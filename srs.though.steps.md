@@ -1,0 +1,8 @@
+- Analyze the PRD document thoroughly to identify key features and functionalities
+- Identify and list all actors (users and systems) that will interact with the system
+- Break down each PRD feature into specific user interactions and system behaviors
+- Document main success scenarios and alternative flows for each use case
+- Derive functional requirements from the documented use cases
+- Organize requirements into categories based on features or modules
+- Review for completeness and consistency
+- Validate with stakeholders and iterate based on feedback
