@@ -63,21 +63,26 @@ Requisito Funcional (derivado do passo 3):
 
 ENTREGA FINAL:
 - Apenas a versão revisada do SRS (sem mostrar a crítica e sem o draft bruto).
-- Manter estrutura oficial:
-  # Título e Meta
-  # Sumário
-  # 1. Introdução
-  # 2. Descrição Geral
-  # 3. User Stories
-  # 4. Requisitos Funcionais
-  # 5. Requisitos Não-Funcionais
-  # 6. Arquitetura Proposta
-  # 7. APIs e Modelos de Dados (opcional se aplicável)
-  # 8. Requisitos de Implantação e Operação
-  # 9. Segurança e Conformidade
-  # 10. Plano de Testes (opcional)
-  # 11. Riscos e Alternativas Rejeitadas
-  # 12. Apêndices (Matriz de Rastreabilidade, Glossário, Ambiguidades, Referências)
+
+ESTRUTURA OBRIGATÓRIA DO SRS (Markdown):
+- Título e Meta
+- Sumário
+- 1. Introdução
+- 2. Descrição Geral
+- 3. User Stories
+- 4. Requisitos Funcionais
+- 5. Requisitos Não-Funcionais
+- 6. Arquitetura Proposta
+- 7. APIs e Modelos de Dados (opcional se aplicável)
+- 8. Requisitos de Implantação e Operação
+- 9. Segurança e Conformidade
+- 10. Plano de Testes (opcional se aplicável)
+- 11. Riscos e Alternativas Rejeitadas
+- 12. Apêndices
+   - A. Matriz de Rastreabilidade (US / UC -> FR -> NFR (quando relevante))
+   - B. Glossário
+   - C. Ambiguidades / Pendências
+   - D. Referências
 
 Padronização:
 - UC-<n>, FR-<módulo>-<n>, NFR-<categoria>-<n>, US-<n>
