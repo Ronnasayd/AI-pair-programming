@@ -22,8 +22,8 @@ PADRÕES:
 - Tarefas: claras, estimáveis (< 16h), com DoD objetivo.
 - Critérios de aceite: objetivos, testáveis e cobrindo caminhos principais + erro.
 
-SAÍDA:
-Produza JSON principal conforme especificação; após o JSON, inclua seção explicativa adicional (Racional de Decisões, Riscos, Próximos Passos).
+SAÍDA (MARKDOWN):
+{{ TEMPLATE A SER FORNECIDO }}
 
 SE FALTAR INFORMAÇÃO:
 Antes de iniciar, liste claramente perguntas de esclarecimento agrupadas por categoria (Domínio, Usuários, Regras de Negócio, Restrições Técnicas, Segurança, Performance).

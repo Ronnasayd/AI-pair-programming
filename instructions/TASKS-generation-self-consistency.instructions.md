@@ -24,27 +24,8 @@ PROCESSO:
 8. Priorizar (explicar método e parâmetros).
 9. Produzir recomendações finais.
 
-SAÍDA (JSON):
-{
-  "requisitos": [...],
-  "trilhas_exploradas": {
-    "A": {...},
-    "B": {...},
-    "C": {...}
-  },
-  "avaliacao_trilhas": [
-    { "trilha": "A", "cobertura": 5, "coesao": 4, "valor": 5, "risco": 4, "nota_final": 18 },
-    ...
-  ],
-  "escolha_final": { "base": "B", "mesclas_de": ["A"], "justificativa": "..." },
-  "epicos": [...],
-  "historias": [...],
-  "tarefas": [...],
-  "matriz_rastreabilidade": [...],
-  "priorizacao": {...},
-  "validacao": {...},
-  "recomendacoes": [...]
-}
+SAÍDA (MARKDOWN):
+{{ TEMPLATE A SER FORNECIDO }}
 
 PADRÕES:
 - Critérios de aceite concretos (Given/When/Then).
