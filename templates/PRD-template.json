@@ -1,0 +1,23 @@
+{
+  "executive_summary": {
+    "description": "Descreva de forma clara e concisa por que o produto existe, para quem é e quais problemas ele resolve."
+  },
+  "problems_to_solve": [
+    {
+      "problem": "Descreva o problema principal que os usuários enfrentam atualmente.",
+      "impact": "Explique o impacto desse problema no negócio e/ou na experiência do usuário."
+    }
+  ],
+  "expected_features": [
+    {
+      "feature": "Nome da funcionalidade principal do produto.",
+      "value_description": "Breve descrição do valor que essa funcionalidade entrega para o usuário ou negócio."
+    }
+  ],
+  "success_kpis": [
+    "Métrica que indica o sucesso do produto (ex: aumento de engajamento, redução do tempo de tarefa, retenção de usuários)."
+  ],
+  "constraints_notes": [
+    "Limitação técnica, legal ou de negócio relevante."
+  ]
+}

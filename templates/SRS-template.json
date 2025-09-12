@@ -1,0 +1,53 @@
+{
+  "title_and_meta": {
+    "title": "Título do documento ou projeto.",
+    "meta": "Informações adicionais como autor, data, versão, etc."
+  },
+  "summary": "Breve sumário do documento ou projeto.",
+  "introduction": "Contexto inicial, objetivos e visão geral.",
+  "general_description": "Descrição geral sobre o escopo, stakeholders e premissas.",
+  "user_stories": [
+    {
+      "id": "US001",
+      "description": "Descrição da user story ou caso de uso."
+    }
+  ],
+  "functional_requirements": [
+    {
+      "id": "FR001",
+      "requirement": "Descrição do requisito funcional."
+    }
+  ],
+  "non_functional_requirements": [
+    {
+      "id": "NFR001",
+      "requirement": "Descrição do requisito não-funcional."
+    }
+  ],
+  "proposed_architecture": "Descrição da arquitetura proposta, diagramas ou explicação textual.",
+  "apis_and_data_models": [
+    {
+      "api_or_model": "Nome da API ou modelo de dados.",
+      "description": "Descrição detalhada (opcional, se aplicável)."
+    }
+  ],
+  "deployment_and_operation_requirements": "Detalhes sobre implantação, ambiente e operação.",
+  "security_and_compliance": "Regras, práticas e normas de segurança e conformidade.",
+  "test_plan": "Plano de testes, critérios de aceitação, estratégias (opcional, se aplicável).",
+  "risks_and_rejected_alternatives": "Riscos conhecidos e alternativas consideradas e rejeitadas.",
+  "appendices": {
+    "traceability_matrix": "Matriz de rastreabilidade: US / UC -> FR -> NFR, quando relevante.",
+    "glossary": [
+      {
+        "term": "Termo",
+        "definition": "Definição"
+      }
+    ],
+    "ambiguities_and_pending_issues": [
+      "Ambiguidade ou pendência a ser resolvida."
+    ],
+    "references": [
+      "Referência bibliográfica ou técnica."
+    ]
+  }
+}
