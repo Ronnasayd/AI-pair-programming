@@ -47,9 +47,8 @@ Fase 10 - Recomendações finais:
 - Pontos a validar com stakeholders.
 - Métricas iniciais sugeridas (ativação, adoção, tempo resposta, etc.).
 
-SAÍDA:
-1. JSON estruturado (epics, stories, tasks, traceability, prioritization, planning, validation).
-2. Seção textual: Resumo Executivo + Principais Riscos + Próximos Passos.
+SAÍDA (MARKDOWN):
+{{ TEMPLATE A SER FORNECIDO }}
 
 ANTES DE COMEÇAR:
 Se informações estiverem incompletas, faça uma lista de perguntas objetivas e aguarde (se instruído). Caso contrário, prossiga assumindo premissas explícitas (liste-as).

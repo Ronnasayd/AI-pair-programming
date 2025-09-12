@@ -33,29 +33,8 @@ Etapa 4 - Revisão Aplicada:
 Etapa 5 - Saída Final + Log de Reflexões:
 - Inclua seção "Reflexões e Melhorias Aplicadas".
 
-FORMATO DE SAÍDA:
-{
-  "versao_inicial": { "epicos": [...], "historias": [...], "tarefas": [...], "rastreabilidade": [...] },
-  "autoavaliacao": [
-    { "item": "Cobertura", "status": "AJUSTAR", "observacao": "Faltou R-012" },
-    ...
-  ],
-  "plano_melhoria": [
-    { "acao": "Adicionar história para R-012 (recuperação de senha)", "prioridade": "alta" }
-  ],
-  "versao_final": {
-    "epicos": [...],
-    "historias": [...],
-    "tarefas": [...],
-    "matriz_rastreabilidade": [...],
-    "priorizacao": {...},
-    "validacao_final": {...}
-  },
-  "reflexoes": [
-    "Histórias refinadas para remover ambiguidade em benefício",
-    "Critérios de aceite expandidos para fluxo de erro"
-  ]
-}
+SAÍDA (MARKDOWN):
+{{ TEMPLATE A SER FORNECIDO }}
 
 PADRÕES:
 - Formato de épico: "Como <organização> queremos <capacidade> para <objetivo>"
