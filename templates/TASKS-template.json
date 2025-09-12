@@ -1,0 +1,144 @@
+{
+  "title_and_meta": {
+    "title": "Título do projeto ou tarefa.",
+    "meta": "Informações adicionais: autor, data, versão, squad/responsável, etc."
+  },
+  "summary": "Resumo executivo do objetivo, contexto ou demanda.",
+  "introduction": "Breve introdução sobre o contexto, problema e público-alvo.",
+  "premises": [
+    "Premissa ou restrição relevante."
+  ],
+  "open_questions": [
+    "Pergunta em aberto ou ponto indefinido."
+  ],
+  "general_description": "Descrição geral do escopo, stakeholders, dependências principais.",
+  "personas": [
+    {
+      "name": "Nome da persona",
+      "objectives": "Principais metas",
+      "pains": "Dores ou desafios",
+      "motivators": "Motivos para uso"
+    }
+  ],
+  "user_journeys": [
+    {
+      "persona": "Nome da persona",
+      "steps_summary": "Resumo dos passos",
+      "requirements": [
+        "ID do requisito relacionado"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "REQ001",
+      "type": "funcional|nao-funcional",
+      "description": "Descrição clara do requisito.",
+      "origin": "Origem (stakeholder, documento, etc.)",
+      "dependencies": [
+        "REQ002"
+      ],
+      "notes": "Observações ou detalhes adicionais."
+    }
+  ],
+  "use_cases": [
+    {
+      "id": "UC001",
+      "name": "Nome do caso de uso",
+      "actors": [
+        "Usuário",
+        "Sistema"
+      ],
+      "summary": "Fluxo resumido",
+      "related_requirements": [
+        "REQ001"
+      ]
+    }
+  ],
+  "epics": [
+    {
+      "id": "E001",
+      "title": "Título do épico",
+      "domain": "Contexto/Domínio",
+      "business_value": "Valor de negócio",
+      "effort": "Estimada (T-shirt size ou pontos)",
+      "risks": "Riscos principais",
+      "user_stories": [
+        {
+          "id": "US001",
+          "description": "Descrição da história de usuário",
+          "acceptance_criteria": "Critérios (Given/When/Then)",
+          "dependencies": [],
+          "story_points": "",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T001",
+      "user_story": "US001",
+      "category": "backend|frontend|db|testes|devops|seguranca",
+      "description": "Descrição da tarefa técnica",
+      "definition_of_done": "Critérios para considerar como pronto.",
+      "estimate_hours": "",
+      "skills": [
+        "skill1",
+        "skill2"
+      ],
+      "dependencies": []
+    }
+  ],
+  "prioritization": [
+    {
+      "item": "E001 ou US001 ou T001",
+      "value": "Valor de negócio ou prioridade",
+      "effort": "Estimativa de esforço",
+      "risk": "Risco relativo",
+      "dependencies": [],
+      "justification": "Breve justificativa"
+    }
+  ],
+  "roadmap": [
+    {
+      "release_or_sprint": "Sprint 1 / Release X",
+      "objective": "Objetivo da iteração",
+      "items": [
+        "E001",
+        "US001"
+      ],
+      "success_criteria": "Critério para considerar sucesso.",
+      "observations": ""
+    }
+  ],
+  "risks": [
+    {
+      "description": "Descrição do risco",
+      "probability": "Baixa/Média/Alta",
+      "impact": "Baixo/Médio/Alto",
+      "mitigation": "Como mitigar"
+    }
+  ],
+  "recommendations": [
+    "Sugestão ou recomendação técnica/processual."
+  ],
+  "next_steps": [
+    "Próxima ação sugerida."
+  ],
+  "appendices": {
+    "traceability_matrix": "Matriz US/UC -> REQ (funcionais/não-funcionais) -> tarefas, quando relevante.",
+    "glossary": [
+      {
+        "term": "Termo",
+        "definition": "Definição"
+      }
+    ],
+    "ambiguities_and_pending_issues": [
+      "Ambiguidade ou pendência a ser resolvida."
+    ],
+    "references": [
+      "Referência bibliográfica ou técnica."
+    ]
+  }
+}
