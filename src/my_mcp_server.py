@@ -51,7 +51,7 @@ def my_get_context(command: str) -> Dict[str, Any]:
         result = subprocess.run(
             [
                 "python3",
-                "/home/ronnas/develop/personal/prompt-ia/generate-context-ia.py",
+                "/home/ronnas/develop/personal/AI-pair-programming/src/generate-context-ia.py",
             ]
             + command.split(" "),
             capture_output=True,
@@ -126,7 +126,7 @@ def my_run_prompt(name: str) -> Dict[str, Any]:
     """
     try:
         filepath = glob(
-            f"/home/ronnas/develop/personal/prompt-ia/*{name}*.instructions.md"
+            f"/home/ronnas/develop/personal/AI-pair-programming/instructions/*{name}*.instructions.md"
         )[0]
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
@@ -157,7 +157,7 @@ def my_code_review(cwd: Optional[str] = None) -> Dict[str, Any]:
         git_diff = result.stdout
 
         with open(
-            "/home/ronnas/develop/personal/prompt-ia/review-refactor-specialist.instructions.md",
+            "/home/ronnas/develop/personal/AI-pair-programming/instructions/review-refactor-specialist.instructions.md",
             "r",
             encoding="utf-8",
         ) as f:
