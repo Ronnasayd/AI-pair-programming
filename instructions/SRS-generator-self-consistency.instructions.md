@@ -19,14 +19,24 @@ Padronização de IDs:
 - UC-<n>, FR-<módulo>-<n>, NFR-<categoria>-<n>, US-<n>
 - Matriz de Rastreabilidade obrigatória.
 
-Entrada PRD:
+ENTRADAS:
+PRD:
 {{PRD_DOCUMENTO}}
 
 ESTRUTURA:
 {{ESTRUTURA_SRS}}
 
-Contextos / Restrições:
+Contextos Adicionais (opcional):
 {{CONTEXTOS_ADICIONAIS}}
+
+Restrições Técnicas (opcional):
+{{RESTRICOES}}
+
+Stakeholders (opcional):
+{{STAKEHOLDERS}}
+
+Objetivos Estratégicos (opcional):
+{{OBJETIVOS}}
 
 Gere o SRS final consolidado e otimizado por consenso.
 

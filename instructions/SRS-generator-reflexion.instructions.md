@@ -31,14 +31,24 @@ Padronização:
 - UC-<n>, FR-<módulo>-<n>, NFR-<categoria>-<n>, US-<n>
 - Matriz: tabela (US / UC / FR / NFR (se aplicável))
 
-Entrada PRD:
+ENTRADAS:
+PRD:
 {{PRD_DOCUMENTO}}
 
 ESTRUTURA:
 {{ESTRUTURA_SRS}}
 
-Contextos Adicionais:
+Contextos Adicionais (opcional):
 {{CONTEXTOS_ADICIONAIS}}
+
+Restrições Técnicas (opcional):
+{{RESTRICOES}}
+
+Stakeholders (opcional):
+{{STAKEHOLDERS}}
+
+Objetivos Estratégicos (opcional):
+{{OBJETIVOS}}
 
 Agora execute internamente os 3 ciclos e entregue apenas o SRS final revisado.
 
