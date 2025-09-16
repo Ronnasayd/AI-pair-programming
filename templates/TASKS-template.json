@@ -43,7 +43,7 @@
     {
       "id": "T001",
       "user_story": "US001",
-      "category": "backend|frontend|db|testes|devops|seguranca",
+      "category": "backend|frontend|db|testes|devops|seguranca|design",
       "description": "Descrição da tarefa técnica",
       "dependencies": []
     }
