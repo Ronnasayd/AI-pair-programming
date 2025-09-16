@@ -71,6 +71,7 @@ def my_get_context(command: str) -> Dict[str, Any]:
 def my_run_command(command: str, cwd: Optional[str] = None) -> Dict[str, Any]:
     """
     Executes a shell command in the specified directory (or current directory if not provided).
+    Se houver ambiente virtual (venv/.venv) no diretório, ativa automaticamente antes do comando.
     Args:
         command (str): The shell command to execute.
         cwd (Optional[str]): Directory to execute the command in.
@@ -78,15 +79,27 @@ def my_run_command(command: str, cwd: Optional[str] = None) -> Dict[str, Any]:
         dict: stdout, stderr, or error message.
     """
     try:
+        workdir = cwd or os.getcwd()
+        venv_path = None
+        # Detecta venv ou .venv
+        for venv_candidate in ["venv", "env"]:
+            candidate_path = os.path.join(workdir, venv_candidate, "bin", "activate")
+            if os.path.isfile(candidate_path):
+                venv_path = candidate_path
+                break
+        # Só prefixa se não houver ativação explícita no comando
+        if venv_path and not ("activate" in command or "source" in command):
+            # Usa 'source' para ativar o venv antes do comando
+            command = f"source '{venv_path}' && {command}"
         result = subprocess.run(
             command,
-            cwd=cwd or os.getcwd(),
+            cwd=workdir,
             capture_output=True,
             text=True,
             shell=True,  # permite string única como comando
+            executable="/bin/zsh",  # garante compatibilidade com zsh
             check=False,
         )
-
         if result.returncode == 0:
             return {"stdout": result.stdout.strip()}
         else:
@@ -94,7 +107,6 @@ def my_run_command(command: str, cwd: Optional[str] = None) -> Dict[str, Any]:
                 "stderr": result.stderr.strip(),
                 "returncode": result.returncode,
             }
-
     except FileNotFoundError as e:
         return _format_error(
             "Arquivo ou diretório não encontrado ao executar comando", e
