@@ -9,21 +9,39 @@
   "user_stories": [
     {
       "id": "US001",
-      "description": "Descrição da user story ou caso de uso."
+      "description": "Descrição da user story ou caso de uso.",
+      "actors": [
+        "Usuário",
+        "Sistema"
+      ],
+      "summary": "Fluxo resumido",
+      "related_requirements": [
+        "FR001"
+      ]
     }
   ],
-  "functional_requirements": [
-    {
-      "id": "FR001",
-      "requirement": "Descrição do requisito funcional."
-    }
-  ],
-  "non_functional_requirements": [
-    {
-      "id": "NFR001",
-      "requirement": "Descrição do requisito não-funcional."
-    }
-  ],
+  "requirements": {
+    "functional_requirements": [
+      {
+        "id": "FR001",
+        "requirement": "Descrição do requisito funcional.",
+        "dependencies": [
+          "FR002|NFR002"
+        ],
+        "notes": "Observações ou detalhes adicionais."
+      }
+    ],
+    "non_functional_requirements": [
+      {
+        "id": "NFR001",
+        "requirement": "Descrição do requisito não-funcional.",
+        "dependencies": [
+          "FR002|NFR002"
+        ],
+        "notes": "Observações ou detalhes adicionais."
+      }
+    ]
+  },
   "proposed_architecture": "Descrição da arquitetura proposta, diagramas ou explicação textual.",
   "apis_and_data_models": [
     {
@@ -36,7 +54,7 @@
   "test_plan": "Plano de testes, critérios de aceitação, estratégias (opcional, se aplicável).",
   "risks_and_rejected_alternatives": "Riscos conhecidos e alternativas consideradas e rejeitadas.",
   "appendices": {
-    "traceability_matrix": "Matriz de rastreabilidade: US / UC -> FR -> NFR, quando relevante.",
+    "traceability_matrix": "Matriz de rastreabilidade: US  -> FR -> NFR, quando relevante.",
     "glossary": [
       {
         "term": "Termo",
