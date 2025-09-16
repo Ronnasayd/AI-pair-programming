@@ -55,61 +55,13 @@
       ]
     }
   ],
-  "epics": [
-    {
-      "id": "E001",
-      "title": "Título do épico",
-      "domain": "Contexto/Domínio",
-      "business_value": "Valor de negócio",
-      "effort": "Estimada (T-shirt size ou pontos)",
-      "risks": "Riscos principais",
-      "user_stories": [
-        {
-          "id": "US001",
-          "description": "Descrição da história de usuário",
-          "acceptance_criteria": "Critérios (Given/When/Then)",
-          "dependencies": [],
-          "story_points": "",
-          "notes": ""
-        }
-      ]
-    }
-  ],
   "tasks": [
     {
       "id": "T001",
       "user_story": "US001",
       "category": "backend|frontend|db|testes|devops|seguranca",
       "description": "Descrição da tarefa técnica",
-      "definition_of_done": "Critérios para considerar como pronto.",
-      "estimate_hours": "",
-      "skills": [
-        "skill1",
-        "skill2"
-      ],
       "dependencies": []
-    }
-  ],
-  "prioritization": [
-    {
-      "item": "E001 ou US001 ou T001",
-      "value": "Valor de negócio ou prioridade",
-      "effort": "Estimativa de esforço",
-      "risk": "Risco relativo",
-      "dependencies": [],
-      "justification": "Breve justificativa"
-    }
-  ],
-  "roadmap": [
-    {
-      "release_or_sprint": "Sprint 1 / Release X",
-      "objective": "Objetivo da iteração",
-      "items": [
-        "E001",
-        "US001"
-      ],
-      "success_criteria": "Critério para considerar sucesso.",
-      "observations": ""
     }
   ],
   "risks": [
@@ -122,9 +74,6 @@
   ],
   "recommendations": [
     "Sugestão ou recomendação técnica/processual."
-  ],
-  "next_steps": [
-    "Próxima ação sugerida."
   ],
   "appendices": {
     "traceability_matrix": "Matriz US/UC -> REQ (funcionais/não-funcionais) -> tarefas, quando relevante.",
