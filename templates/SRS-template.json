@@ -14,7 +14,6 @@
         "Usuário",
         "Sistema"
       ],
-      "summary": "Fluxo resumido",
       "related_requirements": [
         "FR001"
       ]
@@ -27,8 +26,7 @@
         "requirement": "Descrição do requisito funcional.",
         "dependencies": [
           "FR002|NFR002"
-        ],
-        "notes": "Observações ou detalhes adicionais."
+        ]
       }
     ],
     "non_functional_requirements": [
@@ -37,8 +35,7 @@
         "requirement": "Descrição do requisito não-funcional.",
         "dependencies": [
           "FR002|NFR002"
-        ],
-        "notes": "Observações ou detalhes adicionais."
+        ]
       }
     ]
   },
