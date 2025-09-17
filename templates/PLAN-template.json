@@ -1,0 +1,33 @@
+{
+  "title_and_meta": {
+    "title": "Título do projeto ou tarefa.",
+    "meta": "Informações adicionais: autor, data, versão, squad/responsável, etc."
+  },
+  "summary": "Resumo executivo do objetivo, contexto ou demanda.",
+  "introduction": "Breve introdução sobre o contexto, problema e público-alvo.",
+  "general_description": "Descrição geral do escopo, stakeholders, dependências principais.",
+  "status": [
+    "Not started",
+    "In progress",
+    "Completed",
+    "Cancelled"
+  ],
+  "tasks": [
+    {
+      "id": "T001",
+      "user_story": "US001",
+      "category": "backend|frontend|db|testes|devops|seguranca|design",
+      "description": "Descrição da tarefa técnica",
+      "status": "Not started|In progress|Completed|Cancelled",
+      "dependencies": [],
+      "sub-tasks": [
+        {
+          "id": "ST001",
+          "description": "Descrição da sub-tarefa técnica",
+          "status": "Not started|In progress|Completed|Cancelled",
+          "dependencies": []
+        }
+      ]
+    }
+  ]
+}
