@@ -1,0 +1,136 @@
+{
+  "srs": {
+    "identification": {
+      "document_id": "SRS-001",
+      "title": "Título do Software",
+      "version": "1.0",
+      "authors": [
+        "Nome do Autor"
+      ],
+      "status": "Draft | Approved | Final",
+      "date": "YYYY-MM-DD",
+      "revision_history": [
+        {
+          "version": "0.1",
+          "date": "YYYY-MM-DD",
+          "changes": "Rascunho inicial"
+        }
+      ]
+    },
+    "introduction": {
+      "purpose": "Descrever os objetivos e razões para este SRS.",
+      "scope": "Delimitar o sistema, suas funcionalidades principais e metas.",
+      "definitions_acronyms_abbreviations": {
+        "sigla": "Descrição"
+      },
+      "references": [
+        "PRD v1.0",
+        "Norma ISO/IEC/IEEE 29148:2018"
+      ],
+      "overview": "Resumo da organização do documento."
+    },
+    "overall_description": {
+      "product_perspective": "Descrição do produto em relação a outros sistemas.",
+      "product_functions": [
+        "Função principal 1",
+        "Função principal 2"
+      ],
+      "user_characteristics": [
+        {
+          "type": "Administrador",
+          "skills": "Conhecimentos técnicos básicos"
+        }
+      ],
+      "constraints": [
+        "Exemplo: uso obrigatório de banco de dados PostgreSQL"
+      ],
+      "assumptions_and_dependencies": [
+        "Exemplo: dependência de integração com API externa X"
+      ],
+      "apportioning_of_requirements": "Divisão de requisitos entre versões ou releases."
+    },
+    "specific_requirements": {
+      "external_interfaces": [
+        {
+          "id": "INT-01",
+          "type": "API REST",
+          "description": "Integração com sistema externo X"
+        }
+      ],
+      "functional_requirements": [
+        {
+          "id": "FR-001",
+          "description": "O sistema deverá permitir login com autenticação JWT.",
+          "priority": "Alta",
+          "dependencies": [
+            "FR-002"
+          ]
+        }
+      ],
+      "usability_requirements": [
+        {
+          "id": "UR-001",
+          "description": "A interface deverá estar em conformidade com WCAG 2.1 AA."
+        }
+      ],
+      "performance_requirements": [
+        {
+          "id": "PR-001",
+          "description": "O sistema deve suportar 1000 requisições simultâneas."
+        }
+      ],
+      "logical_database_requirements": [
+        {
+          "id": "DBR-001",
+          "description": "O sistema deverá armazenar usuários com os atributos id, nome, email e senha_hash."
+        }
+      ],
+      "design_constraints": [
+        "O sistema deverá ser implementado em Node.js com banco PostgreSQL."
+      ],
+      "standards_compliance": [
+        "GDPR",
+        "LGPD"
+      ],
+      "software_system_attributes": {
+        "reliability": "Disponibilidade mínima de 99,5%.",
+        "security": "Criptografia AES-256 em repouso e TLS 1.3 em trânsito.",
+        "maintainability": "Código documentado e testado com cobertura mínima de 80%.",
+        "portability": "Compatível com Docker/Kubernetes."
+      },
+      "verification": [
+        "Cada requisito funcional será validado com testes unitários e de integração.",
+        "Requisitos de desempenho serão verificados por testes de carga."
+      ],
+      "supporting_information": [
+        "Wireframes de telas",
+        "Diagramas UML"
+      ]
+    },
+    "appendices": {
+      "traceability_matrix": {
+        "US001": [
+          "FR-001",
+          "FR-002"
+        ],
+        "US002": [
+          "FR-003",
+          "NFR-001"
+        ]
+      },
+      "glossary": [
+        {
+          "term": "Usuário",
+          "definition": "Pessoa que interage com o sistema."
+        }
+      ],
+      "ambiguities_and_pending_issues": [
+        "Definir limite máximo de upload de arquivos."
+      ],
+      "references": [
+        "ISO/IEC/IEEE 29148:2018",
+        "Documentação técnica do sistema X"
+      ]
+    }
+  }
+}
