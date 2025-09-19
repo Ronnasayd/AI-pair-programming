@@ -1,6 +1,7 @@
 # arquivo: ollama_local_proxy.py
 import asyncio
 import json
+import logging
 import subprocess
 import time
 from datetime import datetime
@@ -9,6 +10,14 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("ollama_proxy.log"), logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -21,14 +30,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_NAME = "gemini-proxy"  # Simplified name without tag
-MODEL_TAG = "latest"
+
+# Middleware para logar todas as requisições
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+
+    # Log da requisição
+    client_ip = request.client.host if request.client else "unknown"
+    logger.info(f"📥 {request.method} {request.url.path} - IP: {client_ip}")
+
+    # Processar a requisição
+    response = await call_next(request)
+
+    # Log da resposta
+    process_time = time.time() - start_time
+    logger.info(
+        f"📤 {request.method} {request.url.path} - Status: {response.status_code} - Tempo: {process_time:.3f}s"
+    )
+
+    return response
+
+
+MODEL_NAME = "codellama"  # Use codellama for better compatibility
+MODEL_TAG = "7b-instruct-q2_K"
 MODEL_FULL_NAME = f"{MODEL_NAME}:{MODEL_TAG}"
-DIGEST = "sha256:fake-digest-123456789abcdef"
-MODIFIED_AT = "2024-09-01T00:00:00Z"
-SIZE = 12345678
-PARAMETER_SIZE = "3B"
-QUANTIZATION_LEVEL = "Q4_0"
+DIGEST = "sha256:28ee56afb6a5dada9cd8d09d89b5217499ffe9364658aa2d1eaf9f97bdfa0cba"
+MODIFIED_AT = "2025-09-19T20:26:08.719111943Z"
+SIZE = 2826028934
+PARAMETER_SIZE = "7B"
+QUANTIZATION_LEVEL = "Q2_K"
 
 
 def now_timestamp():
@@ -37,15 +68,42 @@ def now_timestamp():
 
 def call_gemini(prompt: str):
     """Call the external Gemini CLI tool and return the response."""
+    start_time = time.time()
+    logger.info("🤖 Iniciando chamada para Gemini")
+    logger.debug(
+        f"📝 Prompt enviado: {prompt[:200]}{'...' if len(prompt) > 200 else ''}"
+    )
+
     try:
-        cmd = ["gemini", "chat", "--prompt", prompt, "--json"]
+        # Use the correct gemini CLI syntax without --json flag
+        cmd = ["gemini", "--prompt", prompt]
+        logger.debug(f"🔧 Comando executado: {' '.join(cmd[:2])} [prompt truncado]")
+
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        try:
-            return json.loads(result.stdout)
-        except json.JSONDecodeError:
-            return {"text": result.stdout.strip()}
+        execution_time = time.time() - start_time
+
+        logger.info(f"✅ Gemini respondeu em {execution_time:.2f}s")
+
+        # Since gemini CLI returns plain text, not JSON, return as text
+        response_text = result.stdout.strip()
+        if response_text:
+            logger.debug("📤 Resposta recebida com sucesso")
+            return {"text": response_text}
+        else:
+            logger.warning("⚠️ Resposta vazia do Gemini")
+            return {"text": "Desculpe, não consegui gerar uma resposta."}
+
     except subprocess.CalledProcessError as e:
+        execution_time = time.time() - start_time
+        logger.error(f"❌ Erro na chamada Gemini após {execution_time:.2f}s: {e}")
+        logger.error(f"🔍 Stderr: {e.stderr}")
         return {"error": e.stderr or str(e)}
+    except Exception as e:
+        execution_time = time.time() - start_time
+        logger.error(
+            f"❌ Erro inesperado na chamada Gemini após {execution_time:.2f}s: {e}"
+        )
+        return {"error": str(e)}
 
 
 def get_model_details():
@@ -82,10 +140,11 @@ def is_valid_model(model_name: str) -> bool:
 
     # Support various formats
     valid_names = [
-        MODEL_NAME,  # "gemini-proxy"
-        MODEL_FULL_NAME,  # "gemini-proxy:latest"
+        MODEL_NAME,  # "codellama"
+        MODEL_FULL_NAME,  # "codellama:7b-instruct-q2_K"
         f"{MODEL_NAME}:latest",
-        "gemini-proxy",
+        "codellama:7b-instruct-q2_K",
+        "gemini-proxy",  # Legacy support
         "gemini-proxy:latest",
     ]
 
@@ -94,16 +153,19 @@ def is_valid_model(model_name: str) -> bool:
 
 def normalize_model_name(model_name: str) -> str:
     """Normalize model name to the canonical form."""
-    if model_name in [MODEL_NAME, "gemini-proxy"]:
+    if model_name in [MODEL_NAME, "codellama"]:
         return MODEL_FULL_NAME
-    if model_name.endswith(":latest"):
+    if model_name.endswith(f":{MODEL_TAG}"):
         return model_name
-    return f"{model_name}:latest" if ":" not in model_name else model_name
+    if model_name == "gemini-proxy" or model_name == "gemini-proxy:latest":
+        return MODEL_FULL_NAME  # Legacy support
+    return f"{model_name}:{MODEL_TAG}" if ":" not in model_name else model_name
 
 
 # Root endpoint for basic server info
 @app.get("/")
 async def root():
+    logger.info("🏠 Acesso ao endpoint raiz")
     return JSONResponse(
         content={
             "status": "ollama proxy server is running",
@@ -127,6 +189,7 @@ async def version():
 @app.get("/api/tags")
 async def list_models():
     """List models that are available locally."""
+    logger.info("📋 GET /api/tags - Listando modelos disponíveis")
     return JSONResponse(content={"models": [get_model_info()]})
 
 
@@ -139,10 +202,14 @@ async def list_models_alias():
 @app.get("/api/show")
 async def show_model_get(name: str = Query(MODEL_FULL_NAME)):
     """Show model information via GET request."""
+    logger.info(f"ℹ️ GET /api/show - Modelo: {name}")
+
     if not is_valid_model(name):
+        logger.warning(f"⚠️ Modelo não encontrado: {name}")
         raise HTTPException(status_code=404, detail=f"Model '{name}' not found")
 
     normalized_name = normalize_model_name(name)
+    logger.debug(f"🔧 Nome normalizado: {normalized_name}")
 
     return JSONResponse(
         content={
@@ -187,12 +254,21 @@ async def chat(request: Request):
     _options = body.get("options", {})  # Reserved for future model options
     _keep_alive = body.get("keep_alive", "5m")  # Reserved for memory management
 
+    logger.info(
+        f"💬 POST /api/chat - Modelo: {model}, Stream: {stream}, Mensagens: {len(messages)}"
+    )
+    logger.debug(
+        f"📨 Mensagens recebidas: {json.dumps(messages, ensure_ascii=False)[:500]}{'...' if len(str(messages)) > 500 else ''}"
+    )
+
     # Validate model
     if not is_valid_model(model):
+        logger.warning(f"⚠️ Modelo inválido solicitado: {model}")
         raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
 
     # Handle empty messages (model loading)
     if not messages:
+        logger.info("📭 Mensagens vazias - retornando resposta de carregamento")
         return JSONResponse(
             content={
                 "model": model,
@@ -211,6 +287,9 @@ async def chat(request: Request):
         prompt_parts.append(f"{role}: {content}")
 
     prompt = "\n\n".join(prompt_parts)
+    logger.debug(
+        f"🔧 Prompt construído: {prompt[:300]}{'...' if len(prompt) > 300 else ''}"
+    )
 
     # Call Gemini
     start_time = time.time()
@@ -219,14 +298,19 @@ async def chat(request: Request):
 
     # Handle errors
     if "error" in gemini_resp:
+        logger.error(f"❌ Erro no Gemini: {gemini_resp['error']}")
         raise HTTPException(status_code=500, detail=gemini_resp["error"])
 
     response_content = gemini_resp.get("text", str(gemini_resp))
+    logger.info(
+        f"✅ Resposta gerada em {end_time - start_time:.2f}s, {len(response_content)} caracteres"
+    )
 
     # Calculate timing
     total_duration = int((end_time - start_time) * 1_000_000_000)  # nanoseconds
 
     if stream:
+        logger.info("🌊 Iniciando resposta em streaming")
 
         async def generate_stream():
             # First chunk with partial content
@@ -259,6 +343,7 @@ async def chat(request: Request):
 
         return StreamingResponse(generate_stream(), media_type="text/plain")
     else:
+        logger.info("📝 Enviando resposta não-streaming")
         # Non-streaming response
         return JSONResponse(
             content={
@@ -293,12 +378,23 @@ async def generate(request: Request):
     _keep_alive = body.get("keep_alive", "5m")  # Reserved for memory management
     _images = body.get("images", [])  # Reserved for multimodal support
 
-    # Validate model
-    if model != MODEL_NAME:
-        raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
+    logger.info(
+        f"🤖 POST /api/generate - Modelo: {model}, Stream: {stream}, Formato: {format_type}"
+    )
+    logger.debug(f"📝 Prompt: {prompt[:200]}{'...' if len(prompt) > 200 else ''}")
+    logger.debug(f"🔧 Sistema: {system[:100]}{'...' if len(system) > 100 else ''}")
+
+    # Validate model (be more flexible)
+    if not is_valid_model(model):
+        # For compatibility, accept any model name and use our default
+        logger.warning(
+            f"⚠️ Modelo desconhecido '{model}', usando padrão {MODEL_FULL_NAME}"
+        )
+        model = MODEL_FULL_NAME
 
     # Handle model loading (empty prompt)
     if not prompt.strip():
+        logger.info("📭 Prompt vazio - retornando resposta de carregamento")
         return JSONResponse(
             content={
                 "model": model,
@@ -315,6 +411,10 @@ async def generate(request: Request):
     if suffix:
         full_prompt = f"{full_prompt}\n{suffix}"
 
+    logger.debug(
+        f"🔧 Prompt completo: {full_prompt[:300]}{'...' if len(full_prompt) > 300 else ''}"
+    )
+
     # Call Gemini
     start_time = time.time()
     gemini_resp = call_gemini(full_prompt)
@@ -322,23 +422,30 @@ async def generate(request: Request):
 
     # Handle errors
     if "error" in gemini_resp:
+        logger.error(f"❌ Erro no Gemini: {gemini_resp['error']}")
         raise HTTPException(status_code=500, detail=gemini_resp["error"])
 
     response_content = gemini_resp.get("text", str(gemini_resp))
+    logger.info(
+        f"✅ Resposta gerada em {end_time - start_time:.2f}s, {len(response_content)} caracteres"
+    )
 
     # JSON format handling
     if format_type == "json":
+        logger.debug("🔧 Processando formato JSON")
         try:
             # Try to ensure response is valid JSON
             json.loads(response_content)
         except json.JSONDecodeError:
             # If not valid JSON, wrap it
+            logger.warning("⚠️ Resposta não é JSON válido, encapsulando")
             response_content = json.dumps({"response": response_content})
 
     # Calculate timing
     total_duration = int((end_time - start_time) * 1_000_000_000)  # nanoseconds
 
     if stream:
+        logger.info("🌊 Iniciando resposta em streaming")
 
         async def generate_stream():
             # Simulate streaming by chunking the response
@@ -375,6 +482,7 @@ async def generate(request: Request):
 
         return StreamingResponse(generate_stream(), media_type="application/x-ndjson")
     else:
+        logger.info("📝 Enviando resposta não-streaming")
         # Non-streaming response
         return JSONResponse(
             content={
@@ -396,6 +504,7 @@ async def generate(request: Request):
 @app.get("/api/ps")
 async def list_running_models():
     """List models that are currently loaded into memory."""
+    logger.info("🏃 GET /api/ps - Listando modelos em execução")
     return JSONResponse(
         content={
             "models": [
@@ -423,15 +532,25 @@ async def generate_embeddings(request: Request):
     _options = body.get("options", {})  # Reserved for future model options
     _keep_alive = body.get("keep_alive", "5m")  # Reserved for memory management
 
-    # Validate model
-    if model != MODEL_NAME:
-        raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
+    logger.info(f"🔗 POST /api/embed - Modelo: {model}")
+    logger.debug(
+        f"📝 Input: {str(input_text)[:200]}{'...' if len(str(input_text)) > 200 else ''}"
+    )
+
+    # Validate model (be flexible)
+    if not is_valid_model(model):
+        logger.warning(
+            f"⚠️ Modelo desconhecido '{model}' para embeddings, usando padrão {MODEL_FULL_NAME}"
+        )
+        model = MODEL_FULL_NAME
 
     # Handle multiple inputs
     if isinstance(input_text, list):
         inputs = input_text
     else:
         inputs = [input_text]
+
+    logger.debug(f"🔧 Processando {len(inputs)} entrada(s) para embedding")
 
     # Generate fake embeddings (in real implementation, you'd call Gemini for embeddings)
     embeddings = []
@@ -458,6 +577,8 @@ async def generate_embeddings(request: Request):
 
         embeddings.append(embedding)
 
+    logger.info(f"✅ Embeddings gerados: {len(embeddings)} vetores de 384 dimensões")
+
     return JSONResponse(
         content={
             "model": model,
@@ -481,7 +602,7 @@ async def copy_model(request: Request):
             status_code=400, detail="Source and destination are required"
         )
 
-    if source != MODEL_NAME:
+    if not is_valid_model(source):
         raise HTTPException(
             status_code=404, detail=f"Source model '{source}' not found"
         )
@@ -500,7 +621,7 @@ async def delete_model(request: Request):
     if not model:
         raise HTTPException(status_code=400, detail="Model name is required")
 
-    if model != MODEL_NAME:
+    if not is_valid_model(model):
         raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
 
     # In a real implementation, you would delete the model
@@ -626,10 +747,239 @@ async def generate_embedding_legacy(request: Request):
     return JSONResponse(content={"embedding": []})
 
 
+@app.post("/v1/chat/completions")
+async def openai_chat_completions(request: Request):
+    """OpenAI-compatible chat completions endpoint."""
+    body = await request.json()
+    model = body.get("model", MODEL_FULL_NAME)
+    messages = body.get("messages", [])
+    stream = body.get("stream", False)
+    # Extract other parameters but don't log unused warnings
+    _temperature = body.get("temperature", 0.7)
+    _top_p = body.get("top_p", 1.0)
+    _n = body.get("n", 1)
+    _max_tokens = body.get("max_tokens", None)
+    _stop = body.get("stop", None)
+    _presence_penalty = body.get("presence_penalty", 0)
+    _frequency_penalty = body.get("frequency_penalty", 0)
+
+    logger.info(
+        f"🔌 POST /v1/chat/completions (OpenAI) - Modelo: {model}, Stream: {stream}, Mensagens: {len(messages)}"
+    )
+    logger.debug(
+        f"📨 Mensagens OpenAI: {json.dumps(messages, ensure_ascii=False)[:500]}{'...' if len(str(messages)) > 500 else ''}"
+    )
+
+    # Validate model - accept any model name for OpenAI compatibility
+    if not model:
+        logger.error("❌ Modelo não especificado")
+        raise HTTPException(status_code=400, detail="Model is required")
+
+    # Handle empty messages
+    if not messages:
+        logger.info("📭 Mensagens vazias - retornando resposta vazia OpenAI")
+        if stream:
+
+            async def empty_stream():
+                chunk_data = {
+                    "id": f"chatcmpl-{int(time.time())}",
+                    "object": "chat.completion.chunk",
+                    "created": int(time.time()),
+                    "model": model,
+                    "system_fingerprint": "fp_ollama",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "delta": {"role": "assistant", "content": ""},
+                            "finish_reason": "stop",
+                        }
+                    ],
+                }
+                yield f"data: {json.dumps(chunk_data)}\n\n"
+                yield "data: [DONE]\n\n"
+
+            return StreamingResponse(empty_stream(), media_type="text/event-stream")
+        else:
+            return JSONResponse(
+                content={
+                    "id": f"chatcmpl-{int(time.time())}",
+                    "object": "chat.completion",
+                    "created": int(time.time()),
+                    "model": model,
+                    "choices": [
+                        {
+                            "index": 0,
+                            "message": {"role": "assistant", "content": ""},
+                            "finish_reason": "stop",
+                        }
+                    ],
+                    "usage": {
+                        "prompt_tokens": 0,
+                        "completion_tokens": 0,
+                        "total_tokens": 0,
+                    },
+                }
+            )
+
+    # Build prompt from messages
+    prompt_parts = []
+    for msg in messages:
+        role = msg.get("role", "user")
+        content = msg.get("content", "")
+        if role == "system":
+            prompt_parts.append(f"System: {content}")
+        elif role == "user":
+            prompt_parts.append(f"User: {content}")
+        elif role == "assistant":
+            prompt_parts.append(f"Assistant: {content}")
+
+    prompt = "\n\n".join(prompt_parts)
+    logger.debug(
+        f"🔧 Prompt OpenAI construído: {prompt[:300]}{'...' if len(prompt) > 300 else ''}"
+    )
+
+    # Call Gemini
+    gemini_resp = call_gemini(prompt)
+
+    # Handle errors
+    if "error" in gemini_resp:
+        logger.error(f"❌ Erro no Gemini (OpenAI): {gemini_resp['error']}")
+        raise HTTPException(status_code=500, detail=gemini_resp["error"])
+
+    response_content = gemini_resp.get("text", str(gemini_resp))
+    logger.info(f"✅ Resposta OpenAI gerada, {len(response_content)} caracteres")
+
+    # Calculate token usage (approximation)
+    prompt_tokens = len(prompt.split())
+    completion_tokens = len(response_content.split())
+    total_tokens = prompt_tokens + completion_tokens
+
+    completion_id = f"chatcmpl-{int(time.time())}"
+    created_timestamp = int(time.time())
+
+    if stream:
+        logger.info("🌊 Iniciando resposta OpenAI em streaming")
+
+        async def generate_openai_stream():
+            # Split response into chunks for streaming
+            words = response_content.split()
+            chunk_size = max(1, len(words) // 10)  # Split into ~10 chunks
+
+            for i in range(0, len(words), chunk_size):
+                chunk_words = words[i : i + chunk_size]
+                chunk_content = " ".join(chunk_words)
+
+                # Add space at the beginning if not the first chunk
+                if i > 0:
+                    chunk_content = " " + chunk_content
+
+                is_last_chunk = i + chunk_size >= len(words)
+
+                chunk_data = {
+                    "id": completion_id,
+                    "object": "chat.completion.chunk",
+                    "created": created_timestamp,
+                    "model": model,
+                    "system_fingerprint": "fp_ollama",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "delta": {
+                                "role": "assistant" if i == 0 else None,
+                                "content": chunk_content,
+                            },
+                            "finish_reason": "stop" if is_last_chunk else None,
+                        }
+                    ],
+                }
+
+                # Remove None values from delta
+                if chunk_data["choices"][0]["delta"]["role"] is None:
+                    del chunk_data["choices"][0]["delta"]["role"]
+
+                yield f"data: {json.dumps(chunk_data)}\n\n"
+
+                if not is_last_chunk:
+                    await asyncio.sleep(0.05)  # Small delay between chunks
+
+            # Send final chunk with usage info
+            final_chunk = {
+                "id": completion_id,
+                "object": "chat.completion.chunk",
+                "created": created_timestamp,
+                "model": model,
+                "system_fingerprint": "fp_ollama",
+                "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}],
+                "usage": {
+                    "prompt_tokens": prompt_tokens,
+                    "completion_tokens": completion_tokens,
+                    "total_tokens": total_tokens,
+                },
+            }
+
+            yield f"data: {json.dumps(final_chunk)}\n\n"
+            yield "data: [DONE]\n\n"
+
+        return StreamingResponse(
+            generate_openai_stream(), media_type="text/event-stream"
+        )
+    else:
+        logger.info("📝 Enviando resposta OpenAI não-streaming")
+        # Non-streaming response
+        return JSONResponse(
+            content={
+                "id": completion_id,
+                "object": "chat.completion",
+                "created": created_timestamp,
+                "model": model,
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {"role": "assistant", "content": response_content},
+                        "finish_reason": "stop",
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": prompt_tokens,
+                    "completion_tokens": completion_tokens,
+                    "total_tokens": total_tokens,
+                },
+            }
+        )
+
+
+@app.get("/v1/models")
+async def openai_list_models():
+    """OpenAI-compatible models endpoint."""
+    logger.info("🔌 GET /v1/models - Listando modelos (OpenAI)")
+    return JSONResponse(
+        content={
+            "object": "list",
+            "data": [
+                {
+                    "id": MODEL_FULL_NAME,
+                    "object": "model",
+                    "created": int(
+                        time.mktime(
+                            datetime.fromisoformat(
+                                MODIFIED_AT.replace("Z", "+00:00")
+                            ).timetuple()
+                        )
+                    ),
+                    "owned_by": "ollama",
+                    "permission": [],
+                    "root": MODEL_FULL_NAME,
+                    "parent": None,
+                }
+            ],
+        }
+    )
+
+
 if __name__ == "__main__":
-    print("Starting Ollama API proxy server on port 11434")
-    print(f"Available model: {MODEL_FULL_NAME}")
-    print("Endpoints:")
+    print("🚀 Starting Ollama API proxy server on port 11434")
+    print(f"📦 Available model: {MODEL_FULL_NAME}")
+    print("🔗 Endpoints:")
     print("  - GET  /api/tags          - List available models")
     print("  - POST /api/show          - Show model information")
     print("  - POST /api/generate      - Generate completion")
@@ -641,4 +991,11 @@ if __name__ == "__main__":
     print("  - POST /api/pull          - Pull model")
     print("  - POST /api/push          - Push model")
     print("  - POST /api/embeddings    - Generate embedding (legacy)")
+    print("  - POST /v1/chat/completions - OpenAI-compatible chat completions")
+    print("  - GET  /v1/models         - OpenAI-compatible models list")
+    print("📝 Logs serão salvos em: ollama_proxy.log")
+
+    logger.info("🚀 Iniciando servidor Ollama API proxy na porta 11434")
+    logger.info(f"📦 Modelo disponível: {MODEL_FULL_NAME}")
+
     uvicorn.run(app, host="0.0.0.0", port=11434)

@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-import requests
-from flask import Flask, request, Response
-from urllib.parse import urljoin
 import json
 import time
+from urllib.parse import urljoin
+
+import requests
+from flask import Flask, Response, request
 
 # Configuração
-REMOTE_OLLAMA = "https://nasty-knives-remain.loca.lt/"  # endereço do ollama remoto
+REMOTE_OLLAMA = "https://khaki-things-obey.loca.lt/"  # endereço do ollama remoto
 LOCAL_HOST = "0.0.0.0"
 LOCAL_PORT = 11434
 
-EXCLUDE_PATHS = ['api/show']
+EXCLUDE_PATHS = ["api/show"]
 
 app = Flask(__name__)
+
 
 def log_request(path):
     print(f"\n=== [{time.strftime('%Y-%m-%d %H:%M:%S')}] Nova requisição ===")
@@ -23,6 +25,7 @@ def log_request(path):
         print(f"Body:\n{body_str}")
     except Exception as e:
         print(f"Erro ao ler corpo: {e}")
+
 
 def log_response(resp):
     print(f"--- Resposta do remoto ---")
@@ -43,13 +46,14 @@ def log_response(resp):
         print(f"Erro ao ler resposta: {e}")
     print("=" * 50)
 
+
 def proxy_request(path):
     """Encaminha requisição para o Ollama remoto com logging."""
     if path not in EXCLUDE_PATHS:
         log_request(path)
 
     remote_url = urljoin(REMOTE_OLLAMA + "/", path)
-    headers = {key: value for key, value in request.headers if key.lower() != 'host'}
+    headers = {key: value for key, value in request.headers if key.lower() != "host"}
 
     resp = requests.request(
         method=request.method,
@@ -58,23 +62,27 @@ def proxy_request(path):
         data=request.get_data(),
         cookies=request.cookies,
         allow_redirects=False,
-        stream=True
+        stream=True,
     )
-    
+
     if path not in EXCLUDE_PATHS:
         log_response(resp)
 
     return Response(
         resp.iter_content(chunk_size=8192),
         status=resp.status_code,
-        headers=dict(resp.headers)
+        headers=dict(resp.headers),
     )
 
-@app.route('/', defaults={'path': ''}, methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-@app.route('/<path:path>', methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+
+@app.route(
+    "/", defaults={"path": ""}, methods=["GET", "POST", "PUT", "DELETE", "PATCH"]
+)
+@app.route("/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def catch_all(path):
     return proxy_request(path)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print(f"Proxy rodando em http://{LOCAL_HOST}:{LOCAL_PORT} -> {REMOTE_OLLAMA}")
     app.run(host=LOCAL_HOST, port=LOCAL_PORT)
