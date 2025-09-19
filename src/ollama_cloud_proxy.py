@@ -7,11 +7,11 @@ import requests
 from flask import Flask, Response, request
 
 # Configuração
-REMOTE_OLLAMA = "https://khaki-things-obey.loca.lt/"  # endereço do ollama remoto
+REMOTE_OLLAMA = "https://tangy-candles-clap.loca.lt/"  # endereço do ollama remoto
 LOCAL_HOST = "0.0.0.0"
 LOCAL_PORT = 11434
 
-EXCLUDE_PATHS = ["api/show"]
+EXCLUDE_PATHS = []
 
 app = Flask(__name__)
 
