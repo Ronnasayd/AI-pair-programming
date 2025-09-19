@@ -1,15 +1,18 @@
 # arquivo: ollama_local_proxy.py
 import asyncio
+import hashlib
 import json
 import logging
+import struct
 import subprocess
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+from starlette.responses import Response
 
 # Configure logging
 logging.basicConfig(
@@ -40,13 +43,61 @@ async def log_requests(request: Request, call_next):
     client_ip = request.client.host if request.client else "unknown"
     logger.info(f"📥 {request.method} {request.url.path} - IP: {client_ip}")
 
+    # Capturar corpo da requisição
+    request_body = await request.body()
+    logger.info(
+        f"📝 Corpo da requisição: {request_body.decode('utf-8', errors='ignore')}"
+    )
+
     # Processar a requisição
     response = await call_next(request)
+
+    # Capturar corpo da resposta
+    response_body = "N/A"
+    content_type = response.headers.get("content-type", "")
+
+    # Se for uma JSONResponse, tentamos capturar o conteúdo
+    if "application/json" in content_type:
+        try:
+            # Para FastAPI/Starlette, o corpo está no body_iterator
+            if hasattr(response, "body_iterator"):
+                # Coletar todos os chunks do body_iterator
+                chunks = []
+                async for chunk in response.body_iterator:
+                    chunks.append(chunk)
+
+                # Decodificar o conteúdo
+                full_content = b"".join(chunks)
+                response_body = full_content.decode("utf-8", errors="ignore")
+
+                # Recriar o response com o mesmo conteúdo
+                new_response = Response(
+                    content=full_content,
+                    status_code=response.status_code,
+                    headers=dict(response.headers),
+                    media_type=response.media_type,
+                )
+                response = new_response
+            elif hasattr(response, "body"):
+                response_body = (
+                    response.body.decode("utf-8", errors="ignore")
+                    if isinstance(response.body, bytes)
+                    else str(response.body)
+                )
+        except Exception as e:
+            response_body = f"N/A (erro ao capturar: {str(e)})"
+    elif "text/event-stream" in content_type:
+        response_body = "N/A (streaming response)"
+    else:
+        response_body = "N/A (tipo não suportado)"
 
     # Log da resposta
     process_time = time.time() - start_time
     logger.info(
         f"📤 {request.method} {request.url.path} - Status: {response.status_code} - Tempo: {process_time:.3f}s"
+    )
+    logger.info(
+        f"📝 Corpo da resposta: {response_body[:50000]}{'...' if len(response_body) > 50000 else ''}"
     )
 
     return response
@@ -55,8 +106,9 @@ async def log_requests(request: Request, call_next):
 MODEL_NAME = "codellama"  # Use codellama for better compatibility
 MODEL_TAG = "7b-instruct-q2_K"
 MODEL_FULL_NAME = f"{MODEL_NAME}:{MODEL_TAG}"
-DIGEST = "sha256:28ee56afb6a5dada9cd8d09d89b5217499ffe9364658aa2d1eaf9f97bdfa0cba"
-MODIFIED_AT = "2025-09-19T20:26:08.719111943Z"
+DIGEST = "28ee56afb6a5dada9cd8d09d89b5217499ffe9364658aa2d1eaf9f97bdfa0cba"
+# Set MODIFIED_AT to current UTC time in ISO format with nanoseconds
+MODIFIED_AT = datetime.utcnow().isoformat() + "Z"
 SIZE = 2826028934
 PARAMETER_SIZE = "7B"
 QUANTIZATION_LEVEL = "Q2_K"
@@ -111,8 +163,8 @@ def get_model_details():
     return {
         "parent_model": "",
         "format": "gguf",
-        "family": "llama",  # Use "llama" as it's widely supported
-        "families": ["llama"],  # Many clients expect "llama" family
+        "family": "llama",
+        "families": None,  # Match the log format exactly
         "parameter_size": PARAMETER_SIZE,
         "quantization_level": QUANTIZATION_LEVEL,
     }
@@ -128,7 +180,7 @@ def get_model_info():
         "digest": DIGEST,
         "details": get_model_details(),
         # Additional fields that some clients might expect
-        "expires_at": "2025-12-31T23:59:59Z",
+        "expires_at": (datetime.utcnow() + timedelta(days=1)).isoformat() + "Z",
         "size_vram": SIZE,
     }
 
@@ -213,25 +265,82 @@ async def show_model_get(name: str = Query(MODEL_FULL_NAME)):
 
     return JSONResponse(
         content={
-            "modelfile": f"FROM {normalized_name}\\nSYSTEM You are a helpful assistant powered by Gemini.",
-            "parameters": 'temperature 0.7\\nstop "\\n"',
-            "template": "{{ .System }}\\nUSER: {{ .Prompt }}\\nASSISTANT: {{ .Response }}",
+            "license": """LLAMA 2 COMMUNITY LICENSE AGREEMENT\t
+Llama 2 Version Release Date: July 18, 2023
+
+"Agreement" means the terms and conditions for use, reproduction, distribution and 
+modification of the Llama Materials set forth herein.
+
+"Documentation" means the specifications, manuals and documentation 
+accompanying Llama 2 distributed by Meta at ai.meta.com/resources/models-and-
+libraries/llama-downloads/.
+
+"Licensee" or "you" means you, or your employer or any other person or entity (if 
+you are entering into this Agreement on such person or entity's behalf), of the age 
+required under applicable laws, rules or regulations to provide legal consent and that 
+has legal authority to bind your employer or such other person or entity if you are 
+entering in this Agreement on their behalf.
+
+"Llama 2" means the foundational large language models and software and 
+algorithms, including machine-learning model code, trained model weights, 
+inference-enabling code, training-enabling code, fine-tuning enabling code and other 
+elements of the foregoing distributed by Meta at ai.meta.com/resources/models-and-
+libraries/llama-downloads/.
+
+"Llama Materials" means, collectively, Meta's proprietary Llama 2 and 
+Documentation (and any portion thereof) made available under this Agreement.
+
+"Meta" or "we" means Meta Platforms Ireland Limited (if you are located in or, if you 
+are an entity, your principal place of business is in the EEA or Switzerland) and Meta 
+Platforms, Inc. (if you are located outside of the EEA or Switzerland). 
+
+By clicking "I Accept" below or by using or distributing any portion or element of the 
+Llama Materials, you agree to be bound by this Agreement.""",
+            "modelfile": f"""# Modelfile generated by "ollama show"
+# To build a new Modelfile based on this, replace FROM with:
+# FROM {normalized_name}
+
+FROM /root/.ollama/models/blobs/sha256-28ee56afb6a5dada9cd8d09d89b5217499ffe9364658aa2d1eaf9f97bdfa0cba
+TEMPLATE "[INST] <<SYS>>{{{{ .System }}}}<</SYS>>\\n\\n{{{{ .Prompt }}}} [/INST]\\n"
+PARAMETER stop [INST]
+PARAMETER stop [/INST]
+PARAMETER stop <<SYS>>
+PARAMETER stop <</SYS>>
+PARAMETER rope_frequency_base 1e+06""",
+            "parameters": """rope_frequency_base            1e+06
+stop                           "[INST]"
+stop                           "[/INST]"
+stop                           "<<SYS>>"
+stop                           "<</SYS>>\"""",
+            "template": "[INST] <<SYS>>{{ .System }}<</SYS>>\\n\\n{{ .Prompt }} [/INST]\\n",
             "details": get_model_details(),
             "model_info": {
-                "general.architecture": "transformer",
-                "general.file_type": 2,
-                "general.parameter_count": 3000000000,
+                "general.architecture": "llama",
+                "general.file_type": 10,
+                "general.parameter_count": 6738546688,
                 "general.quantization_version": 2,
-                "gemini.attention.head_count": 32,
-                "gemini.attention.head_count_kv": 8,
-                "gemini.block_count": 24,
-                "gemini.context_length": 8192,
-                "gemini.embedding_length": 2048,
-                "gemini.feed_forward_length": 8192,
-                "gemini.vocab_size": 32000,
-                "tokenizer.ggml.model": "gpt2",
-                "tokenizer.ggml.pre": "gemini-bpe",
+                "llama.attention.head_count": 32,
+                "llama.attention.head_count_kv": 32,
+                "llama.attention.layer_norm_rms_epsilon": 1e-05,
+                "llama.block_count": 32,
+                "llama.context_length": 16384,
+                "llama.embedding_length": 4096,
+                "llama.feed_forward_length": 11008,
+                "llama.rope.dimension_count": 128,
+                "llama.rope.freq_base": 1000000,
+                "tokenizer.ggml.bos_token_id": 1,
+                "tokenizer.ggml.eos_token_id": 2,
+                "tokenizer.ggml.model": "llama",
+                "tokenizer.ggml.scores": None,
+                "tokenizer.ggml.token_type": None,
+                "tokenizer.ggml.tokens": None,
+                "tokenizer.ggml.unknown_token_id": 0,
             },
+            "tensors": [
+                {"name": "token_embd.weight", "type": "Q2_K", "shape": [4096, 32016]},
+                {"name": "blk.0.attn_norm.weight", "type": "F32", "shape": [4096]},
+                {"name": "output_norm.weight", "type": "F32", "shape": [4096]},
+            ],
         }
     )
 
@@ -514,7 +623,8 @@ async def list_running_models():
                     "size": SIZE,
                     "digest": DIGEST,
                     "details": get_model_details(),
-                    "expires_at": "2024-12-31T23:59:59Z",
+                    "expires_at": (datetime.utcnow() + timedelta(days=1)).isoformat()
+                    + "Z",
                     "size_vram": SIZE,
                 }
             ]
@@ -556,9 +666,6 @@ async def generate_embeddings(request: Request):
     embeddings = []
     for text in inputs:
         # Generate a fake embedding vector (384 dimensions for example)
-        import hashlib
-        import struct
-
         # Use hash of text to generate consistent fake embeddings
         hash_obj = hashlib.md5(text.encode())
         hash_bytes = hash_obj.digest()
