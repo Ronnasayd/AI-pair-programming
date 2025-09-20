@@ -1,4 +1,9 @@
 # arquivo: ollama_local_proxy.py
+# Updated to support flexible model naming according to Ollama API conventions
+# Model names follow a `model:tag` format, where model can have an optional namespace
+# Examples: orca-mini:3b-q4_1, llama3:70b, llama3.1:8b, namespace/model:tag
+# The tag is optional and defaults to `latest` if not provided
+
 import asyncio
 import hashlib
 import json
@@ -164,17 +169,20 @@ def get_model_details():
         "parent_model": "",
         "format": "gguf",
         "family": "llama",
-        "families": None,  # Match the log format exactly
+        "families": ["llama"],  # Match the log format exactly
         "parameter_size": PARAMETER_SIZE,
         "quantization_level": QUANTIZATION_LEVEL,
     }
 
 
-def get_model_info():
-    """Return detailed model information."""
+def get_model_info(model_name=None):
+    """Return detailed model information for any model name."""
+    if not model_name:
+        model_name = MODEL_FULL_NAME
+
     return {
-        "name": MODEL_FULL_NAME,  # Use full name with tag
-        "model": MODEL_FULL_NAME,  # Some clients expect both 'name' and 'model'
+        "name": model_name,
+        "model": model_name,
         "modified_at": MODIFIED_AT,
         "size": SIZE,
         "digest": DIGEST,
@@ -186,32 +194,41 @@ def get_model_info():
 
 
 def is_valid_model(model_name: str) -> bool:
-    """Check if the model name is valid/supported."""
+    """Check if the model name is valid/supported.
+
+    According to Ollama API conventions, model names follow a `model:tag` format,
+    where model can have an optional namespace such as `example/model`.
+    The tag is optional and, if not provided, will default to `latest`.
+
+    For maximum compatibility, we accept any model name format.
+    """
     if not model_name:
         return False
 
-    # Support various formats
-    valid_names = [
-        MODEL_NAME,  # "codellama"
-        MODEL_FULL_NAME,  # "codellama:7b-instruct-q2_K"
-        f"{MODEL_NAME}:latest",
-        "codellama:7b-instruct-q2_K",
-        "gemini-proxy",  # Legacy support
-        "gemini-proxy:latest",
-    ]
-
-    return model_name in valid_names
+    # Accept any model name for maximum compatibility
+    # This proxy will handle any model request and route it to Gemini
+    return True
 
 
 def normalize_model_name(model_name: str) -> str:
-    """Normalize model name to the canonical form."""
-    if model_name in [MODEL_NAME, "codellama"]:
+    """Normalize model name to a consistent form.
+
+    According to Ollama conventions:
+    - Model names can be: model, model:tag, namespace/model, namespace/model:tag
+    - If no tag is provided, 'latest' is implied
+    """
+    if not model_name:
         return MODEL_FULL_NAME
-    if model_name.endswith(f":{MODEL_TAG}"):
-        return model_name
-    if model_name == "gemini-proxy" or model_name == "gemini-proxy:latest":
-        return MODEL_FULL_NAME  # Legacy support
-    return f"{model_name}:{MODEL_TAG}" if ":" not in model_name else model_name
+
+    # For logging and consistency, we can normalize but still accept any name
+    # If no tag specified, assume latest
+    if ":" not in model_name:
+        normalized = f"{model_name}:latest"
+    else:
+        normalized = model_name
+
+    # Return the normalized name for consistency
+    return normalized
 
 
 # Root endpoint for basic server info
@@ -242,6 +259,7 @@ async def version():
 async def list_models():
     """List models that are available locally."""
     logger.info("📋 GET /api/tags - Listando modelos disponíveis")
+    # Return a generic model that can handle any requests
     return JSONResponse(content={"models": [get_model_info()]})
 
 
@@ -257,8 +275,8 @@ async def show_model_get(name: str = Query(MODEL_FULL_NAME)):
     logger.info(f"ℹ️ GET /api/show - Modelo: {name}")
 
     if not is_valid_model(name):
-        logger.warning(f"⚠️ Modelo não encontrado: {name}")
-        raise HTTPException(status_code=404, detail=f"Model '{name}' not found")
+        logger.warning(f"⚠️ Modelo vazio: {name}")
+        raise HTTPException(status_code=400, detail="Model name is required")
 
     normalized_name = normalize_model_name(name)
     logger.debug(f"🔧 Nome normalizado: {normalized_name}")
@@ -370,17 +388,21 @@ async def chat(request: Request):
         f"📨 Mensagens recebidas: {json.dumps(messages, ensure_ascii=False)[:500]}{'...' if len(str(messages)) > 500 else ''}"
     )
 
-    # Validate model
+    # Validate model - now accepts any model name
     if not is_valid_model(model):
-        logger.warning(f"⚠️ Modelo inválido solicitado: {model}")
-        raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
+        logger.warning(f"⚠️ Modelo vazio ou inválido: '{model}'")
+        raise HTTPException(status_code=400, detail="Model name is required")
+
+    # Normalize the model name for consistency in responses
+    normalized_model = normalize_model_name(model)
+    logger.debug(f"🔧 Modelo normalizado: {model} -> {normalized_model}")
 
     # Handle empty messages (model loading)
     if not messages:
         logger.info("📭 Mensagens vazias - retornando resposta de carregamento")
         return JSONResponse(
             content={
-                "model": model,
+                "model": model,  # Return the original model name requested
                 "created_at": now_timestamp(),
                 "message": {"role": "assistant", "content": ""},
                 "done_reason": "load",
@@ -424,7 +446,7 @@ async def chat(request: Request):
         async def generate_stream():
             # First chunk with partial content
             yield f'data: {json.dumps({
-                "model": model,
+                "model": model,  # Use original model name
                 "created_at": now_timestamp(),
                 "message": {
                     "role": "assistant",
@@ -435,7 +457,7 @@ async def chat(request: Request):
 
             # Final chunk with complete response
             yield f'data: {json.dumps({
-                "model": model,
+                "model": model,  # Use original model name
                 "created_at": now_timestamp(),
                 "message": {
                     "role": "assistant",
@@ -456,7 +478,7 @@ async def chat(request: Request):
         # Non-streaming response
         return JSONResponse(
             content={
-                "model": model,
+                "model": model,  # Use original model name
                 "created_at": now_timestamp(),
                 "message": {"role": "assistant", "content": response_content},
                 "done": True,
@@ -493,13 +515,14 @@ async def generate(request: Request):
     logger.debug(f"📝 Prompt: {prompt[:200]}{'...' if len(prompt) > 200 else ''}")
     logger.debug(f"🔧 Sistema: {system[:100]}{'...' if len(system) > 100 else ''}")
 
-    # Validate model (be more flexible)
+    # Validate model - accept any model name for compatibility
     if not is_valid_model(model):
-        # For compatibility, accept any model name and use our default
-        logger.warning(
-            f"⚠️ Modelo desconhecido '{model}', usando padrão {MODEL_FULL_NAME}"
-        )
-        model = MODEL_FULL_NAME
+        logger.warning(f"⚠️ Modelo vazio ou inválido: '{model}', usando padrão")
+        # For compatibility, if model is empty, use default
+        if not model.strip():
+            model = MODEL_FULL_NAME
+        # If model name is provided but we want to be compatible, accept it
+        logger.info(f"🔧 Aceitando modelo: {model}")
 
     # Handle model loading (empty prompt)
     if not prompt.strip():
@@ -614,22 +637,7 @@ async def generate(request: Request):
 async def list_running_models():
     """List models that are currently loaded into memory."""
     logger.info("🏃 GET /api/ps - Listando modelos em execução")
-    return JSONResponse(
-        content={
-            "models": [
-                {
-                    "name": MODEL_NAME,
-                    "model": MODEL_NAME,
-                    "size": SIZE,
-                    "digest": DIGEST,
-                    "details": get_model_details(),
-                    "expires_at": (datetime.utcnow() + timedelta(days=1)).isoformat()
-                    + "Z",
-                    "size_vram": SIZE,
-                }
-            ]
-        }
-    )
+    return JSONResponse(content={"models": [get_model_info()]})
 
 
 @app.post("/api/embed")
@@ -647,12 +655,12 @@ async def generate_embeddings(request: Request):
         f"📝 Input: {str(input_text)[:200]}{'...' if len(str(input_text)) > 200 else ''}"
     )
 
-    # Validate model (be flexible)
+    # Validate model - accept any model name for compatibility
     if not is_valid_model(model):
-        logger.warning(
-            f"⚠️ Modelo desconhecido '{model}' para embeddings, usando padrão {MODEL_FULL_NAME}"
-        )
-        model = MODEL_FULL_NAME
+        logger.warning(f"⚠️ Modelo vazio para embeddings: '{model}', usando padrão")
+        if not model.strip():
+            model = MODEL_FULL_NAME
+        logger.info(f"🔧 Aceitando modelo para embeddings: {model}")
 
     # Handle multiple inputs
     if isinstance(input_text, list):
@@ -710,9 +718,12 @@ async def copy_model(request: Request):
         )
 
     if not is_valid_model(source):
-        raise HTTPException(
-            status_code=404, detail=f"Source model '{source}' not found"
-        )
+        # Accept any source model name but log warning if empty
+        if not source.strip():
+            raise HTTPException(
+                status_code=400, detail="Source model name cannot be empty"
+            )
+        logger.info(f"🔧 Aceitando modelo fonte: {source}")
 
     # In a real implementation, you would copy the model
     # For this proxy, we just return success
@@ -729,7 +740,10 @@ async def delete_model(request: Request):
         raise HTTPException(status_code=400, detail="Model name is required")
 
     if not is_valid_model(model):
-        raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
+        # Accept any model name but log warning if empty
+        if not model.strip():
+            raise HTTPException(status_code=400, detail="Model name cannot be empty")
+        logger.info(f"🔧 Aceitando modelo para deleção: {model}")
 
     # In a real implementation, you would delete the model
     # For this proxy, we just return success
