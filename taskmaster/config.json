@@ -1,0 +1,38 @@
+{
+  "models": {
+    "main": {
+      "provider": "ollama",
+      "modelId": "gpt-oss:120b",
+      "maxTokens": 128000,
+      "temperature": 0.2
+    },
+    "research": {
+      "provider": "ollama",
+      "modelId": "codellama:7b-instruct-q2_K",
+      "maxTokens": 8000,
+      "temperature": 0.1
+    },
+    "fallback": {
+      "provider": "ollama",
+      "modelId": "llama3.3:latest",
+      "maxTokens": 8000,
+      "temperature": 0.2
+    }
+  },
+  "global": {
+    "logLevel": "info",
+    "debug": false,
+    "defaultNumTasks": 10,
+    "defaultSubtasks": 5,
+    "defaultPriority": "medium",
+    "projectName": "Taskmaster",
+    "ollamaBaseURL": "http://localhost:11434/api",
+    "bedrockBaseURL": "https://bedrock.us-east-1.amazonaws.com",
+    "responseLanguage": "Portuguese",
+    "enableCodebaseAnalysis": true,
+    "defaultTag": "master",
+    "azureOpenaiBaseURL": "https://your-endpoint.openai.azure.com/",
+    "userId": "1234567890"
+  },
+  "claudeCode": {}
+}
