@@ -1,11 +1,16 @@
 import asyncio
-from mcp.client.stdio import stdio_client, StdioServerParameters
-from mcp.client.session import ClientSession
 
-command={
-    "command":"my_run_command",
-    "arguments":{"command": "ls -la", "cwd": None}
+from mcp.client.session import ClientSession
+from mcp.client.stdio import StdioServerParameters, stdio_client
+
+command = {
+    "command": "my_run_command",
+    "arguments": {
+        "command": "cd notebook_crawler/spiders && ls",
+        "cwd": "/home/ronnas/develop/poc/notebook-search-crawler",
+    },
 }
+
 
 async def main():
     server_params = StdioServerParameters(command="my_mcp_server", args=[])
