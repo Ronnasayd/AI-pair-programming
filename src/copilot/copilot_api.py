@@ -86,6 +86,9 @@ class CopilotAPI:
             data="{}",
             timeout=300,
         )
+        if response.status_code == 400:
+            self.auth()
+            self.get_token()
         data = response.json()
         self.thread_id = data.get("thread_id")
         return data
