@@ -809,7 +809,7 @@ async def openai_list_models():
 
 
 if __name__ == "__main__":
-    print("🚀 Starting Copilot Ollama API proxy server on port 11435")
+    print("🚀 Starting Copilot Ollama API proxy server on port 11434")
     print(f"📦 Available model: {MODEL_FULL_NAME}")
     print("🔗 Endpoints:")
     print("  - GET  /api/tags          - List available models")
@@ -828,11 +828,11 @@ if __name__ == "__main__":
     print("📝 Logs serão salvos em: copilot_ollama_proxy.log")
     print("🔧 Backend: GitHub Copilot API")
 
-    logger.info("🚀 Iniciando servidor Copilot Ollama API proxy na porta 11435")
+    logger.info("🚀 Iniciando servidor Copilot Ollama API proxy na porta 11434")
     logger.info(f"📦 Modelo disponível: {MODEL_FULL_NAME}")
     logger.info("🔧 Backend: GitHub Copilot API")
 
     # Initialize Copilot client on startup
     initialize_copilot()
 
-    uvicorn.run(app, host="0.0.0.0", port=11435)
+    uvicorn.run(app, host="0.0.0.0", port=11434)
