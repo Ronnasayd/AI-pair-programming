@@ -336,7 +336,11 @@ max_tokens                     4096""",
                 "general.parameter_count": 175000000000,
                 "general.quantization_version": 2,
                 "tokenizer.model": "gpt-4",
+                "tokenizer.ggml.merges": [],  # populates if `verbose=true`
+                "tokenizer.ggml.token_type": [],  # populates if `verbose=true`
+                "tokenizer.ggml.tokens": [],  # populates if `verbose=true`
             },
+            "capabilities": ["completion"]
         }
     )
 
