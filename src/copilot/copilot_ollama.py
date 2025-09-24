@@ -768,7 +768,7 @@ async def openai_chat_completions(request: Request):
 
     # OpenAI format response
     response_data = {
-        "id": f"chatcmpl-{uuid.uuid4()}",
+        "id": f"{uuid.uuid4()}",
         "object": "chat.completion",
         "created": int(time.time()),
         "model": model,
