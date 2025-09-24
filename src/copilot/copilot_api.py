@@ -86,7 +86,7 @@ class CopilotAPI:
             data="{}",
             timeout=300,
         )
-        if response.status_code == 400:
+        if response.status_code == 401:
             self.auth()
             self.get_token()
         data = response.json()
@@ -133,7 +133,7 @@ class CopilotAPI:
             data=data,
             timeout=300,
         )
-        if response.status_code == 400:
+        if response.status_code == 401:
             self.auth()
             self.get_token()
 
