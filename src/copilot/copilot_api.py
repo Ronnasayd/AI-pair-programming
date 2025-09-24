@@ -93,7 +93,96 @@ class CopilotAPI:
         self.thread_id = data.get("thread_id")
         return data
 
-    def chat(self, message: str, references: list[str] = []):
+    def _handle_streaming_response(self, response):
+        """
+        Handle streaming response from GitHub Copilot API.
+
+        Args:
+            response: requests.Response object with streaming enabled
+
+        Returns:
+            Generator yielding streaming chunks or complete response data
+        """
+        try:
+            full_content = ""
+            chunks = []
+
+            for line in response.iter_lines(decode_unicode=True):
+                if line:
+                    # Remove 'data: ' prefix if present
+                    if line.startswith("data: "):
+                        line = line[6:]
+
+                    # Skip empty lines and special markers
+                    if not line.strip() or line.strip() == "[DONE]":
+                        continue
+
+                    try:
+                        chunk_data = json.loads(line)
+                        chunks.append(chunk_data)
+
+                        # Extract content from chunk if available
+                        if "content" in chunk_data:
+                            content = chunk_data.get("content", "")
+                            full_content += content
+                            yield {
+                                "type": "chunk",
+                                "content": content,
+                                "full_content": full_content,
+                                "raw_data": chunk_data,
+                            }
+                        elif "choices" in chunk_data:
+                            # Handle OpenAI-style streaming format
+                            for choice in chunk_data["choices"]:
+                                if "delta" in choice and "content" in choice["delta"]:
+                                    content = choice["delta"]["content"]
+                                    full_content += content
+                                    yield {
+                                        "type": "chunk",
+                                        "content": content,
+                                        "full_content": full_content,
+                                        "raw_data": chunk_data,
+                                    }
+                        else:
+                            # Yield other types of chunks (metadata, etc.)
+                            yield {"type": "metadata", "raw_data": chunk_data}
+
+                    except json.JSONDecodeError as e:
+                        # If it's not valid JSON, treat as raw text
+                        full_content += line
+                        yield {
+                            "type": "text",
+                            "content": line,
+                            "full_content": full_content,
+                            "error": f"JSON decode error: {str(e)}",
+                        }
+
+            # Yield final summary
+            yield {
+                "type": "complete",
+                "full_content": full_content,
+                "total_chunks": len(chunks),
+                "raw_chunks": chunks,
+            }
+
+        except (
+            requests.exceptions.RequestException,
+            json.JSONDecodeError,
+            IOError,
+        ) as e:
+            yield {
+                "type": "error",
+                "error": str(e),
+                "full_content": full_content if "full_content" in locals() else "",
+            }
+
+        finally:
+            response.close()
+
+    def chat(self, message: str, references: list[str] = None, streaming: bool = False):
+
+        if references is None:
+            references = []
 
         data = {
             "responseMessageID": "",
@@ -102,7 +191,7 @@ class CopilotAPI:
             "references": [],
             "context": [],
             "currentURL": "https://github.com/copilot",
-            "streaming": False,
+            "streaming": streaming,
             "confirmations": [],
             "customInstructions": [],
             "model": "gpt-4.1",
@@ -132,19 +221,121 @@ class CopilotAPI:
             headers=self.headers,
             data=data,
             timeout=300,
+            stream=streaming,
         )
+
         if response.status_code == 401:
             self.auth()
             self.get_token()
+            self.headers["authorization"] = f"GitHub-Bearer {self.token}"
+            # Retry the request after authentication
+            response = requests.post(
+                f"https://api.individual.githubcopilot.com/github/chat/threads/{self.thread_id}/messages",
+                params="",
+                headers=self.headers,
+                data=data,
+                timeout=300,
+                stream=streaming,
+            )
 
-        data = response.json()
+        if streaming:
+            return self._handle_streaming_response(response)
+        else:
+            response_data = response.json()
+            return response_data
 
-        return data
+    def chat_complete(
+        self, message: str, references: list[str] = None, streaming: bool = False
+    ):
+        """
+        Chat method that returns complete response, even for streaming requests.
+
+        Args:
+            message: The message to send
+            references: List of file paths to include as references
+            streaming: Whether to use streaming API
+
+        Returns:
+            dict: Complete response data with full content
+        """
+        if references is None:
+            references = []
+
+        if not streaming:
+            return self.chat(message, references, streaming)
+
+        # Handle streaming response by collecting all chunks
+        full_content = ""
+        metadata = []
+
+        for chunk in self.chat(message, references, streaming=True):
+            if chunk["type"] == "chunk":
+                full_content = chunk["full_content"]
+            elif chunk["type"] == "complete":
+                return {
+                    "content": chunk["full_content"],
+                    "streaming": True,
+                    "total_chunks": chunk["total_chunks"],
+                    "raw_chunks": chunk["raw_chunks"],
+                }
+            elif chunk["type"] == "metadata":
+                metadata.append(chunk["raw_data"])
+            elif chunk["type"] == "error":
+                return {
+                    "error": chunk["error"],
+                    "content": chunk["full_content"],
+                    "streaming": True,
+                }
+
+        # Fallback return
+        return {
+            "content": full_content,
+            "streaming": True,
+            "metadata": metadata,
+        }
 
 
 if __name__ == "__main__":
-
     api = CopilotAPI()
     # api.auth()
     # print(api.create_chat())
-    print(api.chat("explique o codigo", ["/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"]))  # type: ignore
+
+    # Example 1: Non-streaming chat
+    print("=== Non-streaming response ===")
+    response = api.chat(
+        "explique o codigo",
+        [
+            "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
+        ],
+        streaming=False,
+    )
+    print(response)
+
+    # Example 2: Streaming chat with real-time processing
+    print("\n=== Streaming response (real-time) ===")
+    for chunk in api.chat(
+        "explique brevemente o codigo",
+        [
+            "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
+        ],
+        streaming=True,
+    ):
+        if chunk["type"] == "chunk":
+            print(chunk["content"], end="", flush=True)
+        elif chunk["type"] == "complete":
+            print(f"\n\n[Stream completed - {chunk['total_chunks']} chunks received]")
+            break
+        elif chunk["type"] == "error":
+            print(f"\n[Error: {chunk['error']}]")
+            break
+
+    # Example 3: Streaming chat with complete response
+    print("\n=== Streaming response (complete) ===")
+    complete_response = api.chat_complete(
+        "resuma o codigo em uma frase",
+        [
+            "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
+        ],
+        streaming=True,
+    )
+    print(complete_response)
