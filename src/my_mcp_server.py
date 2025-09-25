@@ -484,7 +484,7 @@ def my_convert_tasks_to_markdown(
 
 
 @mcp.tool()
-def my_convert_markdown_to_tasks(markdown_file_path: str) -> Dict[str, Any]:
+def my_convert_markdown_to_tasks(cwd: str) -> Dict[str, Any]:
     """
     Converts a markdown file in TODO-events format to tasks.json format.
 
@@ -495,7 +495,11 @@ def my_convert_markdown_to_tasks(markdown_file_path: str) -> Dict[str, Any]:
         dict: Tasks JSON content or error message.
     """
     try:
+        if not cwd:
+            cwd = os.getcwd()
         # Check if file exists
+        markdown_file_path = os.path.join(cwd, ".taskmaster", "tasks", "tasks.md")
+
         if not os.path.isfile(markdown_file_path):
             return {
                 "error": f"Arquivo markdown não encontrado em: {markdown_file_path}"
@@ -508,6 +512,14 @@ def my_convert_markdown_to_tasks(markdown_file_path: str) -> Dict[str, Any]:
         # Parse markdown and convert to tasks JSON
         tasks_json = _parse_markdown_to_tasks(markdown_content)
         tasks_json_str = json.dumps(tasks_json, ensure_ascii=False)
+
+        with open(
+            os.path.join(cwd, ".taskmaster", "tasks", "tasks.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            f.write(tasks_json_str)
+
 
         return {"content": ".taskmaster/tasks/tasks.json criado com sucesso."}
 
