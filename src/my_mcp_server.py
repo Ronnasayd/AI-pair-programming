@@ -400,18 +400,21 @@ def my_run_prompt(name: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_code_review(cwd: Optional[str] = None) -> Dict[str, Any]:
+def my_code_review(
+    rootProject: Optional[str] = None, command="git diff"
+) -> Dict[str, Any]:
     """
     Gets the git diff in the specified directory (or current directory if not provided) and combines it with the review template for prompt execution.
     Args:
-        cwd (Optional[str]): Directory to run git diff in.
+        rootProject (Optional[str]): Directory to run git diff in.
+        command (str): Command to execute (default=git diff).
     Returns:
         dict: Combined instructions and git diff, or error message.
     """
     try:
         result = subprocess.run(
-            ["git", "diff"],
-            cwd=cwd or os.getcwd(),
+            command.split(" "),
+            cwd=rootProject or os.getcwd(),
             capture_output=True,
             text=True,
             check=False,
@@ -436,23 +439,25 @@ def my_code_review(cwd: Optional[str] = None) -> Dict[str, Any]:
 
 @mcp.tool()
 def my_convert_tasks_to_markdown(
-    cwd: Optional[str] = None,
+    rootProject: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Converts a .taskmaster/tasks/tasks.json file to markdown format similar to TODO-events.md.
 
     Args:
-        cwd (Optional[str]): Path to the .taskmaster. If not provided, looks for .taskmaster/tasks/tasks.json in current directory.
+        rootProject (Optional[str]): root of the project, looks for .taskmaster/tasks/tasks.json in current directory.
 
     Returns:
         dict: Markdown content or error message.
     """
     try:
         # Default path if not provided
-        if not cwd:
-            cwd = os.getcwd()
+        if not rootProject:
+            rootProject = os.getcwd()
 
-        tasks_file_path = os.path.join(cwd, ".taskmaster", "tasks", "tasks.json")
+        tasks_file_path = os.path.join(
+            rootProject, ".taskmaster", "tasks", "tasks.json"
+        )
 
         # Check if file exists
         if not os.path.isfile(tasks_file_path):
@@ -465,11 +470,13 @@ def my_convert_tasks_to_markdown(
         # Generate markdown content
         markdown_content = _generate_markdown_from_tasks(tasks_data)
 
-        if not os.path.exists(os.path.join(cwd, ".taskmaster", "tasks")):
-            os.makedirs(os.path.join(cwd, ".taskmaster", "tasks"))
+        if not os.path.exists(os.path.join(rootProject, ".taskmaster", "tasks")):
+            os.makedirs(os.path.join(rootProject, ".taskmaster", "tasks"))
 
         with open(
-            os.path.join(cwd, ".taskmaster", "tasks", "tasks.md"), "w", encoding="utf-8"
+            os.path.join(rootProject, ".taskmaster", "tasks", "tasks.md"),
+            "w",
+            encoding="utf-8",
         ) as f:
             f.write(markdown_content)
 
@@ -484,21 +491,23 @@ def my_convert_tasks_to_markdown(
 
 
 @mcp.tool()
-def my_convert_markdown_to_tasks(cwd: str) -> Dict[str, Any]:
+def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str, Any]:
     """
     Converts a markdown file in TODO-events format to tasks.json format.
 
     Args:
-        markdown_file_path (str): Path to the markdown file to convert.
+        rootProject (Optional[str]): root of the project, looks for .taskmaster/tasks/tasks.md in current directory.
 
     Returns:
         dict: Tasks JSON content or error message.
     """
     try:
-        if not cwd:
-            cwd = os.getcwd()
+        if not rootProject:
+            rootProject = os.getcwd()
         # Check if file exists
-        markdown_file_path = os.path.join(cwd, ".taskmaster", "tasks", "tasks.md")
+        markdown_file_path = os.path.join(
+            rootProject, ".taskmaster", "tasks", "tasks.md"
+        )
 
         if not os.path.isfile(markdown_file_path):
             return {
@@ -514,12 +523,11 @@ def my_convert_markdown_to_tasks(cwd: str) -> Dict[str, Any]:
         tasks_json_str = json.dumps(tasks_json, ensure_ascii=False)
 
         with open(
-            os.path.join(cwd, ".taskmaster", "tasks", "tasks.json"),
+            os.path.join(rootProject, ".taskmaster", "tasks", "tasks.json"),
             "w",
             encoding="utf-8",
         ) as f:
             f.write(tasks_json_str)
-
 
         return {"content": ".taskmaster/tasks/tasks.json criado com sucesso."}
 
