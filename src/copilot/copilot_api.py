@@ -89,6 +89,13 @@ class CopilotAPI:
         if response.status_code == 401:
             self.auth()
             self.get_token()
+            self.headers["authorization"] = f"GitHub-Bearer {self.token}"
+            response = requests.post(
+                "https://api.individual.githubcopilot.com/github/chat/threads",
+                headers=self.headers,
+                data="{}",
+                timeout=300,
+            )
         data = response.json()
         self.thread_id = data.get("thread_id")
         return data
