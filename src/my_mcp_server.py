@@ -853,3 +853,13 @@ def validate_tasks_json(tasks_file_path: str) -> Dict[str, Any]:
         return _format_error("Erro de sistema ao abrir arquivo", e)
     except Exception as e:
         return _format_error("Erro inesperado ao validar tasks", e)
+
+
+if __name__ == "__main__":
+    mcp.run()  # Inicia o servidor usando stdio por padrão
+    # Example test calls (uncomment as needed):
+    # import asyncio
+    # print(asyncio.run(load_page_as_doc("https://www.prisma.io/docs/guides/management-api-basic")))
+    # print(asyncio.run(my_get_context("--list --tree /home/ronnas/develop/personal/prompt-ia/")))
+    # print(my_run_command("ls -la"))
+    # print(my_code_review("/home/ronnas/develop/personal/prompt-ia/"))
