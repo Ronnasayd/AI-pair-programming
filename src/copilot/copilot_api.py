@@ -9,12 +9,9 @@ from dotenv import load_dotenv
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("copilot_ollama_proxy.log"),
-        # logging.StreamHandler()
-    ],
+    handlers=[logging.FileHandler("copilot_ollama_proxy.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
 
@@ -136,7 +133,7 @@ class CopilotAPI:
         try:
             full_content = ""
             chunks = []
-
+            response.encoding = "utf-8"
             for line in response.iter_lines(decode_unicode=True):
                 if line:
                     # Remove 'data: ' prefix if present

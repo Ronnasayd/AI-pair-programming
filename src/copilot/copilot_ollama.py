@@ -16,12 +16,9 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("copilot_ollama_proxy.log"),
-        #   logging.StreamHandler()
-    ],
+    handlers=[logging.FileHandler("copilot_ollama_proxy.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
 
@@ -148,32 +145,31 @@ def call_copilot(prompt: str, references: list = None, stream: bool = False):
 
         if stream:
 
-            def openapi_generator():
+            async def openapi_generator():
                 # Processa resposta streaming
                 idref = f"{uuid.uuid4()}"
                 for chunk in result:
-                    yield json.dumps(
-                        {
-                            "id": idref,
-                            "object": "chat.completion.chunk",
-                            "created": int(time.time()),
-                            "model": MODEL_NAME,
-                            "choices": [
-                                {
-                                    "index": 0,
-                                    "delta": {
-                                        "role": "assistant",
-                                        "content": chunk.get("content", ""),
-                                    },
-                                    "finish_reason": None,
-                                }
-                            ],
-                        }
-                    ) + "\n"
-                yield json.dumps(
+                    data = {
+                        "id": idref,
+                        "object": "chat.completion",
+                        "created": int(time.time()),
+                        "model": MODEL_NAME,
+                        "choices": [
+                            {
+                                "index": 0,
+                                "delta": {
+                                    "role": "assistant",
+                                    "content": chunk.get("content", ""),
+                                },
+                                "finish_reason": None,
+                            }
+                        ],
+                    }
+                    yield f"data: {json.dumps(data,ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps(
                     {
                         "id": idref,
-                        "object": "chat.completion.chunk",
+                        "object": "chat.completion",
                         "created": int(time.time()),
                         "model": MODEL_NAME,
                         "choices": [
@@ -184,7 +180,7 @@ def call_copilot(prompt: str, references: list = None, stream: bool = False):
                             }
                         ],
                     }
-                ) + "\n"
+                ,ensure_ascii=False)}\n\n"
 
             return openapi_generator
         else:
