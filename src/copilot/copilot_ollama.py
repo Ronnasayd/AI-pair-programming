@@ -16,9 +16,12 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("copilot_ollama_proxy.log"), logging.StreamHandler()],
+    handlers=[
+        logging.FileHandler("copilot_ollama_proxy.log"),
+        #   logging.StreamHandler()
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -105,7 +108,6 @@ def initialize_copilot():
 
             # Test the connection with a simple call
             logger.info("🧪 Testando conexão com Copilot...")
-            test_result = copilot_api.chat("Hello", [])
             logger.info("✅ Teste de conexão Copilot bem-sucedido")
 
         except Exception as e:
@@ -123,7 +125,7 @@ def initialize_copilot():
     return copilot_api
 
 
-def call_copilot(prompt: str, references: list = None):
+def call_copilot(prompt: str, references: list = None, stream: bool = False):
     """Call the Copilot API and return the response."""
     start_time = time.time()
     logger.info("🤖 Iniciando chamada para Copilot")
@@ -134,61 +136,63 @@ def call_copilot(prompt: str, references: list = None):
     try:
         client = initialize_copilot()
         if client is None:
-            logger.error("❌ Cliente Copilot não disponível")
-            return {
-                "text": "I'm a Copilot Ollama proxy server, but GitHub Copilot is currently not available. Please check your authentication credentials."
-            }
+            logger.error("CopilotAPI não inicializado.")
+            return {"error": "CopilotAPI não inicializado."}
 
-        # Use references if provided, otherwise empty list
         refs = references or []
 
-        # Call Copilot API
-        result = client.chat(prompt, refs)
+        # Chamada Copilot API
+        result = client.chat(prompt, refs, streaming=stream)
         execution_time = time.time() - start_time
-
         logger.info(f"✅ Copilot respondeu em {execution_time:.2f}s")
 
-        # Extract the response text from Copilot API response
-        if isinstance(result, dict):
-            # Check for the correct Copilot API format: {'message': {'content': '...'}}
-            if "message" in result and isinstance(result["message"], dict):
-                content = result["message"].get("content", "")
-                if content and isinstance(content, str) and content.strip():
-                    logger.debug(
-                        f"✅ Resposta recebida: {content[:200]}{'...' if len(content) > 200 else ''}"
-                    )
-                    return {"text": content.strip()}
+        if stream:
 
-            # Fallback: try other possible response fields
-            response_text = (
-                result.get("content")
-                or result.get("text")
-                or result.get("response")
-                or None
-            )
+            def openapi_generator():
+                # Processa resposta streaming
+                idref = f"{uuid.uuid4()}"
+                for chunk in result:
+                    yield json.dumps(
+                        {
+                            "id": idref,
+                            "object": "chat.completion.chunk",
+                            "created": int(time.time()),
+                            "model": MODEL_NAME,
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "delta": {
+                                        "role": "assistant",
+                                        "content": chunk.get("content", ""),
+                                    },
+                                    "finish_reason": None,
+                                }
+                            ],
+                        }
+                    ) + "\n"
+                yield json.dumps(
+                    {
+                        "id": idref,
+                        "object": "chat.completion.chunk",
+                        "created": int(time.time()),
+                        "model": MODEL_NAME,
+                        "choices": [
+                            {
+                                "index": 0,
+                                "delta": {},
+                                "finish_reason": "stop",
+                            }
+                        ],
+                    }
+                ) + "\n"
 
-            # If we got a dict as response_text, convert to string
-            if isinstance(response_text, dict):
-                logger.debug(f"🔧 Converting dict response to string: {response_text}")
-                response_text = str(response_text)
-            elif response_text is None:
-                logger.debug(f"🔧 No text field found, using full result: {result}")
-                response_text = str(result)
-
-            # Ensure response_text is a string before calling strip()
-            if isinstance(response_text, str) and response_text.strip():
-                logger.debug(
-                    f"✅ Resposta recebida (fallback): {response_text[:200]}{'...' if len(response_text) > 200 else ''}"
-                )
-                return {"text": response_text.strip()}
-            else:
-                logger.warning("⚠️ Resposta vazia do Copilot")
-                return {
-                    "text": "I received an empty response from GitHub Copilot. Please try again."
-                }
+            return openapi_generator
         else:
-            logger.warning(f"⚠️ Formato de resposta inesperado: {type(result)}")
-            return {"text": str(result) if result else "Empty response."}
+            # Resposta não streaming
+            if isinstance(result, dict):
+                return {"text": result.get("content", str(result))}
+            else:
+                return {"text": str(result)}
 
     except Exception as e:
         execution_time = time.time() - start_time
@@ -196,18 +200,17 @@ def call_copilot(prompt: str, references: list = None):
         logger.error(
             f"❌ Erro na chamada Copilot após {execution_time:.2f}s: {error_msg}"
         )
-
-        # Provide user-friendly error messages based on the error type
         if "401" in error_msg or "unauthorized" in error_msg.lower():
-            fallback_msg = "GitHub Copilot authentication failed. Please check your credentials and try again. For now, I'm running in demo mode."
+            fallback_msg = (
+                "Erro de autenticação: verifique suas credenciais do Copilot."
+            )
         elif "400" in error_msg:
-            fallback_msg = "GitHub Copilot request was invalid. Please try rephrasing your question."
+            fallback_msg = "Requisição inválida para Copilot."
         elif "timeout" in error_msg.lower():
-            fallback_msg = "GitHub Copilot request timed out. Please try again."
+            fallback_msg = "Timeout na chamada Copilot."
         else:
-            fallback_msg = f"GitHub Copilot is currently unavailable: {error_msg}"
-
-        return {"text": fallback_msg}
+            fallback_msg = f"Erro inesperado: {error_msg}"
+        return {"error": fallback_msg}
 
 
 def get_model_details():
@@ -340,7 +343,7 @@ max_tokens                     4096""",
                 "tokenizer.ggml.token_type": [],  # populates if `verbose=true`
                 "tokenizer.ggml.tokens": [],  # populates if `verbose=true`
             },
-            "capabilities": ["completion"]
+            "capabilities": ["completion"],
         }
     )
 
@@ -408,7 +411,7 @@ async def chat(request: Request):
 
     # Call Copilot
     start_time = time.time()
-    copilot_resp = call_copilot(prompt)
+    copilot_resp = call_copilot(prompt, stream=stream)
     end_time = time.time()
 
     # Handle errors
@@ -526,10 +529,9 @@ async def generate(request: Request):
     logger.debug(
         f"🔧 Prompt completo: {full_prompt[:300]}{'...' if len(full_prompt) > 300 else ''}"
     )
-
     # Call Copilot
     start_time = time.time()
-    copilot_resp = call_copilot(full_prompt)
+    copilot_resp = call_copilot(full_prompt, stream=stream)
     end_time = time.time()
 
     # Handle errors
@@ -655,7 +657,7 @@ async def delete_model(request: Request):
 
     logger.info(f"🗑️ DELETE /api/delete - Modelo: {name}")
 
-    # Since we're using Copilot, we just acknowledge the deletion
+    # Since we're usando Copilot, we just acknowledge the deletion
     return JSONResponse(content={"status": "success"})
 
 
@@ -737,8 +739,6 @@ async def openai_chat_completions(request: Request):
     model = body.get("model", MODEL_FULL_NAME)
     messages = body.get("messages", [])
     stream = body.get("stream", False)
-    temperature = body.get("temperature", 0.7)
-    max_tokens = body.get("max_tokens", 4096)
 
     logger.info(f"🔗 POST /v1/chat/completions - Modelo: {model}, OpenAI compatible")
 
@@ -755,14 +755,11 @@ async def openai_chat_completions(request: Request):
             prompt_parts.append(f"Assistant: {content}")
 
     prompt = "\n\n".join(prompt_parts)
-
     # Call Copilot
-    start_time = time.time()
-    copilot_resp = call_copilot(prompt)
-    end_time = time.time()
+    copilot_resp = call_copilot(prompt, stream=stream)
 
-    if "error" in copilot_resp:
-        raise HTTPException(status_code=500, detail=copilot_resp["error"])
+    if stream:
+        return StreamingResponse(content=copilot_resp(), media_type="text/event-stream")
 
     response_content = copilot_resp.get("text", str(copilot_resp))
 
