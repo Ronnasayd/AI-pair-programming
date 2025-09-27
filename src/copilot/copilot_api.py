@@ -206,6 +206,9 @@ class CopilotAPI:
         logging.info(
             f"CopilotAPI.chat called with message='{message[:50]}', references={references}, streaming={streaming}"
         )
+        logging.debug(
+            f"CopilotAPI.chat called with message='{message}', references={references}, streaming={streaming}"
+        )
         if references is None:
             references = []
 
@@ -269,14 +272,12 @@ class CopilotAPI:
         else:
             response_data = response.json()
             logging.info(f"CopilotAPI.chat response: {str(response_data)[:200]}")
+            logging.debug(f"CopilotAPI.chat response: {str(response_data)}")
             return response_data
 
     def chat_complete(
         self, message: str, references: list[str] = None, streaming: bool = False
     ):
-        logging.info(
-            f"CopilotAPI.chat_complete called with message='{message[:50]}', references={references}, streaming={streaming}"
-        )
         """
         Chat method that returns complete response, even for streaming requests.
 
@@ -288,12 +289,19 @@ class CopilotAPI:
         Returns:
             dict: Complete response data with full content
         """
+        logging.info(
+            f"CopilotAPI.chat_complete called with message='{message[:50]}', references={references}, streaming={streaming}"
+        )
+        logging.debug(
+            f"CopilotAPI.chat_complete called with message='{message}', references={references}, streaming={streaming}"
+        )
         if references is None:
             references = []
 
         if not streaming:
             result = self.chat(message, references, streaming)
             logging.info(f"CopilotAPI.chat_complete result: {str(result)[:200]}")
+            logging.info(f"CopilotAPI.chat_complete result: {str(result)}")
             return result
 
         # Handle streaming response by collecting all chunks
