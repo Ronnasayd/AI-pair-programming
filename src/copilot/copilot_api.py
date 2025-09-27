@@ -11,7 +11,10 @@ from dotenv import load_dotenv
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("copilot_ollama_proxy.log"), logging.StreamHandler()],
+    handlers=[
+        logging.FileHandler("copilot_ollama_proxy.log"),
+        # logging.StreamHandler()
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -147,10 +150,9 @@ class CopilotAPI:
                     try:
                         chunk_data = json.loads(line)
                         chunks.append(chunk_data)
-
                         # Extract content from chunk if available
-                        if "content" in chunk_data:
-                            content = chunk_data.get("content", "")
+                        if "type" in chunk_data and chunk_data["type"] == "content":
+                            content = chunk_data.get("body", "")
                             full_content += content
                             yield {
                                 "type": "chunk",
@@ -158,18 +160,6 @@ class CopilotAPI:
                                 "full_content": full_content,
                                 "raw_data": chunk_data,
                             }
-                        elif "choices" in chunk_data:
-                            # Handle OpenAI-style streaming format
-                            for choice in chunk_data["choices"]:
-                                if "delta" in choice and "content" in choice["delta"]:
-                                    content = choice["delta"]["content"]
-                                    full_content += content
-                                    yield {
-                                        "type": "chunk",
-                                        "content": content,
-                                        "full_content": full_content,
-                                        "raw_data": chunk_data,
-                                    }
                         else:
                             # Yield other types of chunks (metadata, etc.)
                             yield {"type": "metadata", "raw_data": chunk_data}
@@ -280,72 +270,6 @@ class CopilotAPI:
             logger.debug(f"CopilotAPI.chat response: {str(response_data)}")
             return response_data
 
-    def chat_complete(
-        self, message: str, references: list[str] = None, streaming: bool = False
-    ):
-        """
-        Chat method that returns complete response, even for streaming requests.
-
-        Args:
-            message: The message to send
-            references: List of file paths to include as references
-            streaming: Whether to use streaming API
-
-        Returns:
-            dict: Complete response data with full content
-        """
-        logger.info(
-            f"CopilotAPI.chat_complete called with message='{message[:50]}', references={references}, streaming={streaming}"
-        )
-        logger.debug(
-            f"CopilotAPI.chat_complete called with message='{message}', references={references}, streaming={streaming}"
-        )
-        if references is None:
-            references = []
-
-        if not streaming:
-            result = self.chat(message, references, streaming)
-            logger.info(f"CopilotAPI.chat_complete result: {str(result)[:200]}")
-            logger.info(f"CopilotAPI.chat_complete result: {str(result)}")
-            return result
-
-        # Handle streaming response by collecting all chunks
-        full_content = ""
-        metadata = []
-
-        for chunk in self.chat(message, references, streaming=True):
-            if chunk["type"] == "chunk":
-                full_content = chunk["full_content"]
-            elif chunk["type"] == "complete":
-                logger.info(
-                    f"CopilotAPI.chat_complete streaming result: {str(chunk)[:200]}"
-                )
-                return {
-                    "content": chunk["full_content"],
-                    "streaming": True,
-                    "total_chunks": chunk["total_chunks"],
-                    "raw_chunks": chunk["raw_chunks"],
-                }
-            elif chunk["type"] == "metadata":
-                metadata.append(chunk["raw_data"])
-            elif chunk["type"] == "error":
-                logger.error(f"CopilotAPI.chat_complete error: {chunk['error']}")
-                return {
-                    "error": chunk["error"],
-                    "content": chunk["full_content"],
-                    "streaming": True,
-                }
-
-        # Fallback return
-        logger.info(
-            f"CopilotAPI.chat_complete fallback result: {str(full_content)[:200]}"
-        )
-        return {
-            "content": full_content,
-            "streaming": True,
-            "metadata": metadata,
-        }
-
 
 if __name__ == "__main__":
     logger.info("CopilotAPI main execution started")
@@ -381,15 +305,4 @@ if __name__ == "__main__":
         elif chunk["type"] == "error":
             print(f"\n[Error: {chunk['error']}]")
             break
-
-    # Example 3: Streaming chat with complete response
-    print("\n=== Streaming response (complete) ===")
-    complete_response = api.chat_complete(
-        "resuma o codigo em uma frase",
-        [
-            "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
-        ],
-        streaming=True,
-    )
-    print(complete_response)
     logger.info("CopilotAPI main execution completed")
