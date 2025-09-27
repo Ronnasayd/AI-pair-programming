@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import os
@@ -53,7 +54,8 @@ class CopilotAPI:
 
     def auth(self):
         logging.info("CopilotAPI.auth called")
-        get_cookies()
+        # Aguarda a função assíncrona get_cookies
+        asyncio.run(get_cookies())
         headers = {
             "accept": "application/json",
             "accept-language": "en-US,en;q=0.9",
@@ -115,7 +117,6 @@ class CopilotAPI:
         return data
 
     def _handle_streaming_response(self, response):
-        logging.info("CopilotAPI._handle_streaming_response called")
         """
         Handle streaming response from GitHub Copilot API.
 
@@ -125,6 +126,7 @@ class CopilotAPI:
         Returns:
             Generator yielding streaming chunks or complete response data
         """
+        logging.info("CopilotAPI._handle_streaming_response called")
         try:
             full_content = ""
             chunks = []
