@@ -1,9 +1,15 @@
 import json
+import logging
 import os
 
 import requests
 from copilot_playwright import get_cookies
 from dotenv import load_dotenv
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
 
 home_directory = os.path.expanduser("~")
 load_dotenv(dotenv_path=os.path.join(home_directory, ".secrets", "copilot.env"))
@@ -11,6 +17,7 @@ load_dotenv(dotenv_path=os.path.join(home_directory, ".secrets", "copilot.env"))
 
 class CopilotAPI:
     def __init__(self, thread_id="6ad571dd-f9fc-436a-8cd1-d59d9c363da7"):
+        logging.info(f"CopilotAPI.__init__ called with thread_id={thread_id}")
         self.thread_id = thread_id
         self.headers = {
             "accept": "*/*",
@@ -34,14 +41,18 @@ class CopilotAPI:
         }
         self.get_token()
         self.headers["authorization"] = f"GitHub-Bearer {self.token}"
+        logging.info("CopilotAPI.__init__ completed")
 
     def get_token(self):
+        logging.info("CopilotAPI.get_token called")
         with open(
             f"{home_directory}/.secrets/copilot_token.json", "r", encoding="utf-8"
         ) as f:
             self.token = json.load(f).get("token")
+        logging.info("CopilotAPI.get_token completed")
 
     def auth(self):
+        logging.info("CopilotAPI.auth called")
         get_cookies()
         headers = {
             "accept": "application/json",
@@ -78,8 +89,10 @@ class CopilotAPI:
                 f"{home_directory}/.secrets/copilot_token.json", "w", encoding="utf-8"
             ) as f:
                 json.dump(response.json(), f, indent=4)
+        logging.info("CopilotAPI.auth completed")
 
     def create_chat(self):
+        logging.info("CopilotAPI.create_chat called")
         response = requests.post(
             "https://api.individual.githubcopilot.com/github/chat/threads",
             headers=self.headers,
@@ -98,9 +111,11 @@ class CopilotAPI:
             )
         data = response.json()
         self.thread_id = data.get("thread_id")
+        logging.info(f"CopilotAPI.create_chat response: {data}")
         return data
 
     def _handle_streaming_response(self, response):
+        logging.info("CopilotAPI._handle_streaming_response called")
         """
         Handle streaming response from GitHub Copilot API.
 
@@ -185,9 +200,12 @@ class CopilotAPI:
 
         finally:
             response.close()
+        logging.info("CopilotAPI._handle_streaming_response completed")
 
     def chat(self, message: str, references: list[str] = None, streaming: bool = False):
-
+        logging.info(
+            f"CopilotAPI.chat called with message='{message[:50]}', references={references}, streaming={streaming}"
+        )
         if references is None:
             references = []
 
@@ -246,14 +264,19 @@ class CopilotAPI:
             )
 
         if streaming:
+            logging.info("CopilotAPI.chat returning streaming response")
             return self._handle_streaming_response(response)
         else:
             response_data = response.json()
+            logging.info(f"CopilotAPI.chat response: {str(response_data)[:200]}")
             return response_data
 
     def chat_complete(
         self, message: str, references: list[str] = None, streaming: bool = False
     ):
+        logging.info(
+            f"CopilotAPI.chat_complete called with message='{message[:50]}', references={references}, streaming={streaming}"
+        )
         """
         Chat method that returns complete response, even for streaming requests.
 
@@ -269,7 +292,9 @@ class CopilotAPI:
             references = []
 
         if not streaming:
-            return self.chat(message, references, streaming)
+            result = self.chat(message, references, streaming)
+            logging.info(f"CopilotAPI.chat_complete result: {str(result)[:200]}")
+            return result
 
         # Handle streaming response by collecting all chunks
         full_content = ""
@@ -279,6 +304,9 @@ class CopilotAPI:
             if chunk["type"] == "chunk":
                 full_content = chunk["full_content"]
             elif chunk["type"] == "complete":
+                logging.info(
+                    f"CopilotAPI.chat_complete streaming result: {str(chunk)[:200]}"
+                )
                 return {
                     "content": chunk["full_content"],
                     "streaming": True,
@@ -288,6 +316,7 @@ class CopilotAPI:
             elif chunk["type"] == "metadata":
                 metadata.append(chunk["raw_data"])
             elif chunk["type"] == "error":
+                logging.error(f"CopilotAPI.chat_complete error: {chunk['error']}")
                 return {
                     "error": chunk["error"],
                     "content": chunk["full_content"],
@@ -295,6 +324,9 @@ class CopilotAPI:
                 }
 
         # Fallback return
+        logging.info(
+            f"CopilotAPI.chat_complete fallback result: {str(full_content)[:200]}"
+        )
         return {
             "content": full_content,
             "streaming": True,
@@ -303,6 +335,7 @@ class CopilotAPI:
 
 
 if __name__ == "__main__":
+    logging.info("CopilotAPI main execution started")
     api = CopilotAPI()
     # api.auth()
     # print(api.create_chat())
@@ -346,3 +379,4 @@ if __name__ == "__main__":
         streaming=True,
     )
     print(complete_response)
+    logging.info("CopilotAPI main execution completed")
