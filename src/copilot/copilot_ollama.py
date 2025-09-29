@@ -122,7 +122,7 @@ def initialize_copilot():
     return copilot_api
 
 
-def call_copilot(prompt: str, references: list = None, stream: bool = False):
+async def call_copilot(prompt: str, references: list = None, stream: bool = False):
     """Call the Copilot API and return the response."""
     start_time = time.time()
     logger.info("🤖 Iniciando chamada para Copilot")
@@ -139,7 +139,7 @@ def call_copilot(prompt: str, references: list = None, stream: bool = False):
         refs = references or []
 
         # Chamada Copilot API
-        result = client.chat(prompt, refs, streaming=stream)
+        result = await client.chat(prompt, refs, streaming=stream)
         execution_time = time.time() - start_time
         logger.info(f"✅ Copilot respondeu em {execution_time:.2f}s")
 
@@ -407,7 +407,7 @@ async def chat(request: Request):
 
     # Call Copilot
     start_time = time.time()
-    copilot_resp = call_copilot(prompt, stream=stream)
+    copilot_resp = await call_copilot(prompt, stream=stream)
     end_time = time.time()
 
     # Handle errors
@@ -527,7 +527,7 @@ async def generate(request: Request):
     )
     # Call Copilot
     start_time = time.time()
-    copilot_resp = call_copilot(full_prompt, stream=stream)
+    copilot_resp = await call_copilot(full_prompt, stream=stream)
     end_time = time.time()
 
     # Handle errors
@@ -752,7 +752,7 @@ async def openai_chat_completions(request: Request):
 
     prompt = "\n\n".join(prompt_parts)
     # Call Copilot
-    copilot_resp = call_copilot(prompt, stream=stream)
+    copilot_resp = await call_copilot(prompt, stream=stream)
 
     if stream:
         return StreamingResponse(content=copilot_resp(), media_type="text/event-stream")
