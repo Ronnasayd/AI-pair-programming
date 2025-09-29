@@ -55,10 +55,10 @@ class CopilotAPI:
             self.token = json.load(f).get("token")
         logger.info("CopilotAPI.get_token completed")
 
-    def auth(self):
+    async def auth(self):
         logger.info("CopilotAPI.auth called")
         # Aguarda a função assíncrona get_cookies
-        asyncio.run(get_cookies())
+        await get_cookies()
         headers = {
             "accept": "application/json",
             "accept-language": "en-US,en;q=0.9",
@@ -94,9 +94,11 @@ class CopilotAPI:
                 f"{home_directory}/.secrets/copilot_token.json", "w", encoding="utf-8"
             ) as f:
                 json.dump(response.json(), f, indent=4)
+        self.get_token()
         logger.info("CopilotAPI.auth completed")
+        return self.token
 
-    def create_chat(self):
+    async def create_chat(self):
         logger.info("CopilotAPI.create_chat called")
         response = requests.post(
             "https://api.individual.githubcopilot.com/github/chat/threads",
@@ -105,8 +107,7 @@ class CopilotAPI:
             timeout=300,
         )
         if response.status_code == 401:
-            self.auth()
-            self.get_token()
+            await self.auth()
             self.headers["authorization"] = f"GitHub-Bearer {self.token}"
             response = requests.post(
                 "https://api.individual.githubcopilot.com/github/chat/threads",
@@ -194,7 +195,7 @@ class CopilotAPI:
             response.close()
         logger.info("CopilotAPI._handle_streaming_response completed")
 
-    def chat(self, message: str, references: list[str] = None, streaming: bool = False):
+    async def chat(self, message: str, references: list[str] = None, streaming: bool = False):
         logger.info(
             f"CopilotAPI.chat called with message='{message[:50]}', references={references}, streaming={streaming}"
         )
@@ -245,8 +246,7 @@ class CopilotAPI:
         )
 
         if response.status_code == 401:
-            self.auth()
-            self.get_token()
+            await self.auth()
             self.headers["authorization"] = f"GitHub-Bearer {self.token}"
             # Retry the request after authentication
             response = requests.post(
@@ -271,35 +271,35 @@ class CopilotAPI:
 if __name__ == "__main__":
     logger.info("CopilotAPI main execution started")
     api = CopilotAPI()
-    # api.auth()
+    asyncio.run(api.auth())
     # print(api.create_chat())
 
-    # Example 1: Non-streaming chat
-    print("=== Non-streaming response ===")
-    response = api.chat(
-        "explique o codigo",
-        [
-            "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
-        ],
-        streaming=False,
-    )
-    print(response)
+    # # Example 1: Non-streaming chat
+    # print("=== Non-streaming response ===")
+    # response = api.chat(
+    #     "explique o codigo",
+    #     [
+    #         "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
+    #     ],
+    #     streaming=False,
+    # )
+    # print(response)
 
-    # Example 2: Streaming chat with real-time processing
-    print("\n=== Streaming response (real-time) ===")
-    for chunk in api.chat(
-        "explique brevemente o codigo",
-        [
-            "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
-        ],
-        streaming=True,
-    ):
-        if chunk["type"] == "chunk":
-            print(chunk["content"], end="", flush=True)
-        elif chunk["type"] == "complete":
-            print(f"\n\n[Stream completed - {chunk['total_chunks']} chunks received]")
-            break
-        elif chunk["type"] == "error":
-            print(f"\n[Error: {chunk['error']}]")
-            break
-    logger.info("CopilotAPI main execution completed")
+    # # Example 2: Streaming chat with real-time processing
+    # print("\n=== Streaming response (real-time) ===")
+    # for chunk in api.chat(
+    #     "explique brevemente o codigo",
+    #     [
+    #         "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
+    #     ],
+    #     streaming=True,
+    # ):
+    #     if chunk["type"] == "chunk":
+    #         print(chunk["content"], end="", flush=True)
+    #     elif chunk["type"] == "complete":
+    #         print(f"\n\n[Stream completed - {chunk['total_chunks']} chunks received]")
+    #         break
+    #     elif chunk["type"] == "error":
+    #         print(f"\n[Error: {chunk['error']}]")
+    #         break
+    # logger.info("CopilotAPI main execution completed")
