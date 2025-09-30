@@ -142,6 +142,7 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
         result = await client.chat(prompt, refs, streaming=stream)
         execution_time = time.time() - start_time
         logger.info(f"✅ Copilot respondeu em {execution_time:.2f}s")
+        
 
         if stream:
 
@@ -186,7 +187,7 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
         else:
             # Resposta não streaming
             if isinstance(result, dict):
-                return {"text": result.get("content", str(result))}
+                return {"text": result.get("message").get("content","")}
             else:
                 return {"text": str(result)}
 
