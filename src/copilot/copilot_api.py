@@ -195,12 +195,17 @@ class CopilotAPI:
             response.close()
         logger.info("CopilotAPI._handle_streaming_response completed")
 
-    async def chat(self, message: str, references: list[str] = None, streaming: bool = False):
+    async def chat(
+        self, message: str, references: list[str] = None, streaming: bool = False
+    ):
         logger.info(
             f"CopilotAPI.chat called with message='{message[:50]}', references={references}, streaming={streaming}"
         )
         logger.debug(
             f"CopilotAPI.chat called with message='{message}', references={references}, streaming={streaming}"
+        )
+        logger.info(
+            f"CopilotAPI.chat called with '{len(message)}' characters message. approximately {int(len(message)/4)} tokens"
         )
         if references is None:
             references = []
