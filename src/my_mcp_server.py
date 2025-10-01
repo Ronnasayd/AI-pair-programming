@@ -1,26 +1,14 @@
-"""
-MCP Server para conversão de formatos de tarefas.
-
-Funções implementadas:
-1. my_convert_markdown_to_tasks - Converte markdown TODO-events para JSON tasks.json
-2. my_convert_and_save_markdown_to_tasks - Converte e salva o resultado em arquivo
-3. my_convert_tasks_to_markdown - Converte tasks.json para markdown TODO-events
-4. validate_tasks_json - Valida estrutura de arquivo tasks.json
-
-Exemplo de uso:
-- my_convert_markdown_to_tasks('/path/to/TODO-events.md')
-- my_convert_and_save_markdown_to_tasks('/path/to/TODO-events.md', '/path/to/output.json')
-- validate_tasks_json('/path/to/tasks.json')
-"""
-
 #!/bin/env python3
 import json
 import os
+import re
 import subprocess
+from datetime import datetime
 from glob import glob
 from typing import Any, Dict, Optional
 
 import aiohttp
+import requests
 from markdownify import markdownify as md
 from mcp.server.fastmcp import FastMCP
 
@@ -145,8 +133,6 @@ def _parse_markdown_to_tasks(markdown_content: str) -> Dict[str, Any]:
     Returns:
         dict: Tasks JSON structure
     """
-    import re
-    from datetime import datetime
 
     lines = markdown_content.split("\n")
     tasks = []
@@ -535,6 +521,32 @@ def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str,
         return _format_error("Erro de sistema ao abrir arquivo markdown", e)
     except Exception as e:
         return _format_error("Erro inesperado ao processar markdown", e)
+
+
+@mcp.tool()
+def my_styleguide(language: str = "python") -> Dict[str, Any]:
+    """
+    Returns a style guide for the specified programming language.
+    Args:
+        language (str): Programming language (default: Python).
+    Returns:
+        dict: Style guide content or error message.
+    """
+    try:
+        mapper = {
+            "python": "https://raw.githubusercontent.com/google/styleguide/refs/heads/gh-pages/pyguide.md",
+            "javascript": "https://raw.githubusercontent.com/google/styleguide/refs/heads/gh-pages/jsguide.html",
+            "go": "https://raw.githubusercontent.com/google/styleguide/refs/heads/gh-pages/go/guide.md",
+        }
+        response = requests.get(mapper[language], timeout=5)
+        if response.status_code == 200:
+            return {
+                "content": f"{response.text}\n utilize esse styleguide para código referente a linguagem {language}"
+            }
+        else:
+            return _format_error("Erro ao buscar styleguide", response.status_code)
+    except OSError as e:
+        return _format_error("Erro de sistema ao abrir arquivo de styleguide", e)
 
 
 if __name__ == "__main__":
