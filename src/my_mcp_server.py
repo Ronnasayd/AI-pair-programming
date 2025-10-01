@@ -275,16 +275,84 @@ INSTRUCTIONS_DIR = "/home/ronnas/develop/personal/AI-pair-programming/instructio
 TASKS_DIR = ".taskmaster/tasks"
 TASKS_JSON = "tasks.json"
 TASKS_MD = "tasks.md"
+META_JSON = "meta.json"
 REVIEW_INSTRUCTIONS = "review-refactor-specialist.instructions.md"
 DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer.instructions.md"
+VENV_DIRS = ("venv", "env")
+BIN_DIR = "bin"
+ACTIVATE_SCRIPT = "activate"
+
+
+def _extract_meta_from_tasks(tasks_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Extrai campos extras de tasks.json para meta.json, indexando por id (e id composto para subtasks).
+
+    Args:
+        tasks_data: Dicionário com dados das tasks.
+
+    Returns:
+        dict: Metadados extras indexados por id.
+    """
+    meta = {}
+    for _, context_data in tasks_data.items():
+        if "tasks" not in context_data:
+            continue
+        for task in context_data["tasks"]:
+            task_id = str(task.get("id"))
+            meta[task_id] = {
+                k: v
+                for k, v in task.items()
+                if k not in ("id", "title", "status", "subtasks")
+            }
+            # Subtasks
+            for subtask in task.get("subtasks", []):
+                sub_id = f"{task_id}.{subtask.get('id')}"
+                meta[sub_id] = {
+                    k: v
+                    for k, v in subtask.items()
+                    if k not in ("id", "title", "status")
+                }
+    return meta
+
+
+def _merge_tasks_with_meta(
+    tasks_json: Dict[str, Any], meta: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    Preenche tasks.json (após parse do markdown) com campos extras do meta.json.
+
+    Args:
+        tasks_json: Estrutura de tasks convertida do markdown.
+        meta: Metadados extras indexados por id.
+
+    Returns:
+        dict: Estrutura de tasks enriquecida com metadados.
+    """
+    for _, context_data in tasks_json.items():
+        if "tasks" not in context_data:
+            continue
+        for task in context_data["tasks"]:
+            task_id = str(task.get("id"))
+            if task_id in meta:
+                for k, v in meta[task_id].items():
+                    task[k] = v
+            # Subtasks
+            for subtask in task.get("subtasks", []):
+                sub_id = f"{task_id}.{subtask.get('id')}"
+                if sub_id in meta:
+                    for k, v in meta[sub_id].items():
+                        subtask[k] = v
+    return tasks_json
 
 
 @mcp.tool()
 async def my_load_page_as_doc(url: str) -> Dict[str, Any]:
     """
     Downloads a web page and returns clean text for documentation purposes.
+
     Args:
         url (str): The URL to fetch.
+
     Returns:
         dict: Markdown content or error message.
     """
@@ -305,8 +373,10 @@ async def my_load_page_as_doc(url: str) -> Dict[str, Any]:
 def my_get_context(command: str) -> Dict[str, Any]:
     """
     Returns context based on the provided command.
+
     Args:
         command (str): Command-line arguments for context generation script.
+
     Returns:
         dict: Context content or error message.
     """
@@ -335,9 +405,11 @@ def my_run_command(command: str, cwd: Optional[str] = None) -> Dict[str, Any]:
     """
     Executes a shell command in the specified directory (or current directory if not provided).
     Se houver ambiente virtual (venv/.venv) no diretório, ativa automaticamente antes do comando.
+
     Args:
         command (str): The shell command to execute.
         cwd (Optional[str]): Directory to execute the command in.
+
     Returns:
         dict: stdout, stderr, or error message.
     """
@@ -345,8 +417,10 @@ def my_run_command(command: str, cwd: Optional[str] = None) -> Dict[str, Any]:
         workdir = cwd or os.getcwd()
         venv_path = None
         # Detecta venv ou .venv
-        for venv_candidate in ["venv", "env"]:
-            candidate_path = os.path.join(workdir, venv_candidate, "bin", "activate")
+        for venv_candidate in VENV_DIRS:
+            candidate_path = os.path.join(
+                workdir, venv_candidate, BIN_DIR, ACTIVATE_SCRIPT
+            )
             if os.path.isfile(candidate_path):
                 venv_path = candidate_path
                 break
@@ -382,8 +456,10 @@ def my_run_command(command: str, cwd: Optional[str] = None) -> Dict[str, Any]:
 def my_run_prompt(name: str) -> Dict[str, Any]:
     """
     Executes a predefined prompt by loading its instruction file.
+
     Args:
         name (str): Name pattern for the instruction file.
+
     Returns:
         dict: File content or error message.
     """
@@ -404,9 +480,11 @@ def my_code_review(
 ) -> Dict[str, Any]:
     """
     Gets the git diff in the specified directory (or current directory if not provided) and combines it with the review template for prompt execution.
+
     Args:
         rootProject (Optional[str]): Directory to run git diff in.
         command (str): Command to execute (default=git diff).
+
     Returns:
         dict: Combined instructions and git diff, or error message.
     """
@@ -460,50 +538,40 @@ def my_developer_workflow() -> Dict[str, Any]:
     except subprocess.SubprocessError as e:
         return _format_error("Erro de subprocesso ao executar git diff", e)
 
+
 @mcp.tool()
 def my_convert_tasks_to_markdown(
     rootProject: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Converts a .taskmaster/tasks/tasks.json file to markdown format similar to TODO-events.md.
+    Também gera meta.json com os campos extras de tasks/subtasks.
 
     Args:
-        rootProject (Optional[str]): root of the project, looks for .taskmaster/tasks/tasks.json in current directory.
+        rootProject: Diretório raiz do projeto (opcional).
 
     Returns:
-        dict: Markdown content or error message.
+        dict: Mensagem de sucesso ou erro.
     """
     try:
-        # Default path if not provided
         if not rootProject:
             rootProject = os.getcwd()
-
         tasks_file_path = os.path.join(rootProject, TASKS_DIR, TASKS_JSON)
-
-        # Check if file exists
         if not os.path.isfile(tasks_file_path):
             return {"error": f"Arquivo tasks.json não encontrado em: {tasks_file_path}"}
-
-        # Load JSON content
         with open(tasks_file_path, "r", encoding="utf-8") as f:
             tasks_data = json.load(f)
-
-        # Generate markdown content
         markdown_content = _generate_markdown_from_tasks(tasks_data)
-
         tasks_dir_path = os.path.join(rootProject, TASKS_DIR)
         if not os.path.exists(tasks_dir_path):
             os.makedirs(tasks_dir_path)
-
-        with open(
-            os.path.join(tasks_dir_path, TASKS_MD),
-            "w",
-            encoding="utf-8",
-        ) as f:
+        with open(os.path.join(tasks_dir_path, TASKS_MD), "w", encoding="utf-8") as f:
             f.write(markdown_content)
-
-        return {"content": "Arquivo criado com sucesso."}
-
+        # Gera meta.json
+        meta = _extract_meta_from_tasks(tasks_data)
+        with open(os.path.join(tasks_dir_path, META_JSON), "w", encoding="utf-8") as f:
+            json.dump(meta, f, ensure_ascii=False, indent=2)
+        return {"content": "Arquivos tasks.md e meta.json criados com sucesso."}
     except json.JSONDecodeError as e:
         return _format_error("Erro ao decodificar JSON", e)
     except OSError as e:
@@ -516,41 +584,37 @@ def my_convert_tasks_to_markdown(
 def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str, Any]:
     """
     Converts a markdown file in TODO-events format to tasks.json format.
+    Utiliza meta.json para restaurar campos extras, se disponível.
 
     Args:
-        rootProject (Optional[str]): root of the project, looks for .taskmaster/tasks/tasks.md in current directory.
+        rootProject: Diretório raiz do projeto (opcional).
 
     Returns:
-        dict: Tasks JSON content or error message.
+        dict: Mensagem de sucesso ou erro.
     """
     try:
         if not rootProject:
             rootProject = os.getcwd()
-        # Check if file exists
         markdown_file_path = os.path.join(rootProject, TASKS_DIR, TASKS_MD)
-
+        meta_file_path = os.path.join(rootProject, TASKS_DIR, META_JSON)
         if not os.path.isfile(markdown_file_path):
             return {
                 "error": f"Arquivo markdown não encontrado em: {markdown_file_path}"
             }
-
-        # Read markdown content
         with open(markdown_file_path, "r", encoding="utf-8") as f:
             markdown_content = f.read()
-
-        # Parse markdown and convert to tasks JSON
         tasks_json = _parse_markdown_to_tasks(markdown_content)
-        tasks_json_str = json.dumps(tasks_json, ensure_ascii=False)
-
+        # Se existir meta.json, restaura campos extras
+        if os.path.isfile(meta_file_path):
+            with open(meta_file_path, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+            tasks_json = _merge_tasks_with_meta(tasks_json, meta)
+        tasks_json_str = json.dumps(tasks_json, ensure_ascii=False, indent=2)
         with open(
-            os.path.join(rootProject, TASKS_DIR, TASKS_JSON),
-            "w",
-            encoding="utf-8",
+            os.path.join(rootProject, TASKS_DIR, TASKS_JSON), "w", encoding="utf-8"
         ) as f:
             f.write(tasks_json_str)
-
         return {"content": f"{TASKS_DIR}/{TASKS_JSON} criado com sucesso."}
-
     except OSError as e:
         return _format_error("Erro de sistema ao abrir arquivo markdown", e)
     except Exception as e:
@@ -561,8 +625,10 @@ def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str,
 def my_styleguide(language: str = "python") -> Dict[str, Any]:
     """
     Returns a style guide for the specified programming language.
+
     Args:
         language (str): Programming language (default: Python).
+
     Returns:
         dict: Style guide content or error message.
     """
