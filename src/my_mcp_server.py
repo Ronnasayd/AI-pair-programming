@@ -1,4 +1,10 @@
-#!/bin/env python3
+"""
+my_mcp_server.py
+
+Implements a FastMCP server with tools for code review, context generation, markdown/JSON conversion, and shell command execution.
+This module is designed for extensibility and integration with AI-powered workflows.
+"""
+
 import json
 import os
 import re
@@ -264,6 +270,14 @@ def _symbol_to_status(symbol: str) -> str:
     return symbol_map.get(symbol, "pending")
 
 
+# Constantes para caminhos de arquivos e diretórios
+INSTRUCTIONS_DIR = "/home/ronnas/develop/personal/AI-pair-programming/instructions"
+TASKS_DIR = ".taskmaster/tasks"
+TASKS_JSON = "tasks.json"
+TASKS_MD = "tasks.md"
+REVIEW_INSTRUCTIONS = "review-refactor-specialist.instructions.md"
+
+
 @mcp.tool()
 async def my_load_page_as_doc(url: str) -> Dict[str, Any]:
     """
@@ -373,9 +387,7 @@ def my_run_prompt(name: str) -> Dict[str, Any]:
         dict: File content or error message.
     """
     try:
-        filepath = glob(
-            f"/home/ronnas/develop/personal/AI-pair-programming/instructions/*{name}*.instructions.md"
-        )[0]
+        filepath = glob(f"{INSTRUCTIONS_DIR}/*{name}*.instructions.md")[0]
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
         return {"content": content}
@@ -408,13 +420,13 @@ def my_code_review(
         git_diff = result.stdout
 
         with open(
-            "/home/ronnas/develop/personal/AI-pair-programming/instructions/review-refactor-specialist.instructions.md",
+            os.path.join(INSTRUCTIONS_DIR, REVIEW_INSTRUCTIONS),
             "r",
             encoding="utf-8",
         ) as f:
             instructions = f.read()
 
-        combined_content = f"{instructions}\n\nGit Diff:\n{git_diff}"
+        combined_content = f"Instructions:\n{instructions}\n\nGit Diff:\n{git_diff}\n\nBaseado nas modificações verifique se há ajustes ou melhoria de código a serem feitos."
         return {"content": combined_content}
 
     except FileNotFoundError as e:
@@ -441,9 +453,7 @@ def my_convert_tasks_to_markdown(
         if not rootProject:
             rootProject = os.getcwd()
 
-        tasks_file_path = os.path.join(
-            rootProject, ".taskmaster", "tasks", "tasks.json"
-        )
+        tasks_file_path = os.path.join(rootProject, TASKS_DIR, TASKS_JSON)
 
         # Check if file exists
         if not os.path.isfile(tasks_file_path):
@@ -456,11 +466,12 @@ def my_convert_tasks_to_markdown(
         # Generate markdown content
         markdown_content = _generate_markdown_from_tasks(tasks_data)
 
-        if not os.path.exists(os.path.join(rootProject, ".taskmaster", "tasks")):
-            os.makedirs(os.path.join(rootProject, ".taskmaster", "tasks"))
+        tasks_dir_path = os.path.join(rootProject, TASKS_DIR)
+        if not os.path.exists(tasks_dir_path):
+            os.makedirs(tasks_dir_path)
 
         with open(
-            os.path.join(rootProject, ".taskmaster", "tasks", "tasks.md"),
+            os.path.join(tasks_dir_path, TASKS_MD),
             "w",
             encoding="utf-8",
         ) as f:
@@ -491,9 +502,7 @@ def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str,
         if not rootProject:
             rootProject = os.getcwd()
         # Check if file exists
-        markdown_file_path = os.path.join(
-            rootProject, ".taskmaster", "tasks", "tasks.md"
-        )
+        markdown_file_path = os.path.join(rootProject, TASKS_DIR, TASKS_MD)
 
         if not os.path.isfile(markdown_file_path):
             return {
@@ -509,13 +518,13 @@ def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str,
         tasks_json_str = json.dumps(tasks_json, ensure_ascii=False)
 
         with open(
-            os.path.join(rootProject, ".taskmaster", "tasks", "tasks.json"),
+            os.path.join(rootProject, TASKS_DIR, TASKS_JSON),
             "w",
             encoding="utf-8",
         ) as f:
             f.write(tasks_json_str)
 
-        return {"content": ".taskmaster/tasks/tasks.json criado com sucesso."}
+        return {"content": f"{TASKS_DIR}/{TASKS_JSON} criado com sucesso."}
 
     except OSError as e:
         return _format_error("Erro de sistema ao abrir arquivo markdown", e)
