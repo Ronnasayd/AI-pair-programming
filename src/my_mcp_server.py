@@ -276,6 +276,7 @@ TASKS_DIR = ".taskmaster/tasks"
 TASKS_JSON = "tasks.json"
 TASKS_MD = "tasks.md"
 REVIEW_INSTRUCTIONS = "review-refactor-specialist.instructions.md"
+DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer.instructions.md"
 
 
 @mcp.tool()
@@ -434,6 +435,30 @@ def my_code_review(
     except subprocess.SubprocessError as e:
         return _format_error("Erro de subprocesso ao executar git diff", e)
 
+
+@mcp.tool()
+def my_developer_workflow() -> Dict[str, Any]:
+    """
+    Loads and returns the developer workflow instructions from a predefined instructions file.
+
+    Returns:
+        dict: The content of the instructions or an error message.
+    """
+    try:
+        with open(
+            os.path.join(INSTRUCTIONS_DIR, DEVELOPER_WORKFLOW_INSTRUCTIONS),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            instructions = f.read()
+
+        combined_content = f"Instructions:\n{instructions}\n\nSiga essas instruções para desenvolver código de forma eficiente e organizada."
+        return {"content": combined_content}
+
+    except FileNotFoundError as e:
+        return _format_error("Arquivo de instruções não encontrado", e)
+    except subprocess.SubprocessError as e:
+        return _format_error("Erro de subprocesso ao executar git diff", e)
 
 @mcp.tool()
 def my_convert_tasks_to_markdown(
