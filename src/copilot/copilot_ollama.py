@@ -4,6 +4,8 @@
 import asyncio
 import json
 import logging
+import os
+import re
 import time
 import uuid
 from datetime import datetime, timedelta
@@ -35,6 +37,36 @@ app.add_middleware(
 
 # Global Copilot API instance
 copilot_api = None
+
+
+def extrair_attachments(texto: str) -> str:
+    """
+    Extrai todos os caminhos de arquivo a partir do padrão '// filepath: ...'
+    e retorna uma string no formato:
+    <attachments><attachment id="ARQUIVO_1"/><attachment id="ARQUIVO_2"/>...</attachments>
+    """
+    match = re.search(r"<attachments>(.*)<\/attachments>", texto, re.DOTALL)
+    if not match:
+        return []
+    attachments_text = match.group(1).strip()
+    paths = re.findall(r"filepath:\s*(.+)", attachments_text)
+    paths = [path.split(" ")[0] for path in paths ]
+    if not paths:
+        return []
+    paths = [path for path in paths if os.path.exists(path)]
+    attachments = "".join(
+        f'<attachment id="{caminho.strip().split("/")[-1]}"/>' for caminho in paths
+    )
+
+    attachments_new_text = f"<attachments>{attachments}\n</attachments>"
+    new_prompt = re.sub(
+        r"<attachments>.*<\/attachments>",
+        attachments_new_text,
+        texto,
+        count=0,
+        flags=re.DOTALL,
+    )
+    return [new_prompt, paths]
 
 
 # Middleware para logar todas as requisições
@@ -142,7 +174,6 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
         result = await client.chat(prompt, refs, streaming=stream)
         execution_time = time.time() - start_time
         logger.info(f"✅ Copilot respondeu em {execution_time:.2f}s")
-        
 
         if stream:
 
@@ -187,7 +218,7 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
         else:
             # Resposta não streaming
             if isinstance(result, dict):
-                return {"text": result.get("message").get("content","")}
+                return {"text": result.get("message").get("content", "")}
             else:
                 return {"text": str(result)}
 
@@ -752,11 +783,19 @@ async def openai_chat_completions(request: Request):
             prompt_parts.append(f"Assistant: {content}")
 
     prompt = "\n\n".join(prompt_parts)
+    info = extrair_attachments(prompt)
+    references = []
+    if len(info) > 1:
+        prompt = info[0]
+        references = info[1]
     # Call Copilot
-    copilot_resp = await call_copilot(prompt, stream=stream)
+    copilot_resp = await call_copilot(prompt, references, stream=stream)
 
     if stream:
         return StreamingResponse(content=copilot_resp(), media_type="text/event-stream")
+
+    if copilot_resp.get("error"):
+        raise HTTPException(status_code=500, detail=copilot_resp["error"])
 
     response_content = copilot_resp.get("text", str(copilot_resp))
 
