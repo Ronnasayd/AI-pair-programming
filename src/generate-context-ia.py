@@ -50,6 +50,8 @@ DEFAULT_EXCLUDE = [
     "/.husky/",
     ".dockerignore",
     ".nvmrc",
+    "__pycache__/",
+    ".pdf"
 ]
 
 DEFAULT_CONTENT_EXCLUDE = os.getenv("DEFAULT_CONTENT_EXCLUDE", "").split(",")
@@ -261,8 +263,9 @@ def should_exclude(file_path, exclude_dirs, exclude_files, include_dirs):
     return False
 
 
-def read_file(file, content_exclude, line_numbers=[]):
+def read_file(common_basepath, file, content_exclude, line_numbers=[]):
     filepath = file.replace(home_directory, "~")
+    common_basepath = common_basepath.replace(home_directory, "~")
     try:
         if is_binary_file(file):
             return None
@@ -311,7 +314,7 @@ def read_file(file, content_exclude, line_numbers=[]):
         if ext in {"js", "ts", "go", "py", "html", "css"}:
             content = remove_comments_from_code(content, f".{ext}")
         content = remove_blank_lines(content)
-        result = f"### Arquivo: {filepath}\n````{ext}\n{content}\n````\n"
+        result = f"### Arquivo: {filepath.replace(common_basepath, '')}\n````{ext}\n{content}\n````\n"
         print(result)
 
     except Exception as e:
@@ -440,6 +443,8 @@ def main():
     )
     all_files = sorted(all_files)
 
+    common_basepath = os.path.commonpath(args.paths) + "/"
+
     if args.tree:
         print("## Arvores de arquivos")
         for directory in directories:
@@ -450,7 +455,7 @@ def main():
     # Se apenas listar, já retorna essa lista com caminho abreviado e nada mais
     if args.list:
         for file in sorted(all_files):
-            print(file.replace(home_directory, "~"))
+            print(file.replace(common_basepath, ""))
         return
 
     print(f"# Contexto\n")
@@ -463,13 +468,13 @@ def main():
         )
         if args.text_full:
             for file in data:
-                read_file(file, args.exclude_content, [])
+                read_file(common_basepath, file, args.exclude_content, [])
         else:
             for file in data:
-                read_file(file, args.exclude_content, data[file])
+                read_file(common_basepath, file, args.exclude_content, data[file])
     else:
         for file in all_files:
-            read_file(file, args.exclude_content, [])
+            read_file(common_basepath, file, args.exclude_content, [])
 
 
 if __name__ == "__main__":
