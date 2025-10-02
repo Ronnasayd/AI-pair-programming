@@ -50,7 +50,7 @@ def extrair_attachments(texto: str) -> str:
         return []
     attachments_text = match.group(1).strip()
     paths = re.findall(r"filepath:\s*(.+)", attachments_text)
-    paths = [path.split(" ")[0] for path in paths ]
+    paths = [path.split(" ")[0] for path in paths]
     if not paths:
         return []
     paths = [path for path in paths if os.path.exists(path)]
@@ -436,10 +436,14 @@ async def chat(request: Request):
     logger.debug(
         f"🔧 Prompt construído: {prompt[:300]}{'...' if len(prompt) > 300 else ''}"
     )
-
+    references = []
+    info = extrair_attachments(prompt)
+    if len(info) > 1:
+        prompt = info[0]
+        references = info[1]
     # Call Copilot
     start_time = time.time()
-    copilot_resp = await call_copilot(prompt, stream=stream)
+    copilot_resp = await call_copilot(prompt, references, stream=stream)
     end_time = time.time()
 
     # Handle errors
