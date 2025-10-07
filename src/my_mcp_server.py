@@ -11,7 +11,7 @@ import re
 import subprocess
 from datetime import datetime
 from glob import glob
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import aiohttp
 import requests
@@ -370,25 +370,60 @@ async def my_load_page_as_doc(url: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_get_context(command: str) -> Dict[str, Any]:
+def my_get_context(
+    exclude: str,
+    exclude_content: str,
+    workers: str,
+    llist: bool,
+    tree: bool,
+    include: str,
+    text: str,
+    text_full: bool,
+    paths: List[str],
+) -> Dict[str, Any]:
     """
-    Returns context based on the provided command.
+    Returns context based on the provided parameters.
 
     Args:
-        command (str): Command-line arguments for context generation script.
+        exclude (str): Patterns to exclude from context generation.
+        exclude_content (str): Patterns to exclude from file content.
+        workers (str): Number of worker threads for parallel processing (optional).
+        llist (bool): If True, lists files instead of generating context.
+        tree (bool): If True, outputs directory tree structure.
+        include (str): Patterns to include in context generation.
+        text (str): Additional text to include in context.
+        text_full (bool): If True, includes full text content.
+        paths (List[str]): List of file or directory paths to process.
 
     Returns:
         dict: Context content or error message.
     """
     try:
+        command = "python3 /home/ronnas/develop/personal/AI-pair-programming/src/generate-context-ia.py"
+        if exclude:
+            command += f" --exclude '{exclude}'"
+        if exclude_content:
+            command += f" --exclude-content '{exclude_content}'"
+        if workers:
+            command += f" --workers {workers}"
+        if llist:
+            command += " --list"
+        if tree:
+            command += " --tree"
+        if include:
+            command += f" --include '{include}'"
+        if text:
+            command += f" --text '{text}'"
+        if text_full:
+            command += " --text-full"
+        for path in paths:
+            command += f" '{path}'"
         result = subprocess.run(
-            [
-                "python3",
-                "/home/ronnas/develop/personal/AI-pair-programming/src/generate-context-ia.py",
-            ]
-            + command.split(" "),
+            command,
             capture_output=True,
             text=True,
+            shell=True,  # permite string única como comando
+            executable="/bin/zsh",  # garante compatibilidade com zsh
             check=False,
         )
         if result.returncode != 0:
