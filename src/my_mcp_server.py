@@ -401,33 +401,20 @@ def my_get_context(command: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_run_command(command: str, cwd: Optional[str] = None) -> Dict[str, Any]:
+def my_run_command(command: str, rootProject: Optional[str] = None) -> Dict[str, Any]:
     """
     Executes a shell command in the specified directory (or current directory if not provided).
     Se houver ambiente virtual (venv/.venv) no diretório, ativa automaticamente antes do comando.
 
     Args:
         command (str): The shell command to execute.
-        cwd (Optional[str]): Directory to execute the command in.
+        rootProject (Optional[str]): Directory to execute the command in.
 
     Returns:
         dict: stdout, stderr, or error message.
     """
     try:
-        workdir = cwd or os.getcwd()
-        venv_path = None
-        # Detecta venv ou .venv
-        for venv_candidate in VENV_DIRS:
-            candidate_path = os.path.join(
-                workdir, venv_candidate, BIN_DIR, ACTIVATE_SCRIPT
-            )
-            if os.path.isfile(candidate_path):
-                venv_path = candidate_path
-                break
-        # Só prefixa se não houver ativação explícita no comando
-        if venv_path and not ("activate" in command or "source" in command):
-            # Usa 'source' para ativar o venv antes do comando
-            command = f"source '{venv_path}' && {command}"
+        workdir = rootProject or os.getcwd()
         result = subprocess.run(
             command,
             cwd=workdir,
