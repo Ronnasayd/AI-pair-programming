@@ -656,6 +656,7 @@ async def generate_embeddings(request: Request):
     """Generate embeddings from a model."""
     body = await request.json()
     model = body.get("model", MODEL_FULL_NAME)
+    input_text = body.get("input", "")
 
     logger.info(f"🔢 POST /api/embed - Modelo: {model}")
 
