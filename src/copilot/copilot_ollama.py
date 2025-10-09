@@ -20,7 +20,10 @@ from fastapi.responses import JSONResponse, StreamingResponse
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("copilot_ollama_proxy.log"), logging.StreamHandler()],
+    handlers=[
+        logging.FileHandler("/tmp/copilot_ollama_proxy.log"),
+        logging.StreamHandler(),
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -653,7 +656,6 @@ async def generate_embeddings(request: Request):
     """Generate embeddings from a model."""
     body = await request.json()
     model = body.get("model", MODEL_FULL_NAME)
-    input_text = body.get("input", "")
 
     logger.info(f"🔢 POST /api/embed - Modelo: {model}")
 
@@ -866,7 +868,7 @@ if __name__ == "__main__":
     print("  - POST /api/embeddings    - Generate embedding (legacy)")
     print("  - POST /v1/chat/completions - OpenAI-compatible chat completions")
     print("  - GET  /v1/models         - OpenAI-compatible models list")
-    print("📝 Logs serão salvos em: copilot_ollama_proxy.log")
+    print("📝 Logs serão salvos em: /tmp/copilot_ollama_proxy.log")
     print("🔧 Backend: GitHub Copilot API")
 
     logger.info("🚀 Iniciando servidor Copilot Ollama API proxy na porta 11434")
