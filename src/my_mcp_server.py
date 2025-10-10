@@ -601,6 +601,30 @@ def my_developer_workflow() -> Dict[str, Any]:
     except subprocess.SubprocessError as e:
         return _format_error("Erro de subprocesso ao executar git diff", e)
 
+@mcp.tool()
+def my_generate_docs_init() -> Dict[str, Any]:
+    """
+    return instructions for generating initial project documentation from a predefined instructions file.
+
+    Returns:
+        dict: The content of the instructions or an error message.
+    """
+    try:
+        with open(
+            os.path.join(INSTRUCTIONS_DIR, DOCUMENTATION_WORKFLOW_INSTRUCTIONS),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            instructions = f.read()
+
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nSiga as instruções fornecidas e gere a documentação da base de código do workspace no formato descrito. Analise a estrutura da base de código e quebre em partes menores (modulos, pastas, arquivos). Conforme intera sobre cada parte, mostre qual arquivo será analisado e após analise e geração da modificação da documentação, mostrar as alterações feitas.\n</task>\n"
+        return {"content": combined_content}
+
+    except FileNotFoundError as e:
+        return _format_error("Arquivo de instruções não encontrado", e)
+    except subprocess.SubprocessError as e:
+        return _format_error("Erro de subprocesso ao executar git diff", e)
+
 
 @mcp.tool()
 def my_convert_tasks_to_markdown(
