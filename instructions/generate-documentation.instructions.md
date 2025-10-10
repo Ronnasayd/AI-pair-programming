@@ -116,18 +116,76 @@ docs/
  ├── architecture.md     # detalhes de arquitetura e decisões de design
  ├── setup.md            # guia de instalação e execução
  ├── usage.md            # exemplos de uso da aplicação
- ├── models.md           # descrição técnica de cada modelo (opcional)
- ├── endpoints.md        # descrição técnica de cada endpoint (opcional)
+ ├── models.md           # descrição técnica de cada modelo (opcional: Apenas quando houver definição de modelos)
+ ├── endpoints.md        # descrição técnica de cada endpoint (opcional: Apenas quando houver API)
  ├── modules.md          # descrição técnica de cada módulo/pasta
  ├── contribution.md     # guia para contribuidores
  ├── adr/                # decisões arquiteturais (opcional)
  │    └── ...
  ├── techs/              # tecnologias e frameworks utilizados (opcional)
  │    └── ...
+ ├── misc/               # qualquer outras documentações que não estão específicadas (opcional)
+ │    └── ...
  └── faq.md              # dúvidas frequentes (opcional)
 ```
+### 2. Descrição dos Arquivos
 
-### 2. Estrutura do summary Compacto
+#### 1. `architecture.md` – detalhes de arquitetura e decisões de design
+
+* **Objetivo:** Visão geral do sistema, diagramas, decisões de alto nível.
+* **Tamanho ideal:** **1.500–3.500 palavras**
+
+#### 2. `setup.md` – guia de instalação e execução
+
+* **Objetivo:** Passo a passo para rodar localmente ou em produção.
+* **Tamanho ideal:** **500–1.500 palavras**
+
+#### 3. `usage.md` – exemplos de uso da aplicação
+
+* **Objetivo:** Exemplos práticos, snippets, fluxos de uso.
+* **Tamanho ideal:** **1.000–2.500 palavras**
+
+#### 4. `models.md` – descrição técnica de cada modelo
+
+* **Objetivo:** Documentação de estruturas de dados, modelos ML/entidades do sistema.
+* **Tamanho ideal:** **1.000–3.000 palavras** (depende do número de modelos)
+
+#### 5. `endpoints.md` – descrição técnica de cada endpoint
+
+* **Objetivo:** APIs, métodos, parâmetros, respostas.
+* **Tamanho ideal:** **1.500–3.500 palavras**
+
+#### 6. `modules.md` – descrição técnica de cada módulo/pasta
+
+* **Objetivo:** Explicar responsabilidades e interações entre módulos.
+* **Tamanho ideal:** **1.500–3.000 palavras**
+
+#### 7. `contribution.md` – guia para contribuidores
+
+* **Objetivo:** Explicar fluxo de contribuição, padrões de commits, PRs, revisão de código.
+* **Tamanho ideal:** **500–1.500 palavras**
+
+#### 8. `adr/` – decisões arquiteturais
+
+* **Objetivo:** Cada ADR deve documentar **uma decisão específica**.
+* **Tamanho ideal por ADR:** **300–800 palavras**
+
+#### 9. `techs/` – tecnologias e frameworks
+
+* **Objetivo:** Breve descrição das tecnologias usadas, versão, links de referência.
+* **Tamanho ideal:** **200–800 palavras por tech**
+
+#### 10. `misc/` – documentação misc
+
+* **Objetivo:** Qualquer documentação que não se encaixa nos outros arquivos.
+* **Tamanho ideal:** **500–2.000 palavras**
+
+#### 11. `faq.md` – dúvidas frequentes
+
+* **Objetivo:** Perguntas comuns e respostas rápidas.
+* **Tamanho ideal:** **500–1.000 palavras**
+
+### 3. Estrutura do summary Compacto
 
 O summary terá os seguintes blocos (mantendo 500–1500 palavras):
 
@@ -141,8 +199,9 @@ O summary terá os seguintes blocos (mantendo 500–1500 palavras):
    * Fluxo resumido de dados
 
 3. **Arquitetura em Alto Nível**
-   * Diagrama simplificado (ou link para `docs/architecture.md`)
+   * Diagrama mermaid simplificado
    * Tecnologias principais
+   * Link para `docs/architecture.md`
 
 4. **Instalação Rápida**
    * Pré-requisitos
@@ -171,21 +230,26 @@ O summary terá os seguintes blocos (mantendo 500–1500 palavras):
 
 10. **Decisões Arquiteturais** (opcional)
     * Resumo das principais decisões
-   * Link para `docs/adr/`
+    * Link para `docs/adr/`
 
 11. **Techs** (opcional)
    * Resumo das tecnologias e frameworks utilizados no projeto
    * Link para `docs/techs/`
 
-12. **FAQ / Problemas Comuns** (opcional)
+12. **Documentação misc** (opcional)
+   * Resumo de qualquer outra documentação relevante
+   * Link para `docs/misc/`
+
+13. **FAQ / Problemas Comuns** (opcional)
    * Breve Q\&A
    * Link para `docs/faq.md`
 
 
-### 3. Padrão de Escrita
+### 4. Padrão de Escrita
 
 * summary = **visão panorâmica, onboarding rápido, links**.
 * Arquivos em `docs/` = **referência técnica aprofundada**.
 * Estilo: **Markdown moderno, headings claros, tabelas e listas curtas, links navegáveis**.
+* Links: **sempre que possível, linkar para outras partes da documentação no formato [referencia](link-relativo)**.
 
 </instruções>
