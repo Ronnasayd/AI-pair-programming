@@ -278,6 +278,7 @@ TASKS_MD = "tasks.md"
 META_JSON = "meta.json"
 REVIEW_INSTRUCTIONS = "review-refactor-specialist.instructions.md"
 DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer.instructions.md"
+DOCUMENTATION_WORKFLOW_INSTRUCTIONS = "generate-documentation.instructions.md"
 VENV_DIRS = ("venv", "env")
 BIN_DIR = "bin"
 ACTIVATE_SCRIPT = "activate"
@@ -527,7 +528,47 @@ def my_code_review(
         ) as f:
             instructions = f.read()
 
-        combined_content = f"Instructions:\n{instructions}\n\nGit Diff:\n{git_diff}\n\nBaseado nas modificações verifique se há ajustes ou melhoria de código a serem feitos."
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBaseado nas modificações feitas, verifique se há ajustes ou melhoria de código a serem feitos seguindo as instruções fornecidas.\n</task>\n"
+        return {"content": combined_content}
+
+    except FileNotFoundError as e:
+        return _format_error("Arquivo de instruções não encontrado", e)
+    except subprocess.SubprocessError as e:
+        return _format_error("Erro de subprocesso ao executar git diff", e)
+
+
+@mcp.tool()
+def my_generate_docs_update(
+    rootProject: Optional[str] = None, command="git diff"
+) -> Dict[str, Any]:
+    """
+    Gets the git diff or similar command in the specified directory (or current directory if not provided) and combines it with the documentation template for prompt execution.
+
+    Args:
+        rootProject (Optional[str]): Directory to run git diff in.
+        command (str): Command to execute (default=git diff).
+
+    Returns:
+        dict: Combined instructions and git diff, or error message.
+    """
+    try:
+        result = subprocess.run(
+            command.split(" "),
+            cwd=rootProject or os.getcwd(),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        git_diff = result.stdout
+
+        with open(
+            os.path.join(INSTRUCTIONS_DIR, DOCUMENTATION_WORKFLOW_INSTRUCTIONS),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            instructions = f.read()
+
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBaseado nas modificações e instruções fornecidas, ajuste a documentação de forma adequada. Analise os arquivos de documentação existentes e veja quais devem ser atualizados com base nas modificações feitas. Preferencialmente atualize arquivos existentes, mas se necessário crie novos arquivos.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
@@ -552,7 +593,7 @@ def my_developer_workflow() -> Dict[str, Any]:
         ) as f:
             instructions = f.read()
 
-        combined_content = f"Instructions:\n{instructions}\n\nSiga essas instruções para desenvolver código de forma eficiente e organizada."
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nSiga as instruções fornecidas para o desenvolvimento de código em qualquer implementação ou ajuste solicitado a seguir.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
