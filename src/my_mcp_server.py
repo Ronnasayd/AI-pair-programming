@@ -272,6 +272,7 @@ def _symbol_to_status(symbol: str) -> str:
 
 # Constantes para caminhos de arquivos e diretórios
 INSTRUCTIONS_DIR = "/home/ronnas/develop/personal/AI-pair-programming/instructions"
+TEMPLATES_DIR = "/home/ronnas/develop/personal/AI-pair-programming/templates"
 TASKS_DIR = ".taskmaster/tasks"
 TASKS_JSON = "tasks.json"
 TASKS_MD = "tasks.md"
@@ -279,6 +280,8 @@ META_JSON = "meta.json"
 REVIEW_INSTRUCTIONS = "review-refactor-specialist.instructions.md"
 DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer.instructions.md"
 DOCUMENTATION_WORKFLOW_INSTRUCTIONS = "generate-documentation.instructions.md"
+GENERATE_PRD_INSTRUCTIONS = "product-owner.instructions.md"
+PRD_TEMPLATE = "PRD-template.json"
 VENV_DIRS = ("venv", "env")
 BIN_DIR = "bin"
 ACTIVATE_SCRIPT = "activate"
@@ -568,7 +571,7 @@ def my_generate_docs_update(
         ) as f:
             instructions = f.read()
 
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBaseado nas modificações e instruções fornecidas, ajuste a documentação de forma adequada. Analise os arquivos de documentação existentes e veja quais devem ser atualizados com base nas modificações feitas. Preferencialmente atualize arquivos existentes, mas se necessário crie novos arquivos.\n</task>\n"
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBaseado nas modificações e instruções fornecidas, ajuste a documentação de forma adequada. Analise os arquivos de documentação existentes (verificar pasta docs/ e SUMMARY.md caso existam) e veja quais devem ser atualizados com base nas modificações feitas. Preferencialmente atualize arquivos existentes, mas se necessário crie novos arquivos. Só atualize os arquivos se as modificações forem relevantes para o tipo de conteúdo do arquivo. Não adicione texto só por adicionar. Antes de qualquer modificação mostre o que será adicionado e pergunte se deve prosseguir.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
@@ -601,6 +604,39 @@ def my_developer_workflow() -> Dict[str, Any]:
     except subprocess.SubprocessError as e:
         return _format_error("Erro de subprocesso ao executar git diff", e)
 
+
+@mcp.tool()
+def my_generate_prd() -> Dict[str, Any]:
+    """
+    return instructions for generating PRD file.
+
+    Returns:
+        dict: The content of the instructions or an error message.
+    """
+    try:
+        with open(
+            os.path.join(INSTRUCTIONS_DIR, GENERATE_PRD_INSTRUCTIONS),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            instructions = f.read()
+        with open(
+            os.path.join(TEMPLATES_DIR, PRD_TEMPLATE),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            template = f.read()
+
+        combined_content = f"""
+        <prd_template>{template}</prd_template>
+        <system_instructions>{instructions}</system_instructions>
+        <task>Siga o workflow fornecido em `system_instructions`. O formato a ser utilizado é o que esta definido em `prd_template`. Faça as perguntas para oh usuário que ajudem na elaboração do PRD. Espere a resposta do usuárioa a cada pergunta antes de seguir para a proxima. Pense profundamente na resolução do problema e faça pesquisas caso necessário. Ao final do processo, salve o arquivo gerado em `docs/PRD.json`.</task>
+        """
+        return {"content": combined_content}
+
+    except FileNotFoundError as e:
+        return _format_error("Arquivo de instruções não encontrado", e)
+
 @mcp.tool()
 def my_generate_docs_init() -> Dict[str, Any]:
     """
@@ -617,14 +653,12 @@ def my_generate_docs_init() -> Dict[str, Any]:
         ) as f:
             instructions = f.read()
 
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nSiga as instruções fornecidas e gere a documentação da base de código do workspace no formato descrito. Analise a estrutura da base de código e quebre em partes menores (modulos, pastas, arquivos). Conforme intera sobre cada parte, mostre qual arquivo será analisado e após analise e geração da modificação da documentação, mostrar as alterações feitas.\n</task>\n"
+
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nSiga as instruções fornecidas para gerar a documentação do workspace no formato descrito. Faça a geração dessa documentação de forma incremental. Analise a estrutura em árvore do workspace e quebre em partes menores (modulos, pastas, arquivos). Conforme intera sobre cada parte, mostre qual arquivo, modulo ou pasta do workspace será analisado em seguida e após analise faça a geração da documentação de forma incremental conforme descrito nas instruções.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
         return _format_error("Arquivo de instruções não encontrado", e)
-    except subprocess.SubprocessError as e:
-        return _format_error("Erro de subprocesso ao executar git diff", e)
-
 
 @mcp.tool()
 def my_convert_tasks_to_markdown(
