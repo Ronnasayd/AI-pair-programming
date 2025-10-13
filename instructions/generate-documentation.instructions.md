@@ -250,6 +250,18 @@ O summary terá os seguintes blocos (mantendo 500–1500 palavras):
 * summary = **visão panorâmica, onboarding rápido, links**.
 * Arquivos em `docs/` = **referência técnica aprofundada**.
 * Estilo: **Markdown moderno, headings claros, tabelas e listas curtas, links navegáveis**.
-* Links: **sempre que possível, linkar para outras partes da documentação no formato [referencia](link-relativo)**.
+
+
+### 5. Instruções obrigatórias.
+
+* Sempre utilize links no formato markdown padrão sempre use links no formato [docs/architecture.md](docs/architecture.md).
+* Sempre utilize listas numeradas ou com marcadores para organizar informações.
+* Sempre utilize headings (`#`, `##`, `###`) para estruturar o conteúdo.
+* Sempre utilize blocos de código com sintaxe destacada (```python, ```json, etc.) para comandos, exemplos e trechos de código.
+* Sempre utilize diagramas mermaid para representar fluxos e arquiteturas.
+* Sempre utilize tabelas para comparar ou listar informações estruturadas.
+
+### 6. Evitar
+* Evite referenciar arquivos, pastas ou modulos nesse formato `docs/architecture.md`, sempre use links no formato markdown padrão.
 
 </instruções>
