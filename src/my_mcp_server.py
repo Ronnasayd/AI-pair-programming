@@ -18,6 +18,8 @@ import requests
 from markdownify import markdownify as md
 from mcp.server.fastmcp import FastMCP
 
+from search_engine import search_codebase
+
 # Inicializa o servidor MCP corretamente
 mcp = FastMCP(name="my-mcp")
 
@@ -637,6 +639,7 @@ def my_generate_prd() -> Dict[str, Any]:
     except FileNotFoundError as e:
         return _format_error("Arquivo de instruções não encontrado", e)
 
+
 @mcp.tool()
 def my_generate_docs_init() -> Dict[str, Any]:
     """
@@ -653,12 +656,12 @@ def my_generate_docs_init() -> Dict[str, Any]:
         ) as f:
             instructions = f.read()
 
-
         combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nSiga as instruções fornecidas para gerar a documentação do workspace no formato descrito. Faça a geração dessa documentação de forma incremental. Analise a estrutura em árvore do workspace e quebre em partes menores (modulos, pastas, arquivos). Conforme intera sobre cada parte, mostre qual arquivo, modulo ou pasta do workspace será analisado em seguida e após analise faça a geração da documentação de forma incremental conforme descrito nas instruções.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
         return _format_error("Arquivo de instruções não encontrado", e)
+
 
 @mcp.tool()
 def my_convert_tasks_to_markdown(
@@ -768,6 +771,22 @@ def my_styleguide(language: str = "python") -> Dict[str, Any]:
             return _format_error("Erro ao buscar styleguide", response.status_code)
     except OSError as e:
         return _format_error("Erro de sistema ao abrir arquivo de styleguide", e)
+
+
+@mcp.tool()
+def my_search_references(query: str, rootProject: str = "src"):
+    """
+    Returns relevant references from the codebase based on the search query.
+
+    Args:
+        query (str): The search query.
+        rootProject (str): The root project directory (default: "src").
+
+    Returns:
+        dict: Search results.
+    """
+    results = search_codebase(query, rootProject)
+    return {"query": query, "results": results}
 
 
 if __name__ == "__main__":

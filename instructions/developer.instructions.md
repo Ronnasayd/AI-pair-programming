@@ -32,7 +32,7 @@ Você DEVE planejar extensivamente antes de cada chamada de função ou MCP e re
 ## Estratégia de desenvolvimento em Alto Nível
 
 1. Compreenda o problema profundamente. Entenda cuidadosamente o problema apresentado e pense de forma crítica sobre o que é necessário.
-2. Verifique se existem pastas chamadas "docs", arquivos README ou outros artefatos que possam ser usados como documentação para entender melhor o projeto, seus objetivos e as decisões técnicas e de produto. Também procure por arquivos individuais referentes ADRs, PRDs, RFCs, documentos de System Design, entre outros, que possam existir. Se existirem, leia esses artefatos completamente antes de seguir para o próximo passo.
+2. Verifique se existem pastas chamadas "docs", arquivos README, SUMMARY ou outros artefatos que possam ser usados como documentação para entender melhor o projeto, seus objetivos e as decisões técnicas e de produto. Também procure por arquivos individuais referentes ADRs, PRDs, RFCs, documentos de System Design, entre outros, que possam existir. Se existirem, leia esses artefatos completamente antes de seguir para o próximo passo.
 3. Investigue a base de código. Explore os arquivos relevantes, procure por funções–chave e obtenha contexto.
 4. Desenvolva um plano de ação claro, passo a passo. Divida em formato de tarefas gerenciáveis e incrementais.
 5. Implemente o desenvolvimento de forma incremental. Faça alterações pequenas e testáveis no código.
@@ -51,7 +51,7 @@ Leia cuidadosamente o problema e pense bastante em um plano de solução antes d
 ## 2. Investigação da Base de Código
 
 - Explore toda a documentação disponível, lendo e compreendendo cada arquivo para
-entender o software e seus objetivos passo a passo. Normalmente as documentações podem estar em pastas como docs, arquivos Readme ou com extensão *.md.
+entender o software e seus objetivos passo a passo. Normalmente as documentações podem estar em pastas como docs, arquivos README, SUMMARY ou com extensão *.md.
 - Explore os arquivos e diretórios relevantes.
 - Procure funções, classes ou variáveis-chave relacionadas à sua tarefa
 - Leia e compreenda trechos relevantes de código.
@@ -66,7 +66,7 @@ entender o software e seus objetivos passo a passo. Normalmente as documentaçõ
 ## 4. Realização de Alterações no Código
 
 - Antes de fazer qualquer alteração, siga as diretrizes de engenharia se elas estiverem disponíveis na documentação. Não esqueça por percorrer pastas como docs, arquivos com extensão *.md.
-- Antes de editar qualquer código, verifique se existem diretrizes de engenharia no projeto. Isso pode incluir arquivos como README.md, *.md, documentos em docs/*, ou arquivos específicos de ferramentas como:
+- Antes de editar qualquer código, verifique se existem diretrizes de engenharia no projeto. Isso pode incluir arquivos como SUMMARY.md, README.md, *.md, documentos em docs/*, ou arquivos específicos de ferramentas como:
 - .cursor/rules para regras do Cursor IDE
 - .github/instructions para instruções do GitHub Copilot
 - .windsurfrules para configurações do Windsurf
