@@ -233,6 +233,7 @@ class CopilotAPI:
         }
 
         if len(references) > 0:
+            logger.info(f"CopilotAPI.chat including references: {references}")
             for ref in references:
                 with open(ref, "r", encoding="utf-8") as f:
                     data["references"].append(

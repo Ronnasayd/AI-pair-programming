@@ -1,0 +1,5 @@
+modelcontextprotocol
+rank-bm25
+fastembed
+onnxruntime
+numpy
