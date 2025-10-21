@@ -1,5 +1,7 @@
+import fnmatch
 import os
 import re
+import subprocess
 
 import numpy as np
 from fastembed import TextEmbedding
@@ -45,6 +47,61 @@ DEFAULT_EXCLUDE = [
     "__pycache__/",
     ".pdf",
 ]
+
+
+def ag_search(text="", rootProject="src", globs=["*.*"]):
+    command_results = []
+    data = {}
+    exclude_dirs = [item for item in DEFAULT_EXCLUDE if item.endswith("/")]
+    exclude_files = [item for item in DEFAULT_EXCLUDE if not item.endswith("/")]
+    command = ["ag", "--nocolor", "--numbers", "--filename"]
+    for item in exclude_dirs:
+        command.append(f'--ignore="{item.replace("/", "")}"')
+    for item in exclude_files:
+        command.append(f'--ignore="*{item}"')
+    command.append("|".join(text.split(" ")))
+    command.append(rootProject)
+    command.extend(
+        "| awk '{ print substr($0, 1, length($0) < 250 ? length($0) : 250) }'".split(
+            " "
+        )
+    )
+    # print(" ".join(command))
+
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    if result.returncode == 0:
+        command_results.extend(result.stdout.split("\n"))
+    for line in command_results:
+        s = line.split(":")
+        if len(s) > 1:
+            limit = 5
+            file = s[0]
+            number = int(s[1])
+            data[file] = list(
+                set(
+                    data.get(file, [])
+                    + list(range(max(number - limit, 1), number + limit))
+                )
+            )
+    result = []
+    for key, value in data.items():
+        matches = []
+        for glob in globs:
+            matches.append(fnmatch.fnmatch(key, glob))
+        if any(matches):
+            with open(key, "r", encoding="utf-8", errors="ignore") as f:
+                file_lines = f.readlines()
+                lines = sorted(value)
+                start = lines[0]
+                last = lines[0]
+                for line in lines:
+                    if abs(line - last) > 1:
+                        result.append(
+                            dict(path=key, code="".join(file_lines[start:last]))
+                        )
+                        start = line
+                    last = line
+    return result
 
 
 # ===================================
@@ -125,8 +182,9 @@ def semantic_rerank(snippets, query, top_n=10):
     ]
 
 
-def search_codebase(query: str, base_dir="src"):
-    snippets = collect_code_snippets(base_dir)
+def search_codebase(query: str, base_dir="src", globs=["*.*"]):
+    # snippets = collect_code_snippets(base_dir)
+    snippets = ag_search(query, rootProject=base_dir, globs=globs)
     if not snippets:
         return []
 
