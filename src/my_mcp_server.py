@@ -774,18 +774,21 @@ def my_styleguide(language: str = "python") -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_search_references(query: str, rootProject: str = "src"):
+def my_search_references(query: str, rootProject: Optional[str] = None,globs=["*.*"]) -> Dict[str, Any]:
     """
     Returns relevant references from the codebase based on the search query.
 
     Args:
         query (str): The search query.
-        rootProject (str): The root project directory (default: "src").
+        rootProject (str): The root project directory.
+        globs (List[str]): List of glob patterns to filter files.
 
     Returns:
         dict: Search results.
     """
-    results = search_codebase(query, rootProject)
+    if not rootProject:
+        rootProject = os.getcwd()
+    results = search_codebase(query, rootProject, globs)
     return {"query": query, "results": results}
 
 
