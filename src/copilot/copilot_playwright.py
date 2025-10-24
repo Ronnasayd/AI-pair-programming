@@ -18,7 +18,7 @@ async def get_cookies():
     async with async_playwright() as p:
         context = await p.chromium.launch_persistent_context(
             user_data_dir=user_data_dir,
-            headless=False,
+            headless=True,
             executable_path=chrome_path,
             args=[
                 "--no-sandbox"
