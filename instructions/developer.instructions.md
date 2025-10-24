@@ -165,10 +165,10 @@ Antes de entregar qualquer feature, verifique:
 
 ### 5.6. Erros comuns a evitar
 
-* ❌ Testar múltiplas funcionalidades no mesmo `it(...)`
-* ❌ Não usar mocks corretamente e testar o serviço inteiro com dependências reais
-* ❌ Usar lógica complexa dentro dos testes
-* ❌ Esquecer de testar fluxos de erro e exceções
-* ❌ Escrever testes que quebram com pequenas mudanças irrelevantes
+* [x] Testar múltiplas funcionalidades no mesmo `it(...)`
+* [x] Não usar mocks corretamente e testar o serviço inteiro com dependências reais
+* [x] Usar lógica complexa dentro dos testes
+* [x] Esquecer de testar fluxos de erro e exceções
+* [x] Escrever testes que quebram com pequenas mudanças irrelevantes
 
 </instruções>
