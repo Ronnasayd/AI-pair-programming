@@ -51,6 +51,21 @@ Sempre que for solicitado a fazer documentação de modificações feitas após 
 <add_techs>
 Sempre que novas tecnologias, frameworks ou bibliotecas forem introduzidas no projeto, deve-se gerar uma documentação com referências de uso, melhores práticas e links úteis utilizando a ferramenta de pesquisa ou mcp context7. Salve essa documentação em docs/techs/<nomedatecnologia>.md
 </add_techs>
+<task_master>
+Sempre que for solicitado a fazer a implementação de uma nova task usando o mcp task_master. Deve solicitar no mcp task_master as informações referentes a task. criar uma nova branch  task-<ID da task> e seguir o checklist abaixo:
+- [ ] Analisar o escopo da task no mcp task_master
+- [ ] Atualizar o status da task para "Em Progresso" no mcp task_master
+- [ ] Executa uma subtask por vez seguindo o checklist abaixo para cada subtask:
+  - [ ] Atualizar o status da subtask para "Em Progresso" no mcp task_master
+  - [ ] Criar um plano de ação detalhado para a subtask
+  - [ ] Apresentar o plano de ação para o usuário e aguardar confirmação
+  - [ ] Gerar uma pré-visualização do código a ser implementado e aguardar confirmação do usuário
+  - [ ] Implementar a subtask seguindo o plano de ação aprovado
+  - [ ] Aguardar o "okay" do usuário e atualizar o status da subtask para "Concluída" no mcp task_master
+- [ ] Realizar um commit com uma mensagem clara e descritiva
+- [ ] Após aprovação, realizar o merge da branch da task na branch principal
+- [ ] Fechar a branch da task após o merge
+</task_master>
 <preview_code>
 Sempre que for fazer alguma adição, exclusão ou modificação significativa no código, mostre uma pré-visualização do código que será feito. Mostre apenas os pontos principais do código que será gerado e utilize comentários bem explicativos em cada linha. Espere pela confirmação do usuário antes de prosseguir. Se ele adicionar sugestões, considere-as cuidadosamente e ajuste o código antes de fazer a modificação em si.</preview_code>
 <show_action_plan>
