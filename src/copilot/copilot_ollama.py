@@ -52,8 +52,8 @@ def extrair_attachments(texto: str) -> str:
     if not match:
         return []
     attachments_text = match.group(1).strip()
-    paths = re.findall(r"filepath:\s*(.+)", attachments_text)
-    paths = [path.split(" ")[0] for path in paths]
+    paths = re.findall(r"(#|#\s+)?filepath:\s*(.+)", attachments_text)
+    paths = [path[1] for path in paths if path[0] == ""]
     if not paths:
         return []
     paths = [path for path in paths if os.path.exists(path)]
