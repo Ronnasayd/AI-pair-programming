@@ -352,7 +352,7 @@ def _merge_tasks_with_meta(
 
 
 @mcp.tool()
-async def my_load_page_as_doc(url: str) -> Dict[str, Any]:
+async def my_mcp_load_page_as_doc(url: str) -> Dict[str, Any]:
     """
     Downloads a web page and returns clean text for documentation purposes.
 
@@ -376,7 +376,7 @@ async def my_load_page_as_doc(url: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_get_context(
+def my_mcp_get_context(
     exclude: str,
     exclude_content: str,
     workers: str,
@@ -442,7 +442,7 @@ def my_get_context(
 
 
 @mcp.tool()
-def my_run_command(command: str, rootProject: Optional[str] = None) -> Dict[str, Any]:
+def my_mcp_run_command(command: str, rootProject: Optional[str] = None) -> Dict[str, Any]:
     """
     Executes a shell command in the specified directory (or current directory if not provided).
     Se houver ambiente virtual (venv/.venv) no diretório, ativa automaticamente antes do comando.
@@ -481,7 +481,7 @@ def my_run_command(command: str, rootProject: Optional[str] = None) -> Dict[str,
 
 
 @mcp.tool()
-def my_run_prompt(name: str) -> Dict[str, Any]:
+def my_mcp_run_prompt(name: str) -> Dict[str, Any]:
     """
     Executes a predefined prompt by loading its instruction file.
 
@@ -503,7 +503,7 @@ def my_run_prompt(name: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_code_review(
+def my_mcp_code_review(
     rootProject: Optional[str] = None, command="git diff"
 ) -> Dict[str, Any]:
     """
@@ -543,7 +543,7 @@ def my_code_review(
 
 
 @mcp.tool()
-def my_generate_docs_update(
+def my_mcp_generate_docs_update(
     rootProject: Optional[str] = None, command="git diff"
 ) -> Dict[str, Any]:
     """
@@ -583,9 +583,9 @@ def my_generate_docs_update(
 
 
 @mcp.tool()
-def my_developer_workflow() -> Dict[str, Any]:
+def my_mcp_developer_instructions() -> Dict[str, Any]:
     """
-    Loads and returns the developer workflow instructions from a predefined instructions file.
+    Loads and returns the developer instructions that must be followed by the agent.
 
     Returns:
         dict: The content of the instructions or an error message.
@@ -608,7 +608,7 @@ def my_developer_workflow() -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_generate_prd() -> Dict[str, Any]:
+def my_mcp_generate_prd() -> Dict[str, Any]:
     """
     return instructions for generating PRD file.
 
@@ -641,7 +641,7 @@ def my_generate_prd() -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_generate_docs_init() -> Dict[str, Any]:
+def my_mcp_generate_docs_init() -> Dict[str, Any]:
     """
     return instructions for generating initial project documentation from a predefined instructions file.
 
@@ -664,7 +664,7 @@ def my_generate_docs_init() -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_convert_tasks_to_markdown(
+def my_mcp_convert_tasks_to_markdown(
     rootProject: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
@@ -705,7 +705,7 @@ def my_convert_tasks_to_markdown(
 
 
 @mcp.tool()
-def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str, Any]:
+def my_mcp_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str, Any]:
     """
     Converts a markdown file in TODO-events format to tasks.json format.
     Utiliza meta.json para restaurar campos extras, se disponível.
@@ -746,7 +746,7 @@ def my_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str,
 
 
 @mcp.tool()
-def my_styleguide(language: str = "python") -> Dict[str, Any]:
+def my_mcp_styleguide(language: str = "python") -> Dict[str, Any]:
     """
     Returns a style guide for the specified programming language.
 
@@ -774,7 +774,7 @@ def my_styleguide(language: str = "python") -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_search_references(query: str, rootProject: Optional[str] = None,globs=["*.*"]) -> Dict[str, Any]:
+def my_mcp_search_references(query: str, rootProject: Optional[str] = None,globs=["*.*"]) -> Dict[str, Any]:
     """
     Returns relevant references from the codebase based on the search query.
 
