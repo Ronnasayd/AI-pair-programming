@@ -309,7 +309,7 @@ async def root():
     return JSONResponse(
         content={
             "status": "copilot ollama proxy server is running",
-            "version": "0.1.0",
+            "version": "0.6.4",
             "models": [MODEL_FULL_NAME],
             "backend": "github-copilot",
         }
@@ -320,7 +320,7 @@ async def root():
 async def version():
     """Get server version information."""
     return JSONResponse(
-        content={"version": "0.1.9", "proxy": True, "backend": "github-copilot"}
+        content={"version": "0.6.4", "proxy": True, "backend": "github-copilot"}
     )
 
 
