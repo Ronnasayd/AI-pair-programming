@@ -48,12 +48,29 @@ def extrair_attachments(texto: str) -> str:
     e retorna uma string no formato:
     <attachments><attachment id="ARQUIVO_1"/><attachment id="ARQUIVO_2"/>...</attachments>
     """
-    match = re.search(r"<attachments>(.*)<\/attachments>", texto, re.DOTALL)
-    if not match:
+    regex1 = r'<attachment\s+filePath=\"([^"]+)">([\s\S]*?)<\/attachment>'
+    match1 = re.findall(regex1, texto)
+    paths1 = []
+    for m in match1:
+        if os.path.exists(m[0]):
+            paths1.append(m[0])
+    if paths1:
+        new_prompt = re.sub(
+            r'<attachment\s+filePath=\"([^"]+)">([\s\S]*?)<\/attachment>',
+            "",
+            texto,
+            count=0,
+            flags=re.DOTALL,
+        )
+        return [new_prompt, paths1]
+    
+    
+    match2 = re.search(r"<attachments>(.*)<\/attachments>", texto, re.DOTALL)
+    if not match2:
         return []
-    attachments_text = match.group(1).strip()
+    attachments_text = match2.group(1).strip()
     paths = re.findall(r"(#|#\s+)?filepath:\s*(.+)", attachments_text)
-    paths = [path[1] for path in paths if path[0] == ""]
+    paths = [path[1] for path in paths if path[0] == "" and os.path.exists(path[1])]
     if not paths:
         return []
     paths = [path for path in paths if os.path.exists(path)]
