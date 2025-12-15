@@ -80,8 +80,15 @@ def _generate_markdown_from_tasks(tasks_data: Dict[str, Any]) -> str:
             # Main task
             task_id = task.get("id", "")
             title = task.get("title", "Untitled Task")
+            description = task.get("description", "").strip()
 
             markdown_lines.append(f"- {status_symbol} {task_id} - {title}")
+            # Include description as a field (two-space indent) if present
+            if description:
+                # Normalize newlines to a single line to keep markdown parsing simple
+                desc_single = " ".join(description.splitlines()).strip()
+                if desc_single and desc_single != title:
+                    markdown_lines.append(f"  - **Description**: {desc_single}")
 
             # Process subtasks if they exist
             subtasks = task.get("subtasks", [])
@@ -101,10 +108,16 @@ def _generate_markdown_from_tasks(tasks_data: Dict[str, Any]) -> str:
                     )
                     subtask_id = subtask.get("id", "")
                     subtask_title = subtask.get("title", "Untitled Subtask")
+                    subtask_description = subtask.get("description", "").strip()
 
                     markdown_lines.append(
                         f"  - {subtask_status_symbol} {subtask_id} - {subtask_title}"
                     )
+                    # Include subtask description as a deeper-indented field (4 spaces)
+                    if subtask_description:
+                        sub_desc_single = " ".join(subtask_description.splitlines()).strip()
+                        if sub_desc_single and sub_desc_single != subtask_title:
+                            markdown_lines.append(f"    - **Description**: {sub_desc_single}")
 
             markdown_lines.append("")
             markdown_lines.append("---")  # Separator between main tasks
@@ -223,6 +236,18 @@ def _parse_markdown_to_tasks(markdown_content: str) -> Dict[str, Any]:
             field_name = field_name.strip()
             field_value = field_value.strip()
 
+            # Map known fields into the current subtask
+            key = field_name.lower()
+            if key == "description":
+                current_subtask["description"] = field_value
+            elif key == "details":
+                current_subtask["details"] = field_value
+            elif key == "priority":
+                current_subtask["priority"] = field_value
+            elif key == "status":
+                # Allow overriding status via field
+                current_subtask["status"] = _symbol_to_status(field_value) if len(field_value) == 1 else field_value
+
             continue
 
         # Check for main task field
@@ -231,6 +256,16 @@ def _parse_markdown_to_tasks(markdown_content: str) -> Dict[str, Any]:
             field_name, field_value = field_match.groups()
             field_name = field_name.strip()
             field_value = field_value.strip()
+            # Map known fields into the current main task
+            key = field_name.lower()
+            if key == "description":
+                current_task["description"] = field_value
+            elif key == "details":
+                current_task["details"] = field_value
+            elif key == "priority":
+                current_task["priority"] = field_value
+            elif key == "status":
+                current_task["status"] = _symbol_to_status(field_value) if len(field_value) == 1 else field_value
 
     # Don't forget the last task
     if current_task:
