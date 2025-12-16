@@ -1,73 +1,82 @@
 <rules>
-Gere código que siga as melhores práticas reconhecidas pelo setor e esteja otimizado para desempenho, segurança e escalabilidade.
-Garanta que o código seja limpo, bem estruturado, legível e fácil de manter.
-Siga rigorosamente as convenções de codificação, padrões de nomenclatura e as diretrizes de estilo do projeto ou linguagem utilizada.
-Evite métodos, APIs ou bibliotecas obsoletos ou depreciados; prefira sempre alternativas atuais e bem suportadas pela comunidade.
-Inclua comentários explicativos para lógicas complexas, decisões de arquitetura, limitações conhecidas e trechos de código não triviais.
-Considere o contexto da base de código existente, integrando novas implementações de modo compatível e seguindo padrões já estabelecidos.
-Evite mudanças que quebrem a retrocompatibilidade, exceto quando absolutamente necessário, e nesse caso, forneça documentação detalhada sobre as alterações e instruções para migração.
-Ao criar funções, métodos, classes ou módulos, utilize nomes claros, descritivos e consistentes, refletindo com precisão o seu propósito e evitando ambiguidades.
-Implemente tratamento de erros robusto e validação de entrada em todos os pontos relevantes, contemplando tanto erros previstos quanto exceções inesperadas.
-Garanta que o código seja testável, incluindo exemplos, testes automatizados ou instruções para validação manual sempre que possível.
-Para código front-end, assegure que componentes sejam responsivos, acessíveis, compatíveis com diferentes navegadores e dispositivos, e sigam as recomendações de usabilidade e padrões modernos da web (WCAG, ARIA, etc.).
-Para código back-end, priorize segurança (proteção contra injeções, autenticação, autorização, criptografia), escalabilidade e eficiência no acesso a dados e recursos.
-Se o pedido for ambíguo, incompleto ou contraditório, solicite esclarecimentos ao usuário antes de gerar o código, especificando as dúvidas de forma objetiva.
-Evite o uso de gírias, linguagem informal ou abreviações excessivas nos comentários, documentação e mensagens de log.
-Adote princípios de programação defensiva, modularização, reutilização e separação de responsabilidades.
-Inclua documentação clara e objetiva, sempre que houver alterações significativas, novos componentes, endpoints, ou interfaces públicas.
-Considere requisitos de internacionalização/localização, se aplicável ao projeto.
-Sempre que possível, utilize recursos nativos da linguagem ou bibliotecas amplamente utilizadas, em vez de implementar soluções do zero sem justificativa técnica.
+Generate code that follows recognized industry best practices and is optimized for performance, security, and scalability.
+Ensure the code is clean, well-structured, readable, and easy to maintain.
+Strictly follow coding conventions, naming standards, and the style guidelines of the project or chosen language.
+Avoid obsolete or deprecated methods, APIs, or libraries; always prefer current, well-supported alternatives.
+Include explanatory comments for complex logic, architectural decisions, known limitations, and non-trivial code sections.
+Consider the context of the existing codebase, integrating new implementations in a compatible way and following established patterns.
+Avoid changes that break backward compatibility unless absolutely necessary; in such cases, provide detailed documentation of changes and migration instructions.
+When creating functions, methods, classes, or modules, use clear, descriptive, and consistent names that accurately reflect their purpose and avoid ambiguity.
+Implement robust error handling and input validation at all relevant points, covering both expected errors and unexpected exceptions.
+Ensure the code is testable, including examples, automated tests, or instructions for manual validation whenever possible.
+For front-end code, ensure components are responsive, accessible, compatible across different browsers and devices, and follow modern web usability recommendations and standards (WCAG, ARIA, etc.).
+For back-end code, prioritize security (protection against injections, authentication, authorization, encryption), scalability, and efficient access to data and resources.
+If the request is ambiguous, incomplete, or contradictory, ask the user for clarification before generating code, specifying your questions objectively.
+Avoid slang, informal language, or excessive abbreviations in comments, documentation, and log messages.
+Adopt defensive programming principles, modularization, reuse, and separation of concerns.
+Include clear and objective documentation whenever there are significant changes, new components, endpoints, or public interfaces.
+Consider internationalization/localization requirements if applicable to the project.
+Whenever possible, use native language features or widely used libraries instead of implementing solutions from scratch without a solid technical justification.
 </rules>
+
 <avoid>
-Evite nomes confusos, genéricos ou abreviados para variáveis, funções, classes ou módulos (ex.: `x`, `temp1`, `doStuff`, `data1`).
-Não escreva código sem comentários em seções complexas, algoritmos não triviais ou decisões fora do padrão.
-Evite duplicação de código; prefira abstração e reutilização por meio de funções, métodos ou módulos.
-Não ignore o tratamento de erros ou presuma sucesso em operações críticas, como acesso a recursos externos, I/O ou manipulação de dados.
-Não utilize valores mágicos (números, strings hardcoded) sem explicação ou definição em constantes nomeadas ou enums.
-Evite misturar múltiplas responsabilidades em uma única função, classe ou módulo; pratique o princípio da responsabilidade única.
-Não implemente código sem testes básicos, validações de comportamento ou exemplos de uso.
-Não ignore o desempenho em partes críticas, como loops ineficientes, consultas pesadas ou operações síncronas bloqueantes.
-Nunca confie na entrada do usuário sem validação adequada ou proteção contra vulnerabilidades (XSS, CSRF).
-Não deixe código morto, comentado, funções não utilizadas ou trechos obsoletos no projeto.
-Não reimplemente funcionalidades já existentes em bibliotecas estáveis e bem testadas sem justificativa técnica relevante.
-Não desconsidere guias de estilo, estrutura, convenções do projeto ou recomendações da equipe.
-Evite excesso de estruturas condicionais aninhadas (muitos if-elif-else), prefira alternativas como polimorfismo, dicionários ou padrões de projeto.
-Nunca importe módulos fora do nível superior do arquivo, exceto quando explicitamente necessário (ex.: imports condicionais ou de plugins).
-Jamais capture exceções muito gerais (ex.: `except Exception`) sem necessidade; prefira capturar exceções específicas.
-Não acesse membros protegidos ou privados fora da classe ou módulo de origem.
-Evite deixar variáveis, argumentos ou parâmetros não utilizados no código.
-Não utilize tipagem genérica ou permissiva demais (ex.: `any`, tipos sem restrição) sem motivo claro.
-Evite dependências circulares, acoplamento excessivo entre módulos e violações ao princípio da inversão de dependências.
-Não utilize práticas desatualizadas de segurança, algoritmos obsoletos de criptografia ou métodos inseguros de autenticação/autorização.
-Não ignore requisitos de internacionalização/localização em projetos que demandem suporte multi-idioma.
-Evite inconsistências entre ambientes de desenvolvimento, teste e produção (ex.: configurações hardcoded, caminhos absolutos, permissões diferentes).
+Avoid confusing, generic, or abbreviated names for variables, functions, classes, or modules (e.g., `x`, `temp1`, `doStuff`, `data1`).
+Do not write code without comments in complex sections, non-trivial algorithms, or non-standard decisions.
+Avoid code duplication; prefer abstraction and reuse through functions, methods, or modules.
+Do not ignore error handling or assume success in critical operations such as access to external resources, I/O, or data manipulation.
+Do not use magic values (hardcoded numbers, strings) without explanation or defining them as named constants or enums.
+Avoid mixing multiple responsibilities in a single function, class, or module; practice the Single Responsibility Principle.
+Do not implement code without basic tests, behavior validations, or usage examples.
+Do not ignore performance in critical parts, such as inefficient loops, heavy queries, or blocking synchronous operations.
+Never trust user input without proper validation or protection against vulnerabilities (XSS, CSRF).
+Do not leave dead code, commented-out code, unused functions, or obsolete snippets in the project.
+Do not reimplement functionality already available in stable, well-tested libraries without relevant technical justification.
+Do not disregard style guides, structure, project conventions, or team recommendations.
+Avoid excessive nested conditionals (many if-elif-else); prefer alternatives such as polymorphism, dictionaries/dispatch maps, or design patterns.
+Never import modules outside the top level of the file unless explicitly necessary (e.g., conditional imports or plugins).
+Do not catch overly broad exceptions (e.g., `except Exception`) without need; prefer catching specific exceptions.
+Do not access protected or private members outside the originating class or module.
+Avoid leaving variables, arguments, or parameters unused in the code.
+Do not use overly generic or too-permissive typing (e.g., `any`, unconstrained types) without a clear reason.
+Avoid circular dependencies, excessive coupling between modules, and violations of the Dependency Inversion Principle.
+Do not use outdated security practices, obsolete cryptographic algorithms, or insecure authentication/authorization methods.
+Do not ignore internationalization/localization requirements in projects that require multi-language support.
+Avoid inconsistencies between development, test, and production environments (e.g., hardcoded configurations, absolute paths, different permissions).
 </avoid>
+
 <run_commands>
-Execute comandos de tarefas longas (que levem mais de 2 segundos) com a ferramenta mcp my_run_command. Sempre passe o argumento correto rootProject para o run_command, que deve ser o diretório raiz do projeto. Se o projeto tiver um ambiente virtual (venv/.venv), ative-o automaticamente antes de executar o comando.
+Run long-running tasks (that take more than 2 seconds) with the MCP tool `my_run_command`. Always pass the correct `rootProject` argument to `run_command`, which must be the project’s root directory. If the project has a virtual environment (`venv`/`.venv`), activate it automatically before executing the command.
 </run_commands>
+
 <update_documentation>
-Sempre que for solicitado a fazer documentação de modificações feitas após uma implementação utilize o mcp my_generate_docs_update. passando o argumento correto rootProject, que deve ser o diretório raiz do projeto e um commando que descreva as modificações feitas (ex: git diff). Siga as instruções fornecidas pela ferramenta para atualização da documentação.
+Whenever you are asked to document modifications made after an implementation, use the MCP tool `my_generate_docs_update`, passing the correct `rootProject` (the project’s root directory) and a command that describes the changes made (e.g., `git diff`). Follow the tool’s instructions to update the documentation.
 </update_documentation>
+
 <add_techs>
-Sempre que novas tecnologias, frameworks ou bibliotecas forem introduzidas no projeto, deve-se gerar uma documentação com referências de uso, melhores práticas e links úteis utilizando a ferramenta de pesquisa ou mcp context7. Salve essa documentação em docs/techs/<nomedatecnologia>.md
+Whenever new technologies, frameworks, or libraries are introduced into the project, generate documentation with usage references, best practices, and useful links using a research tool or MCP Context7. Save this documentation in `docs/techs/<technology-name>.md`.
 </add_techs>
+
 <task_master>
-Sempre que for solicitado a fazer a implementação de uma nova task usando o mcp task_master. Deve solicitar no mcp task_master as informações referentes a task. criar uma nova branch  task-<ID da task> e seguir o checklist abaixo:
-- [ ] Analisar o escopo da task no mcp task_master
-- [ ] Atualizar o status da task para "Em Progresso" no mcp task_master
-- [ ] Executa uma subtask por vez seguindo o checklist abaixo para cada subtask:
-  - [ ] Atualizar o status da subtask para "Em Progresso" no mcp task_master
-  - [ ] Criar um plano de ação detalhado para a subtask
-  - [ ] Apresentar o plano de ação para o usuário e aguardar confirmação
-  - [ ] Gerar uma pré-visualização do código a ser implementado e aguardar confirmação do usuário
-  - [ ] Implementar a subtask seguindo o plano de ação aprovado
-  - [ ] Aguardar o "okay" do usuário e atualizar o status da subtask para "Concluída" no mcp task_master
-- [ ] Realizar um commit com uma mensagem clara e descritiva
-- [ ] Após aprovação, realizar o merge da branch da task na branch principal
-- [ ] Fechar a branch da task após o merge
-</task_master>
+Whenever you are asked to implement a new task using MCP Task Master, request the task details from MCP Task Master, create a new branch `task-<TASK_ID>`, and follow the checklist below:
+
+- [ ] Analyze the task scope in MCP Task Master
+- [ ] Update the task status to "In Progress" in MCP Task Master
+- [ ] Execute one subtask at a time, following the checklist below for each subtask:
+  - [ ] Update the subtask status to "In Progress" in MCP Task Master
+  - [ ] Create a detailed action plan for the subtask
+  - [ ] Present the action plan to the user and wait for confirmation
+  - [ ] Generate a preview of the code to be implemented and wait for the user's confirmation
+  - [ ] Implement the subtask according to the approved action plan
+  - [ ] Wait for the user's "okay" and update the subtask status to "Completed" in MCP Task Master
+- [ ] Make a commit with a clear, descriptive message
+- [ ] After approval, merge the task branch into the main branch
+- [ ] Close the task branch after the merge
+      </task_master>
+
 <preview_code>
-Sempre que for fazer alguma adição, exclusão ou modificação significativa no código, mostre uma pré-visualização do código que será feito. Mostre apenas os pontos principais do código que será gerado e utilize comentários bem explicativos em cada linha. Espere pela confirmação do usuário antes de prosseguir. Se ele adicionar sugestões, considere-as cuidadosamente e ajuste o código antes de fazer a modificação em si.</preview_code>
+Whenever making any significant addition, deletion, or modification to code, show a preview of the code that will be produced. Show only the key points of the generated code and include well-explained comments on each line. Wait for the user's confirmation before proceeding. If the user adds suggestions, consider them carefully and adjust the code before making the actual modification.
+</preview_code>
+
 <show_action_plan>
-Sempre que for fazer alguma adição, exclusão ou modificação significativa no código, explique o que será feito e o motivo de tal alteração. Espere pela confirmação do usuário antes de prosseguir. Se ele adicionar sugestões, considere-as cuidadosamente e ajuste o plano conforme necessário.
+Whenever making any significant addition, deletion, or modification to code, explain what will be done and why the change is needed. Wait for the user's confirmation before proceeding. If the user adds suggestions, consider them carefully and adjust the plan as necessary.
 </show_action_plan>
