@@ -404,10 +404,10 @@ async def my_mcp_load_page_as_doc(url: str) -> Dict[str, Any]:
 
         md_html = md(html, heading_style="ATX")
         if not md_html:
-            return {"error": "Não foi possível converter o HTML para Markdown."}
+            return {"error": "Failed to convert HTML to Markdown."}
         return {"content": md_html}
     except aiohttp.ClientError as e:
-        return _format_error("Erro de conexão HTTP ao carregar página", e)
+        return _format_error("HTTP connection error when loading page", e)
 
 
 @mcp.tool()
@@ -468,12 +468,12 @@ def my_mcp_get_context(
             check=False,
         )
         if result.returncode != 0:
-            return {"error": "Não foi possível executar o command"}
+            return {"error": "Failed to execute command"}
         return {"content": result.stdout}
     except FileNotFoundError as e:
-        return _format_error("Arquivo não encontrado ao executar comando", e)
+        return _format_error("File not found when running command.", e)
     except subprocess.SubprocessError as e:
-        return _format_error("Erro de subprocesso ao executar comando", e)
+        return _format_error("Subprocess error when running command", e)
 
 
 @mcp.tool()
@@ -509,10 +509,10 @@ def my_mcp_run_command(command: str, rootProject: Optional[str] = None) -> Dict[
             }
     except FileNotFoundError as e:
         return _format_error(
-            "Arquivo ou diretório não encontrado ao executar comando", e
+            "File or directory not found when running command.", e
         )
     except subprocess.SubprocessError as e:
-        return _format_error("Erro de subprocesso ao executar comando", e)
+        return _format_error("Subprocess error when running command", e)
 
 
 @mcp.tool()
@@ -532,9 +532,9 @@ def my_mcp_run_prompt(name: str) -> Dict[str, Any]:
             content = f.read()
         return {"content": content}
     except IndexError as e:
-        return _format_error("Arquivo de instruções não encontrado", e)
+        return _format_error("Instruction file not found.", e)
     except OSError as e:
-        return _format_error("Erro de sistema ao abrir arquivo de instruções", e)
+        return _format_error("System error when opening instruction file", e)
 
 
 @mcp.tool()
@@ -568,13 +568,13 @@ def my_mcp_code_review(
         ) as f:
             instructions = f.read()
 
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBaseado nas modificações feitas, verifique se há ajustes ou melhoria de código a serem feitos seguindo as instruções fornecidas.\n</task>\n"
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBased on the modifications made, check if there are any adjustments or code improvements to be made by following the instructions provided.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
-        return _format_error("Arquivo de instruções não encontrado", e)
+        return _format_error("Instruction file not found", e)
     except subprocess.SubprocessError as e:
-        return _format_error("Erro de subprocesso ao executar git diff", e)
+        return _format_error("Subprocess error when executing git diff", e)
 
 
 @mcp.tool()
@@ -608,13 +608,13 @@ def my_mcp_generate_docs_update(
         ) as f:
             instructions = f.read()
 
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBaseado nas modificações e instruções fornecidas, ajuste a documentação de forma adequada. Analise os arquivos de documentação existentes (verificar pasta docs/ e SUMMARY.md caso existam) e veja quais devem ser atualizados com base nas modificações feitas. Preferencialmente atualize arquivos existentes, mas se necessário crie novos arquivos. Só atualize os arquivos se as modificações forem relevantes para o tipo de conteúdo do arquivo. Não adicione texto só por adicionar. Antes de qualquer modificação mostre o que será adicionado e pergunte se deve prosseguir.\n</task>\n"
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBased on the modifications and instructions provided, adjust the documentation accordingly. Review existing documentation files (check the docs/ folder and SUMMARY.md if they exist) and see which ones need updating based on the changes made. Preferably update existing files, but create new ones if necessary. Only update files if the changes are relevant to the file's content type. Don't add text just for the sake of adding it. Before any modification, show what will be added and ask if you should proceed.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
-        return _format_error("Arquivo de instruções não encontrado", e)
+        return _format_error("Instruction file not found", e)
     except subprocess.SubprocessError as e:
-        return _format_error("Erro de subprocesso ao executar git diff", e)
+        return _format_error("Subprocess error when executing git diff", e)
 
 
 @mcp.tool()
@@ -633,13 +633,13 @@ def my_mcp_developer_instructions() -> Dict[str, Any]:
         ) as f:
             instructions = f.read()
 
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nSiga as instruções fornecidas para o desenvolvimento de código em qualquer implementação ou ajuste solicitado a seguir.\n</task>\n"
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nFollow the instructions provided for code development in any implementation or adjustment requested below.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
-        return _format_error("Arquivo de instruções não encontrado", e)
+        return _format_error("Instruction file not found", e)
     except subprocess.SubprocessError as e:
-        return _format_error("Erro de subprocesso ao executar git diff", e)
+        return _format_error("Subprocess error when executing git diff", e)
 
 
 @mcp.tool()
@@ -667,12 +667,12 @@ def my_mcp_generate_prd() -> Dict[str, Any]:
         combined_content = f"""
         <prd_template>{template}</prd_template>
         <system_instructions>{instructions}</system_instructions>
-        <task>Siga o workflow fornecido em `system_instructions`. O formato a ser utilizado é o que esta definido em `prd_template`. Faça as perguntas para oh usuário que ajudem na elaboração do PRD. Espere a resposta do usuárioa a cada pergunta antes de seguir para a proxima. Pense profundamente na resolução do problema e faça pesquisas caso necessário. Ao final do processo, salve o arquivo gerado em `docs/PRD.json`.</task>
+        <task>Follow the workflow provided in `system_instructions`. The format to be used is defined in `prd_template`. Ask the user questions that help in the elaboration of the PRD. Wait for the user's response to each question before proceeding to the next. Think deeply about the problem resolution and conduct research if necessary. At the end of the process, save the generated file in `docs/PRD.json`.</task>
         """
         return {"content": combined_content}
 
     except FileNotFoundError as e:
-        return _format_error("Arquivo de instruções não encontrado", e)
+        return _format_error("Instruction file not found", e)
 
 
 @mcp.tool()
@@ -691,12 +691,11 @@ def my_mcp_generate_docs_init() -> Dict[str, Any]:
         ) as f:
             instructions = f.read()
 
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nSiga as instruções fornecidas para gerar a documentação do workspace no formato descrito. Faça a geração dessa documentação de forma incremental. Analise a estrutura em árvore do workspace e quebre em partes menores (modulos, pastas, arquivos). Conforme intera sobre cada parte, mostre qual arquivo, modulo ou pasta do workspace será analisado em seguida e após analise faça a geração da documentação de forma incremental conforme descrito nas instruções.\n</task>\n"
+        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nFollow the instructions provided to generate the workspace documentation in the described format. Perform the generation of this documentation incrementally. Analyze the tree structure of the workspace and break it down into smaller parts (modules, folders, files). As you iterate over each part, show which file, module, or folder of the workspace will be analyzed next and after analysis, perform the generation of the documentation incrementally as described in the instructions.\n</task>\n"
         return {"content": combined_content}
 
     except FileNotFoundError as e:
-        return _format_error("Arquivo de instruções não encontrado", e)
-
+        return _format_error("Instruction file not found", e)
 
 @mcp.tool()
 def my_mcp_convert_tasks_to_markdown(
@@ -717,7 +716,7 @@ def my_mcp_convert_tasks_to_markdown(
             rootProject = os.getcwd()
         tasks_file_path = os.path.join(rootProject, TASKS_DIR, TASKS_JSON)
         if not os.path.isfile(tasks_file_path):
-            return {"error": f"Arquivo tasks.json não encontrado em: {tasks_file_path}"}
+            return {"error": f"tasks.json file not found at: {tasks_file_path}"}
         with open(tasks_file_path, "r", encoding="utf-8") as f:
             tasks_data = json.load(f)
         markdown_content = _generate_markdown_from_tasks(tasks_data)
@@ -730,13 +729,13 @@ def my_mcp_convert_tasks_to_markdown(
         meta = _extract_meta_from_tasks(tasks_data)
         with open(os.path.join(tasks_dir_path, META_JSON), "w", encoding="utf-8") as f:
             json.dump(meta, f, ensure_ascii=False, indent=2)
-        return {"content": "Arquivos tasks.md e meta.json criados com sucesso."}
+        return {"content": "Files tasks.md and meta.json created successfully."}
     except json.JSONDecodeError as e:
-        return _format_error("Erro ao decodificar JSON", e)
+        return _format_error("Error decoding JSON", e)
     except OSError as e:
-        return _format_error("Erro de sistema ao abrir arquivo", e)
+        return _format_error("System error when opening file", e)
     except Exception as e:
-        return _format_error("Erro inesperado ao processar tasks", e)
+        return _format_error("Unexpected error processing tasks", e)
 
 
 @mcp.tool()
@@ -758,12 +757,12 @@ def my_mcp_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[
         meta_file_path = os.path.join(rootProject, TASKS_DIR, META_JSON)
         if not os.path.isfile(markdown_file_path):
             return {
-                "error": f"Arquivo markdown não encontrado em: {markdown_file_path}"
+                "error": f"Markdown file not found at: {markdown_file_path}"
             }
         with open(markdown_file_path, "r", encoding="utf-8") as f:
             markdown_content = f.read()
         tasks_json = _parse_markdown_to_tasks(markdown_content)
-        # Se existir meta.json, restaura campos extras
+        # If meta.json exists, restore extra fields
         if os.path.isfile(meta_file_path):
             with open(meta_file_path, "r", encoding="utf-8") as f:
                 meta = json.load(f)
@@ -773,12 +772,11 @@ def my_mcp_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[
             os.path.join(rootProject, TASKS_DIR, TASKS_JSON), "w", encoding="utf-8"
         ) as f:
             f.write(tasks_json_str)
-        return {"content": f"{TASKS_DIR}/{TASKS_JSON} criado com sucesso."}
+        return {"content": f"{TASKS_DIR}/{TASKS_JSON} created successfully."}
     except OSError as e:
-        return _format_error("Erro de sistema ao abrir arquivo markdown", e)
+        return _format_error("System error when opening markdown file", e)
     except Exception as e:
-        return _format_error("Erro inesperado ao processar markdown", e)
-
+        return _format_error("Unexpected error processing markdown", e)
 
 @mcp.tool()
 def my_mcp_styleguide(language: str = "python") -> Dict[str, Any]:
@@ -800,12 +798,12 @@ def my_mcp_styleguide(language: str = "python") -> Dict[str, Any]:
         response = requests.get(mapper[language], timeout=5)
         if response.status_code == 200:
             return {
-                "content": f"{response.text}\n utilize esse styleguide para código referente a linguagem {language}"
+                "content": f"{response.text}\n use this styleguide for code related to the {language} language"
             }
         else:
-            return _format_error("Erro ao buscar styleguide", response.status_code)
+            return _format_error("Error fetching styleguide", response.status_code)
     except OSError as e:
-        return _format_error("Erro de sistema ao abrir arquivo de styleguide", e)
+        return _format_error("System error when opening styleguide file", e)
 
 
 @mcp.tool()
