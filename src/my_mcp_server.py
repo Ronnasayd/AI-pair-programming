@@ -318,6 +318,7 @@ REVIEW_INSTRUCTIONS = "review-refactor-specialist.instructions.md"
 DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer.instructions.md"
 DOCUMENTATION_WORKFLOW_INSTRUCTIONS = "generate-documentation.instructions.md"
 GENERATE_PRD_INSTRUCTIONS = "product-owner.instructions.md"
+ASK_GUIDELINES_INSTRUCTIONS = "ask-guidelines.instructions.md"
 PRD_TEMPLATE = "PRD-template.json"
 VENV_DIRS = ("venv", "env")
 BIN_DIR = "bin"
@@ -673,6 +674,30 @@ def my_mcp_generate_prd() -> Dict[str, Any]:
 
     except FileNotFoundError as e:
         return _format_error("Instruction file not found", e)
+
+@mcp.tool()
+def my_mcp_aks_guidelines() -> Dict[str, Any]:
+    """
+    return a group of guidelines for asking questions that agent must respond to.
+
+    Returns:
+        dict: The content of the instructions or an error message.
+    """
+    try:
+        with open(
+            os.path.join(INSTRUCTIONS_DIR, ASK_GUIDELINES_INSTRUCTIONS),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            instructions = f.read()
+
+
+        combined_content = f"""<system_instructions>{instructions}</system_instructions> answer the questions."""
+        return {"content": combined_content}
+
+    except FileNotFoundError as e:
+        return _format_error("Instruction file not found", e)
+
 
 
 @mcp.tool()
