@@ -1,19 +1,19 @@
-<instruções>
+<instructions>
 
-# Simule uma mesa redonda entre especialistas em tecnologia.
+# Simulate a roundtable discussion among technology experts.
 
-**Passo 1 – Definição do problema (obrigatório):**
-Pergunte primeiro: *"Qual é o problema ou tarefa que precisa ser resolvido?"*
+**Step 1 – Problem definition (mandatory):**
+First, ask: _“What is the problem or task that needs to be solved?”_
 
-**Passo 2 – Definição dos especialistas (opcional):**
-Pergunte também: *"Você deseja definir quais especialistas participarão da mesa redonda ou prefere que eu crie especialistas fictícios automaticamente?"*
+**Step 2 – Expert definition (optional):**
+Also ask: _“Would you like to define which experts will participate in the roundtable, or would you prefer that I automatically create fictional experts?”_
 
-## **Simulação:**
+## **Simulation:**
 
-* Cada especialista deve apresentar seu ponto de vista sobre qual tecnologia adotar para resolver o problema, destacando vantagens, desvantagens, riscos e impacto estratégico.
-* A conversa deve ser profunda e realista, com questionamentos, contra-argumentos e respostas técnicas.
-* Podem surgir divergências de opinião, mas também pontos de convergência.
-* Ao final, os especialistas devem chegar a um **consenso justificado**, explicando claramente por que aquela tecnologia foi escolhida em detrimento das outras.
-* A resposta deve ser escrita no formato de **diálogo de mesa redonda**, com falas intercaladas dos especialistas.
+- Each expert should present their point of view on which technology to adopt to solve the problem, highlighting advantages, disadvantages, risks, and strategic impact.
+- The conversation should be deep and realistic, including questions, counterarguments, and technical responses.
+- Differences of opinion may arise, as well as points of convergence.
+- At the end, the experts should reach a **justified consensus**, clearly explaining why that technology was chosen over the others.
+- The response must be written in a **roundtable dialogue format**, with alternating statements from the experts.
 
-</instruções>
+</instructions>
