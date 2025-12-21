@@ -1,50 +1,78 @@
-ATUE NO MODO REFLEXION (GERAÇÃO → AUTOAVALIAÇÃO → REVISÃO).
+**OPERATE IN REFLECTION MODE (GENERATION → SELF-EVALUATION → REVISION).**
 
-OBJETIVO: Transformar requisitos em épicos, histórias e tarefas rastreáveis com validação iterativa.
+**OBJECTIVE:** Transform requirements into **traceable epics, stories, and tasks** with iterative validation.
 
-ETAPAS:
-Etapa 1 - Geração Inicial:
-- Extraia requisitos (R-IDs).
-- Agrupe e proponha épicos.
-- Gere histórias e tarefas (versão 1).
-- Monte rastreabilidade inicial.
+---
 
-Etapa 2 - Checklist de Qualidade (autoavaliação):
-Avalie cada item (OK / AJUSTAR):
-- Cobertura ≥ 95% dos requisitos?
-- Épicos SMART?
-- Histórias INVEST?
-- Critérios de aceite claros e testáveis?
-- Dependências identificadas?
-- Tarefas atômicas (<16h) e categorizadas?
-- Riscos principais mapeados?
-- Métricas de sucesso definidas por épico?
-- Priorização justificada?
+## STEPS:
 
-Etapa 3 - Plano de Melhoria:
-- Liste problemas detectados.
-- Gerar ações corretivas.
+### Step 1 – Initial Generation:
 
-Etapa 4 - Revisão Aplicada:
-- Ajustar épicos/histórias/tarefas conforme plano.
-- Atualizar matriz de rastreabilidade.
-- Recalcular cobertura e priorização.
+- Extract requirements (**R-IDs**).
+- Group and propose **epics**.
+- Generate **stories and tasks** (version 1).
+- Build **initial traceability**.
 
-Etapa 5 - Saída Final + Log de Reflexões:
-- Inclua seção "Reflexões e Melhorias Aplicadas".
+### Step 2 – Quality Checklist (self-evaluation):
 
-SAÍDA (MARKDOWN):
-{{ TEMPLATE A SER FORNECIDO }}
+Evaluate each item (**OK / ADJUST**):
 
-PADRÕES:
-- Formato de épico: "Como <organização> queremos <capacidade> para <objetivo>"
-- Histórias com persona real.
-- Tarefas com DoD específico.
+- Coverage ≥ **95%** of requirements?
+- Are epics **SMART**?
+- Are stories **INVEST**?
+- Are acceptance criteria clear and testable?
+- Are dependencies identified?
+- Are tasks atomic (**< 16h**) and categorized?
+- Are main risks mapped?
+- Are success metrics defined per epic?
+- Is prioritization justified?
 
-INÍCIO DOS DADOS:
-[COLAR REQUISITOS / CONTEXTO AQUI]
+### Step 3 – Improvement Plan:
 
-SE FALTAR INFORMAÇÃO:
-Liste perguntas; caso prossiga, explicite premissas.
+- List detected problems.
+- Generate **corrective actions**.
 
-PROSSIGA.
+### Step 4 – Applied Revision:
+
+- Adjust epics / stories / tasks according to the plan.
+- Update the **traceability matrix**.
+- Recalculate coverage and prioritization.
+
+### Step 5 – Final Output + Reflection Log:
+
+- Include a **“Reflections and Improvements Applied”** section.
+
+---
+
+## OUTPUT (MARKDOWN):
+
+```
+{{ TEMPLATE TO BE PROVIDED }}
+```
+
+---
+
+## STANDARDS:
+
+- Epic format:
+  **“As an <organization>, we want <capability> so that <objective>.”**
+- Stories must use a **real persona**.
+- Tasks must include a **specific Definition of Done (DoD)**.
+
+---
+
+## DATA START:
+
+```
+[PASTE REQUIREMENTS / CONTEXT HERE]
+```
+
+---
+
+### IF INFORMATION IS MISSING:
+
+List questions; if you proceed anyway, **explicitly state assumptions**.
+
+---
+
+**PROCEED.**

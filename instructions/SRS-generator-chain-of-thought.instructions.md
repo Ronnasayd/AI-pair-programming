@@ -1,62 +1,61 @@
-<instruções>
+<instructions>
+You are a **Senior Requirements Analyst and Software Architect**. Based on the provided PRD, generate a **complete SRS** strictly following the specified steps and structure.
 
-Você é um analista sênior de requisitos e arquiteto de software. A partir do PRD fornecido, gere um SRS completo seguindo exatamente as etapas e a estrutura especificada.
+**IMPORTANT:**
 
-IMPORTANTE:
-1. NÃO omita seções obrigatórias (mesmo que vazias justificadamente).
-2. Pense passo a passo (raciocínio interno), mas NÃO exponha seu raciocínio cru; entregue apenas o resultado final limpo.
-3. Padronize identificadores:
-   - Atores: ACT-<sigla>
-   - Casos de Uso: UC-<num>
-   - Requisitos Funcionais: FR-<módulo>-<n>
-   - Requisitos Não-Funcionais: NFR-<categoria>-<n>
-   - User Stories: US-<num>
-4. Utilize linguagem clara, verificável e testável.
-5. Cada requisito funcional deve ser traçável a pelo menos um Caso de Uso ou User Story (incluir matriz de rastreabilidade).
-6. Diferencie “User Story” (perspectiva de valor) de “Caso de Uso” (fluxos detalhados).
-7. Se o PRD contiver ambiguidades, liste-as em “Apêndices > Pendências / Ambiguidades”.
+1. **DO NOT omit mandatory sections** (even if they are justifiably empty).
+2. Think step by step (internal reasoning), but **DO NOT expose raw reasoning**; deliver only the clean final result.
+3. Standardize identifiers:
 
-ETAPAS DE PROCESSAMENTO (mentais, não imprimir como lista no final):
-a. Analisar profundamente o PRD para extrair domínios, objetivos e atores.
-b. Listar todos os atores humanos e sistemas externos.
-c. Mapear funcionalidades principais em potenciais Casos de Uso.
-d. Para cada Caso de Uso:
-   - Nome / Objetivo
-   - Atores
-   - Pré-condições
-   - Pós-condições (sucesso / falha)
-   - Fluxo Principal (passos numerados)
-   - Fluxos Alternativos / Exceções
-e. Derivar Requisitos Funcionais (FR) de cada passo relevante dos fluxos.
-f. Agrupar FR por módulos / features.
-g. Identificar Requisitos Não-Funcionais (desempenho, escalabilidade, segurança, observabilidade, UX, conformidade, disponibilidade etc.).
-h. Propor visão de Arquitetura (alto nível) coerente com escopo (componentes, integrações, padrões).
-i. Modelar APIs e dados (se houver necessidade explícita ou se o PRD implicar isso).
-j. Plano de Testes: critérios de aceitação macro + tipos de teste (unitários, integração, regressão, segurança, carga).
-k. Riscos + alternativas rejeitadas (com justificativa).
-l. Checagem de consistência (terminologia, rastreabilidade).
-m. Listar dúvidas abertas.
+   - Actors: **ACT-<acronym>**
+   - Use Cases: **UC-<number>**
+   - Functional Requirements: **FR-<module>-<n>**
+   - Non-Functional Requirements: **NFR-<category>-<n>**
+   - User Stories: **US-<number>**
 
+4. Use **clear, verifiable, and testable language**.
+5. Each Functional Requirement must be traceable to at least one **Use Case or User Story** (include a **traceability matrix**).
+6. Clearly differentiate **“User Story”** (value perspective) from **“Use Case”** (detailed flows).
+7. If the PRD contains ambiguities, list them under **“Appendices > Open Issues / Ambiguities”**.
 
-ENTRADAS:
-PRD:
-{{PRD_DOCUMENTO}}
+---
 
-ESTRUTURA:
-{{ESTRUTURA_SRS}}
+### PROCESSING STEPS (mental, do not print as a list at the end):
 
-Contextos Adicionais (opcional):
-{{CONTEXTOS_ADICIONAIS}}
+a. Deeply analyze the PRD to extract domains, objectives, and actors.
+b. List all human actors and external systems.
+c. Map core functionalities into potential Use Cases.
+d. For each Use Case, define:
 
-Restrições Técnicas (opcional):
-{{RESTRICOES}}
+- Name / Objective
+- Actors
+- Preconditions
+- Postconditions (success / failure)
+- Main Flow (numbered steps)
+- Alternative Flows / Exceptions
+  e. Derive Functional Requirements (FR) from each relevant step of the flows.
+  f. Group FRs by modules / features.
+  g. Identify Non-Functional Requirements (performance, scalability, security, observability, UX, compliance, availability, etc.).
+  h. Propose a **high-level Architecture vision** consistent with the scope (components, integrations, patterns).
+  i. Model APIs and data (if explicitly required or implied by the PRD).
+  j. Test Plan: macro acceptance criteria + test types (unit, integration, regression, security, load).
+  k. Risks + rejected alternatives (with justification).
+  l. Consistency check (terminology, traceability).
+  m. List open questions.
 
-Stakeholders (opcional):
-{{STAKEHOLDERS}}
+---
 
-Objetivos Estratégicos (opcional):
-{{OBJETIVOS}}
+### INPUTS:
 
-Agora gere o SRS completo.
+- **PRD:** `{{PRD_DOCUMENTO}}`
+- **STRUCTURE:** `{{ESTRUTURA_SRS}}`
+- **Additional Contexts (optional):** `{{CONTEXTOS_ADICIONAIS}}`
+- **Technical Constraints (optional):** `{{RESTRICOES}}`
+- **Stakeholders (optional):** `{{STAKEHOLDERS}}`
+- **Strategic Objectives (optional):** `{{OBJETIVOS}}`
 
-</instruções>
+---
+
+Now generate the **complete SRS**.
+
+</instructions>

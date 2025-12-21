@@ -1,32 +1,60 @@
-ATUE NO MODO TREE OF THOUGHTS.
+**OPERATE IN TREE OF THOUGHTS MODE.**
 
-OBJETIVO: A partir dos documentos fornecidos (SRS/PRD/outros), gerar Épicos, Histórias e Tarefas completamente rastreáveis, seguindo as fases: Análise → Agrupamento → Decomposição → Detalhamento → Validação → Organização.
+**OBJECTIVE:** Based on the provided documents (SRS / PRD / others), generate **Epics, Stories, and Tasks** that are fully traceable, following the phases: **Analysis → Grouping → Decomposition → Detailing → Validation → Organization**.
 
-INSTRUÇÕES DE RACIOCÍNIO (ÁRVORES):
-1. Extraia TODOS os requisitos: atribua IDs (R-001...), classifique (funcional / não-funcional), identifique atores, casos de uso, dependências.
-2. Gere ao menos 3 alternativas de agrupamento em domínios / bounded contexts (Árvore A, B, C). Liste prós/contras de cada.
-3. Para cada agrupamento, proponha 2–3 opções de épicos por cluster. Mantenha formato: "Como <organização> queremos <capacidade> para <objetivo>".
-4. Selecione a combinação ótima de épicos (critérios: cobertura, valor, coesão, independência, redução de risco). Justifique exclusões.
-5. Para cada épico, gere histórias INVEST. Onde houver ambiguidade, gere variantes e escolha a melhor (explique brevemente).
-6. Para cada história, gere critérios Given/When/Then (mínimo 3) e estime story points (assuma Fibonacci).
-7. Decomponha histórias em tarefas técnicas atômicas (categorias: frontend, backend, db, testes, devops, segurança). Defina Definition of Done por tarefa.
-8. Monte matriz de rastreabilidade: Requisito → Épico → Histórias → Tarefas.
-9. Execute verificação de cobertura (percentual), lacunas, conflitos, dependências cruzadas, riscos (classificar: alto/médio/baixo).
-10. Priorize épicos (metodologia informada ou, se ausente, sugerir e aplicar). Considere valor vs esforço vs risco vs dependências.
-11. Proponha plano inicial de releases/sprints (ordem lógica).
-12. Liste recomendações e pontos a validar com stakeholders.
+---
 
-PADRÕES:
-- Épicos: SMART + valor de negócio + esforço relativo (T-Shirt).
-- Histórias: INVEST + clara persona + benefício explícito.
-- Tarefas: claras, estimáveis (< 16h), com DoD objetivo.
-- Critérios de aceite: objetivos, testáveis e cobrindo caminhos principais + erro.
+## REASONING INSTRUCTIONS (TREES):
 
-SAÍDA (MARKDOWN):
-{{ TEMPLATE A SER FORNECIDO }}
+1. Extract **ALL requirements**: assign IDs (R-001…), classify them (functional / non-functional), identify **actors, use cases, and dependencies**.
+2. Generate at least **3 alternative groupings** into domains / bounded contexts (**Tree A, B, C**). List **pros and cons** of each.
+3. For each grouping, propose **2–3 epic options per cluster**. Use the format:
+   **“As an <organization>, we want <capability> so that <objective>.”**
+4. Select the **optimal combination of epics** (criteria: coverage, value, cohesion, independence, risk reduction). **Justify exclusions**.
+5. For each epic, generate **INVEST-compliant stories**. Where ambiguity exists, generate **variants** and choose the best one (briefly explain).
+6. For each story, generate **Given / When / Then** acceptance criteria (minimum **3**) and estimate **story points** (assume Fibonacci).
+7. Decompose stories into **atomic technical tasks** (categories: frontend, backend, database, tests, DevOps, security). Define a **Definition of Done (DoD)** for each task.
+8. Build the **traceability matrix**:
+   **Requirement → Epic → Stories → Tasks**
+9. Perform **coverage verification** (percentage), identify **gaps, conflicts, cross-dependencies, and risks** (classify as high / medium / low).
+10. **Prioritize epics** (using the provided methodology or, if absent, propose and apply one). Consider **value vs effort vs risk vs dependencies**.
+11. Propose an **initial release / sprint plan** (logical ordering).
+12. List **recommendations and points to validate with stakeholders**.
 
-SE FALTAR INFORMAÇÃO:
-Antes de iniciar, liste claramente perguntas de esclarecimento agrupadas por categoria (Domínio, Usuários, Regras de Negócio, Restrições Técnicas, Segurança, Performance).
+---
 
-INÍCIO DOS DADOS:
-[INSERIR AQUI OS DOCUMENTOS E CONTEXTO]
+## STANDARDS:
+
+- **Epics:** SMART + business value + relative effort (T-shirt sizing).
+- **Stories:** INVEST + clear persona + explicit benefit.
+- **Tasks:** clear, estimable (**< 16h**), with objective DoD.
+- **Acceptance criteria:** objective, testable, covering main paths and error cases.
+
+---
+
+## OUTPUT (MARKDOWN):
+
+```
+{{ TEMPLATE TO BE PROVIDED }}
+```
+
+---
+
+## IF INFORMATION IS MISSING:
+
+Before starting, clearly list **clarification questions**, grouped by category:
+
+- Domain
+- Users
+- Business Rules
+- Technical Constraints
+- Security
+- Performance
+
+---
+
+## DATA START:
+
+```
+[INSERT DOCUMENTS AND CONTEXT HERE]
+```

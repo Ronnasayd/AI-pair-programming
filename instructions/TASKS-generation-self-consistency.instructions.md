@@ -1,39 +1,73 @@
-ATUE NO MODO SELF-CONSISTENCY.
+**OPERATE IN SELF-CONSISTENCY MODE.**
 
-OBJETIVO: Gerar épicos, histórias e tarefas a partir dos requisitos, utilizando múltiplas trajetórias de raciocínio e consolidando a melhor.
+**OBJECTIVE:** Generate **epics, stories, and tasks** from requirements by using multiple reasoning paths and consolidating the best one.
 
-PROCESSO:
-1. Extração Base:
-   - Gerar lista de requisitos (R-IDs), tipos, origem, ator, dependências.
-2. Gerar 3 trajetórias independentes (Trilha A, Trilha B, Trilha C):
-   - Cada trilha deve propor: agrupamento → épicos → histórias → tarefas (alto nível) → priorização preliminar.
-   - Cada trilha adota um critério diferente de organização principal:
-     * Trilha A: centrada em jornadas de usuário.
-     * Trilha B: centrada em bounded contexts técnicos.
-     * Trilha C: centrada em valor de negócio incremental.
-3. Avaliar trilhas:
-   - Critérios: cobertura, coesão, granularidade, independência, clareza de valor, risco.
-   - Atribuir pontuação (0–5) por critério.
-4. Escolher trilha base (ou mesclar elementos). Justificar.
-5. Refinar trilha escolhida:
-   - Ajustar épicos (SMART).
-   - Garantir histórias INVEST.
-   - Expandir tarefas com DoD.
-6. Construir matriz de rastreabilidade final.
-7. Validar cobertura e listar lacunas.
-8. Priorizar (explicar método e parâmetros).
-9. Produzir recomendações finais.
+---
 
-SAÍDA (MARKDOWN):
-{{ TEMPLATE A SER FORNECIDO }}
+## PROCESS:
 
-PADRÕES:
-- Critérios de aceite concretos (Given/When/Then).
-- Estimativas: Story points (Fibonacci). Tarefas em horas.
-- Categorias técnicas claras.
+### 1. Base Extraction:
 
-ANTES DE EXECUTAR:
-Se faltar dado crítico (ex: personas inexistentes), solicite esclarecimentos; se continuar, declare premissas.
+- Generate a list of requirements (**R-IDs**), including **type, source, actor, and dependencies**.
 
-INSIRA OS DADOS A SEGUIR:
-[DOCUMENTOS / CONTEXTO]
+### 2. Generate 3 Independent Paths (Track A, Track B, Track C):
+
+- Each track must propose: **grouping → epics → stories → tasks (high level) → preliminary prioritization**.
+- Each track adopts a different primary organization criterion:
+
+  - **Track A:** user-journey–centric.
+  - **Track B:** technical bounded-context–centric.
+  - **Track C:** incremental business-value–centric.
+
+### 3. Evaluate Tracks:
+
+- Criteria: **coverage, cohesion, granularity, independence, clarity of value, risk**.
+- Assign a **score (0–5)** for each criterion.
+
+### 4. Choose Base Track (or merge elements). Justify the choice.
+
+### 5. Refine the Chosen Track:
+
+- Adjust epics to be **SMART**.
+- Ensure stories follow **INVEST**.
+- Expand tasks with **Definition of Done (DoD)**.
+
+### 6. Build the Final Traceability Matrix.
+
+### 7. Validate Coverage and List Gaps.
+
+### 8. Prioritize:
+
+- Explain the **method and parameters** used.
+
+### 9. Produce Final Recommendations.
+
+---
+
+## OUTPUT (MARKDOWN):
+
+```
+{{ TEMPLATE TO BE PROVIDED }}
+```
+
+---
+
+## STANDARDS:
+
+- Concrete acceptance criteria (**Given / When / Then**).
+- Estimates: **Story points (Fibonacci)**; **tasks in hours**.
+- Clear technical categories.
+
+---
+
+### BEFORE EXECUTION:
+
+If critical data is missing (e.g., personas do not exist), **request clarification**; if proceeding anyway, **declare assumptions**.
+
+---
+
+### INSERT DATA BELOW:
+
+```
+[DOCUMENTS / CONTEXT]
+```
