@@ -1,57 +1,87 @@
-ATUE NO MODO CHAIN OF THOUGHT ESTRUTURADO.
+**OPERATE IN STRUCTURED CHAIN-OF-THOUGHT MODE.**
 
-OBJETIVO: Converter requisitos (SRS/PRD/outros) em épicos, histórias e tarefas rastreáveis e priorizadas.
+**OBJECTIVE:** Convert requirements (SRS / PRD / others) into **traceable and prioritized epics, stories, and tasks**.
 
-FLUXO SEQUENCIAL (NÃO PULE ETAPAS):
-Fase 1 - Extração:
-- Liste requisitos (R-001...) com tipo (funcional / não-funcional), origem (parágrafo ou seção), ator, caso de uso relacionado.
-- Identifique dependências e restrições.
+---
 
-Fase 2 - Domínio:
-- Liste candidatos a bounded contexts / domínios.
-- Mapeie jornadas principais (nome + passos resumidos).
-- Defina personas (nome, objetivo primário, dores).
+## SEQUENTIAL FLOW (DO NOT SKIP STEPS):
 
-Fase 3 - Agrupamento → Épicos:
-- Agrupe requisitos por domínio/jornada.
-- Derive épicos (E-01...). Use formato organizacional.
-- Para cada épico: objetivo de negócio, métricas de sucesso, riscos, hipótese de valor.
+### Phase 1 – Extraction:
 
-Fase 4 - Histórias:
-- Quebre cada épico em histórias (US-001...).
-- Formato: "Como <persona> eu quero <funcionalidade> para <benefício>".
-- Aplique INVEST (se falhar, refine).
-- Adicione critérios Given/When/Then (≥3).
+- List requirements (R-001…) with **type** (functional / non-functional), **source** (paragraph or section), **actor**, and **related use case**.
+- Identify **dependencies and constraints**.
 
-Fase 5 - Tarefas:
-- Para cada história: decompor em tarefas (T-001...). Categoria + DoD + estimativa horas + skills.
+### Phase 2 – Domain:
 
-Fase 6 - Rastreamento:
-- Monte tabela/matriz: Requisito → Épico → Histórias → Tarefas.
+- List candidate **bounded contexts / domains**.
+- Map **primary journeys** (name + summarized steps).
+- Define **personas** (name, primary goal, pains).
 
-Fase 7 - Validação:
-- Percentual de requisitos cobertos.
-- Lacunas (listar R-IDs sem mapeamento).
-- Conflitos ou ambiguidades.
-- Principais riscos (segurança, performance, compliance etc.).
+### Phase 3 – Grouping → Epics:
 
-Fase 8 - Priorização:
-- Escolha framework (MoSCoW / WSJF / Kano / sugerir).
-- Aplique e gere ordenação de épicos e depois histórias críticas.
+- Group requirements by **domain / journey**.
+- Derive **epics** (E-01…). Use an **organizational format**.
+- For each epic, define: **business objective, success metrics, risks, value hypothesis**.
 
-Fase 9 - Planejamento:
-- Sugira releases/sprints (Sprint 1: US-X, US-Y...).
-- Defina Definition of Ready e Definition of Done globais.
+### Phase 4 – Stories:
 
-Fase 10 - Recomendações finais:
-- Pontos a validar com stakeholders.
-- Métricas iniciais sugeridas (ativação, adoção, tempo resposta, etc.).
+- Break each epic into **user stories** (US-001…).
+- Format:
+  _“As a <persona>, I want <functionality> so that <benefit>.”_
+- Apply **INVEST** (if it fails, refine).
+- Add **Given / When / Then** acceptance criteria (≥ 3).
 
-SAÍDA (MARKDOWN):
-{{ TEMPLATE A SER FORNECIDO }}
+### Phase 5 – Tasks:
 
-ANTES DE COMEÇAR:
-Se informações estiverem incompletas, faça uma lista de perguntas objetivas e aguarde (se instruído). Caso contrário, prossiga assumindo premissas explícitas (liste-as).
+- For each story, decompose into **tasks** (T-001…).
+- Include: **category + Definition of Done (DoD) + time estimate (hours) + required skills**.
 
-INÍCIO DOS DADOS:
-[COLAR DOCUMENTOS AQUI]
+### Phase 6 – Traceability:
+
+- Build a table/matrix:
+  **Requirement → Epic → Stories → Tasks**
+
+### Phase 7 – Validation:
+
+- Percentage of **requirements covered**.
+- **Gaps** (list R-IDs without mapping).
+- **Conflicts or ambiguities**.
+- **Main risks** (security, performance, compliance, etc.).
+
+### Phase 8 – Prioritization:
+
+- Choose a framework (**MoSCoW / WSJF / Kano / suggest one**).
+- Apply it and generate **ordered epics**, then **critical stories**.
+
+### Phase 9 – Planning:
+
+- Suggest **releases / sprints** (e.g., Sprint 1: US-X, US-Y…).
+- Define global **Definition of Ready (DoR)** and **Definition of Done (DoD)**.
+
+### Phase 10 – Final Recommendations:
+
+- Points to validate with **stakeholders**.
+- Suggested **initial metrics** (activation, adoption, response time, etc.).
+
+---
+
+## OUTPUT (MARKDOWN):
+
+```
+{{ TEMPLATE TO BE PROVIDED }}
+```
+
+---
+
+### BEFORE STARTING:
+
+If information is incomplete, create a **list of objective questions and wait** (if instructed).
+Otherwise, proceed by making **explicit assumptions** (list them).
+
+---
+
+### DATA START:
+
+```
+[PASTE DOCUMENTS HERE]
+```

@@ -1,55 +1,71 @@
-<instruções>
+<instructions>
 
-Você seguirá um processo iterativo de 3 ciclos (podendo encurtar se a qualidade já for alta):
+You will follow an **iterative process of 3 cycles** (you may shorten it if quality is already high):
 
-CICLO 1 – DRAFT INICIAL:
-- Gerar versão inicial do SRS (mínimo viável completo).
-- Marcar incertezas com tag TODO:? no corpo.
+### CYCLE 1 – INITIAL DRAFT:
 
-CICLO 2 – CRÍTICA:
-- Gerar uma seção interna (não incluída no SRS final) de auditoria avaliando:
-  * Cobertura de funcionalidades declaradas no PRD
-  * Completude dos fluxos de casos de uso
-  * Clareza e testabilidade dos requisitos
-  * Rastreabilidade (UC/US -> FR -> NFR)
-  * Consistência terminológica
-  * Gaps (itens do PRD não mapeados)
-  * Riscos não tratados
-- NÃO exibir o texto do SRS aqui, apenas a crítica estruturada.
+- Generate the initial version of the SRS (**minimum viable complete**).
+- Mark uncertainties with the tag **TODO:?** within the body.
 
-CICLO 3 – REVISÃO:
-- Ajustar o SRS removendo TODO:? resolvidos.
-- Completar requisitos ausentes.
-- Garantir que cada FR referencia pelo menos um UC ou US.
-- Otimizar linguagem para testabilidade (evitar adjetivos vagos).
+### CYCLE 2 – CRITIQUE:
 
+- Generate an **internal section** (not included in the final SRS) performing an audit that evaluates:
 
-ENTREGA FINAL:
-- Apenas a versão revisada do SRS (sem mostrar a crítica e sem o draft bruto).
+  - Coverage of functionalities declared in the PRD
+  - Completeness of use case flows
+  - Clarity and testability of requirements
+  - Traceability (UC/US → FR → NFR)
+  - Terminology consistency
+  - Gaps (PRD items not mapped)
+  - Untreated risks
 
-Padronização:
-- UC-<n>, FR-<módulo>-<n>, NFR-<categoria>-<n>, US-<n>
-- Matriz: tabela (US / UC / FR / NFR (se aplicável))
+- **DO NOT display the SRS text here**, only the structured critique.
 
-ENTRADAS:
-PRD:
+### CYCLE 3 – REVISION:
+
+- Adjust the SRS by resolving and removing **TODO:?** items.
+- Complete missing requirements.
+- Ensure each FR references at least one UC or US.
+- Optimize language for testability (avoid vague adjectives).
+
+---
+
+### FINAL DELIVERY:
+
+- **Only** the revised final version of the SRS
+  (without showing the critique or the raw draft).
+
+---
+
+### Standardization:
+
+- UC-<n>, FR-<module>-<n>, NFR-<category>-<n>, US-<n>
+- Matrix: table (US / UC / FR / NFR (if applicable))
+
+---
+
+### INPUTS:
+
+**PRD:**
 {{PRD_DOCUMENTO}}
 
-ESTRUTURA:
+**STRUCTURE:**
 {{ESTRUTURA_SRS}}
 
-Contextos Adicionais (opcional):
+**Additional Contexts (optional):**
 {{CONTEXTOS_ADICIONAIS}}
 
-Restrições Técnicas (opcional):
+**Technical Constraints (optional):**
 {{RESTRICOES}}
 
-Stakeholders (opcional):
+**Stakeholders (optional):**
 {{STAKEHOLDERS}}
 
-Objetivos Estratégicos (opcional):
+**Strategic Objectives (optional):**
 {{OBJETIVOS}}
 
-Agora execute internamente os 3 ciclos e entregue apenas o SRS final revisado.
+---
 
-</instruções>
+Now internally execute the **3 cycles** and deliver **only the final revised SRS**.
+
+</instructions>

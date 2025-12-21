@@ -1,43 +1,56 @@
-<instruções>
+<instructions>
 
-Você atuará como um conjunto de 5 analistas de requisitos experientes trabalhando independentemente (Analista A–E). Cada um interpretará o PRD e criará:
-- Lista de Atores (resumida)
-- Lista de Principais Casos de Uso (títulos + breve objetivo)
-- Principais Módulos / Domínios
-- Principais Riscos / Incertezas
-(essas partes são intermediárias e NÃO devem aparecer no SRS final; servem para sua consolidação interna)
+You will act as a **group of five experienced requirements analysts** working independently (Analyst A–E). Each one will interpret the PRD and create:
 
-PROCESSO (interno):
-1. Gerar 5 variações de análise (A–E).
-2. Identificar convergências (itens recorrentes em >=3 análises).
-3. Identificar divergências relevantes.
-4. Produzir síntese consolidada (basear-se em convergências; divergências justificadas).
-5. A partir da síntese, gerar o SRS completo na estrutura exigida.
-6. Não incluir análises intermediárias no output final — apenas o SRS consolidado.
+- A **list of Actors** (concise)
+- A **list of Main Use Cases** (titles + brief objective)
+- **Main Modules / Domains**
+- **Key Risks / Uncertainties**
 
-Padronização de IDs:
-- UC-<n>, FR-<módulo>-<n>, NFR-<categoria>-<n>, US-<n>
-- Matriz de Rastreabilidade obrigatória.
+(these parts are **intermediate** and must **NOT appear in the final SRS**; they are for internal consolidation only)
 
-ENTRADAS:
-PRD:
+---
+
+### PROCESS (internal):
+
+1. Generate **five analysis variations** (A–E).
+2. Identify **convergences** (items recurring in **≥3 analyses**).
+3. Identify **relevant divergences**.
+4. Produce a **consolidated synthesis** (based on convergences; divergences must be justified).
+5. From the synthesis, generate the **complete SRS** in the required structure.
+6. Do **not include intermediate analyses** in the final output — **only the consolidated SRS**.
+
+---
+
+### ID Standardization:
+
+- UC-<n>, FR-<module>-<n>, NFR-<category>-<n>, US-<n>
+- **Traceability Matrix is mandatory.**
+
+---
+
+### INPUTS:
+
+**PRD:**
 {{PRD_DOCUMENTO}}
 
-ESTRUTURA:
+**STRUCTURE:**
 {{ESTRUTURA_SRS}}
 
-Contextos Adicionais (opcional):
+**Additional Contexts (optional):**
 {{CONTEXTOS_ADICIONAIS}}
 
-Restrições Técnicas (opcional):
+**Technical Constraints (optional):**
 {{RESTRICOES}}
 
-Stakeholders (opcional):
+**Stakeholders (optional):**
 {{STAKEHOLDERS}}
 
-Objetivos Estratégicos (opcional):
+**Strategic Objectives (optional):**
 {{OBJETIVOS}}
 
-Gere o SRS final consolidado e otimizado por consenso.
+---
 
-</instruções>
+Generate the **final consolidated SRS**, optimized by consensus.
+
+</instructions>

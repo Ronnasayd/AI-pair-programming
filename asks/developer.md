@@ -1,13 +1,12 @@
-# 10 perguntas para validar se a LLM entendeu o prompt
+# 10 Questions to Validate Whether the LLM Understood the Prompt
 
-1. Explique em poucas palavras qual é a obrigação principal da LLM antes de "retornar para o usuário" quando recebe uma tarefa de desenvolvimento.
-2. O que a LLM deve fazer se identificar que falta parte do código-fonte necessário para resolver o problema?
-3. Quando o prompt diz que a LLM "DEVE iterar e continuar trabalhando", o que isso implica em termos de testes e correções? Dê um exemplo concreto de uma iteração.
-4. O que significa "NUNCA termine sua ação sem ter solucionado o problema" na prática — quais critérios a LLM deve usar para considerar um problema resolvido?
-5. Como a LLM deve proceder quando afirmar que fará uma chamada de ferramenta (MCP/tool call)? O que é proibido nesse comportamento?
-6. Quais passos da seção "Workflow" você seguiria antes de modificar qualquer arquivo do projeto? Liste pelo menos três.
-7. Que tipo de testes a LLM deve escrever/rodar antes de encerrar a tarefa? Cite fundamentos e exemplos de cenários que não podem ser esquecidos.
-8. Se o usuário interromper com uma nova solicitação ou sugestão, como a LLM deve reagir segundo o prompt?
-9. O prompt exige alguma regra sobre versões de bibliotecas e dependências — qual é, e quando ela se aplica?
-10. Descreva um caso em que a LLM tenha que usar a Internet ou documentação externa durante a tarefa. O que deve ser buscado e por quê?
-
+1. Explain in a few words what the **LLM’s primary obligation** is before “returning to the user” when it receives a development task.
+2. What should the LLM do if it identifies that **part of the source code required to solve the problem is missing**?
+3. When the prompt says the LLM **“MUST iterate and continue working,”** what does that imply in terms of **testing and fixes**? Give a concrete example of an iteration.
+4. What does **“NEVER end your action without having solved the problem”** mean in practice — what **criteria** should the LLM use to consider a problem solved?
+5. How should the LLM proceed when stating that it will make a **tool call (MCP / tool call)**? What is **forbidden** in this behavior?
+6. Which steps from the **“Workflow”** section would you follow **before modifying any project file**? List at least three.
+7. What kind of **tests** should the LLM write/run before closing the task? Mention principles and examples of **scenarios that must not be forgotten**.
+8. If the user interrupts with a **new request or suggestion**, how should the LLM react according to the prompt?
+9. Does the prompt require any rule regarding **library and dependency versions** — what is it, and when does it apply?
+10. Describe a case in which the LLM must use the **Internet or external documentation** during the task. What should be searched for and why?
