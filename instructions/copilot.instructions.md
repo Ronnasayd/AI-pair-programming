@@ -1,3 +1,8 @@
+---
+description: Comprehensive guide to generate code with copilot
+applyTo: "**/*"
+---
+
 <rules>
 Generate code that follows recognized industry best practices and is optimized for performance, security, and scalability.
 Ensure the code is clean, well-structured, readable, and easy to maintain.
