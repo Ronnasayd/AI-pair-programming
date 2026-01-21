@@ -49,10 +49,6 @@ Do not ignore internationalization/localization requirements in projects that re
 Avoid inconsistencies between development, test, and production environments (e.g., hardcoded configurations, absolute paths, different permissions).
 </avoid>
 
-<run_commands>
-Run long-running tasks (that take more than 2 seconds) with the MCP tool `my_run_command`. Always pass the correct `rootProject` argument to `run_command`, which must be the project’s root directory. If the project has a virtual environment (`venv`/`.venv`), activate it automatically before executing the command.
-</run_commands>
-
 <update_documentation>
 Whenever you are asked to document modifications made after an implementation, use the MCP tool `my_generate_docs_update`, passing the correct `rootProject` (the project’s root directory) and a command that describes the changes made (e.g., `git diff`). Follow the tool’s instructions to update the documentation.
 </update_documentation>
@@ -77,6 +73,19 @@ Whenever you are asked to implement a new task using MCP Task Master, request th
 - [ ] After approval, merge the task branch into the main branch
 - [ ] Close the task branch after the merge
       </task_master>
+
+<style_guides>
+When generating code, always adhere to the specific style guides and conventions of the programming language or framework being used. This includes indentation, spacing, brace styles, naming conventions, and file organization. If the project has an established style guide (e.g., PEP 8 for Python, Google Java Style Guide), follow it strictly. If no specific style guide is provided, use widely accepted community standards for the respective language.
+
+References to search for style guides:
+golang: https://google.github.io/styleguide/go/index.html
+html: https://google.github.io/styleguide/htmlcssguide.html
+css: https://google.github.io/styleguide/htmlcssguide.html
+python: https://google.github.io/styleguide/pyguide.html
+typescript: https://google.github.io/styleguide/tsguide.html
+javascript: https://google.github.io/styleguide/jsguide.html
+markdown: https://google.github.io/styleguide/docguide/style.html
+</style_guides>
 
 <preview_code>
 Whenever making any significant addition, deletion, or modification to code, show a preview of the code that will be produced. Show only the key points of the generated code and include well-explained comments on each line. Wait for the user's confirmation before proceeding. If the user adds suggestions, consider them carefully and adjust the code before making the actual modification.
