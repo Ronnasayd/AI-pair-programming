@@ -892,6 +892,7 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         After that, Execute these commands sequentially in terminal:
         task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md)" 
         task-master analyze-complexity 
+        task-master expand --all  --research  --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md))"
         """
         return {"content": combined_content}
 
