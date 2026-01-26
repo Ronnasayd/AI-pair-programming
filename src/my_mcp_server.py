@@ -877,6 +877,11 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         Based on the instructions provided and the task description, perform a review of the @workspace and check files and code snippets relevant to the implementation of the task. Generate a english detailed and complete description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md, following strictly the format below:
         <format>
         <description>{{DESCRIPTION OF TASK HERE}}</description>
+        
+        <!--- THE FOLLOWING TEXT IS UNCHANGEABLE. --->
+        <!--- DO NOT REWRITE, DO NOT CORRECT, DO NOT ADAPT. --->
+        <!--- USE IT EXACTLY AS IT IS, CHARACTER BY CHARACTER. --->
+        <!--- UNCHANGING_TEXT_START --->
         <workflow>
         - If documentation files or any other type of file are provided, extract relevant links and related files that may assist in implementing the task.
         - When creating a task or subtask, add references to relevant files or links that may assist in implementing the task.
@@ -887,6 +892,7 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         - Ensure that changes are fully backward compatible and do not affect other system flows.
         - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-mm-yyyy-<description>/README.md
         </workflow>
+        <!--- UNCHANGING_TEXT_END --->
         </format>
         
         After that, Execute these commands sequentially in terminal:
