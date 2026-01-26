@@ -319,6 +319,7 @@ DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer.instructions.md"
 DOCUMENTATION_WORKFLOW_INSTRUCTIONS = "generate-documentation.instructions.md"
 GENERATE_PRD_INSTRUCTIONS = "product-owner.instructions.md"
 ASK_GUIDELINES_INSTRUCTIONS = "ask-guidelines.instructions.md"
+TASK_REVIEWER_INSTRUCTIONS = "task-reviewer.instructions.md"
 PRD_TEMPLATE = "PRD-template.json"
 VENV_DIRS = ("venv", "env")
 BIN_DIR = "bin"
@@ -850,6 +851,50 @@ def my_mcp_search_references(query: str, rootProject: Optional[str] = None,globs
     results = search_codebase(query, rootProject, globs,top_n)
     return {"query": query, "results": results}
 
+@mcp.tool()
+def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str = "") -> Dict[str, Any]:
+    """
+    Generate task description to be added to taskmaster based on project analysis.
+
+    Args:
+        rootProject (str): The root project directory.
+        task_description (str): Description of the task to be created.
+
+    Returns:
+        dict: The content of the instructions or an error message.
+    """
+    try:
+        with open(
+            os.path.join(INSTRUCTIONS_DIR, TASK_REVIEWER_INSTRUCTIONS),
+            "r",
+            encoding="utf-8",
+        ) as f:
+            instructions = f.read()
+
+        combined_content = f"""
+        <system_instructions>{instructions}</system_instructions>
+        <task_description>{task_description}</task_description>
+        Based on the instructions provided and the task description, perform a review of the @workspace and check files and code snippets relevant to the implementation of the task. Generate a detailed and complete description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md, following the format below:
+
+        <description>{{DESCRIPTION HERE}}</description>
+
+        <workflow>
+        - If documentation files or any other type of file are provided, extract relevant links and related files that may assist in implementing the task.
+        - When creating a task or subtask, add references to relevant files or links that may assist in implementing the task.
+        - Before each implementation step (tasks or subtasks), check relevant references and links. Perform a thorough review of relevant files and documents until you have a complete understanding of what needs to be done.
+        - Add relevant code snippets that may assist in implementing the task in markdown format.
+        - Check all *.md files starting from SUMMARY.md and docs/ to find relevant documentation.
+        - Create and present a detailed action plan for executing the task implementation.
+        - Ensure that changes are fully backward compatible and do not affect other system flows.
+        - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-mm-yyyy-<description>/README.md
+        </workflow>
+
+        After that, make a call to the taskmaster MCP to create the task with the generated description.
+        """
+        return {"content": combined_content}
+
+    except FileNotFoundError as e:
+        return _format_error("Instruction file not found", e)
 
 if __name__ == "__main__":
     mcp.run()  # Inicia o servidor usando stdio por padrão
