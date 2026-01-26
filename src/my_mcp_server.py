@@ -874,10 +874,9 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         combined_content = f"""
         <system_instructions>{instructions}</system_instructions>
         <task_description>{task_description}</task_description>
-        Based on the instructions provided and the task description, perform a review of the @workspace and check files and code snippets relevant to the implementation of the task. Generate a detailed and complete description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md, following the format below:
-
-        <description>{{DESCRIPTION HERE}}</description>
-
+        Based on the instructions provided and the task description, perform a review of the @workspace and check files and code snippets relevant to the implementation of the task. Generate a english detailed and complete description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md, following strictly the format below:
+        <format>
+        <description>{{DESCRIPTION OF TASK HERE}}</description>
         <workflow>
         - If documentation files or any other type of file are provided, extract relevant links and related files that may assist in implementing the task.
         - When creating a task or subtask, add references to relevant files or links that may assist in implementing the task.
@@ -888,8 +887,8 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         - Ensure that changes are fully backward compatible and do not affect other system flows.
         - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-mm-yyyy-<description>/README.md
         </workflow>
-
-        After that, make a call to the taskmaster MCP to create the task with the generated description.
+        </format>
+        After that, make a call to the taskmaster MCP to create a new task with the generated description.
         """
         return {"content": combined_content}
 
