@@ -182,14 +182,14 @@ def semantic_rerank(snippets, query, top_n=10):
     ]
 
 
-def search_codebase(query: str, base_dir="src", globs=["*.*"]):
+def search_codebase(query: str, base_dir="src", globs=["*.*"],top_n=10):
     # snippets = collect_code_snippets(base_dir)
     snippets = ag_search(query, rootProject=base_dir, globs=globs)
     if not snippets:
         return []
 
     filtered = bm25_filter(snippets, query)
-    ranked = semantic_rerank(filtered, query)
+    ranked = semantic_rerank(filtered, query,top_n)
     return ranked
 
 
