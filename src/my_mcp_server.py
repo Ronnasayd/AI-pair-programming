@@ -874,7 +874,7 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         combined_content = f"""
         <system_instructions>{instructions}</system_instructions>
         <task_description>{task_description}</task_description>
-        Based on the instructions provided and the task description, perform a review of the @workspace and check files and code snippets relevant to the implementation of the task. Generate a english detailed and complete description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md, following strictly the format below:
+        Based on the instructions provided and the task description, perform a review of the @workspace and check files and code snippets relevant to the implementation of the task. Generate a english detailed and complete description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md, following strictly the format below:
         <format>
         <description>{{DESCRIPTION OF TASK HERE}}</description>
         
@@ -896,9 +896,9 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         </format>
         
         Next, ask the user to review the created document; if they suggest any modifications or extensions, make them. When they say you can proceed, execute these commands sequentially in the terminal:
-        task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md)" 
+        task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)" 
         task-master analyze-complexity 
-        task-master expand --all  --research  --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md))"
+        task-master expand --all  --research  --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md))"
         """
         return {"content": combined_content}
 
