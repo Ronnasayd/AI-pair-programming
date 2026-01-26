@@ -888,7 +888,10 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-mm-yyyy-<description>/README.md
         </workflow>
         </format>
-        After that, make a call to the taskmaster MCP to create a new task with the generated description.
+        
+        After that, Execute these commands sequentially in terminal:
+        task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md)" 
+        task-master analyze-complexity 
         """
         return {"content": combined_content}
 
