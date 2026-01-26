@@ -895,7 +895,7 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         <!--- UNCHANGING_TEXT_END --->
         </format>
         
-        After that, Execute these commands sequentially in terminal:
+        Next, ask the user to review the created document; if they suggest any modifications or extensions, make them. When they say you can proceed, execute these commands sequentially in the terminal:
         task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md)" 
         task-master analyze-complexity 
         task-master expand --all  --research  --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-spec.md))"
