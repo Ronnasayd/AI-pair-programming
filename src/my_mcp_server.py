@@ -878,7 +878,6 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         <format>
         <description>{{DESCRIPTION OF TASK HERE}}</description>
         
-        <!--- THE FOLLOWING COMMENTS MUST BE FOLLOWED BUT NOT ADDED IN GENERATED FILE. --->
         <!--- THE FOLLOWING TEXT IS UNCHANGEABLE. --->
         <!--- DO NOT REWRITE, DO NOT CORRECT, DO NOT ADAPT. --->
         <!--- USE IT EXACTLY AS IT IS, CHARACTER BY CHARACTER. --->
