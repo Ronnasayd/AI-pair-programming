@@ -874,10 +874,11 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         combined_content = f"""
         <system_instructions>{instructions}</system_instructions>
         <task_description>{task_description}</task_description>
-        Based on the instructions provided and the task description, perform a review of the @workspace and check files and code snippets relevant to the implementation of the task. Generate a english detailed and complete description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md, following strictly the format below:
+        Search on the @workspace of {rootProject} for files relevants to the implementation of the task. Deep think about the problem and generate a description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md, following strictly the format below:
         <format>
         <description>{{DESCRIPTION OF TASK HERE}}</description>
         
+        <!--- THE FOLLOWING COMMENTS MUST BE FOLLOWED BUT NOT ADDED IN GENERATED FILE. --->
         <!--- THE FOLLOWING TEXT IS UNCHANGEABLE. --->
         <!--- DO NOT REWRITE, DO NOT CORRECT, DO NOT ADAPT. --->
         <!--- USE IT EXACTLY AS IT IS, CHARACTER BY CHARACTER. --->
