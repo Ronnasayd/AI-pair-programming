@@ -570,7 +570,35 @@ def my_mcp_code_review(
         ) as f:
             instructions = f.read()
 
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBased on the modifications made, check if there are any adjustments or code improvements to be made by following the instructions provided.\n</task>\n"
+        combined_content = f"""
+        <system_instructions>{instructions}</system_instructions>
+        <diff_in_files>{git_diff}</diff_in_files>
+        Based on the modifications made, check if there are any code adjustments or improvements to be made, following the instructions provided. Carefully analyze the problem, write a description of the changes to be made, and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md, following strictly the format below:
+        <format>
+        <description>{{DESCRIPTION OF CHABGES HERE}}</description>
+        
+        <!--- THE FOLLOWING TEXT IS UNCHANGEABLE. --->
+        <!--- DO NOT REWRITE, DO NOT CORRECT, DO NOT ADAPT. --->
+        <!--- USE IT EXACTLY AS IT IS, CHARACTER BY CHARACTER. --->
+        <!--- UNCHANGING_TEXT_START --->
+        <workflow>
+        - If documentation files or any other type of file are provided, extract relevant links and related files that may assist in implementing the task.
+        - When creating a task or subtask, add references to relevant files or links that may assist in implementing the task.
+        - Before each implementation step (tasks or subtasks), check relevant references and links. Perform a thorough review of relevant files and documents until you have a complete understanding of what needs to be done.
+        - Add relevant code snippets that may assist in implementing the task in markdown format.
+        - Check all *.md files starting from SUMMARY.md and docs/ to find relevant documentation.
+        - Create and present a detailed action plan for executing the task implementation.
+        - Ensure that changes are fully backward compatible and do not affect other system flows.
+        - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-mm-yyyy-<description>/README.md
+        </workflow>
+        <!--- UNCHANGING_TEXT_END --->
+        </format>
+        
+        Next, ask the user to review the created document; if they suggest any modifications or extensions, make them. When they say you can proceed, execute these commands sequentially in the terminal:
+        task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)" 
+        task-master analyze-complexity 
+        task-master expand --all  --research  --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md))"
+        """
         return {"content": combined_content}
 
     except FileNotFoundError as e:
