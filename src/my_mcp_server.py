@@ -1,9 +1,12 @@
+
 """
 my_mcp_server.py
 
-Implements a FastMCP server with tools for code review, context generation, markdown/JSON conversion, and shell command execution.
-This module is designed for extensibility and integration with AI-powered workflows.
+Implements a FastMCP server with tools for code review, context generation,
+markdown/JSON conversion, and shell command execution. This module is designed
+for extensibility and integration with AI-powered workflows.
 """
+
 
 import json
 import os
@@ -23,23 +26,26 @@ from search_engine import search_codebase
 # Inicializa o servidor MCP corretamente
 mcp = FastMCP(name="my-mcp")
 
+
 def load_instructions(instructions_ref="") -> str:
     with open(
-            os.path.join(INSTRUCTIONS_DIR, instructions_ref),
-            "r",
-            encoding="utf-8",
-        ) as f:
+        os.path.join(INSTRUCTIONS_DIR, instructions_ref),
+        "r",
+        encoding="utf-8",
+    ) as f:
         instructions = f.read()
     return instructions
 
+
 def load_template(template_ref="") -> str:
     with open(
-            os.path.join(TEMPLATES_DIR, template_ref),
-            "r",
-            encoding="utf-8",
-        ) as f:
+        os.path.join(TEMPLATES_DIR, template_ref),
+        "r",
+        encoding="utf-8",
+    ) as f:
         template = f.read()
     return template
+
 def _format_error(message: str, exc: Exception) -> Dict[str, str]:
     """Helper to format error responses consistently."""
     return {"error": f"{message}: {str(exc)}"}
@@ -321,6 +327,7 @@ def _symbol_to_status(symbol: str) -> str:
         "-": "cancelled",
     }
     return symbol_map.get(symbol, "pending")
+
 
 
 # Constantes para caminhos de arquivos e diretórios
@@ -663,7 +670,9 @@ def my_mcp_developer_instructions() -> Dict[str, Any]:
     """
     try:
         instructions = load_instructions(DEVELOPER_WORKFLOW_INSTRUCTIONS)
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nFollow the instructions provided for code development in any implementation or adjustment requested below.\n</task>\n"
+        combined_content = f"""
+        <system_instructions>{instructions}</system_instructions>
+        <task>Follow the instructions provided for code development in any implementation or adjustment requested.</task>"""
         return {"content": combined_content}
 
     except FileNotFoundError as e:
@@ -697,7 +706,6 @@ def my_mcp_generate_prd() -> Dict[str, Any]:
 def my_mcp_aks_guidelines() -> Dict[str, Any]:
     """
     return a group of guidelines for asking questions that agent must respond to.
-
     Returns:
         dict: The content of the instructions or an error message.
     """
@@ -709,8 +717,6 @@ def my_mcp_aks_guidelines() -> Dict[str, Any]:
     except FileNotFoundError as e:
         return _format_error("Instruction file not found", e)
 
-
-
 @mcp.tool()
 def my_mcp_generate_docs_init() -> Dict[str, Any]:
     """
@@ -720,14 +726,13 @@ def my_mcp_generate_docs_init() -> Dict[str, Any]:
         dict: The content of the instructions or an error message.
     """
     try:
-        with open(
-            os.path.join(INSTRUCTIONS_DIR, DOCUMENTATION_WORKFLOW_INSTRUCTIONS),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            instructions = f.read()
-
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nFollow the instructions provided to generate the workspace documentation in the described format. Perform the generation of this documentation incrementally. Analyze the tree structure of the workspace and break it down into smaller parts (modules, folders, files). As you iterate over each part, show which file, module, or folder of the workspace will be analyzed next and after analysis, perform the generation of the documentation incrementally as described in the instructions.\n</task>\n"
+        instructions = load_instructions(DOCUMENTATION_WORKFLOW_INSTRUCTIONS)
+        combined_content = f"""
+        <system_instructions>{instructions}</system_instructions>
+        <task>
+        Follow the instructions provided to generate the workspace documentation in the described format. Perform the generation of this documentation incrementally. Analyze the tree structure of the workspace and break it down into smaller parts (modules, folders, files). As you iterate over each part, show which file, module, or folder of the workspace will be analyzed next and after analysis, perform the generation of the documentation incrementally as described in the instructions.
+        </task>
+        """
         return {"content": combined_content}
 
     except FileNotFoundError as e:
@@ -827,9 +832,13 @@ def my_mcp_styleguide(language: str = "python") -> Dict[str, Any]:
     """
     try:
         mapper = {
-            "python": "https://raw.githubusercontent.com/google/styleguide/refs/heads/gh-pages/pyguide.md",
-            "javascript": "https://raw.githubusercontent.com/google/styleguide/refs/heads/gh-pages/jsguide.html",
-            "go": "https://raw.githubusercontent.com/google/styleguide/refs/heads/gh-pages/go/guide.md",
+            "golang": "https://google.github.io/styleguide/go/index.html",
+            "html": "https://google.github.io/styleguide/htmlcssguide.html",
+            "css": "https://google.github.io/styleguide/htmlcssguide.html",
+            "python": "https://google.github.io/styleguide/pyguide.html",
+            "typescript": "https://google.github.io/styleguide/tsguide.html",
+            "javascript": "https://google.github.io/styleguide/jsguide.html",
+            "markdown": "https://google.github.io/styleguide/docguide/style.html",
         }
         response = requests.get(mapper[language], timeout=5)
         if response.status_code == 200:
@@ -909,11 +918,14 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
     except FileNotFoundError as e:
         return _format_error("Instruction file not found", e)
 
+
 if __name__ == "__main__":
     mcp.run()  # Inicia o servidor usando stdio por padrão
     # Example test calls (uncomment as needed):
     # import asyncio
-    # print(asyncio.run(my_load_page_as_doc("https://www.prisma.io/docs/guides/management-api-basic")))
-    # print(asyncio.run(my_get_context("--list --tree /home/ronnas/develop/personal/prompt-ia/")))
+    # print(asyncio.run(my_load_page_as_doc(
+    #     "https://www.prisma.io/docs/guides/management-api-basic")))
+    # print(asyncio.run(my_get_context(
+    #     "--list --tree /home/ronnas/develop/personal/prompt-ia/")))
     # print(my_run_command("ls -la"))
     # print(my_code_review("/home/ronnas/develop/personal/prompt-ia/"))
