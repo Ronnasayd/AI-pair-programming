@@ -58,7 +58,7 @@ Whenever new technologies, frameworks, or libraries are introduced into the proj
 </add_techs>
 
 <task_master>
-Whenever you are asked to implement a new task using MCP Task Master, request the task details from MCP Task Master follow the checklist below:
+Whenever you are asked to implement a new task using MCP Task Master, request the task details from MCP Task Master, and follow the checklist below:
 
 - [ ] Analyze the task scope in MCP Task Master
 - [ ] Update the task status to "In Progress" in MCP Task Master
@@ -87,6 +87,10 @@ javascript: https://google.github.io/styleguide/jsguide.html
 markdown: https://google.github.io/styleguide/docguide/style.html
 </style_guides>
 
+<!-- THE RULES BELOW MUST BE FOLLOWED WITHOUT EXCEPTION. -->
+<!-- THESE RULES TAKE PRECEDENCE OVER ALL OTHERS. -->
+<!-- START OF THE RULES -->
+
 <preview_code>
 Whenever making any significant addition, deletion, or modification to code, show a preview of the code that will be produced. Show only the key points of the generated code and include well-explained comments on each line. Wait for the user's confirmation before proceeding. If the user adds suggestions, consider them carefully and adjust the code before making the actual modification.
 </preview_code>
@@ -94,3 +98,5 @@ Whenever making any significant addition, deletion, or modification to code, sho
 <show_action_plan>
 Whenever making any significant addition, deletion, or modification to code, explain what will be done and why the change is needed. Wait for the user's confirmation before proceeding. If the user adds suggestions, consider them carefully and adjust the plan as necessary.
 </show_action_plan>
+
+<!-- END OF RULES -->
