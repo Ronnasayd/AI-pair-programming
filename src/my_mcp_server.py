@@ -23,7 +23,23 @@ from search_engine import search_codebase
 # Inicializa o servidor MCP corretamente
 mcp = FastMCP(name="my-mcp")
 
+def load_instructions(instructions_ref="") -> str:
+    with open(
+            os.path.join(INSTRUCTIONS_DIR, instructions_ref),
+            "r",
+            encoding="utf-8",
+        ) as f:
+        instructions = f.read()
+    return instructions
 
+def load_template(template_ref="") -> str:
+    with open(
+            os.path.join(TEMPLATES_DIR, template_ref),
+            "r",
+            encoding="utf-8",
+        ) as f:
+        template = f.read()
+    return template
 def _format_error(message: str, exc: Exception) -> Dict[str, str]:
     """Helper to format error responses consistently."""
     return {"error": f"{message}: {str(exc)}"}
@@ -563,12 +579,7 @@ def my_mcp_code_review(
         )
         git_diff = result.stdout
 
-        with open(
-            os.path.join(INSTRUCTIONS_DIR, REVIEW_INSTRUCTIONS),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            instructions = f.read()
+        instructions = load_instructions(REVIEW_INSTRUCTIONS)
 
         combined_content = f"""
         <system_instructions>{instructions}</system_instructions>
@@ -607,6 +618,8 @@ def my_mcp_code_review(
         return _format_error("Subprocess error when executing git diff", e)
 
 
+
+
 @mcp.tool()
 def my_mcp_generate_docs_update(
     rootProject: Optional[str] = None, command="git diff"
@@ -630,14 +643,7 @@ def my_mcp_generate_docs_update(
             check=False,
         )
         git_diff = result.stdout
-
-        with open(
-            os.path.join(INSTRUCTIONS_DIR, DOCUMENTATION_WORKFLOW_INSTRUCTIONS),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            instructions = f.read()
-
+        instructions = load_instructions(DOCUMENTATION_WORKFLOW_INSTRUCTIONS)
         combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBased on the modifications and instructions provided, adjust the documentation accordingly. Review existing documentation files (check the docs/ folder and SUMMARY.md if they exist) and see which ones need updating based on the changes made. Preferably update existing files, but create new ones if necessary. Only update files if the changes are relevant to the file's content type. Don't add text just for the sake of adding it. Before any modification, show what will be added and ask if you should proceed.\n</task>\n"
         return {"content": combined_content}
 
@@ -656,13 +662,7 @@ def my_mcp_developer_instructions() -> Dict[str, Any]:
         dict: The content of the instructions or an error message.
     """
     try:
-        with open(
-            os.path.join(INSTRUCTIONS_DIR, DEVELOPER_WORKFLOW_INSTRUCTIONS),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            instructions = f.read()
-
+        instructions = load_instructions(DEVELOPER_WORKFLOW_INSTRUCTIONS)
         combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<task>\nFollow the instructions provided for code development in any implementation or adjustment requested below.\n</task>\n"
         return {"content": combined_content}
 
@@ -681,19 +681,8 @@ def my_mcp_generate_prd() -> Dict[str, Any]:
         dict: The content of the instructions or an error message.
     """
     try:
-        with open(
-            os.path.join(INSTRUCTIONS_DIR, GENERATE_PRD_INSTRUCTIONS),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            instructions = f.read()
-        with open(
-            os.path.join(TEMPLATES_DIR, PRD_TEMPLATE),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            template = f.read()
-
+        instructions = load_instructions(GENERATE_PRD_INSTRUCTIONS)
+        template = load_template(PRD_TEMPLATE)
         combined_content = f"""
         <prd_template>{template}</prd_template>
         <system_instructions>{instructions}</system_instructions>
@@ -713,14 +702,7 @@ def my_mcp_aks_guidelines() -> Dict[str, Any]:
         dict: The content of the instructions or an error message.
     """
     try:
-        with open(
-            os.path.join(INSTRUCTIONS_DIR, ASK_GUIDELINES_INSTRUCTIONS),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            instructions = f.read()
-
-
+        instructions = load_instructions(ASK_GUIDELINES_INSTRUCTIONS)
         combined_content = f"""<system_instructions>{instructions}</system_instructions> answer the questions."""
         return {"content": combined_content}
 
@@ -892,13 +874,7 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         dict: The content of the instructions or an error message.
     """
     try:
-        with open(
-            os.path.join(INSTRUCTIONS_DIR, TASK_REVIEWER_INSTRUCTIONS),
-            "r",
-            encoding="utf-8",
-        ) as f:
-            instructions = f.read()
-
+        instructions = load_instructions(TASK_REVIEWER_INSTRUCTIONS)
         combined_content = f"""
         <system_instructions>{instructions}</system_instructions>
         <task_description>{task_description}</task_description>
