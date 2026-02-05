@@ -1,4 +1,3 @@
-
 """
 my_mcp_server.py
 
@@ -23,7 +22,7 @@ from mcp.server.fastmcp import FastMCP
 
 from search_engine import search_codebase
 
-# Inicializa o servidor MCP corretamente
+# Properly initializes the MCP server
 mcp = FastMCP(name="my-mcp")
 
 
@@ -351,13 +350,13 @@ ACTIVATE_SCRIPT = "activate"
 
 def _extract_meta_from_tasks(tasks_data: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Extrai campos extras de tasks.json para meta.json, indexando por id (e id composto para subtasks).
+    Extracts extra fields from tasks.json to meta.json, indexing by id (and composite id for subtasks).
 
     Args:
-        tasks_data: Dicionário com dados das tasks.
+        tasks_data: Dictionary with task data.
 
     Returns:
-        dict: Metadados extras indexados por id.
+        dict: Extra metadata indexed by id.
     """
     meta = {}
     for _, context_data in tasks_data.items():
@@ -385,14 +384,14 @@ def _merge_tasks_with_meta(
     tasks_json: Dict[str, Any], meta: Dict[str, Any]
 ) -> Dict[str, Any]:
     """
-    Preenche tasks.json (após parse do markdown) com campos extras do meta.json.
+    Fills tasks.json (after parsing markdown) with extra fields from meta.json.
 
     Args:
-        tasks_json: Estrutura de tasks convertida do markdown.
-        meta: Metadados extras indexados por id.
+        tasks_json: Task structure converted from markdown.
+        meta: Extra metadata indexed by id.
 
     Returns:
-        dict: Estrutura de tasks enriquecida com metadados.
+        dict: Task structure enriched with metadata.
     """
     for _, context_data in tasks_json.items():
         if "tasks" not in context_data:
@@ -505,7 +504,7 @@ def my_mcp_get_context(
 def my_mcp_run_command(command: str, rootProject: Optional[str] = None) -> Dict[str, Any]:
     """
     Executes a shell command in the specified directory (or current directory if not provided).
-    Se houver ambiente virtual (venv/.venv) no diretório, ativa automaticamente antes do comando.
+    If there is a virtual environment (venv/.venv) in the directory, it is automatically activated before the command.
 
     Args:
         command (str): The shell command to execute.
@@ -705,7 +704,7 @@ def my_mcp_generate_prd() -> Dict[str, Any]:
 @mcp.tool()
 def my_mcp_aks_guidelines() -> Dict[str, Any]:
     """
-    return a group of guidelines for asking questions that agent must respond to.
+    return a group of guidelines for asking questions that the agent must respond to.
     Returns:
         dict: The content of the instructions or an error message.
     """
@@ -744,13 +743,13 @@ def my_mcp_convert_tasks_to_markdown(
 ) -> Dict[str, Any]:
     """
     Converts a .taskmaster/tasks/tasks.json file to markdown format similar to TODO-events.md.
-    Também gera meta.json com os campos extras de tasks/subtasks.
+    Also generates meta.json with the extra fields of tasks/subtasks.
 
     Args:
-        rootProject: Diretório raiz do projeto (opcional).
+        rootProject: Project root directory (optional).
 
     Returns:
-        dict: Mensagem de sucesso ou erro.
+        dict: Success or error message.
     """
     try:
         if not rootProject:
@@ -783,13 +782,13 @@ def my_mcp_convert_tasks_to_markdown(
 def my_mcp_convert_markdown_to_tasks(rootProject: Optional[str] = None) -> Dict[str, Any]:
     """
     Converts a markdown file in TODO-events format to tasks.json format.
-    Utiliza meta.json para restaurar campos extras, se disponível.
+    Uses meta.json to restore extra fields, if available.
 
     Args:
-        rootProject: Diretório raiz do projeto (opcional).
+        rootProject: Project root directory (optional).
 
     Returns:
-        dict: Mensagem de sucesso ou erro.
+        dict: Success or error message.
     """
     try:
         if not rootProject:
@@ -920,7 +919,7 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
 
 
 if __name__ == "__main__":
-    mcp.run()  # Inicia o servidor usando stdio por padrão
+    mcp.run()  # Starts the server using stdio by default
     # Example test calls (uncomment as needed):
     # import asyncio
     # print(asyncio.run(my_load_page_as_doc(
