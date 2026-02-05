@@ -603,38 +603,73 @@ def my_mcp_code_review(
         - Base your analysis exclusively on the content present in the diff.
         - Do NOT infer, assume, or reference code outside the diff.
         - Do NOT suggest speculative, stylistic, or unrelated changes.
-        - If the diff is already compliant, explicitly state that no improvements are required.
+        - Only propose changes that are objectively justified by the system instructions.
+        - If the diff is already fully compliant, explicitly state that no improvements are required.
         
         PROCESS (internal, do not output):
-        1. Review the system instructions and treat them as authoritative.
+        1. Treat system instructions as authoritative.
         2. Analyze the diff line by line.
-        3. Identify violations, inconsistencies, missed improvements, or refactoring opportunities that are directly observable.
-        4. Consolidate findings into a concise, structured proposal.
+        3. Identify only concrete, observable issues or improvement opportunities.
+        4. Group findings by independent modification units.
+        5. Ensure each unit follows the exact same structure.
         
         OUTPUT RULES (MANDATORY):
         - Output MUST be a single Markdown file.
-        - Do NOT include any text outside the defined file content.
-        - Do NOT include explanations about the process.
+        - Do NOT include text outside the file content.
+        - Do NOT explain reasoning outside the defined sections.
         - Do NOT include code blocks unless explicitly required inside a section.
         
         FILE PATH RULES:
-        - Save the file at: `{rootProject}/.taskmaster/review/`
-        - Filename format: `dd-MM-YYYY-<short-description>.md`
-        - `<short-description>` must:
-          - use kebab-case
-          - contain only lowercase letters, numbers, and hyphens
-          - have a maximum of 8 words
-          - summarize the primary improvement (or "no-changes-required" if applicable)
+        - Save the file at:
+          `{rootProject}/.taskmaster/review/dd-MM-YYYY-<short-description>.md`
         
         FILE CONTENT FORMAT (STRICT):
         The file MUST contain exactly the structure below and nothing else:
         
         <description>
+        
         ## Summary
+        High-level overview of the analysis result.
+        
         ## Motivation
+        Why a review or changes are necessary, strictly based on the diff.
+        
         ## Proposed Changes
+        
+        For EACH required modification or improvement, use the following fixed structure:
+        
+        ### Change <N>: <Short Title>
+        
+        **Type:** Bugfix | Refactor | Compliance | Improvement  
+        **Severity:** Low | Medium | High | Critical
+        
+        **Problem**
+        Clear and objective description of the issue, referencing only the diff.
+        
+        **Evidence**
+        Specific lines or patterns observed in the diff that justify the change.
+        
+        **Proposed Adjustment**
+        Exact description of what must be changed or improved (no speculation).
+        
+        **Expected Outcome**
+        What will be improved or corrected after applying this change.
+        
+        ---
+        
+        (Repeat the structure above for every identified change)
+        
+        If no changes are required, this section MUST contain exactly:
+        > No changes required. The diff is fully compliant with the system instructions.
+        
         ## Alternatives Considered
+        Briefly list any viable alternatives that were consciously not chosen, or explicitly state:
+        > No viable alternatives identified within the scope of the diff.
+        
         ## Risks & Mitigations
+        Concrete risks introduced by the proposed changes and how to mitigate them, or:
+        > No significant risks identified.
+        
         </description>
 
         """
