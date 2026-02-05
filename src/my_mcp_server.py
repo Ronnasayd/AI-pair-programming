@@ -886,9 +886,51 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         combined_content = f"""
         <system_instructions>{instructions}</system_instructions>
         <task_description>{task_description}</task_description>
-        Search on the @workspace of {rootProject} for files relevants to the implementation of the task. Search on the web if necessary for any docs that helps in the implementation of the task. Deep think about the problem and generate a description of the task and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md, following strictly the format below:
+        
+        Your objective is to analyze the task and produce a structured technical specification document that will later be used as input for task-master.
+        
+        ====================
+        PHASE 1 — CONTEXT DISCOVERY
+        ====================
+        
+        1. Search the @workspace of {rootProject} to identify files, modules, documentation, and code relevant to the task.
+        2. Prioritize local documentation (*.md files), starting from:
+           - SUMMARY.md
+           - docs/
+        3. Only search the web if:
+           - The workspace does not contain sufficient information, OR
+           - External documentation is clearly required (e.g., framework or library behavior).
+        4. When searching the web, prioritize official documentation and stable sources.
+        
+        ⚠️ Do NOT implement any code.
+        ⚠️ Do NOT execute any terminal commands in this phase.
+        
+        ====================
+        PHASE 2 — SPECIFICATION GENERATION
+        ====================
+        
+        Based on your analysis, generate a task specification and save it as:
+        
+        {rootProject}/.taskmaster/specs/dd-MM-YYYY-<short-task-description>.md
+        
+        You MUST strictly follow the format below. Do not add, remove, reorder, or rename sections.
+        
         <format>
-        <description>{{DESCRIPTION OF TASK HERE}}</description>
+        <description>
+        
+        ## Problem Summary
+        
+        ## Relevant Files for Solving the Problem
+        
+        ## Relevant Code Snippets for Solving the Problem
+        
+        ## Proposed Action Plan for Task Implementation
+        
+        ## Testing Strategy for Validating the Implementation
+        
+        ## Relevant Links (Optional)
+        
+        </description>
         
         <!--- THE FOLLOWING TEXT IS UNCHANGEABLE. --->
         <!--- DO NOT REWRITE, DO NOT CORRECT, DO NOT ADAPT. --->
@@ -902,15 +944,33 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         - Check all *.md files starting from SUMMARY.md and docs/ to find relevant documentation.
         - Create and present a detailed action plan for executing the task implementation.
         - Ensure that changes are fully backward compatible and do not affect other system flows.
-        - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-mm-yyyy-<description>/README.md
+        - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-MM-YYYY-<description>/README.md
         </workflow>
         <!--- UNCHANGING_TEXT_END --->
         </format>
         
-        Next, ask the user to review the created document; if they suggest any modifications or extensions, make them. When they say you can proceed, execute these commands sequentially in the terminal:
-        task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)" 
-        task-master analyze-complexity 
-        task-master expand --all  --research  --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md))"
+        ====================
+        PHASE 3 — USER REVIEW
+        ====================
+        
+        Ask the user to review the generated document.
+        
+        - If the user suggests modifications or extensions, apply them to the same document.
+        - Repeat this step until the user explicitly confirms with a phrase equivalent to:
+          "You can proceed."
+        
+        Do NOT proceed without explicit confirmation.
+        
+        ====================
+        PHASE 4 — TASK-MASTER EXECUTION
+        ====================
+        
+        Once the user confirms, execute the following commands sequentially in the terminal:
+        
+        1. task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)"
+        2. task-master analyze-complexity
+        3. task-master expand --all --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)"
+
         """
         return {"content": combined_content}
 
