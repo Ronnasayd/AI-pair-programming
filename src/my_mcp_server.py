@@ -588,33 +588,55 @@ def my_mcp_code_review(
         instructions = load_instructions(REVIEW_INSTRUCTIONS)
 
         combined_content = f"""
-        <system_instructions>{instructions}</system_instructions>
-        <diff_in_files>{git_diff}</diff_in_files>
-        Based on the modifications made, check if there are any code adjustments or improvements to be made, following the instructions provided. Carefully analyze the problem, write a description of the changes to be made, and save it as {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md, following strictly the format below:
-        <format>
-        <description>{{DESCRIPTION OF CHABGES HERE}}</description>
+        <system_instructions>
+        {instructions}
+        </system_instructions>
         
-        <!--- THE FOLLOWING TEXT IS UNCHANGEABLE. --->
-        <!--- DO NOT REWRITE, DO NOT CORRECT, DO NOT ADAPT. --->
-        <!--- USE IT EXACTLY AS IT IS, CHARACTER BY CHARACTER. --->
-        <!--- UNCHANGING_TEXT_START --->
-        <workflow>
-        - If documentation files or any other type of file are provided, extract relevant links and related files that may assist in implementing the task.
-        - When creating a task or subtask, add references to relevant files or links that may assist in implementing the task.
-        - Before each implementation step (tasks or subtasks), check relevant references and links. Perform a thorough review of relevant files and documents until you have a complete understanding of what needs to be done.
-        - Add relevant code snippets that may assist in implementing the task in markdown format.
-        - Check all *.md files starting from SUMMARY.md and docs/ to find relevant documentation.
-        - Create and present a detailed action plan for executing the task implementation.
-        - Ensure that changes are fully backward compatible and do not affect other system flows.
-        - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-mm-yyyy-<description>/README.md
-        </workflow>
-        <!--- UNCHANGING_TEXT_END --->
-        </format>
+        <diff_in_files>
+        {git_diff}
+        </diff_in_files>
         
-        Next, ask the user to review the created document; if they suggest any modifications or extensions, make them. When they say you can proceed, execute these commands sequentially in the terminal:
-        task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)" 
-        task-master analyze-complexity 
-        task-master expand --all  --research  --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md))"
+        TASK:
+        Analyze ONLY the provided git diff and identify required adjustments, improvements, or refactorings that strictly comply with the system instructions.
+        
+        SCOPE & CONSTRAINTS:
+        - Base your analysis exclusively on the content present in the diff.
+        - Do NOT infer, assume, or reference code outside the diff.
+        - Do NOT suggest speculative, stylistic, or unrelated changes.
+        - If the diff is already compliant, explicitly state that no improvements are required.
+        
+        PROCESS (internal, do not output):
+        1. Review the system instructions and treat them as authoritative.
+        2. Analyze the diff line by line.
+        3. Identify violations, inconsistencies, missed improvements, or refactoring opportunities that are directly observable.
+        4. Consolidate findings into a concise, structured proposal.
+        
+        OUTPUT RULES (MANDATORY):
+        - Output MUST be a single Markdown file.
+        - Do NOT include any text outside the defined file content.
+        - Do NOT include explanations about the process.
+        - Do NOT include code blocks unless explicitly required inside a section.
+        
+        FILE PATH RULES:
+        - Save the file at: `{rootProject}/.taskmaster/review/`
+        - Filename format: `dd-MM-YYYY-<short-description>.md`
+        - `<short-description>` must:
+          - use kebab-case
+          - contain only lowercase letters, numbers, and hyphens
+          - have a maximum of 8 words
+          - summarize the primary improvement (or "no-changes-required" if applicable)
+        
+        FILE CONTENT FORMAT (STRICT):
+        The file MUST contain exactly the structure below and nothing else:
+        
+        <description>
+        ## Summary
+        ## Motivation
+        ## Proposed Changes
+        ## Alternatives Considered
+        ## Risks & Mitigations
+        </description>
+
         """
         return {"content": combined_content}
 
