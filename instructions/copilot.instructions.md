@@ -58,7 +58,7 @@ Whenever new technologies, frameworks, or libraries are introduced into the proj
 </add_techs>
 
 <task_master>
-Whenever you are asked to implement a new task using MCP Task Master, request the task details from MCP Task Master, create a new branch `task-<TASK_ID>`, and follow the checklist below:
+Whenever you are asked to implement a new task using MCP Task Master, request the task details from MCP Task Master follow the checklist below:
 
 - [ ] Analyze the task scope in MCP Task Master
 - [ ] Update the task status to "In Progress" in MCP Task Master
