@@ -25,6 +25,14 @@ from search_engine import search_codebase
 # Properly initializes the MCP server
 mcp = FastMCP(name="my-mcp")
 
+def run(cmd, cwd=None):
+    return subprocess.run(
+        cmd,
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        check=False,
+    ).stdout.strip()
 
 def load_instructions(instructions_ref="") -> str:
     with open(
@@ -715,6 +723,63 @@ def my_mcp_generate_docs_update(
     except subprocess.SubprocessError as e:
         return _format_error("Subprocess error when executing git diff", e)
 
+
+
+@mcp.tool()
+def my_mcp_generate_docs_sync(rootProject: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Generates a documentation update context by computing the git diff from the
+    oldest commit that modified the `docs/` directory up to the current HEAD.
+
+    The function:
+    1. Finds the oldest git commit that changed any file inside `docs/`.
+    2. Computes the diff between that commit and the current HEAD.
+    3. Combines the diff with documentation workflow instructions to build a prompt
+       for documentation synchronization.
+
+    Args:
+        rootProject (Optional[str]): Path to the project root directory where git commands
+            will be executed. If not provided, the current working directory is used.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing:
+            - "content": The combined instructions and git diff for documentation updates.
+            - "error": An error message if the process fails.
+    """
+    try:
+        cwd = rootProject or os.getcwd()
+
+        # 1) Commit mais antigo que mexeu em docs/
+        oldest_docs_commit = run(
+            ["bash", "-c", "git log --reverse --format='%H' -- docs/ | head -n 1"],
+            cwd,
+        )
+
+        if not oldest_docs_commit:
+            return {"error": "No commits found in docs/"}
+
+        # 2) Diff desde o commit mais antigo até HEAD
+        git_diff = run(["git", "diff", f"{oldest_docs_commit}..HEAD"], cwd)
+
+        instructions = load_instructions(DOCUMENTATION_WORKFLOW_INSTRUCTIONS)
+
+        combined_content = f"""
+        <system_instructions>{instructions}</system_instructions>
+        <oldest_docs_commit>{oldest_docs_commit}</oldest_docs_commit>
+        <diff_in_files>
+        {git_diff}
+        </diff_in_files>
+        <task>
+        Based on the modifications and instructions provided, adjust the documentation accordingly.
+        Review existing documentation files (docs/ and SUMMARY.md).
+        Update only relevant files. Before any modification, show what will be added and ask if you should proceed.
+        </task>
+        """
+
+        return {"content": combined_content}
+
+    except Exception as e:
+        return {"error": str(e)}
 
 @mcp.tool()
 def my_mcp_developer_instructions() -> Dict[str, Any]:
