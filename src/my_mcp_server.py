@@ -726,7 +726,7 @@ def my_mcp_generate_docs_update(
 
 
 @mcp.tool()
-def my_mcp_generate_docs_sync(rootProject: Optional[str] = None) -> Dict[str, Any]:
+def my_mcp_generate_docs_sync(rootProject: Optional[str] = None, filter:str="") -> Dict[str, Any]:
     """
     Generates a documentation update context by computing the git diff from the
     oldest commit that modified the `docs/` directory up to the current HEAD.
@@ -740,6 +740,8 @@ def my_mcp_generate_docs_sync(rootProject: Optional[str] = None) -> Dict[str, An
     Args:
         rootProject (Optional[str]): Path to the project root directory where git commands
             will be executed. If not provided, the current working directory is used.
+        filter (str): Optional filter pattern to limit the git diff to specific files or paths
+            (e.g., "docs/*.md"). If not provided, the entire diff is included.
 
     Returns:
         Dict[str, Any]: A dictionary containing:
@@ -759,7 +761,13 @@ def my_mcp_generate_docs_sync(rootProject: Optional[str] = None) -> Dict[str, An
             return {"error": "No commits found in docs/"}
 
         # 2) Diff desde o commit mais antigo até HEAD
-        git_diff = run(["git", "diff", f"{oldest_docs_commit}..HEAD"], cwd)
+        if filter:
+            git_diff = run(
+                ["bash", "-c", f"git diff {oldest_docs_commit}..HEAD -- {filter}"],
+                cwd,
+            )
+        else:
+            git_diff = run(["git", "diff", f"{oldest_docs_commit}..HEAD"], cwd)
 
         instructions = load_instructions(DOCUMENTATION_WORKFLOW_INSTRUCTIONS)
 
