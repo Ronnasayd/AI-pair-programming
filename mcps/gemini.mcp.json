@@ -1,0 +1,58 @@
+{
+  "mcpServers": {
+    "sequentialthinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "taskmaster-ai": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "-p",
+        "@modelcontextprotocol/sdk@1.17.2",
+        "-p",
+        "fastmcp@3.23.0",
+        "-p",
+        "task-master-ai",
+        "task-master-ai"
+      ]
+    },
+    "my-mcp-server": {
+      "command": "my_mcp_server",
+      "args": []
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "ctx7sk-4221f9cf-9a1c-4d5a-8dbd-4c8951dddf12"
+      }
+    },
+    "sonarqube": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "SONARQUBE_TOKEN",
+        "-e",
+        "SONARQUBE_URL",
+        "--network",
+        "host",
+        "mcp/sonarqube"
+      ],
+      "env": {
+        "SONARQUBE_TOKEN": "sqa_fd1a4b086a92dfdff6da502bce2d9fa3c849b7de",
+        "SONARQUBE_URL": "http://localhost:9000"
+      }
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    }
+  }
+}
