@@ -30,7 +30,7 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp",
       "headers": {
-        "CONTEXT7_API_KEY": "ctx7sk-4221f9cf-9a1c-4d5a-8dbd-4c8951dddf12"
+        "CONTEXT7_API_KEY": "your_context7_api_key"
       }
     },
     "sonarqube": {
@@ -50,7 +50,7 @@
         "mcp/sonarqube"
       ],
       "env": {
-        "SONARQUBE_TOKEN": "sqa_fd1a4b086a92dfdff6da502bce2d9fa3c849b7de",
+        "SONARQUBE_TOKEN": "your_sonarqube_token",
         "SONARQUBE_URL": "http://localhost:9000"
       }
     },
