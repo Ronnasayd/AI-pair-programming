@@ -68,21 +68,6 @@ best practices, and useful links using a research tool or MCP Context7.
 Save this documentation in `docs/techs/<technology-name>.md`.
 </add_techs>
 
-<task_master>
-When implementing a new task via MCP Task Master:
-
-- [ ] Analyze the task scope in MCP Task Master
-- [ ] Update the task status to "In Progress"
-- [ ] Execute one subtask at a time:
-  - [ ] Update subtask status to "In Progress"
-  - [ ] Create a detailed action plan
-  - [ ] Present the plan and wait for user confirmation
-  - [ ] Generate a preview of the code and wait for approval
-  - [ ] Implement according to the approved plan
-  - [ ] Wait for user approval and mark subtask as "Completed"
-- [ ] Close the task branch
-      </task_master>
-
 <style_guides>
 Always follow the official style guide of the language or framework in use.
 If no project-specific guide exists, follow widely accepted community standards.
