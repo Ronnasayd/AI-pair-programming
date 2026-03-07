@@ -178,3 +178,4 @@ pyrightconfig.json
 .github/prompts/
 .github/instructions/
 .taskmaster/
+.github/agents/
