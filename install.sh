@@ -23,6 +23,7 @@ ln -s "$SOURCE/skills/"* "$HOME/.gemini/skills/"
 ########################################################################################
 
 ## GITHUB COPILOT
+########################################################################################
 if [ -L "$LOCAL/.github/skills/" ] || [ -d "$LOCAL/.github/skills/" ]; then
 rm -rf $LOCAL/.github/skills/
 fi
@@ -34,6 +35,12 @@ rm -rf $LOCAL/.github/prompts/
 fi
 mkdir -p $LOCAL/.github/prompts/
 ln -s "$SOURCE/github/prompts/"* "$LOCAL/.github/prompts/"
+########################################################################################
+if [ -L "$LOCAL/.github/agents/" ] || [ -d "$LOCAL/.github/agents/" ]; then
+rm -rf $LOCAL/.github/agents/
+fi
+mkdir -p $LOCAL/.github/agents/
+ln -s "$SOURCE/agents/"* "$LOCAL/.github/agents/"
 ########################################################################################3
 if [ -L "$LOCAL/.github/instructions/copilot.instructions.md" ] || [ -f "$LOCAL/.github/instructions/copilot.instructions.md" ]; then
 rm -rf $LOCAL/.github/instructions/copilot.instructions.md
@@ -70,6 +77,9 @@ if ! grep -q ".github/prompts/" .gitignore; then
 fi
 if ! grep -q ".github/instructions/" .gitignore; then
     echo ".github/instructions/" >> .gitignore
+fi
+if ! grep -q ".github/agents/" .gitignore; then
+    echo ".github/agents/" >> .gitignore
 fi
 if ! grep -q ".taskmaster/" .gitignore; then
     echo ".taskmaster/" >> .gitignore
