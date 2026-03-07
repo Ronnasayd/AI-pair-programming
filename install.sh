@@ -58,3 +58,19 @@ rm -rf "$LOCAL/.taskmaster/state.json"
 fi
 cp -f "$SOURCE/taskmaster/state.json" "$LOCAL/.taskmaster/state.json"
 ############################################################################################
+############################################################################################
+## GITIGNORE
+if ! grep -q ".github/skills/" .gitignore; then
+    echo ".github/skills/" >> .gitignore
+fi
+if ! grep -q ".github/prompts/" .gitignore; then
+    echo ".github/prompts/" >> .gitignore
+fi
+if ! grep -q ".github/instructions/" .gitignore; then
+    echo ".github/instructions/" >> .gitignore
+fi
+if ! grep -q ".taskmaster/" .gitignore; then
+    echo ".taskmaster/" >> .gitignore
+fi
+############################################################################################
+############################################################################################
