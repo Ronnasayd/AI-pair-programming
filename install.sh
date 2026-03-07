@@ -5,7 +5,7 @@ LOCAL="$(pwd)"
 # echo $SOURCE
 # echo $LOCAL
 
-# Installs for gemini
+## GEMINI
 if [ -L "$HOME/.gemini/commands/" ] || [ -d "$HOME/.gemini/commands/" ]; then
 rm -rf $HOME/.gemini/commands/
 fi
@@ -18,7 +18,9 @@ fi
 mkdir -p $HOME/.gemini/skills
 ln -s "$SOURCE/skills/"* "$HOME/.gemini/skills/"
 ########################################################################################
-# Installs for github
+########################################################################################
+
+## GITHUB COPILOT
 if [ -L "$LOCAL/.github/skills/" ] || [ -d "$LOCAL/.github/skills/" ]; then
 rm -rf $LOCAL/.github/skills/
 fi
@@ -42,3 +44,17 @@ rm -rf "$HOME/.config/Code/User/mcp.json"
 fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
+###########################################################################################
+## TASKMASTER
+mkdir -p "$LOCAL/.taskmaster/tasks"
+touch "$LOCAL/.taskmaster/tasks/tasks.json"
+if [ -L "$LOCAL/.taskmaster/config.json" ] || [ -f "$LOCAL/.taskmaster/config.json" ]; then
+rm -rf "$LOCAL/.taskmaster/config.json"
+fi
+cp -f "$SOURCE/taskmaster/config.json" "$LOCAL/.taskmaster/config.json"
+
+if [ -L "$LOCAL/.taskmaster/state.json" ] || [ -f "$LOCAL/.taskmaster/state.json" ]; then
+rm -rf "$LOCAL/.taskmaster/state.json"
+fi
+cp -f "$SOURCE/taskmaster/state.json" "$LOCAL/.taskmaster/state.json"
+############################################################################################
