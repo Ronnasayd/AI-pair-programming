@@ -1,11 +1,7 @@
 ---
 name: execute_task
-description: Use this prompt to execute a task for the MCP developer. It will guide you
+description: Use this prompt to get and execute a task. It will guide you
 ---
 
-use the following tools to execute the task with id {task_id} and follow specs file when is provided {specs_file}:
+Read the {spec_file} file when provided to gather the necessary information to execute the task. Then, upload the task to the system using the get_task tool with the {task_id} and reason step-by-step using the sequentialthinking tool to execute the task. Finally, create a task list using the todos tool to execute the task. When available, delegate task execution to the expert developer agent or obtain instructions with the my_mcp_developer_instructions tool.
 
-- my_mcp_developer_instructions -> provides instructions for the MCP developer to execute the task
-- get_task with id {task_id} -> retrieves the details of the task to be executed
-- sequentialthinking -> provides a step-by-step plan to execute the task
-- todos -> writes a list of todos to execute the task

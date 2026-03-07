@@ -36,7 +36,7 @@ def run(cmd, cwd=None):
 
 def load_instructions(instructions_ref="") -> str:
     with open(
-        os.path.join(INSTRUCTIONS_DIR, instructions_ref),
+        os.path.join(AGENTS_DIR, instructions_ref),
         "r",
         encoding="utf-8",
     ) as f:
@@ -338,18 +338,18 @@ def _symbol_to_status(symbol: str) -> str:
 
 
 # Constantes para caminhos de arquivos e diretórios
-INSTRUCTIONS_DIR = "/home/ronnas/develop/personal/AI-pair-programming/instructions"
+AGENTS_DIR = "/home/ronnas/develop/personal/AI-pair-programming/agents"
 TEMPLATES_DIR = "/home/ronnas/develop/personal/AI-pair-programming/templates"
 TASKS_DIR = ".taskmaster/tasks"
 TASKS_JSON = "tasks.json"
 TASKS_MD = "tasks.md"
 META_JSON = "meta.json"
-REVIEW_INSTRUCTIONS = "review-refactor-specialist.instructions.md"
-DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer.instructions.md"
-DOCUMENTATION_WORKFLOW_INSTRUCTIONS = "generate-documentation.instructions.md"
-GENERATE_PRD_INSTRUCTIONS = "product-owner.instructions.md"
-ASK_GUIDELINES_INSTRUCTIONS = "ask-guidelines.instructions.md"
-TASK_REVIEWER_INSTRUCTIONS = "task-reviewer.instructions.md"
+REVIEW_INSTRUCTIONS = "review-refactor-specialist.agent.md"
+DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer-specialist.agent.md"
+DOCUMENTATION_WORKFLOW_INSTRUCTIONS = "documentation-specialist.agent.md"
+GENERATE_PRD_INSTRUCTIONS = "product-owner-specialist.agent.md"
+ASK_GUIDELINES_INSTRUCTIONS = "ask-guidelines-specialist.agent.md"
+TASK_REVIEWER_INSTRUCTIONS = "task-reviewer-specialist.agent.md"
 PRD_TEMPLATE = "PRD-template.json"
 VENV_DIRS = ("venv", "env")
 BIN_DIR = "bin"
@@ -559,7 +559,7 @@ def my_mcp_run_prompt(name: str) -> Dict[str, Any]:
         dict: File content or error message.
     """
     try:
-        filepath = glob(f"{INSTRUCTIONS_DIR}/*{name}*.instructions.md")[0]
+        filepath = glob(f"{AGENTS_DIR}/*{name}*.agent.md")[0]
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
         return {"content": content}
