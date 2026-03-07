@@ -1,28 +1,7 @@
 ---
 name: python
-description: |
-  Coding conventions and best practices for Python based on the Google Python Style Guide. Use this skill when:
-
-  - Writing new Python modules, libraries, or services
-  - Refactoring Python code to improve readability and maintainability
-  - Enforcing consistent naming conventions and module structure
-  - Designing clean APIs with clear docstrings and type annotations
-  - Avoiding common Python pitfalls such as mutable default arguments
-  - Structuring Python applications with predictable import and file organization
-  - Writing production-quality Python for data, web services, or automation
-
-  This skill emphasizes:
-  - readability and explicitness
-  - consistent naming conventions
-  - clear docstrings and documentation
-  - safe exception handling
-  - small, focused functions
-  - static typing and linting support
-
-  Reference:
-  https://google.github.io/styleguide/pyguide.html
+description: "Coding conventions and best practices for Python based on the Google Python Style Guide, emphasizing readability, explicitness, consistent naming, clear docstrings, safe exception handling, small focused functions, and static typing for writing maintainable production-quality Python code."
 ---
-
 # Skill: Python (Google Style Guide)
 
 ## Overview
