@@ -48,10 +48,9 @@ fi
 mkdir -p $LOCAL/.github/instructions/
 ln -s "$SOURCE/instructions/copilot.instructions.md" "$LOCAL/.github/instructions/copilot.instructions.md"
 ##########################################################################################
-if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
-rm -rf "$HOME/.config/Code/User/mcp.json"
+if [ ! -f "$HOME/.config/Code/User/mcp.json" ]; then
+cp "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 fi
-ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ###########################################################################################
 ## TASKMASTER
