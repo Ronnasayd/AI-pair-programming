@@ -20,6 +20,13 @@ mkdir -p $LOCAL/.github/skills/
 ln -s "$SOURCE/skills/"* "$LOCAL/.github/skills/"
 
 
+if [ -L "$LOCAL/.github/prompts/" ] || [ -d "$LOCAL/.github/prompts/" ]; then
+rm -rf $LOCAL/.github/prompts/
+fi
+mkdir -p $LOCAL/.github/prompts/
+ln -s "$SOURCE/.github/prompts/"* "$LOCAL/.github/prompts/"
+
+
 
 if [ -L "$LOCAL/.github/instructions/copilot.instructions.md" ] || [ -f "$LOCAL/.github/instructions/copilot.instructions.md" ]; then
 rm -rf $LOCAL/.github/instructions/copilot.instructions.md
