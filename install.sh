@@ -20,6 +20,12 @@ fi
 mkdir -p $HOME/.gemini/skills
 ln -s "$SOURCE/skills/"* "$HOME/.gemini/skills/"
 ########################################################################################
+if [ -L "$HOME/.gemini/agents/" ] || [ -d "$HOME/.gemini/agents/" ]; then
+rm -rf $HOME/.gemini/agents/
+fi
+mkdir -p $HOME/.gemini/agents
+ln -s "$SOURCE/agents/"* "$HOME/.gemini/agents/"
+########################################################################################
 ########################################################################################
 
 ## GITHUB COPILOT
