@@ -1,5 +1,5 @@
 ---
-name: typescript
+name: typescript-style-guide
 description: "Conventions and best practices for writing maintainable TypeScript code based on the Google TypeScript Style Guide. Use this skill when writing new TypeScript modules or services, refactoring TypeScript code to improve readability and maintainability, enforcing consistent naming, typing, and formatting conventions, designing strongly typed APIs, interfaces, and classes, avoiding unsafe patterns such as `any`, prototype modification, or loose equality, structuring large TypeScript codebases with predictable patterns, and implementing safe and maintainable code in Node.js or browser TypeScript projects. Emphasizes strong typing, clear naming conventions, strict equality usage, minimal visibility exposure, avoiding dangerous JavaScript features, and consistent formatting. Reference: https://google.github.io/styleguide/tsguide.html"
 ---
 
