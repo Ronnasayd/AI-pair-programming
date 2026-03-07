@@ -1,0 +1,6 @@
+use the following tools to execute the task with id {task_id} and follow specs file when is provided {specs_file}:
+
+- my_mcp_developer_instructions -> provides instructions for the MCP developer to execute the task
+- get_task with id {task_id} -> retrieves the details of the task to be executed
+- sequentialthinking -> provides a step-by-step plan to execute the task
+- todos -> writes a list of todos to execute the task
