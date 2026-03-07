@@ -5,6 +5,8 @@ LOCAL="$(pwd)"
 # echo $SOURCE
 # echo $LOCAL
 
+python3 $SOURCE/converter.py $SOURCE/gemini/commands/  $SOURCE/github/prompts/
+
 ## GEMINI
 if [ -L "$HOME/.gemini/commands/" ] || [ -d "$HOME/.gemini/commands/" ]; then
 rm -rf $HOME/.gemini/commands/
