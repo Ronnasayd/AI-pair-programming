@@ -1,4 +1,18 @@
 {
+  "general": {
+    "sessionRetention": {
+      "enabled": true,
+      "maxAge": "30d",
+      "warningAcknowledged": true
+    },
+    "preferredEditor": "vscode",
+    "vimMode": false
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
   "mcpServers": {
     "sequentialthinking": {
       "command": "npx",
@@ -26,10 +40,7 @@
     },
     "context7": {
       "type": "http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "your_context7_api_key"
-      }
+      "url": "https://mcp.context7.com/mcp"
     },
     "sonarqube": {
       "command": "docker",
@@ -46,7 +57,6 @@
         "mcp/sonarqube"
       ],
       "env": {
-        "SONARQUBE_TOKEN": "your_sonarqube_token",
         "SONARQUBE_URL": "http://localhost:9000"
       }
     },
@@ -54,5 +64,26 @@
       "type": "http",
       "url": "https://mcp.figma.com/mcp"
     }
+  },
+  "ide": {
+    "hasSeenNudge": true,
+    "enabled": true
+  },
+  "experimental": {
+    "enableAgents": true,
+    "plan": true
+  },
+  "ui": {
+    "inlineThinkingMode": "full",
+    "showMemoryUsage": true,
+    "showUserIdentity": true,
+    "footer": {
+      "hideContextPercentage": false
+    },
+    "showCitations": true,
+    "showModelInfoInChat": true
+  },
+  "model": {
+    "name": ""
   }
 }
