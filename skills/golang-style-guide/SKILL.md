@@ -7,7 +7,7 @@ description: "Conventions and best practices for writing readable, maintainable 
 
 ## Overview
 
-This skill implements conventions from the Google Go Style Guide.
+This skill implements conventions from the [Google Go Style Guide](https://google.github.io/styleguide/go/guide).
 
 The goal is to produce Go code that is:
 
@@ -24,281 +24,137 @@ Readable code is prioritized over clever or complex solutions.
 # Core Principles
 
 ## 1. Clarity
-
-Code must be easy to understand.
-
-Guidelines:
-
-- Prefer self-describing names instead of explanatory comments.
-- Comments should explain **why**, not **what**.
-- Avoid clever tricks or surprising patterns.
-- Make the flow of values and decisions obvious.
-- Ensure APIs clearly express their intent.
-
-Readable code should allow a new reader to understand the purpose quickly.
-
----
+Code must be easy to understand. Prefer self-describing names. Comments should explain **why**, not **what**.
 
 ## 2. Simplicity
-
-Use the simplest approach that solves the problem.
-
-Prefer:
-
-1. Core language features
-2. Standard library tools
-3. External dependencies only when necessary
-
-Avoid:
-
-- Unnecessary abstraction
-- Over-engineering
-- Premature optimization
-
-Complexity is acceptable only when justified (e.g., performance).
-
-When complexity exists, document it clearly.
-
----
+Use the simplest approach. Prefer core language features and the standard library. Avoid unnecessary abstraction.
 
 ## 3. Concision
-
-Code should have a high **signal-to-noise ratio**.
-
-Reduce unnecessary:
-
-- Repetition
-- Boilerplate
-- Indirection
-- Verbose naming
-
-Use common Go idioms so readers recognize patterns quickly.
-
-Example:
-
-```go
-if err := doSomething(); err != nil {
-    return err
-}
-```
-
----
+High signal-to-noise ratio. Reduce repetition and boilerplate. Use common Go idioms.
 
 ## 4. Maintainability
-
-Code should be easy to modify correctly.
-
-Maintainable code:
-
-- Has clear structure
-- Avoids tight coupling
-- Uses abstractions only when useful
-- Includes tests with meaningful failures
-- Provides APIs that evolve gracefully
-
-Remember:
-
-Code is **read and modified far more often than it is written**.
+Easy to modify correctly. Clear structure, low coupling, and meaningful tests.
 
 ---
 
-# Formatting
+# Formatting & Imports
 
 ## Always Use `gofmt`
+All Go source code must be formatted with `gofmt`.
 
-All Go source code must be formatted with:
+## Import Grouping
+Imports should be organized into two groups:
+1. Standard library packages
+2. Third-party and project-specific packages
 
+Separate these two groups with a blank line. Within each group, imports should be sorted alphabetically.
+
+Example:
+```go
+import (
+    "fmt"
+    "os"
+
+    "github.com/google/uuid"
+    "myproject/internal/pkg"
+)
 ```
-gofmt
-```
-
-Never manually enforce formatting styles that conflict with gofmt.
-
-Generated code should also be formatted.
 
 ---
 
 # Naming
 
-## MixedCaps
+## MixedCaps & Initialisms
+Go uses `MixedCaps` (camelCase or PascalCase). 
+**Initialisms** (acronyms) should have consistent casing. `URL` should be `URL` or `url`, never `Url`. `ID` should be `ID` or `id`, never `Id`.
 
-Use camel case instead of underscores.
+| Correct | Incorrect |
+| :--- | :--- |
+| `XMLHTTPRequest` | `XmlHttpRequest` |
+| `userID` | `userId` |
+| `appID` | `appId` |
+| `gRPC` | `grpc` |
 
-Examples:
+## Package Names
+- Short, all-lowercase, single word.
+- No underscores or MixedCaps.
+- Avoid names likely to be shadowed (e.g., use `usercount` instead of `count`).
+- Rename imports if the original package name contains underscores.
 
+## Receiver Names
+- Short (1-2 letters), usually an abbreviation of the type.
+- Be consistent within a type's method set.
+- Avoid generic names like `me`, `this`, or `self`.
+
+Example:
 ```go
-MaxLength
-maxLength
-userID
-parseConfig
-```
-
-Avoid:
-
-```
-max_length
-MAX_LENGTH
-user_id
+func (tr *Tray) Activate() { ... }
+func (ri *ResearchInfo) GetDetails() { ... }
 ```
 
 ---
 
-## Naming Guidelines
-
-Good names:
-
-- Reflect intent
-- Avoid redundancy
-- Use context effectively
-- Are shorter when scope is small
-
-Examples:
-
-Good:
-
-```go
-func Parse(r io.Reader)
-```
-
-Bad:
-
-```go
-func ParseReaderInputStream(reader io.Reader)
-```
+# Receiver Types (Value vs. Pointer)
+- Use a **pointer receiver** if the method needs to mutate the receiver.
+- Use a **pointer receiver** if the receiver is a large struct or array.
+- Use a **value receiver** for small, immutable types (like basic types or small structs with no pointers).
+- **Consistency:** If any method of a type has a pointer receiver, all methods should probably have pointer receivers.
 
 ---
 
-# Line Length
+# Comments & Documentation
 
-There is **no fixed line length** in Go.
+## Doc Comments
+- Every exported symbol should have a doc comment.
+- Comments must be complete sentences starting with the name of the symbol.
+- Use the [Go doc comment style](https://go.dev/doc/comment).
 
-If a line becomes too long:
-
-- Refactor the code
-- Introduce intermediate variables
-
-Avoid splitting lines unnecessarily.
-
-Do not split:
-
-- Function signatures awkwardly
-- Long strings (e.g. URLs)
-
----
-
-# Comments
-
-Comments should:
-
-- Explain **why the code exists**
-- Document non-obvious decisions
-- Clarify complex behavior
-
-Avoid comments that restate the code.
-
-Bad:
-
+Example:
 ```go
-// Increment i
-i++
-```
+// A Server handles serving quotes from the works of Shakespeare.
+type Server struct { ... }
 
-Better:
-
-```go
-// Retry counter to prevent infinite loop
-i++
+// Encode writes the JSON encoding of req to w.
+func Encode(w io.Writer, req *Request) { ... }
 ```
 
 ---
 
 # Error Handling
 
-Use idiomatic Go error handling patterns.
+## Error Strings
+- Error strings should **not** be capitalized.
+- Error strings should **not** end with punctuation.
+- This ensures they flow well when wrapped or logged.
 
-Preferred style:
-
+Example:
 ```go
-if err != nil {
-    return err
-}
+// Good
+return fmt.Errorf("something bad happened")
+
+// Bad
+return fmt.Errorf("Something bad happened.")
 ```
-
-Avoid:
-
-- Deep nesting
-- Ignoring errors
-- Clever error abstractions
-
-Error messages should be informative.
-
----
-
-# Abstraction Guidelines
-
-Only introduce abstraction when it adds real value.
-
-Prefer:
-
-- Concrete types
-- Small interfaces
-- Explicit behavior
-
-Avoid:
-
-- Large generic interfaces
-- Overuse of dependency injection frameworks
-- Java-style architecture patterns
 
 ---
 
 # Testing
 
 Maintain a comprehensive test suite.
-
-Tests should:
-
-- Be deterministic
-- Provide clear failure messages
-- Focus on behavior
-
-Use table-driven tests when appropriate.
-
-Example:
-
-```go
-tests := []struct{
-    input string
-    want  string
-}{
-    {"a", "A"},
-    {"b", "B"},
-}
-```
+- Use **table-driven tests** for complex logic.
+- Tests should be deterministic and provide clear failure messages.
+- Focus on behavior over implementation details.
 
 ---
 
 # Consistency
-
-Consistency within a project is important.
-
-If the style guide is silent:
-
-- Follow existing local conventions
-- Maintain consistency within the package
-
-Avoid introducing new patterns unnecessarily.
+Consistency within a package is paramount. If the style guide is silent, follow the existing patterns in the codebase.
 
 ---
 
 # Summary
+1. **Clarity** over cleverness.
+2. **Standard library** over dependencies.
+3. **Idiomatic patterns** (errors, receivers, naming).
+4. **Consistency** with the Google Go Style Guide.
 
-Priorities for Go code readability:
-
-1. Clarity
-2. Simplicity
-3. Concision
-4. Maintainability
-5. Consistency
-
-Prefer code that is straightforward, idiomatic, and easy to maintain.
