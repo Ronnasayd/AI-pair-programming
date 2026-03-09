@@ -89,5 +89,12 @@ fi
 if ! grep -q ".taskmaster/" .gitignore; then
     echo ".taskmaster/" >> .gitignore
 fi
+if ! grep -q "GEMINI.md" .gitignore; then
+    echo "GEMINI.md" >> .gitignore
+fi
 ############################################################################################
+############################################################################################
+if ! grep -q "@.github/instructions/copilot.instructions.md" $LOCAL/GEMINI.md; then
+    echo -e "\n## References:\n@.github/instructions/copilot.instructions.md" >> $LOCAL/GEMINI.md
+fi
 ############################################################################################
