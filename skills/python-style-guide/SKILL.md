@@ -7,446 +7,132 @@ description: "Coding conventions and best practices for Python based on the Goog
 
 ## Overview
 
-This skill implements conventions from the Google Python Style Guide.
-The goal is to produce Python code that is readable, maintainable, and consistent across large codebases.
-
-Reference: https://google.github.io/styleguide/pyguide.html
+This skill implements conventions from the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html). The primary goal is to produce Python code that is readable, maintainable, and consistent across large codebases by following established patterns and avoiding common pitfalls.
 
 ---
 
-# 1. General Principles
+# 1. Language Rules
 
-- Prefer readability and maintainability over cleverness.
-- Be consistent with the surrounding code.
-- Follow automated tooling where possible.
+### Linting
+- **Mandatory Tooling:** Use `pylint` to catch errors and style issues.
+- **Suppression:** Suppress warnings only when necessary and justified (e.g., `pylint: disable=no-member`).
 
-Recommended tools:
+### Imports
+- **Packages & Modules:** Prefer `import x` for packages and modules.
+- **Specific Items:** Use `from x import y` only when `y` is a module, or for items from `typing` and similar core libraries.
+- **No Wildcards:** Never use `from module import *`.
+- **Order:** 
+  1. Standard library imports.
+  2. Third-party library imports.
+  3. Local application imports.
 
-- pylint
-- Black or Pyink formatter
-- type checkers (pytype, mypy)
+### Exceptions
+- **Specific Catch:** Never use catch-all `except:` or `except Exception:`. Catch specific exceptions.
+- **Try Block Size:** Minimize the amount of code inside a `try` block.
+- **Custom Exceptions:** Inherit from `Exception` (or a more specific built-in) and end the name with `Error`.
 
-Running a linter helps detect common errors and style violations early. :contentReference[oaicite:1]{index=1}
+### Global State
+- **Avoid Mutability:** Avoid mutable global variables.
+- **Internal Only:** If global state is necessary, prefix with an underscore (`_`) and access via public functions.
 
----
+### Functions & Power Features
+- **Length:** Prefer small, focused functions. Reconsider logic if a function exceeds ~40 lines.
+- **Complexity:** Avoid complex "power" features like metaclasses, bytecode access, or dynamic inheritance unless absolutely necessary for infrastructure.
+- **Lambda:** Use only for simple, one-line expressions. Use named functions for anything complex.
 
-# 2. Imports
-
-## Import Rules
-
-Imports should be grouped in the following order:
-
-1. Standard library
-2. Third-party libraries
-3. Local application imports
-
-Example:
-
-```python
-import os
-import sys
-
-import requests
-
-from myproject import utils
-```
-
-Avoid wildcard imports:
-
-```python
-from module import *
-```
+### Default Arguments
+- **No Mutable Defaults:** Never use mutable objects (e.g., `[]`, `{}`) as default values.
+- **Correct Pattern:** Use `None` as the default and initialize inside the function.
+  ```python
+  def process_items(items=None):
+      if items is None:
+          items = []
+  ```
 
 ---
 
-# 3. Exceptions
+# 2. Style Rules
 
-### Creating Exceptions
+### Layout & Formatting
+- **Line Length:** Maximum of **80 characters**. Use implicit line joining (parentheses) instead of backslashes.
+- **Indentation:** Use **4 spaces** per level. No tabs.
+- **Blank Lines:** 
+  - Two blank lines between top-level definitions (classes, functions).
+  - One blank line between method definitions within a class.
 
-Custom exceptions must:
+### Whitespace
+- **Operators:** Surround binary operators (`=`, `==`, `<`, `+`, `-`, etc.) with a single space.
+- **Keyword Args:** No spaces around `=` for keyword arguments or default values, *unless* there is a type hint.
+  ```python
+  def func(param: int = 5):  # Space allowed with type hint
+  def func(param=5):        # No spaces without type hint
+  ```
+- **Grouping:** No whitespace inside parentheses, brackets, or braces.
 
-- inherit from an existing exception
-- end with `Error`
+### Naming Conventions
+| Entity | Style | Example |
+| :--- | :--- | :--- |
+| **Modules / Packages** | `lower_with_under` | `user_service.py` |
+| **Classes** | `CapWords` | `UserManager` |
+| **Exceptions** | `CapWords` | `ValidationError` |
+| **Functions / Methods** | `lower_with_under` | `fetch_data()` |
+| **Variables / Params** | `lower_with_under` | `user_id` |
+| **Constants** | `CAPS_WITH_UNDER` | `MAX_RETRIES` |
+| **Internal Members** | `_leading_underscore` | `_private_helper()` |
 
-Example:
-
+### Docstrings
+Mandatory for public APIs, classes, and non-trivial functions. Use `"""triple double quotes"""`.
 ```python
-class DataValidationError(Exception):
-    pass
-```
+def function(arg1: int, arg2: str) -> bool:
+    """Summary line of the function.
 
-### Avoid Catch-All Exceptions
-
-Avoid:
-
-```python
-except:
-```
-
-or
-
-```python
-except Exception:
-```
-
-Unless:
-
-- re-raising the exception
-- isolating failures such as thread boundaries.
-
----
-
-# 4. Mutable Global State
-
-Avoid mutable global variables when possible.
-
-Prefer:
-
-- constants
-- dependency injection
-- passing objects explicitly.
-
----
-
-# 5. Functions
-
-## Function Length
-
-Prefer small, focused functions.
-
-Guideline:
-
-- reconsider functions longer than ~40 lines.
-
-Large functions make debugging and modification harder.
-
----
-
-# 6. Lambda Functions
-
-Use lambda functions only for simple expressions.
-
-Good:
-
-```python
-sorted(items, key=lambda x: x.id)
-```
-
-Bad:
-
-```python
-lambda x: complicated_logic(x)
-```
-
-If logic becomes complex, use a named function.
-
----
-
-# 7. Conditional Expressions
-
-Python ternary expressions are allowed for simple cases:
-
-```python
-value = "yes" if condition else "no"
-```
-
-Avoid long or complex ternary expressions.
-
----
-
-# 8. Default Argument Values
-
-Default parameters are allowed:
-
-```python
-def foo(value, retries=3):
-    pass
-```
-
-Be careful with mutable defaults:
-
-Bad:
-
-```python
-def add_item(item, items=[]):
-    items.append(item)
-```
-
-Correct:
-
-```python
-def add_item(item, items=None):
-    if items is None:
-        items = []
-```
-
----
-
-# 9. Truth Value Testing
-
-Prefer implicit boolean checks:
-
-Good:
-
-```python
-if items:
-```
-
-Avoid:
-
-```python
-if len(items) > 0:
-```
-
-Check for `None` explicitly:
-
-```python
-if value is None:
-```
-
----
-
-# 10. Type Annotations
-
-Use Python type hints for readability and static analysis.
-
-Example:
-
-```python
-def get_user(id: int) -> str:
-    return "user"
-```
-
-Benefits:
-
-- improved readability
-- earlier error detection
-- better IDE support. ([Google GitHub][1])
-
----
-
-# 11. Line Length
-
-Maximum line length:
-
-```
-80 characters
-```
-
-Exceptions include:
-
-- long URLs
-- import lines
-- long constants.
-
-Avoid using `\` for line continuation.
-
-Prefer parentheses:
-
-```python
-result = (
-    some_function_with_long_name(
-        arg1,
-        arg2,
-    )
-)
-```
-
----
-
-# 12. Semicolons
-
-Do not use semicolons.
-
-Incorrect:
-
-```python
-x = 1; y = 2
-```
-
-Correct:
-
-```python
-x = 1
-y = 2
-```
-
----
-
-# 13. Naming Conventions
-
-Follow these naming patterns:
-
-| Entity     | Style              |
-| ---------- | ------------------ |
-| Modules    | `lower_with_under` |
-| Packages   | `lower_with_under` |
-| Classes    | `CapWords`         |
-| Exceptions | `CapWords`         |
-| Functions  | `lower_with_under` |
-| Methods    | `lower_with_under` |
-| Variables  | `lower_with_under` |
-| Constants  | `CAPS_WITH_UNDER`  |
-
-Examples:
-
-```python
-class UserService:
-    pass
-
-def fetch_user():
-    pass
-
-MAX_RETRIES = 3
-```
-
-Names should be descriptive and avoid abbreviations. ([Google GitHub][1])
-
----
-
-# 14. File Naming
-
-Rules:
-
-- must end with `.py`
-- no dashes (`-`)
-
-Correct:
-
-```
-user_service.py
-```
-
-Incorrect:
-
-```
-user-service.py
-```
-
----
-
-# 15. Module Structure
-
-Every module should begin with a module docstring.
-
-Example:
-
-```python
-"""Example module.
-
-Provides utilities for working with user accounts.
-"""
-```
-
----
-
-# 16. Docstrings
-
-Use triple quotes:
-
-```python
-"""Summary line.
-
-Detailed explanation.
-"""
-```
-
-### Function Docstring Example
-
-```python
-def fetch_rows(table, keys):
-    """Fetch rows from a Bigtable.
+    Detailed explanation if necessary.
 
     Args:
-        table: Bigtable instance.
-        keys: List of keys.
+        arg1: Description of arg1.
+        arg2: Description of arg2.
 
     Returns:
-        Mapping of keys to rows.
+        Description of the return value.
+
+    Raises:
+        ValueError: When arg1 is negative.
     """
 ```
 
-Sections may include:
+---
 
-- Args
-- Returns
-- Raises
-- Attributes
+# 3. Modern Python & Typing
 
-Docstrings explain _what_ code does, not how.
+### Type Annotations
+- **Public APIs:** Strongly encouraged for all public function signatures.
+- **Readability:** Use type hints to improve clarity and enable static analysis with tools like `mypy`.
+  ```python
+  from typing import List, Optional
+
+  def get_users(query: str) -> List[User]:
+      ...
+  ```
 
 ---
 
-# 17. Comments
+# 4. Main Entry Point
 
-Write clear comments explaining intent.
-
-Good:
-
-```python
-# Binary search to locate value.
-```
-
-Bad:
-
-```python
-# increment i
-i += 1
-```
-
-Comments should:
-
-- be grammatically correct
-- start with `# ` (space after hash)
-- describe purpose, not obvious behavior. ([Google GitHub][1])
-
----
-
-# 18. Main Entry Point
-
-Executable modules should use:
-
+Executable modules must always use a `main()` function and the `if __name__ == '__main__':` guard.
 ```python
 def main():
+    # Application logic here
     pass
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 ```
-
-This prevents execution when imported.
-
----
-
-# 19. Consistency
-
-When style rules conflict:
-
-1. follow the local file
-2. follow the project style
-3. otherwise use the Google guide.
-
-Consistency across a codebase is more important than personal preference.
 
 ---
 
 # Key Principles
 
-1. Prefer readability.
-2. Avoid surprising behavior.
-3. Write small, focused functions.
-4. Use clear naming conventions.
-5. Document public APIs.
-6. Use static typing where possible.
-
----
-
-# Summary
-
-The Google Python Style Guide emphasizes:
-
-- strong readability
-- consistent naming
-- clear documentation
-- small maintainable functions
-- linting and static analysis
+1. **Readability First:** If the rule makes the code less readable, follow common sense.
+2. **Explicitness:** Be explicit in imports and behavior.
+3. **Consistency:** Match the style of the existing file/project if it differs slightly but is consistent.
+4. **Defensive Programming:** Use static typing and robust error handling.
