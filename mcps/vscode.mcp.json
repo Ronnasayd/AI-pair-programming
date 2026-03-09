@@ -28,10 +28,7 @@
     },
     "context7": {
       "type": "http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "CONTEXT7_API_KEY": "your_context7_api_key"
-      }
+      "url": "https://mcp.context7.com/mcp"
     },
     "sonarqube": {
       "command": "docker",
@@ -50,7 +47,6 @@
         "mcp/sonarqube"
       ],
       "env": {
-        "SONARQUBE_TOKEN": "your_sonarqube_token",
         "SONARQUBE_URL": "http://localhost:9000"
       }
     },
