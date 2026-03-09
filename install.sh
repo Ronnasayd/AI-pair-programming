@@ -8,11 +8,17 @@ LOCAL="$(pwd)"
 python3 $SOURCE/converter.py $SOURCE/gemini/commands/  $SOURCE/github/prompts/
 
 ## GEMINI
+#######################################################################################
 if [ -L "$HOME/.gemini/commands/" ] || [ -d "$HOME/.gemini/commands/" ]; then
 rm -rf $HOME/.gemini/commands/
 fi
 mkdir -p $HOME/.gemini/commands
 ln -s "$SOURCE/gemini/commands/"* "$HOME/.gemini/commands/"
+#######################################################################################
+if [ -L "$HOME/.gemini/settings.json" ] || [ -f "$HOME/.gemini/settings.json" ]; then
+rm -rf $HOME/.gemini/settings.json
+fi
+ln -s "$SOURCE/gemini/settings.json"* "$HOME/.gemini/settings.json"
 #######################################################################################
 if [ -L "$HOME/.gemini/skills/" ] || [ -d "$HOME/.gemini/skills/" ]; then
 rm -rf $HOME/.gemini/skills/
