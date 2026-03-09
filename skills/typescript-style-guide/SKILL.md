@@ -7,364 +7,113 @@ description: "Conventions and best practices for writing maintainable TypeScript
 
 ## Overview
 
-This skill follows the Google TypeScript Style Guide and provides conventions and best practices for writing consistent, maintainable TypeScript code.
-
-Reference: https://google.github.io/styleguide/tsguide.html
+This skill follows the [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html) and provides conventions and best practices for writing consistent, maintainable, and type-safe TypeScript code.
 
 ---
 
-# 1. Source File Basics
+# 1. Language Rules
 
-## Encoding
+### Variable Declarations
+- **Use `const` and `let`:** Use `const` by default. Use `let` only if reassignment is required. **Never use `var`.**
+- **One variable per statement:** Do not use `let a = 1, b = 2;`.
+- **Initialization:** Declare variables close to where they are used.
 
-- Use **UTF-8** for all source files.
+### Types & Inference
+- **Implicit Types:** Rely on type inference for trivial initializations (e.g., `const x = 5;`, `const s = 'foo';`).
+- **Explicit Types:** Use explicit type annotations when the type is not obvious or for public APIs.
+- **Avoid `any`:** Never use `any`. Use `unknown` if the type is truly unknown.
+- **Avoid `{}`:** Use `Record<string, unknown>` or `object` instead of the empty object type `{}`.
 
-## Whitespace
+### Arrays & Objects
+- **Literals:** Use `[]` and `{}` instead of `new Array()` or `new Object()`.
+- **Array Types:** Use `T[]` for simple types and `Array<T>` for complex or nested types.
+- **Iteration:** Use `for...of` to iterate over arrays. Avoid `forEach` unless necessary for side effects in a chain.
 
-- Only ASCII space (`0x20`) is allowed outside of line terminators.
-- Other whitespace must be escaped in strings.
+### Classes
+- **Visibility:** Use TypeScript visibility modifiers (`private`, `protected`). Avoid ES private fields (`#field`).
+- **Modifiers:** Restrict symbol visibility as much as possible. Do not use `public` explicitly (it is the default).
+- **Parameter Properties:** Use parameter properties in constructors to reduce boilerplate.
+  ```ts
+  class UserService {
+    constructor(private readonly db: Database) {}
+  }
+  ```
+- **Readonly:** Mark properties `readonly` if they are not reassigned.
+- **Prototype:** Never modify built-in prototypes.
 
-## Escape Sequences
+### Interfaces vs. Type Aliases
+- **Prefer `interface`:** Use `interface` for object structures (classes/objects).
+- **Use `type`:** Use `type` for unions, intersections, or primitive aliases.
+  ```ts
+  interface User { id: string; }
+  type ID = string | number;
+  ```
 
-Prefer standard escape sequences:
+### Enums
+- **Plain Enums:** Use plain `enum`. **Do not use `const enum`.**
+- **Safety:** Do not use enums for boolean coercion.
 
-```
+### Functions
+- **Declarations:** Use `function Foo() {}` for named functions at the top level.
+- **Arrow Functions:** Use arrow functions for expressions, nested functions, and callbacks.
+- **Return Types:** Always provide explicit return types for public functions and methods.
 
-' " \ \b \f \n \r \t \v
-
-```
-
-Avoid numeric escapes unless necessary.
-
-## Non-ASCII Characters
-
-- Prefer the real Unicode character when readable.
-
-Example:
-
-```ts
-const units = "μs";
-```
-
----
-
-# 2. Variables
-
-## Use `const` and `let`
-
-- Prefer `const`.
-- Use `let` only if reassignment is required.
-- **Never use `var`.**
-
-```ts
-const foo = value;
-let counter = 0;
-```
-
-## One variable per declaration
-
-Correct:
-
-```ts
-let a = 1;
-let b = 2;
-```
-
-Incorrect:
-
-```ts
-let a = 1,
-  b = 2;
-```
+### Control Flow & Equality
+- **Braces:** Always use braces `{}` for all control structures (`if`, `else`, `for`, `while`), even for single-line statements.
+- **Equality:** Always use strict equality (`===` and `!==`).
+- **Null Checks:** Use `obj == null` (loose equality) specifically to check for both `null` and `undefined`.
 
 ---
 
-# 3. Classes
+# 2. Style Rules
 
-## Visibility
+### Semicolons & Layout
+- **Semicolons:** Required at the end of every statement.
+- **Line Length:** Maximum of **80 characters**.
+- **Indentation:** Use **2 spaces** per level. No tabs.
+- **Braces:** Use "Egyptian Braces" (opening brace on the same line).
 
-- Restrict symbol visibility as much as possible.
-- Avoid explicit `public` modifier unless needed.
+### Naming Conventions
+| Entity | Style | Example |
+| :--- | :--- | :--- |
+| **Classes / Interfaces** | `UpperCamelCase` | `UserProfile` |
+| **Types / Enums** | `UpperCamelCase` | `UserStatus` |
+| **Decorators** | `UpperCamelCase` | `@Component` |
+| **Variables / Params** | `lowerCamelCase` | `timeoutMs` |
+| **Functions / Methods** | `lowerCamelCase` | `fetchData()` |
+| **Constants** | `CONSTANT_CASE` | `MAX_RETRY` |
 
-```ts
-class Foo {
-  bar = new Bar();
-}
-```
+- **No Prefixes:** Do not use `_` or `$` prefixes for private members or variables.
 
-Avoid:
+### Strings
+- **Single Quotes:** Use single quotes `'` for ordinary string literals.
+- **Template Literals:** Use backticks `` ` `` for complex concatenation or multi-line strings.
 
-```ts
-class Foo {
-  public bar = new Bar();
-}
-```
+### Modules & Exports
+- **ES Modules:** Use `import`/`export`. Do not use `require()` or `namespace`.
+- **Named Exports:** **Do not use `export default`.** Use named exports for better discoverability and refactoring.
+  ```ts
+  export class Bar {} // Correct
+  export default Bar;  // Incorrect
+  ```
 
-## Avoid Prototype Manipulation
-
-Do not modify prototypes directly.
-
-Bad:
-
-```ts
-SomeClass.prototype.newMethod = function () {};
-```
-
----
-
-# 4. Functions
-
-## Types of functions
-
-- Function declaration
-- Function expression
-- Arrow function
-
-Example:
-
-```ts
-function add(a: number, b: number): number {
-  return a + b;
-}
-
-const addArrow = (a: number, b: number) => a + b;
-```
+### Comments
+- **JSDoc:** Use `/** ... */` for documentation of classes, methods, and properties.
+- **Implementation:** Use `//` for internal notes.
+- **Parameters:** Use inline comments for boolean parameters if meaning is unclear: `start(/* shouldHeat= */ true)`.
 
 ---
 
-# 5. Equality
+# 3. Compiler & Tooling
 
-Always use **strict equality**.
-
-Correct:
-
-```ts
-if (a === b) {
-}
-```
-
-Avoid:
-
-```ts
-if (a == b) {
-}
-```
-
-Exception:
-
-```ts
-if (value == null) {
-  // matches null or undefined
-}
-```
-
----
-
-# 6. Type Safety
-
-## Avoid `any`
-
-Prefer:
-
-- interfaces
-- generics
-- `unknown`
-
-Example:
-
-```ts
-interface User {
-  name: string;
-  email: string;
-}
-```
-
-Instead of:
-
-```ts
-let user: any;
-```
-
----
-
-# 7. Naming Conventions
-
-## Identifiers
-
-Allowed characters:
-
-- letters
-- numbers
-- underscores
-- `$` (rare)
-
-## Naming style
-
-| Type      | Style            |
-| --------- | ---------------- |
-| variables | `lowerCamelCase` |
-| functions | `lowerCamelCase` |
-| classes   | `UpperCamelCase` |
-| constants | `CONSTANT_CASE`  |
-
-Example:
-
-```ts
-const MAX_RETRIES = 5;
-
-class UserService {}
-
-function fetchUser() {}
-```
-
----
-
-# 8. Constants
-
-Use `CONSTANT_CASE` for immutable values.
-
-Example:
-
-```ts
-const UNIT_SUFFIXES = {
-  milliseconds: "ms",
-  seconds: "s",
-};
-```
-
-Static constant example:
-
-```ts
-class MathUtils {
-  static readonly MAX = 100;
-}
-```
-
----
-
-# 9. Dangerous Features to Avoid
-
-Do not use:
-
-- `eval()`
-- `new Function()`
-- modifying built-in objects
-- non-standard ECMAScript features
-
-Bad:
-
-```ts
-eval("alert('hello')");
-```
-
----
-
-# 10. Type Assertions
-
-Avoid unnecessary assertions:
-
-```ts
-value as SomeType;
-```
-
-Use only when absolutely required.
-
----
-
-# 11. Compiler Directives
-
-Avoid:
-
-```ts
-@ts-ignore
-@ts-expect-error
-@ts-nocheck
-```
-
-They hide real issues.
-
----
-
-# 12. Comments
-
-## Class Comments
-
-Explain:
-
-- purpose
-- usage
-- constraints
-
-Example:
-
-```ts
-/**
- * Represents a coffee brewing machine.
- */
-class CoffeeMachine {}
-```
-
-## Method Comments
-
-Start with a verb phrase.
-
-Example:
-
-```ts
-/**
- * Starts the brewing process.
- */
-brew(amountLitres: number) {}
-```
-
-## Parameter Comments
-
-Use when meaning is unclear:
-
-```ts
-startMachine(/* shouldHeatWater= */ true, /* cups= */ 2);
-```
-
----
-
-# 13. Consistency
-
-If a style decision isn't defined:
-
-1. Follow the existing file style.
-2. Follow the directory style.
-3. Default to Google style.
-
-Consistency is more important than preference.
+- **Strict Mode:** Always use `strict: true` in `tsconfig.json`.
+- **Directives:** Avoid `@ts-ignore`. Use `@ts-expect-error` sparingly (primarily in tests) with a comment explaining why.
 
 ---
 
 # Key Principles
 
-1. Avoid patterns that cause bugs.
-2. Maintain consistency across projects.
-3. Optimize for long-term maintainability.
-4. Prefer rules that can be automated.
-
----
-
-# Recommended Tooling
-
-Typical tooling stack:
-
-- TypeScript compiler
-- ESLint
-- Prettier
-- Strict compiler flags
-
----
-
-# Summary
-
-This guide emphasizes:
-
-- strong typing
-- strict equality
-- clear naming
-- avoiding unsafe language features
-- consistent code style
+1. **Type Safety:** Prioritize strong types over `any` or loose assertions.
+2. **Readability:** Follow clear naming and formatting rules to ensure long-term maintainability.
+3. **Consistency:** Match the style of the existing project if it deviates slightly from these rules.
+4. **Modern Features:** Use ES6+ and TypeScript-specific features effectively while avoiding dangerous JS patterns.
