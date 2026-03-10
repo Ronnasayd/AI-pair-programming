@@ -31,7 +31,6 @@ The server in `src/my_mcp_server.py` exposes several tools:
 - `my_mcp_get_context`: Generates a structured context of the codebase.
 - `my_mcp_code_review`: Analyzes git diffs based on specialist instructions.
 - `my_mcp_convert_tasks_to_markdown` / `my_mcp_convert_markdown_to_tasks`: Syncs the internal task state with a human-readable `tasks.md`.
-- `my_mcp_run_command`: Executes shell commands with automatic venv detection.
 
 ### Setup and Installation
 

@@ -508,44 +508,6 @@ def my_mcp_get_context(
         return _format_error("Subprocess error when running command", e)
 
 
-@mcp.tool()
-def my_mcp_run_command(command: str, rootProject: Optional[str] = None) -> Dict[str, Any]:
-    """
-    Executes a shell command in the specified directory (or current directory if not provided).
-    If there is a virtual environment (venv/.venv) in the directory, it is automatically activated before the command.
-
-    Args:
-        command (str): The shell command to execute.
-        rootProject (Optional[str]): Directory to execute the command in.
-
-    Returns:
-        dict: stdout, stderr, or error message.
-    """
-    try:
-        workdir = rootProject or os.getcwd()
-        result = subprocess.run(
-            command,
-            cwd=workdir,
-            capture_output=True,
-            text=True,
-            shell=True,  # permite string única como comando
-            executable="/bin/zsh",  # garante compatibilidade com zsh
-            check=False,
-        )
-        if result.returncode == 0:
-            return {"stdout": result.stdout.strip()}
-        else:
-            return {
-                "stderr": result.stderr.strip(),
-                "returncode": result.returncode,
-            }
-    except FileNotFoundError as e:
-        return _format_error(
-            "File or directory not found when running command.", e
-        )
-    except subprocess.SubprocessError as e:
-        return _format_error("Subprocess error when running command", e)
-
 
 @mcp.tool()
 def my_mcp_run_prompt(name: str) -> Dict[str, Any]:
