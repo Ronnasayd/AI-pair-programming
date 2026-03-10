@@ -16,9 +16,9 @@ mkdir -p $HOME/.gemini/commands
 ln -s "$SOURCE/gemini/commands/"* "$HOME/.gemini/commands/"
 #######################################################################################
 if [ -L "$HOME/.gemini/settings.json" ] || [ -f "$HOME/.gemini/settings.json" ]; then
-rm -rf $HOME/.gemini/settings.json
+rm $HOME/.gemini/settings.json
 fi
-ln -s "$SOURCE/gemini/settings.json"* "$HOME/.gemini/settings.json"
+ln -s "$SOURCE/gemini/settings.json" "$HOME/.gemini/settings.json"
 #######################################################################################
 if [ -L "$HOME/.gemini/skills/" ] || [ -d "$HOME/.gemini/skills/" ]; then
 rm -rf $HOME/.gemini/skills/
