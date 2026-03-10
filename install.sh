@@ -52,6 +52,12 @@ fi
 mkdir -p $LOCAL/.github/prompts/
 ln -s "$SOURCE/github/prompts/"* "$LOCAL/.github/prompts/"
 ########################################################################################
+if [ -L "$LOCAL/.github/hooks/" ] || [ -d "$LOCAL/.github/hooks/" ]; then
+rm -rf $LOCAL/.github/hooks/
+fi
+mkdir -p $LOCAL/.github/hooks/
+ln -s "$SOURCE/hooks/"* "$LOCAL/.github/hooks/"
+########################################################################################
 if [ -L "$LOCAL/.github/agents/" ] || [ -d "$LOCAL/.github/agents/" ]; then
 rm -rf $LOCAL/.github/agents/
 fi
@@ -95,6 +101,9 @@ if ! grep -q ".github/instructions/" .gitignore; then
 fi
 if ! grep -q ".github/agents/" .gitignore; then
     echo ".github/agents/" >> .gitignore
+fi
+if ! grep -q ".github/hooks/" .gitignore; then
+    echo ".github/hooks/" >> .gitignore
 fi
 if ! grep -q ".taskmaster/" .gitignore; then
     echo ".taskmaster/" >> .gitignore

@@ -180,3 +180,4 @@ pyrightconfig.json
 .taskmaster/
 .github/agents/
 GEMINI.md
+.github/hooks/
