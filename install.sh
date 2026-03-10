@@ -10,7 +10,6 @@ python3 $SOURCE/converter.py $SOURCE/gemini/commands/  $SOURCE/github/prompts/
 $SOURCE/scripts/copilot.install.sh
 $SOURCE/scripts/gemini.install.sh
 $SOURCE/scripts/taskmaster.install.sh
-$SOURCE/scripts/gitignore.install.sh
 
 
 

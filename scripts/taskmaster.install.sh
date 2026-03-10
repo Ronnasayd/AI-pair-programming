@@ -12,3 +12,8 @@ rm -rf "$LOCAL/.taskmaster/state.json"
 fi
 cp -f "$SOURCE/taskmaster/state.json" "$LOCAL/.taskmaster/state.json"
 ############################################################################################
+## GITIGNORE
+if ! grep -q ".taskmaster/" .gitignore; then
+    echo ".taskmaster/" >> .gitignore
+fi
+###########################################################################################
