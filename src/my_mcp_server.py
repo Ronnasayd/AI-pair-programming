@@ -1122,10 +1122,16 @@ def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str =
         ====================
         PHASE 4 — TASK-MASTER EXECUTION
         ====================
+
+        Ask the user to confirm if he wants to create one task or append multiple tasks.
+        
         
         Once the user confirms, execute the following commands sequentially in the terminal:
         
+        For one task:
         1. task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)"
+        For append multiple tasks:
+        1. task-master parse-prd --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)" --append
         2. task-master analyze-complexity
         3. task-master expand --all --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)"
 
