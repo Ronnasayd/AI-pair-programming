@@ -8,6 +8,10 @@ LOCAL="$(pwd)"
 python3 $SOURCE/converter.py $SOURCE/gemini/commands/  $SOURCE/github/prompts/
 
 ## GEMINI
+############################################################################################
+if ! grep -q "@.github/instructions/copilot.instructions.md" $LOCAL/GEMINI.md; then
+    echo -e "\n## References:\n@.github/instructions/copilot.instructions.md" >> $LOCAL/GEMINI.md
+fi
 #######################################################################################
 if [ -L "$HOME/.gemini/commands/" ] || [ -d "$HOME/.gemini/commands/" ]; then
 rm -rf $HOME/.gemini/commands/
@@ -100,7 +104,4 @@ if ! grep -q "GEMINI.md" .gitignore; then
 fi
 ############################################################################################
 ############################################################################################
-if ! grep -q "@.github/instructions/copilot.instructions.md" $LOCAL/GEMINI.md; then
-    echo -e "\n## References:\n@.github/instructions/copilot.instructions.md" >> $LOCAL/GEMINI.md
-fi
-############################################################################################
+
