@@ -27,3 +27,8 @@ fi
 mkdir -p $HOME/.gemini/agents
 cp -r "$SOURCE/agents/"* "$HOME/.gemini/agents/"
 ########################################################################################
+## GITIGNORE
+if ! grep -q "GEMINI.md" .gitignore; then
+    echo "GEMINI.md" >> .gitignore
+fi
+###########################################################################################

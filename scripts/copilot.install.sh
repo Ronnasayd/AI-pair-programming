@@ -34,3 +34,20 @@ if [ ! -f "$HOME/.config/Code/User/mcp.json" ]; then
 cp "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 fi
 ###########################################################################################
+## GITIGNORE
+if ! grep -q ".github/skills/" .gitignore; then
+    echo ".github/skills/" >> .gitignore
+fi
+if ! grep -q ".github/prompts/" .gitignore; then
+    echo ".github/prompts/" >> .gitignore
+fi
+if ! grep -q ".github/instructions/" .gitignore; then
+    echo ".github/instructions/" >> .gitignore
+fi
+if ! grep -q ".github/agents/" .gitignore; then
+    echo ".github/agents/" >> .gitignore
+fi
+if ! grep -q ".github/hooks/" .gitignore; then
+    echo ".github/hooks/" >> .gitignore
+fi
+###########################################################################################
