@@ -4,6 +4,10 @@
 
 ### **2026-03-10**
 
+- [✨ **Features**] Add reference check for github copilot instructions in gemini.md ([551aac7](https://github.com/Ronnasayd/AI-pair-programming/commit/551aac7))
+- [✨ **Features**] Add context architect specialist and context map skills for multi-file change planning ([befedbe](https://github.com/Ronnasayd/AI-pair-programming/commit/befedbe))
+- [✨ **Features**] Add figma design system to tailwind css conversion skill documentation ([0fc1067](https://github.com/Ronnasayd/AI-pair-programming/commit/0fc1067))
+- [🧹 **Chores**] Update project dependencies to latest versions ([bec284b](https://github.com/Ronnasayd/AI-pair-programming/commit/bec284b))
 - [✨ **Features**] Add tailwind css documentation and configuration resources ([5e84421](https://github.com/Ronnasayd/AI-pair-programming/commit/5e84421))
 
 ### **2026-03-09**
@@ -343,4 +347,4 @@
 - [🚧 **Other Changes**] D83773e - first commit | 2025-09-11
 
 ---
-Generated on 2026-03-10 10:00:41
+Generated on 2026-03-10 12:22:28
