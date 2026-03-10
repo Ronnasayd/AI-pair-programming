@@ -9,6 +9,11 @@ This instruction file applies exclusively to code generation or code modificatio
 Code review, auditing, analysis, or diff inspection are handled by a separate review prompt.
 Do not perform review-only activities unless explicitly requested.
 
+## Enviroments
+
+- Prefer `yarn`instead of `npm` for JavaScript/TypeScript projects, unless the project explicitly uses `npm`.
+- For Python projects, prefer `pip` and `venv` for dependency management and virtual
+
 ## Rules for Code Generation
 
 When generating code, adhere to the following rules:
