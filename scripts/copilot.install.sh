@@ -29,6 +29,12 @@ rm -rf $LOCAL/.github/instructions/copilot.instructions.md
 fi
 mkdir -p $LOCAL/.github/instructions/
 ln -s "$SOURCE/instructions/copilot.instructions.md" "$LOCAL/.github/instructions/copilot.instructions.md"
+########################################################################################3
+if [ -L "$LOCAL/.github/instructions/orchestration.instructions.md" ] || [ -f "$LOCAL/.github/instructions/orchestration.instructions.md" ]; then
+rm -rf $LOCAL/.github/instructions/orchestration.instructions.md
+fi
+mkdir -p $LOCAL/.github/instructions/
+ln -s "$SOURCE/instructions/orchestration.instructions.md" "$LOCAL/.github/instructions/orchestration.instructions.md"
 ##########################################################################################
 if [ ! -f "$HOME/.config/Code/User/mcp.json" ]; then
 cp "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"

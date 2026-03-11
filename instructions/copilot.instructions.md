@@ -1,5 +1,5 @@
 ---
-description: Comprehensive guide to generate code with Copilot (CODE MODE ONLY)
+description: Comprehensive guide to generate high-quality code.
 applyTo: "**/*"
 ---
 
