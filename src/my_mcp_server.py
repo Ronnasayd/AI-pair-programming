@@ -639,9 +639,8 @@ def my_mcp_generate_docs_init() -> Dict[str, Any]:
         dict: The content of the instructions or an error message.
     """
     try:
-        instructions = load_instructions(DOCUMENTATION_WORKFLOW_INSTRUCTIONS)
         combined_content = f"""
-        <system_instructions>{instructions}</system_instructions>
+        MANDATORY: Use documentations-specialist agent
         <task>
         Follow the instructions provided to generate the workspace documentation in the described format. Perform the generation of this documentation incrementally. Analyze the tree structure of the workspace and break it down into smaller parts (modules, folders, files). As you iterate over each part, show which file, module, or folder of the workspace will be analyzed next and after analysis, perform the generation of the documentation incrementally as described in the instructions.
         </task>
