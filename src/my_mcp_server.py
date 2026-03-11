@@ -532,41 +532,6 @@ def my_mcp_run_prompt(name: str) -> Dict[str, Any]:
 
 
 
-
-@mcp.tool()
-def my_mcp_generate_docs_update(
-    rootProject: Optional[str] = None, command="git diff"
-) -> Dict[str, Any]:
-    """
-    Gets the git diff or similar command in the specified directory (or current directory if not provided) and combines it with the documentation template for prompt execution.
-
-    Args:
-        rootProject (Optional[str]): Directory to run git diff in.
-        command (str): Command to execute (default=git diff).
-
-    Returns:
-        dict: Combined instructions and git diff, or error message.
-    """
-    try:
-        result = subprocess.run(
-            command.split(" "),
-            cwd=rootProject or os.getcwd(),
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        git_diff = result.stdout
-        instructions = load_instructions(DOCUMENTATION_WORKFLOW_INSTRUCTIONS)
-        combined_content = f"<system_instructions>\n{instructions}\n</system_instructions>\n<diff_in_files>\n{git_diff}\n</diff_in_files>\n<task>\nBased on the modifications and instructions provided, adjust the documentation accordingly. Review existing documentation files (check the docs/ folder and SUMMARY.md if they exist) and see which ones need updating based on the changes made. Preferably update existing files, but create new ones if necessary. Only update files if the changes are relevant to the file's content type. Don't add text just for the sake of adding it. Before any modification, show what will be added and ask if you should proceed.\n</task>\n"
-        return {"content": combined_content}
-
-    except FileNotFoundError as e:
-        return _format_error("Instruction file not found", e)
-    except subprocess.SubprocessError as e:
-        return _format_error("Subprocess error when executing git diff", e)
-
-
-
 @mcp.tool()
 def my_mcp_generate_docs_sync(rootProject: Optional[str] = None, filter:str="") -> Dict[str, Any]:
     """
