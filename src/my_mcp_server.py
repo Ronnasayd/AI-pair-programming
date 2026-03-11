@@ -596,26 +596,6 @@ def my_mcp_generate_docs_sync(rootProject: Optional[str] = None, filter:str="") 
 
 
 @mcp.tool()
-def my_mcp_generate_prd() -> Dict[str, Any]:
-    """
-    return instructions for generating PRD file.
-
-    Returns:
-        dict: The content of the instructions or an error message.
-    """
-    try:
-        template = load_template(PRD_TEMPLATE)
-        combined_content = f"""
-        MANDATORY: Use product-owner-specialist agent
-        <prd_template>{template}</prd_template>
-        <task>Follow the workflow provided in `system_instructions`. The format to be used is defined in `prd_template`. Ask the user questions that help in the elaboration of the PRD. Wait for the user's response to each question before proceeding to the next. Think deeply about the problem resolution and conduct research if necessary. At the end of the process, save the generated file in `docs/PRD.json`.</task>
-        """
-        return {"content": combined_content}
-
-    except FileNotFoundError as e:
-        return _format_error("Instruction file not found", e)
-
-@mcp.tool()
 def my_mcp_aks_guidelines() -> Dict[str, Any]:
     """
     return a group of guidelines for asking questions that the agent must respond to.
@@ -630,25 +610,6 @@ def my_mcp_aks_guidelines() -> Dict[str, Any]:
     except FileNotFoundError as e:
         return _format_error("Instruction file not found", e)
 
-@mcp.tool()
-def my_mcp_generate_docs_init() -> Dict[str, Any]:
-    """
-    return instructions for generating initial project documentation from a predefined instructions file.
-
-    Returns:
-        dict: The content of the instructions or an error message.
-    """
-    try:
-        combined_content = f"""
-        MANDATORY: Use documentations-specialist agent
-        <task>
-        Follow the instructions provided to generate the workspace documentation in the described format. Perform the generation of this documentation incrementally. Analyze the tree structure of the workspace and break it down into smaller parts (modules, folders, files). As you iterate over each part, show which file, module, or folder of the workspace will be analyzed next and after analysis, perform the generation of the documentation incrementally as described in the instructions.
-        </task>
-        """
-        return {"content": combined_content}
-
-    except FileNotFoundError as e:
-        return _format_error("Instruction file not found", e)
 
 @mcp.tool()
 def my_mcp_convert_tasks_to_markdown(
@@ -781,148 +742,6 @@ def my_mcp_search_references(query: str, rootProject: Optional[str] = None,globs
         rootProject = os.getcwd()
     results = search_codebase(query, rootProject, globs,top_n)
     return {"query": query, "results": results}
-
-@mcp.tool()
-def my_mcp_task_create(rootProject: Optional[str] = None,task_description: str = "") -> Dict[str, Any]:
-    """
-    Generate task description to be added to taskmaster based on project analysis.
-
-    Args:
-        rootProject (str): The root project directory.
-        task_description (str): Description of the task to be created.
-
-    Returns:
-        dict: The content of the instructions or an error message.
-    """
-    try:
-        instructions = load_instructions(TASK_REVIEWER_INSTRUCTIONS)
-        combined_content = f"""
-        <system_instructions>{instructions}</system_instructions>
-        <task_description>{task_description}</task_description>
-        
-        Your objective is to analyze the task and produce a structured technical specification document that will later be used as input for task-master.
-        
-        ====================
-        PHASE 1 — CONTEXT DISCOVERY
-        ====================
-        
-        1. Search the @workspace of {rootProject} to identify files, modules, documentation, and code relevant to the task.
-        2. Prioritize local documentation (*.md files), starting from:
-           - SUMMARY.md
-           - docs/
-        3. Only search the web if:
-           - The workspace does not contain sufficient information, OR
-           - External documentation is clearly required (e.g., framework or library behavior).
-        4. When searching the web, prioritize official documentation and stable sources.
-        
-        ⚠️ Do NOT implement any code.
-        ⚠️ Do NOT execute any terminal commands in this phase.
-        
-        ====================
-        PHASE 2 — SPECIFICATION GENERATION
-        ====================
-        
-        Based on your analysis, generate a task specification and save it as:
-        
-        {rootProject}/.taskmaster/specs/dd-MM-YYYY-<short-task-description>.md
-        
-        You MUST strictly follow the format below. Do not add, remove, reorder, or rename sections.
-        
-        <format>
-        <description>
-        
-        ## Problem Summary
-        
-        ## Relevant Files for Solving the Problem
-        
-        ## Relevant Code Snippets for Solving the Problem
-        
-        ## Proposed Action Plan for Task Implementation
-        
-        ## Testing Strategy for Validating the Implementation
-
-        ## Context Map
-        ```markdown
-          ### Files to Modify
-          | File | Purpose | Changes Needed |
-          |------|---------|----------------|
-          | path/to/file | description | what changes |
-          
-          ### Dependencies (may need updates)
-          | File | Relationship |
-          |------|--------------|
-          | path/to/dep | imports X from modified file |
-          
-          ### Test Files
-          | Test | Coverage |
-          |------|----------|
-          | path/to/test | tests affected functionality |
-          
-          ### Reference Patterns
-          | File | Pattern |
-          |------|---------|
-          | path/to/similar | example to follow |
-          
-          ### Risk Assessment
-          - [ ] Breaking changes to public API
-          - [ ] Database migrations needed
-          - [ ] Configuration changes required
-        ```
-        
-        ## Relevant Links (Optional)
-        
-        </description>
-        
-        <!--- THE FOLLOWING TEXT IS UNCHANGEABLE. --->
-        <!--- DO NOT REWRITE, DO NOT CORRECT, DO NOT ADAPT. --->
-        <!--- USE IT EXACTLY AS IT IS, CHARACTER BY CHARACTER. --->
-        <!--- UNCHANGING_TEXT_START --->
-        <workflow>
-        - If documentation files or any other type of file are provided, extract relevant links and related files that may assist in implementing the task.
-        - When creating a task or subtask, add references to relevant files or links that may assist in implementing the task.
-        - Before each implementation step (tasks or subtasks), check relevant references and links. Perform a thorough review of relevant files and documents until you have a complete understanding of what needs to be done.
-        - Add relevant code snippets that may assist in implementing the task in markdown format.
-        - Check all *.md files starting from SUMMARY.md and docs/ to find relevant documentation.
-        - Create and present a detailed action plan for executing the task implementation.
-        - Ensure that changes are fully backward compatible and do not affect other system flows.
-        - At the end of the implementation, show a summary of what was done and save it as a .md file in docs/features/dd-MM-YYYY-<description>/README.md
-        </workflow>
-        <!--- UNCHANGING_TEXT_END --->
-        </format>
-        
-        ====================
-        PHASE 3 — USER REVIEW
-        ====================
-        
-        Ask the user to review the generated document.
-        
-        - If the user suggests modifications or extensions, apply them to the same document.
-        - Repeat this step until the user explicitly confirms with a phrase equivalent to:
-          "You can proceed."
-        
-        Do NOT proceed without explicit confirmation.
-        
-        ====================
-        PHASE 4 — TASK-MASTER EXECUTION
-        ====================
-
-        Ask the user to confirm if he wants to create one task or append multiple tasks.
-        
-        
-        Once the user confirms, execute the following commands sequentially in the terminal:
-        
-        For one task:
-        1. task-master add-task --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)"
-        For append multiple tasks:
-        1. task-master parse-prd --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)" --append
-        2. task-master analyze-complexity
-        3. task-master expand --all --research --prompt="$(cat {rootProject}/.taskmaster/specs/dd-MM-YYYY-<description>.md)"
-
-        """
-        return {"content": combined_content}
-
-    except FileNotFoundError as e:
-        return _format_error("Instruction file not found", e)
 
 
 if __name__ == "__main__":
