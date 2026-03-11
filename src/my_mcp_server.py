@@ -576,10 +576,8 @@ def my_mcp_generate_docs_sync(rootProject: Optional[str] = None, filter:str="") 
         else:
             git_diff = run(["git", "diff", f"{oldest_docs_commit}..HEAD"], cwd)
 
-        instructions = load_instructions(DOCUMENTATION_WORKFLOW_INSTRUCTIONS)
-
         combined_content = f"""
-        <system_instructions>{instructions}</system_instructions>
+        MANDATORY: Use documentations-specialist agent
         <oldest_docs_commit>{oldest_docs_commit}</oldest_docs_commit>
         <diff_in_files>
         {git_diff}
@@ -596,26 +594,6 @@ def my_mcp_generate_docs_sync(rootProject: Optional[str] = None, filter:str="") 
     except Exception as e:
         return {"error": str(e)}
 
-@mcp.tool()
-def my_mcp_developer_instructions() -> Dict[str, Any]:
-    """
-    Loads and returns the developer instructions that must be followed by the agent.
-
-    Returns:
-        dict: The content of the instructions or an error message.
-    """
-    try:
-        instructions = load_instructions(DEVELOPER_WORKFLOW_INSTRUCTIONS)
-        combined_content = f"""
-        <system_instructions>{instructions}</system_instructions>
-        <task>Follow the instructions provided for code development in any implementation or adjustment requested.</task>"""
-        return {"content": combined_content}
-
-    except FileNotFoundError as e:
-        return _format_error("Instruction file not found", e)
-    except subprocess.SubprocessError as e:
-        return _format_error("Subprocess error when executing git diff", e)
-
 
 @mcp.tool()
 def my_mcp_generate_prd() -> Dict[str, Any]:
@@ -626,11 +604,10 @@ def my_mcp_generate_prd() -> Dict[str, Any]:
         dict: The content of the instructions or an error message.
     """
     try:
-        instructions = load_instructions(GENERATE_PRD_INSTRUCTIONS)
         template = load_template(PRD_TEMPLATE)
         combined_content = f"""
+        MANDATORY: Use product-owner-specialist agent
         <prd_template>{template}</prd_template>
-        <system_instructions>{instructions}</system_instructions>
         <task>Follow the workflow provided in `system_instructions`. The format to be used is defined in `prd_template`. Ask the user questions that help in the elaboration of the PRD. Wait for the user's response to each question before proceeding to the next. Think deeply about the problem resolution and conduct research if necessary. At the end of the process, save the generated file in `docs/PRD.json`.</task>
         """
         return {"content": combined_content}
