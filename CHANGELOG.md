@@ -1,9 +1,23 @@
 # Changelog
 
-## v2026.03.10 (Initial Release / Full History)
+## v2026.03.11 (Initial Release / Full History)
+
+### **2026-03-11**
+
+- [🐛 **Bug Fixes**] Correct file path key in protect-files script for consistency ([ca72d14](https://github.com/Ronnasayd/AI-pair-programming/commit/ca72d14))
+- [✨ **Features**] Add protect-files hook and script to block access to sensitive files ([c82c55a](https://github.com/Ronnasayd/AI-pair-programming/commit/c82c55a))
+- [✨ **Features**] Update documentation generation instructions to enforce agent usage ([cfc39d5](https://github.com/Ronnasayd/AI-pair-programming/commit/cfc39d5))
+- [✨ **Features**] Update documentation generation tools to enforce agent usage and remove developer instructions ([85db3cd](https://github.com/Ronnasayd/AI-pair-programming/commit/85db3cd))
+- [✨ **Features**] Remove my_mcp_generate_docs_update tool and add generate-docs-update skill for structured documentation updates ([8c03b9b](https://github.com/Ronnasayd/AI-pair-programming/commit/8c03b9b))
+- [🧹 **Chores**] Update command execution instructions for code review skill to allow alternative diff-like outputs ([1fab49f](https://github.com/Ronnasayd/AI-pair-programming/commit/1fab49f))
+- [✨ **Features**] Implement code review skill with structured analysis instructions ([dc93b30](https://github.com/Ronnasayd/AI-pair-programming/commit/dc93b30))
 
 ### **2026-03-10**
 
+- [🧹 **Chores**] Remove my_mcp_run_command tool from the server implementation ([cd6d461](https://github.com/Ronnasayd/AI-pair-programming/commit/cd6d461))
+- [✨ **Features**] Enhance task creation instructions with user confirmation for single or multiple tasks ([78a4f01](https://github.com/Ronnasayd/AI-pair-programming/commit/78a4f01))
+- [✨ **Features**] Add codex installation script and update .gitignore for agent skills ([50957a5](https://github.com/Ronnasayd/AI-pair-programming/commit/50957a5))
+- [📚 **Documentation**] Update changelog for version 2026.03.10 with new features and chore updates ([4b49fca](https://github.com/Ronnasayd/AI-pair-programming/commit/4b49fca))
 - [✨ **Features**] Add comprehensive readme.md for ai pair programming workspace with project overview, key directories, and usage instructions ([f2f1f70](https://github.com/Ronnasayd/AI-pair-programming/commit/f2f1f70))
 - [✨ **Features**] Consolidate gitignore updates into installation scripts and remove redundant gitignore.install.sh ([28b99d9](https://github.com/Ronnasayd/AI-pair-programming/commit/28b99d9))
 - [✨ **Features**] Add installation scripts for github copilot, gemini, gitignore, and taskmaster ([1bda522](https://github.com/Ronnasayd/AI-pair-programming/commit/1bda522))
@@ -353,4 +367,4 @@
 - [🚧 **Other Changes**] D83773e - first commit | 2025-09-11
 
 ---
-Generated on 2026-03-10 17:46:51
+Generated on 2026-03-11 11:31:46
