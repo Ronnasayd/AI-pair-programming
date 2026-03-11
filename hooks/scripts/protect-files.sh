@@ -2,7 +2,7 @@
 # protect-files.sh
 
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.filePath // empty')
 
 PROTECTED_PATTERNS=(".env" ".git/")
 
