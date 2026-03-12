@@ -1,6 +1,6 @@
 ---
-name: create-task
-description: "A skill for executing tasks based on structured specifications created by the create-spec skill. This skill will read the task specification, extract relevant context and references, and perform the necessary steps to implement the task as outlined in the specification. It will also ensure that all actions taken are fully backward compatible and do not affect other system flows."
+name: create-task-taskmaster
+description: "A skill for creating structured task specifications based on detailed analysis of the provided task description. Use this skill to generate comprehensive technical specifications that will serve as input for task-master, ensuring that all necessary context, relevant files, code snippets, and a clear action plan are included to facilitate efficient task implementation."
 argument-hint: "[task_spec_path]: A string containing the path to a markdown file with the task specification. The file should be located in the .taskmaster/specs/ directory and follow the naming convention dd-MM-YYYY-<description>.md."
 ---
 
