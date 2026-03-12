@@ -91,5 +91,10 @@
   },
   "model": {
     "name": ""
+  },
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": false
+    }
   }
 }
