@@ -36,9 +36,10 @@ fi
 mkdir -p $LOCAL/.github/instructions/
 ln -s "$SOURCE/instructions/orchestration.instructions.md" "$LOCAL/.github/instructions/orchestration.instructions.md"
 ##########################################################################################
-if [ ! -f "$HOME/.config/Code/User/mcp.json" ]; then
-cp "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
+if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
+rm $HOME/.config/Code/User/mcp.json
 fi
+ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GITIGNORE
 if ! grep -q ".github/skills/" .gitignore; then
