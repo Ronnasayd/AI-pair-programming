@@ -1,0 +1,14 @@
+{
+  "context7": {
+    "enabled": false
+  },
+  "figma": {
+    "enabled": false
+  },
+  "chrome-devtools": {
+    "enabled": false
+  },
+  "sonarqube": {
+    "enabled": false
+  }
+}

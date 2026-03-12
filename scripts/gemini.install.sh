@@ -19,6 +19,11 @@ rm $HOME/.gemini/settings.json
 fi
 ln -s "$SOURCE/gemini/settings.json" "$HOME/.gemini/settings.json"
 #######################################################################################
+if [ -L "$HOME/.gemini/mcp-server-enablement.json" ] || [ -f "$HOME/.gemini/mcp-server-enablement.json" ]; then
+rm $HOME/.gemini/mcp-server-enablement.json
+fi
+ln -s "$SOURCE/gemini/mcp-server-enablement.json" "$HOME/.gemini/mcp-server-enablement.json"
+#######################################################################################
 if [ -L "$HOME/.gemini/skills/" ] || [ -d "$HOME/.gemini/skills/" ]; then
 rm -rf $HOME/.gemini/skills/
 fi
