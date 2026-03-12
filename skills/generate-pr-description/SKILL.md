@@ -17,8 +17,8 @@ PHASE 1 — TEMPLATE DETECTION
 2. If it exists, read its content and use it as the MANDATORY structure for the PR description.
 3. If it does NOT exist, use the following default topics as sections:
    - ## Description: High-level overview of what this PR does.
-   - ## Task: List of specific tasks or user stories addressed.
    - ## Impact: Technical and functional impact of the changes.
+   - ## Task: List of specific tasks or user stories addressed.
 
 ====================
 PHASE 2 — CONTEXT GATHERING
@@ -54,14 +54,15 @@ Example Output (Default Template):
 ## Description
 This PR introduces a new skill for generating PR descriptions automatically...
 
+## Impact
+- Improves developer productivity by automating repetitive documentation tasks.
+- Ensures consistent PR descriptions across the project.
+
 ## Task
 - Create skills/generate-pr-description/SKILL.md
 - Implement template detection logic.
 - Add language selection support.
 
-## Impact
-- Improves developer productivity by automating repetitive documentation tasks.
-- Ensures consistent PR descriptions across the project.
 ```
 
 ====================
