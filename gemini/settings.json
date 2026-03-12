@@ -94,7 +94,7 @@
   },
   "context": {
     "fileFiltering": {
-      "respectGitIgnore": false
+      "respectGitIgnore": true
     }
   }
 }
