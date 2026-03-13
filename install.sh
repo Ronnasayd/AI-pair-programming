@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-export SOURCE="/home/ronnas/develop/personal/AI-pair-programming"
-export LOCAL="$(pwd)"
 
+SCRIPT_FILE="${BASH_SOURCE[0]}"
+if [ -L "$SCRIPT_FILE" ]; then
+  SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
+fi
+export SOURCE="$(dirname "$SCRIPT_FILE")"
+export LOCAL="$(pwd)"
 # echo $SOURCE
 # echo $LOCAL
 chmod -R +x $SOURCE/hooks/scripts
