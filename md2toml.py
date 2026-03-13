@@ -20,14 +20,14 @@ def convert_file(input_file: Path, output_dir: Path):
 
     name = frontmatter.get("name", "").replace('"', '\\"')
     description = frontmatter.get("description", "").replace('"', '\\"')
-    prompt = parts[2].strip()
+    developer_instructions = parts[2].strip()
 
-    # Escape triple quotes in prompt if they exist
-    escaped_prompt = prompt.replace('"""', '\\"\\"\\"')
+    # Escape triple quotes in developer_instructions if they exist
+    escaped_instructions = developer_instructions.replace('"""', '\\"\\"\\"')
 
     toml_content = f"""name = "{name}"
 description = "{description}"
-prompt = \"\"\"{escaped_prompt}
+developer_instructions = \"\"\"{escaped_instructions}
 \"\"\"
 """
 
