@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## CODEX
-python3 "$SOURCE/md2toml.py" "$SOURCE/agents/" "$LOCAL/.agent/agents/"
+python3 "$SOURCE/md2toml.py" "$SOURCE/agents/" "$HOME/.codex/agents/"
 
 ########################################################################################
 if [ -L "$HOME/.codex/skills/" ] || [ -d "$HOME/.codex/skills/" ]; then
@@ -11,17 +11,17 @@ mkdir -p "$HOME/.codex/skills/"
 ln -s "$SOURCE/skills/"* "$HOME/.codex/skills/"
 
 ###########################################################################################
-## GITIGNORE
-if ! grep -q ".agent/agents/" .gitignore; then
-    echo ".agent/agents/" >> .gitignore
-fi
-if ! grep -q ".codex/" .gitignore; then
-    echo ".codex/" >> .gitignore
-fi
+# ## GITIGNORE
+# if ! grep -q ".agent/agents/" .gitignore; then
+#     echo ".agent/agents/" >> .gitignore
+# fi
+# if ! grep -q ".codex/" .gitignore; then
+#     echo ".codex/" >> .gitignore
+# fi
 
 ###########################################################################################
 ## CODEX CONFIG
-CODEX_DIR="$LOCAL/.codex"
+CODEX_DIR="$HOME/.codex"
 mkdir -p "$CODEX_DIR"
 
 {
@@ -31,7 +31,7 @@ mkdir -p "$CODEX_DIR"
     echo "[agents]"
 } > "$CODEX_DIR/config.toml"
 
-for agent_toml in "$LOCAL/.agent/agents/"*.toml; do
+for agent_toml in "$HOME/.codex/agents/"*.toml; do
     if [ -f "$agent_toml" ]; then
         agent_filename=$(basename "$agent_toml")
         agent_id="${agent_filename%.toml}"
@@ -43,7 +43,7 @@ for agent_toml in "$LOCAL/.agent/agents/"*.toml; do
         {
             echo "[agents.$agent_id]"
             echo "description = \"$description\""
-            echo "config_file = \".agent/agents/$agent_filename\""
+            echo "config_file = \"$HOME/.codex/agents/$agent_filename\""
             echo ""
         } >> "$CODEX_DIR/config.toml"
     fi
