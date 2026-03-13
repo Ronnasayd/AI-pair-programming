@@ -11,4 +11,7 @@ ln -s "$SOURCE/skills/"* "$LOCAL/.agent/skills/"
 if ! grep -q ".agent/skills/" .gitignore; then
     echo ".agent/skills/" >> .gitignore
 fi
+if ! grep -q ".agent/agents/" .gitignore; then
+    echo ".agent/agents/" >> .gitignore
+fi
 ###########################################################################################
