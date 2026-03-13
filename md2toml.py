@@ -18,8 +18,8 @@ def convert_file(input_file: Path, output_dir: Path):
         print(f"Skipping {input_file}: Error parsing frontmatter: {e}")
         return
 
-    name = frontmatter.get("name", "")
-    description = frontmatter.get("description", "")
+    name = frontmatter.get("name", "").replace('"', '\\"')
+    description = frontmatter.get("description", "").replace('"', '\\"')
     prompt = parts[2].strip()
 
     # Escape triple quotes in prompt if they exist

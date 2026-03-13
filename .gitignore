@@ -186,3 +186,4 @@ GEMINI.md
 .agent/instructions/
 .agent/agents/
 .agent/hooks/
+.codex/
