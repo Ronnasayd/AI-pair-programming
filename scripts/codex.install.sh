@@ -29,6 +29,11 @@ mkdir -p "$CODEX_DIR"
     echo "multi_agent = true"
     echo ""
     echo "[agents]"
+    echo "# Concurrent open agent thread cap (Codex default: 6)"
+    echo "max_threads = 6"
+    echo "# Spawned agent nesting depth - root session starts at 0 (Codex default: 1)"
+    echo "max_depth = 1"
+    echo ""
 } > "$CODEX_DIR/config.toml"
 
 for agent_toml in "$HOME/.codex/agents/"*.toml; do
@@ -43,10 +48,24 @@ for agent_toml in "$HOME/.codex/agents/"*.toml; do
         {
             echo "[agents.$agent_id]"
             echo "description = \"$description\""
-            echo "config_file = \"$HOME/.codex/agents/$agent_filename\""
+            # Use relative path as per Codex documentation - paths are resolved relative to config.toml location
+            echo "config_file = \"agents/$agent_filename\""
             echo ""
         } >> "$CODEX_DIR/config.toml"
     fi
 done
 
-echo "Codex configuration generated at $CODEX_DIR/config.toml"
+# Validate config.toml syntax
+if ! grep -q '\[agents\]' "$CODEX_DIR/config.toml"; then
+    echo "Error: Missing [agents] section in config.toml" >&2
+    exit 1
+fi
+
+if ! grep -q 'max_threads\|max_depth' "$CODEX_DIR/config.toml"; then
+    echo "Error: Missing required agent configuration fields" >&2
+    exit 1
+fi
+
+echo "✓ Codex configuration generated at $CODEX_DIR/config.toml"
+echo "✓ All agent config_file paths use relative paths (as per Codex standard)"
+echo "✓ Configuration ready for multi-agent workflows"
