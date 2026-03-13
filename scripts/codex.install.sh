@@ -1,4 +1,5 @@
-## AGENT COPILOT
+## CODEX
+python3 $SOURCE/md2toml.py $SOURCE/agents/  $LOCAL/.agent/agents/
 ########################################################################################
 if [ -L "$LOCAL/.agent/skills/" ] || [ -d "$LOCAL/.agent/skills/" ]; then
 rm -rf $LOCAL/.agent/skills/
