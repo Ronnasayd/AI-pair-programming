@@ -43,7 +43,7 @@ def convert_directory(source_dir: str, output_dir: str):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python converter.py <source_dir> <output_dir>")
+        print("Usage: python toml2md.py <source_dir> <output_dir>")
         sys.exit(1)
 
     convert_directory(sys.argv[1], sys.argv[2])
