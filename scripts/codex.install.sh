@@ -3,6 +3,14 @@
 ## CODEX
 python3 "$SOURCE/md2toml.py" "$SOURCE/agents/" "$HOME/.codex/agents/"
 
+###########################################################################################
+## Rename 'prompt' to 'developer_instructions' in all agent TOML files
+for agent_toml in "$HOME/.codex/agents/"*.toml; do
+    if [ -f "$agent_toml" ]; then
+        sed -i 's/^prompt = /developer_instructions = /' "$agent_toml"
+    fi
+done
+
 ########################################################################################
 if [ -L "$HOME/.codex/skills/" ] || [ -d "$HOME/.codex/skills/" ]; then
     rm -rf "$HOME/.codex/skills/"
