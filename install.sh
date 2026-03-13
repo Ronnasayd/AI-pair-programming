@@ -5,7 +5,7 @@ export LOCAL="$(pwd)"
 # echo $SOURCE
 # echo $LOCAL
 chmod -R +x $SOURCE/hooks/scripts
-python3 $SOURCE/converter.py $SOURCE/gemini/commands/  $SOURCE/github/prompts/
+python3 $SOURCE/toml2md.py $SOURCE/gemini/commands/  $SOURCE/github/prompts/
 
 $SOURCE/scripts/copilot.install.sh
 $SOURCE/scripts/codex.install.sh
