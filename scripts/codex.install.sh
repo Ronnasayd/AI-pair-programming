@@ -44,7 +44,7 @@ for agent_toml in "$LOCAL/.agent/agents/"*.toml; do
         description=$(grep '^description =' "$agent_toml" | head -n 1 | sed 's/^description = "//;s/"$//')
         
         {
-            echo "[agents.\"$agent_id\"]"
+            echo "[agents.$agent_id]"
             echo "description = \"$description\""
             echo "config_file = \".agent/agents/$agent_filename\""
             echo ""
