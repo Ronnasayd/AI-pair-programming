@@ -132,7 +132,7 @@ PHASE 4 — DOCUMENTATION GENERATION
 
 Generate a comprehensive rules document and save it as:
 
-`.github/rules/<LANGUAGE>-rules-<timestamp>.md`
+`docs/rules/<LANGUAGE>-rules-<timestamp>.md`
 
 Where `<LANGUAGE>` is: typescript, python, javascript, golang, rust, java, etc. Or "multi-language" if analyzing multiple languages.
 
