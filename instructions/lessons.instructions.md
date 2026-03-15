@@ -1,3 +1,8 @@
+---
+description: Lessons learned from past mistakes, corrections, and feedback. This file is for self-improvement and continuous learning to avoid repeating the same errors in future tasks.
+applyTo: "**/*"
+---
+
 ## Mandatory: Avoid
 
 - Over-Engineering in the First Iteration

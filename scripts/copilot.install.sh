@@ -24,17 +24,24 @@ fi
 mkdir -p $LOCAL/.github/agents/
 ln -s "$SOURCE/agents/"* "$LOCAL/.github/agents/"
 ########################################################################################3
-if [ -L "$LOCAL/.github/instructions/copilot.instructions.md" ] || [ -f "$LOCAL/.github/instructions/copilot.instructions.md" ]; then
-rm -rf $LOCAL/.github/instructions/copilot.instructions.md
-fi
-mkdir -p $LOCAL/.github/instructions/
-ln -s "$SOURCE/instructions/copilot.instructions.md" "$LOCAL/.github/instructions/copilot.instructions.md"
-########################################################################################3
-if [ -L "$LOCAL/.github/instructions/orchestration.instructions.md" ] || [ -f "$LOCAL/.github/instructions/orchestration.instructions.md" ]; then
-rm -rf $LOCAL/.github/instructions/orchestration.instructions.md
-fi
-mkdir -p $LOCAL/.github/instructions/
-ln -s "$SOURCE/instructions/orchestration.instructions.md" "$LOCAL/.github/instructions/orchestration.instructions.md"
+# Função auxiliar para criar symlinks de instruções
+setup_instruction_file() {
+    local file_name="$1"
+    local source_file="$SOURCE/instructions/$file_name"
+    local local_file="$LOCAL/.github/instructions/$file_name"
+
+    if [ -L "$local_file" ] || [ -f "$local_file" ]; then
+        rm -rf "$local_file"
+    fi
+
+    mkdir -p "$LOCAL/.github/instructions/"
+    ln -s "$source_file" "$local_file"
+}
+
+# Configurar arquivos de instruções
+setup_instruction_file "copilot.instructions.md"
+setup_instruction_file "orchestration.instructions.md"
+setup_instruction_file "lessons.instructions.md"
 ##########################################################################################
 if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
 rm $HOME/.config/Code/User/mcp.json
