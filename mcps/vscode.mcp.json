@@ -19,7 +19,10 @@
         "-p",
         "task-master-ai",
         "task-master-ai"
-      ]
+      ],
+      "env": {
+        "TASK_MASTER_ALLOW_METADATA_UPDATES": "true"
+      }
     },
     "my-mcp-server": {
       "type": "stdio",

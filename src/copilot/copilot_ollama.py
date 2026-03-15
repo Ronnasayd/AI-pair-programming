@@ -261,6 +261,79 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
         return {"error": fallback_msg}
 
 
+def convert_large_prompt_to_attachment(text: str) -> tuple[str, str | None]:
+    """Convert large prompts (>100KB) to temporary file attachments.
+    
+    Args:
+        text: The prompt text to potentially convert
+        
+    Returns:
+        tuple of (processed_prompt, temp_file_path | None)
+        - If text is <= 100KB: returns (text, None)
+        - If text is > 100KB: creates file and returns ("<attachment id='filename'/>", file_path)
+    """
+    # Check byte size (UTF-8 encoded)
+    text_bytes = text.encode('utf-8')
+    byte_size = len(text_bytes)
+    threshold = 102400  # 100KB in bytes
+    
+    if byte_size <= threshold:
+        # Prompt is small enough, return as-is
+        return (text, None)
+    
+    # Prompt is too large, convert to attachment
+    try:
+        # Create temp directory (idempotent)
+        temp_dir = "/tmp/copilot-ollama/"
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Generate unique filename
+        filename = f"copilot-{uuid.uuid4().hex[:8]}.tmp"
+        temp_file_path = os.path.join(temp_dir, filename)
+        
+        # Write text to file
+        with open(temp_file_path, 'w', encoding='utf-8') as f:
+            f.write(text)
+        
+        # Log conversion
+        logger.info(
+            f"Large prompt auto-converted to attachment: {byte_size} bytes (>{threshold}) → {filename}"
+        )
+        
+        # Return attachment tag and file path
+        attachment_tag = f"<attachment id='{filename}'/>"
+        return (attachment_tag, temp_file_path)
+        
+    except Exception as e:
+        logger.error(f"Failed to create attachment for large prompt: {e}")
+        # Fallback: return original text if conversion fails
+        return (text, None)
+
+
+def cleanup_temp_files(file_paths: list[str]) -> None:
+    """Safely clean up temporary files.
+    
+    Args:
+        file_paths: List of file paths to delete
+        
+    Note:
+        Never raises exceptions; logs all errors but continues cleanup.
+    """
+    for path in file_paths:
+        if not path:
+            continue
+            
+        try:
+            os.remove(path)
+            logger.debug(f"Temp file deleted: {path}")
+        except FileNotFoundError:
+            logger.warning(f"Temp file not found (already cleaned): {path}")
+        except PermissionError:
+            logger.error(f"Permission denied deleting temp file: {path}")
+        except Exception as e:
+            logger.error(f"Failed to delete temp file {path}: {e}")
+
+
 def get_model_details():
     """Return standardized model details structure."""
     return {
@@ -456,15 +529,29 @@ async def chat(request: Request):
     logger.debug(
         f"🔧 Prompt construído: {prompt[:300]}{'...' if len(prompt) > 300 else ''}"
     )
+    
+    # Initialize temp files tracking
+    temp_files = []
+    
+    # Convert large prompt to attachment if necessary
+    prompt, temp_file = convert_large_prompt_to_attachment(prompt)
+    if temp_file:
+        temp_files.append(temp_file)
+    
     references = []
     info = extrair_attachments(prompt)
     if len(info) > 1:
         prompt = info[0]
         references = info[1]
-    # Call Copilot
-    start_time = time.time()
-    copilot_resp = await call_copilot(prompt, references, stream=stream)
-    end_time = time.time()
+    
+    # Call Copilot with try-finally to ensure cleanup
+    try:
+        start_time = time.time()
+        copilot_resp = await call_copilot(prompt, references, stream=stream)
+        end_time = time.time()
+    finally:
+        # Always clean up temp files, even if there's an error
+        cleanup_temp_files(temp_files)
 
     # Handle errors
     if "error" in copilot_resp:
@@ -581,10 +668,28 @@ async def generate(request: Request):
     logger.debug(
         f"🔧 Prompt completo: {full_prompt[:300]}{'...' if len(full_prompt) > 300 else ''}"
     )
-    # Call Copilot
-    start_time = time.time()
-    copilot_resp = await call_copilot(full_prompt, stream=stream)
-    end_time = time.time()
+    
+    # Initialize temp files tracking
+    temp_files = []
+    
+    # Convert large prompt to attachment if necessary
+    full_prompt, temp_file = convert_large_prompt_to_attachment(full_prompt)
+    if temp_file:
+        temp_files.append(temp_file)
+    
+    # Add temp file path to references list if conversion occurred
+    references = []
+    if temp_file:
+        references = [temp_file]
+    
+    # Call Copilot with try-finally to ensure cleanup
+    try:
+        start_time = time.time()
+        copilot_resp = await call_copilot(full_prompt, references if temp_file else None, stream=stream)
+        end_time = time.time()
+    finally:
+        # Always clean up temp files, even if there's an error
+        cleanup_temp_files(temp_files)
 
     # Handle errors
     if "error" in copilot_resp:
@@ -892,6 +997,10 @@ if __name__ == "__main__":
     logger.info("🚀 Iniciando servidor Copilot Ollama API proxy na porta 11434")
     logger.info(f"📦 Modelo disponível: {MODEL_FULL_NAME}")
     logger.info("🔧 Backend: GitHub Copilot API")
+
+    # Initialize temporary attachment directory
+    os.makedirs("/tmp/copilot-ollama/", exist_ok=True)
+    logger.info("Temporary attachment directory initialized: /tmp/copilot-ollama/")
 
     # Initialize Copilot client on startup
     initialize_copilot()
