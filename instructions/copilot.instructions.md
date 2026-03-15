@@ -71,7 +71,7 @@ When generating code, adhere to the following rules:
 For any significant code addition, deletion, or modification:
 
 - Use skills whenever they are available and consistent with what is being asked.
-- Whenever possible, delegate parts of the process or the entire task to a specialist.
+- Whenever possible, delegate parts of the process or the entire task to a specialist agent.
 - Explain what will be done and why
 - Wait for explicit user confirmation before proceeding
 - Adjust the plan if the user provides feedback
