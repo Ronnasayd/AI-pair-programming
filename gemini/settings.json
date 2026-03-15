@@ -99,5 +99,8 @@
     "fileFiltering": {
       "respectGitIgnore": true
     }
+  },
+  "checkpointing": {
+    "enabled": true
   }
 }
