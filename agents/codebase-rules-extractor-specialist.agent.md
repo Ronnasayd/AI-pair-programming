@@ -102,7 +102,7 @@ Your task is to analyze a given codebase and create a comprehensive, authoritati
 
 1. **Use the SKILL.md Template**
    - Follow the exact format specified in codebase-rules-extractor SKILL.md
-   - Generate file at: `docs/rules/<LANGUAGE>-rules-<timestamp>.md`
+   - Generate file at: `docs/agents/rules/<LANGUAGE>-rules-<timestamp>.md`
 
 2. **Populate Each Section**
    - Start with sections that have highest confidence data
@@ -171,7 +171,7 @@ You are done when:
 ✅ Every stated rule has concrete code references
 ✅ Contradictions have been identified and explained
 ✅ Anti-patterns have been explained with evidence
-✅ The document is saved to `docs/rules/`
+✅ The document is saved to `docs/agents/rules/`
 ✅ You have presented findings to the user
 ✅ You have verified the document is readable and actionable
 
