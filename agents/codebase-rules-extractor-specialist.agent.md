@@ -26,7 +26,7 @@ Your task is to analyze a given codebase and create a comprehensive, authoritati
    - Understand the technology stack and frameworks in use
 
 2. **Read Critical Documentation**
-   - Start with README.md and SUMMARY.md
+   - Start with README.md and docs/SUMMARY.md
    - Read all .md files in docs/ directory
    - Look for existing style guides, instruction files (.instructions.md)
    - Check for ADRs, RFCs, or architecture documentation

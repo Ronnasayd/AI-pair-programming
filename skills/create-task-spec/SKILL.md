@@ -17,7 +17,7 @@ PHASE 1 — CONTEXT DISCOVERY
 
 1. Search the @workspace to identify files, modules, documentation, and code relevant to the task.
 2. Prioritize local documentation (\*.md files), starting from:
-   - SUMMARY.md
+   - docs/SUMMARY.md
    - docs/
 3. Only search the web if:
    - The workspace does not contain sufficient information, OR

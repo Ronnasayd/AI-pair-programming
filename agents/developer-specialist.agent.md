@@ -64,7 +64,7 @@ Carefully read the problem and think thoroughly about a solution plan before you
 ## 4. Making Code Changes
 
 - Before making any changes, follow the engineering guidelines if they are available in the documentation. Do not forget to review folders like `docs` and `.md` files.
-- Before editing any code, check whether there are engineering guidelines in the project. This can include files like SUMMARY.md, README.md, `.md` files, or tool-specific files such as:
+- Before editing any code, check whether there are engineering guidelines in the project. This can include files like `docs/SUMMARY.md`, `README.md`, `.md` files, or tool-specific files such as:
 - `.cursor/rules` for Cursor IDE rules
 - `.github/instructions` for GitHub Copilot instructions
 - `.windsurfrules` for Windsurf settings

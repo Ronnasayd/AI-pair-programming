@@ -112,8 +112,8 @@ You must also **plan extensively before writing** and reflect deeply on previous
 ### 1. File Structure
 
 ```text
-SUMMARY.md                # executive summary (500–1500 words)
 docs/
+ ├── SUMMARY.md          # executive summary (500–1500 words)
  ├── architecture.md     # architecture and design decisions
  ├── setup.md            # installation and execution guide
  ├── usage.md            # application usage examples
@@ -136,7 +136,7 @@ Below is a **complete reference table** defining **what each file is for**, **wh
 
 | File / Folder          | Required?                          | Target Audience                    | Main Objective                                | Essential Content                                                                 |
 | ---------------------- | ---------------------------------- | ---------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------- |
-| `SUMMARY.md`           | ✅                                 | Everyone                           | High-level overview and navigation            | System name, overview, main modules, architecture summary, quick start, doc links |
+| `docs/SUMMARY.md`      | ✅                                 | Everyone                           | High-level overview and navigation            | System name, overview, main modules, architecture summary, quick start, doc links |
 | `docs/architecture.md` | ✅                                 | Developers and architects          | Explain **how the system works internally**   | Diagrams (mermaid), layers, components, decisions, trade-offs, ADR links          |
 | `docs/setup.md`        | ✅                                 | Developers                         | Explain **how to install and run**            | Requirements, env vars, dependencies, commands, local run, build, deploy          |
 | `docs/usage.md`        | ✅                                 | End users / integrators            | Demonstrate **how to use** the system         | Practical examples, flows, outputs, main use cases                                |

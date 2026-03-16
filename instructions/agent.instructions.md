@@ -15,16 +15,21 @@ Directories and files to search for context:
 - `docs/**`
 - `docs/agents/**`
 - `docs/agents/specs/**`
+- `docs/agents/plans/**`
+- `docs/agents/reviews/**`
+- `docs/adr/**`
+- `docs/techs/**`
+- `docs/misc/**`
 - `docs/architecture.md`
 - `docs/setup.md`
 - `docs/usage.md`
 - `docs/modules.md`
 - `docs/contribution.md`
-- `docs/adr/**`
-- `docs/techs/**`
-- `docs/misc/**`
 - `docs/faq.md`
-- `docs/agents/reviews/**`
+- `docs/SUMMARY.md`
+- `README.md`
+- `GEMINI.md`
+- `CLAUDE.md`
 
 Retrieval process:
 
@@ -35,11 +40,11 @@ Retrieval process:
 ## Mandatory: Rules to Avoid
 
 - Over-Engineering in the First Iteration
-- Creating Unsolicited Files (e.g., IMPLEMENTATION_SUMMARY.md, test files without explicit request)
+- Creating Unsolicited Files
 - Ignoring or Misinterpreting Feedback
 - Not Verifying Current Content Before Editing
 - Creating Documentation Structure When Not Requested
-- Mixing Concepts (Skill ≠ Agent ≠ Task; each has role distinct)
+- Mixing Concepts
 - Unnecessary Complexity in Logic
 - Not Testing Requirements Against Results
 - Rushing into implementation before specification is approved
@@ -53,12 +58,11 @@ Retrieval process:
 - Make incremental adjustments based on feedback
 - Never rewrite everything, only specific segments
 - Always confirm current content before editing
-- Create detailed specification BEFORE implementation (Phase 1: Context Discovery)
-- Use agent orchestration to parallelize independent subtasks (e.g., T1.2 and T1.3 can run concurrently)
-- Establish clear checkpoints/gates between phases (code review after T1.1, tests after T1.2+T1.3)
-- Define dependencies between subtasks explicitly (T1.2 and T1.3 depend on T1.1)
-- Use try-finally for guaranteed cleanup in async operations (always execute in critical paths)
-- Test edge cases before marking task complete (UTF-8 multibyte, threshold boundaries, concurrent calls)
-- Delegate specialized work to expert agents (developer-specialist, test-coverage-specialist, review-refactor-specialist)
+- Create detailed specification BEFORE implementation
+- Use agent orchestration to parallelize independent subtasks
+- Establish clear checkpoints/gates between phases
+- Define dependencies between subtasks explicitly
+- Test edge cases before marking task complete
+- Delegate specialized work to expert agents
 - Verify file existence and line numbers in code references before making edits
-- Keep functions focused and single-responsibility (helper vs cleanup vs integration)
+- Keep functions focused and single-responsibility
