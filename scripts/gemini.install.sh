@@ -16,7 +16,7 @@ if [ -L "$HOME/.gemini/commands/" ] || [ -d "$HOME/.gemini/commands/" ]; then
 rm -rf $HOME/.gemini/commands/
 fi
 mkdir -p $HOME/.gemini/commands
-ln -s "$SOURCE/gemini/commands/"* "$HOME/.gemini/commands/"
+ln -s "$SOURCE/commands/"* "$HOME/.gemini/commands/"
 #######################################################################################
 if [ -L "$HOME/.gemini/settings.json" ] || [ -f "$HOME/.gemini/settings.json" ]; then
 rm $HOME/.gemini/settings.json
