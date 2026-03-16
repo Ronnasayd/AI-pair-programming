@@ -19,10 +19,10 @@ mkdir -p "$HOME/.codex/skills/"
 ln -s "$SOURCE/skills/"* "$HOME/.codex/skills/"
 
 ###########################################################################################
-# ## GITIGNORE
-# if ! grep -q ".agent/agents/" .gitignore; then
-#     echo ".agent/agents/" >> .gitignore
-# fi
+## GITIGNORE
+if ! grep -q "AGENTS.md" .gitignore; then
+    echo "AGENTS.md" >> .gitignore
+fi
 # if ! grep -q ".codex/" .gitignore; then
 #     echo ".codex/" >> .gitignore
 # fi
@@ -39,7 +39,7 @@ mkdir -p "$CODEX_DIR"
     echo "[agents]"
     echo "# Concurrent open agent thread cap (Codex default: 6)"
     echo "max_threads = 6"
-    echo "# Spawned agent nesting depth - root session starts at 0 (Codex default: 1)"
+    echo "# Spawned agent nesting depth root session starts at 0 (Codex default: 1)"
     echo "max_depth = 1"
     echo ""
 } > "$CODEX_DIR/config.toml"
@@ -56,7 +56,7 @@ for agent_toml in "$HOME/.codex/agents/"*.toml; do
         {
             echo "[agents.$agent_id]"
             echo "description = \"$description\""
-            # Use relative path as per Codex documentation - paths are resolved relative to config.toml location
+            # Use relative path as per Codex documentation paths are resolved relative to config.toml location
             echo "config_file = \"agents/$agent_filename\""
             echo ""
         } >> "$CODEX_DIR/config.toml"
@@ -77,3 +77,20 @@ fi
 echo "✓ Codex configuration generated at $CODEX_DIR/config.toml"
 echo "✓ All agent config_file paths use relative paths (as per Codex standard)"
 echo "✓ Configuration ready for multi-agent workflows"
+
+############################################################################################
+if ! grep -q "## REFERENCES" $LOCAL/AGENTS.md; then
+    echo -e "\n## REFERENCES" >> $LOCAL/AGENTS.md
+fi
+############################################################################################
+if ! grep -q ".github/instructions/code.instructions.md" $LOCAL/AGENTS.md; then
+    echo -e "\n- .github/instructions/code.instructions.md" >> $LOCAL/AGENTS.md
+fi
+############################################################################################
+if ! grep -q ".github/instructions/orchestration.instructions.md" $LOCAL/AGENTS.md; then
+    echo -e "\n- .github/instructions/orchestration.instructions.md" >> $LOCAL/AGENTS.md
+fi
+############################################################################################
+if ! grep -q ".github/instructions/agent.instructions.md" $LOCAL/AGENTS.md; then
+    echo -e "\n- .github/instructions/agent.instructions.md" >> $LOCAL/AGENTS.md
+fi
