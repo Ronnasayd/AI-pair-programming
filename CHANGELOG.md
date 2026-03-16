@@ -224,7 +224,7 @@
 
 - [✨ **Features**] Enable headless mode in get_cookies function for improved automation ([cfd3629](https://github.com/Ronnasayd/AI-pair-programming/commit/cfd3629))
 - [✨ **Features**] Add comprehensive cybersecurity instructions for secure software development and operations ([bf17790](https://github.com/Ronnasayd/AI-pair-programming/commit/bf17790))
-- [✨ **Features**] Add comprehensive coding guidelines and best practices to copilot.instructions.md ([759be39](https://github.com/Ronnasayd/AI-pair-programming/commit/759be39))
+- [✨ **Features**] Add comprehensive coding guidelines and best practices to code.instructions.md ([759be39](https://github.com/Ronnasayd/AI-pair-programming/commit/759be39))
 
 ### **2025-10-21**
 
@@ -367,4 +367,5 @@
 - [🚧 **Other Changes**] D83773e - first commit | 2025-09-11
 
 ---
+
 Generated on 2026-03-11 11:31:46
