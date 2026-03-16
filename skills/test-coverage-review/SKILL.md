@@ -38,7 +38,7 @@ PHASE 3 — REPORT GENERATION
 ====================
 
 Generate a report and save it as:
-`docs/reviews/coverage/dd-MM-YYYY-<short-description>.md`
+`docs/agents/reviews/coverage/dd-MM-YYYY-<short-description>.md`
 
 The report MUST follow this structure:
 

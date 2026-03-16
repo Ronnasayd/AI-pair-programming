@@ -22,7 +22,7 @@ Your task is to analyze a task specification or taskmaster task and create an in
 
 1. **Receive Input**
    - Input will be either:
-     a. A file path to a task specification: `docs/specs/dd-MM-YYYY-<description>.md`
+     a. A file path to a task specification: `docs/agents/specs/dd-MM-YYYY-<description>.md`
      b. A taskmaster task ID: Use `mcp_taskmaster-ai_get_task` tool
 
 2. **Load and Parse Content**
@@ -232,7 +232,7 @@ For EACH subtask, evaluate ALL candidate agents:
 ### Phase 7: Orchestration Document Creation
 
 1. **Generate Orchestration Plan Document**
-   - Location: `docs/orchestration/<task_id>-agent-orchestration.md`
+   - Location: `docs/agents/orchestration/<task_id>-agent-orchestration.md`
    - Follow the EXACT format from the orchestrate-agents SKILL.md
    - Include all required sections:
      - Executive Summary
@@ -298,7 +298,7 @@ For EACH subtask, evaluate ALL candidate agents:
    - [ ] Risk factors documented
 
 2. **Generate Summary Report**
-   - File: `docs/reports/orchestration-summary-<task_id>.md`
+   - File: `docs/agents/reports/orchestration-summary-<task_id>.md`
    - Content:
      - 1-paragraph executive summary
      - Agent workload chart
@@ -325,9 +325,9 @@ For EACH subtask, evaluate ALL candidate agents:
 
 Provide the user with:
 
-1. **Orchestration Plan Document** (docs/orchestration/)
+1. **Orchestration Plan Document** (docs/agents/orchestration/)
 2. **Agent Allocation Ledger** (docs/agents/ALLOCATION.md)
-3. **Summary Report** (docs/reports/)
+3. **Summary Report** (docs/agents/reports/)
 4. **Verbal Summary**: Key decisions, timeline, risks, and recommended next steps
 
 All TaskMaster subtasks should be updated with agent assignment information.

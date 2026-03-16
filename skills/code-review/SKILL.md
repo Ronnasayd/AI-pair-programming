@@ -36,7 +36,7 @@ OUTPUT RULES (MANDATORY):
 FILE PATH RULES:
 
 - Save the file at:
-  `docs/reviews/dd-MM-YYYY-<short-description>.md`
+  `docs/agents/reviews/dd-MM-YYYY-<short-description>.md`
 
 FILE CONTENT FORMAT (STRICT):
 The file MUST contain exactly the structure below and nothing else:
