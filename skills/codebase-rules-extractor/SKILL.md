@@ -20,7 +20,7 @@ PHASE 1 — CODEBASE DISCOVERY & MAPPING
    - List all programming languages present
 
 2. **Documentation Review**
-   - Read ALL markdown files: README.md, SUMMARY.md, design docs, ADRs, RFCs
+   - Read ALL markdown files: README.md, docs/SUMMARY.md, design docs, ADRs, RFCs
    - Check for existing style guides, conventions documents, or coding standards
    - Identify any .instructions.md, .rules, or similar documentation files
    - Extract explicit rules already documented

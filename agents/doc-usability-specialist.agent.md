@@ -65,7 +65,7 @@ Carefully read the usability or documentation problem and think thoroughly about
 
 - Before making any changes, follow UX writing, accessibility, and usability guidelines if available in the documentation.
 - Before editing any content, check whether there are style guides, tone of voice, personas, glossaries, or interface standards in the project.
-- Refer to files such as SUMMARY.md, README.md, _.md, documents in docs/_, or tool-specific files.
+- Refer to files such as docs/SUMMARY.md, README.md, _.md, documents in docs/_, or tool-specific files.
 
 ## 5. Review and Validation
 

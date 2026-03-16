@@ -9,6 +9,6 @@ MANDATORY: execute the **$0** argument as a git diff command or any other comman
 
 ## TASK:
 
-Based on the modifications and instructions provided, adjust the documentation accordingly. Review existing documentation files (check the docs/ folder and SUMMARY.md if they exist) and see which ones need updating based on the changes made.
+Based on the modifications and instructions provided, adjust the documentation accordingly. Review existing documentation files (check the docs/ folder and docs/SUMMARY.md if they exist) and see which ones need updating based on the changes made.
 
 Preferably update existing files, but create new ones if necessary. Only update files if the changes are relevant to the file's content type. Don't add text just for the sake of adding it. Before any modification, show what will be added and ask if you should proceed.

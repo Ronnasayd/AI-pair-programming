@@ -7,7 +7,7 @@ export TASK_PROMPT="<spec_description>\n$(cat $1)\n</spec_description>\n<workflo
 - Include code snippets ONLY when demonstrating new patterns not present in the codebase
 - Describe tests using comparison tables (test cases, inputs, expected outputs) instead of code blocks
 - Use matrices and tables for scenarios instead of narrative descriptions
-- Check all \*.md files starting from SUMMARY.md and docs/ to find relevant documentation.
+- Check all \*.md files starting from docs/SUMMARY.md and docs/ to find relevant documentation.
 - Create and present a detailed action plan for executing the task implementation.
 - Ensure that changes are fully backward compatible and do not affect other system flows.
   </workflow_for_task_execution>"
