@@ -5,7 +5,7 @@ argument-hint: "[task_description]: A string containing the detailed description
 ---
 
 MANDATORY: Use task-reviewer-specialist agent
-MANDATORY: execute the **$0** argument as a task description and analyze it according to the system instructions.
+MANDATORY: execute the **{task_description}** argument as a task description and analyze it according to the system instructions.
 
 Your objective is to analyze the task and produce a structured technical specification document that will later be used as input for task-master.
 

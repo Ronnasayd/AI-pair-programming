@@ -5,7 +5,7 @@ argument-hint: "[language]: (Optional) The language in which the PR description 
 ---
 
 MANDATORY: Use developer-specialist or review-refactor-specialist agent.
-MANDATORY: If the **$0** (language) argument is not provided, you MUST ask the user: "Which language should I use for the PR description (e.g., English, Portuguese)?"
+MANDATORY: If the {language} argument is not provided, you MUST ask the user: "Which language should I use for the PR description (e.g., English, Portuguese)?"
 
 Your objective is to generate a professional and comprehensive Pull Request description by analyzing the staged changes and recent commit history.
 
@@ -52,17 +52,19 @@ Example Output (Default Template):
 
 ```markdown
 ## Description
+
 This PR introduces a new skill for generating PR descriptions automatically...
 
 ## Impact
+
 - Improves developer productivity by automating repetitive documentation tasks.
 - Ensures consistent PR descriptions across the project.
 
 ## Task
+
 - Create skills/generate-pr-description/SKILL.md
 - Implement template detection logic.
 - Add language selection support.
-
 ```
 
 ====================

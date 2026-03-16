@@ -5,7 +5,7 @@ argument-hint: "[target]: A string containing the task specification, a file pat
 ---
 
 MANDATORY: Use test-coverage-specialist agent
-MANDATORY: execute the **$0** argument as the target for coverage analysis and follow the specialist's instructions.
+MANDATORY: execute the {target} argument as the target for coverage analysis and follow the specialist's instructions.
 
 Your objective is to provide a critical evaluation of the testing strategy or implemented tests, ensuring no behavioral gaps exist.
 
