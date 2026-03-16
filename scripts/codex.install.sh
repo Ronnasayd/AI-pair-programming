@@ -82,15 +82,20 @@ echo "✓ Configuration ready for multi-agent workflows"
 if ! grep -q "## REFERENCES" $LOCAL/AGENTS.md; then
     echo -e "\n## REFERENCES" >> $LOCAL/AGENTS.md
 fi
+###########################################################################################
+mkdir -p "$HOME/.codex/instructions/"
 ############################################################################################
-if ! grep -q ".github/instructions/code.instructions.md" $LOCAL/AGENTS.md; then
-    echo -e "\n- .github/instructions/code.instructions.md" >> $LOCAL/AGENTS.md
+if ! grep -q "$HOME/.codex/instructions/code.instructions.md" $LOCAL/AGENTS.md; then
+    ln -s "$SOURCE/instructions/code.instructions.md" "$HOME/.codex/instructions/code.instructions.md"
+    echo -e "\n- $HOME/.codex/instructions/code.instructions.md" >> $LOCAL/AGENTS.md
 fi
 ############################################################################################
-if ! grep -q ".github/instructions/orchestration.instructions.md" $LOCAL/AGENTS.md; then
-    echo -e "\n- .github/instructions/orchestration.instructions.md" >> $LOCAL/AGENTS.md
+if ! grep -q "$HOME/.codex/instructions/orchestration.instructions.md" $LOCAL/AGENTS.md; then
+    ln -s "$SOURCE/instructions/orchestration.instructions.md" "$HOME/.codex/instructions/orchestration.instructions.md"
+    echo -e "\n- $HOME/.codex/instructions/orchestration.instructions.md" >> $LOCAL/AGENTS.md
 fi
 ############################################################################################
-if ! grep -q ".github/instructions/agent.instructions.md" $LOCAL/AGENTS.md; then
-    echo -e "\n- .github/instructions/agent.instructions.md" >> $LOCAL/AGENTS.md
+if ! grep -q "$HOME/.codex/instructions/agent.instructions.md" $LOCAL/AGENTS.md; then
+    ln -s "$SOURCE/instructions/agent.instructions.md" "$HOME/.codex/instructions/agent.instructions.md"
+    echo -e "\n- $HOME/.codex/instructions/agent.instructions.md" >> $LOCAL/AGENTS.md
 fi
