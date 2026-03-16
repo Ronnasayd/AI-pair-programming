@@ -79,23 +79,23 @@ echo "✓ All agent config_file paths use relative paths (as per Codex standard)
 echo "✓ Configuration ready for multi-agent workflows"
 
 ############################################################################################
-if ! grep -q "## REFERENCES" $LOCAL/AGENTS.md; then
-    echo -e "\n## REFERENCES" >> $LOCAL/AGENTS.md
+if ! grep -q "## REFERENCES" $HOME/.codex/AGENTS.md; then
+    echo -e "\n## REFERENCES" >> $HOME/.codex/AGENTS.md
 fi
 ###########################################################################################
 mkdir -p "$HOME/.codex/instructions/"
 ############################################################################################
-if ! grep -q "$HOME/.codex/instructions/code.instructions.md" $LOCAL/AGENTS.md; then
+if ! grep -q "$HOME/.codex/instructions/code.instructions.md" $HOME/.codex/AGENTS.md; then
     ln -s "$SOURCE/instructions/code.instructions.md" "$HOME/.codex/instructions/code.instructions.md"
-    echo -e "\n- $HOME/.codex/instructions/code.instructions.md" >> $LOCAL/AGENTS.md
+    echo -e "\n- $HOME/.codex/instructions/code.instructions.md" >> $HOME/.codex/AGENTS.md
 fi
 ############################################################################################
-if ! grep -q "$HOME/.codex/instructions/orchestration.instructions.md" $LOCAL/AGENTS.md; then
+if ! grep -q "$HOME/.codex/instructions/orchestration.instructions.md" $HOME/.codex/AGENTS.md; then
     ln -s "$SOURCE/instructions/orchestration.instructions.md" "$HOME/.codex/instructions/orchestration.instructions.md"
-    echo -e "\n- $HOME/.codex/instructions/orchestration.instructions.md" >> $LOCAL/AGENTS.md
+    echo -e "\n- $HOME/.codex/instructions/orchestration.instructions.md" >> $HOME/.codex/AGENTS.md
 fi
 ############################################################################################
-if ! grep -q "$HOME/.codex/instructions/agent.instructions.md" $LOCAL/AGENTS.md; then
+if ! grep -q "$HOME/.codex/instructions/agent.instructions.md" $HOME/.codex/AGENTS.md; then
     ln -s "$SOURCE/instructions/agent.instructions.md" "$HOME/.codex/instructions/agent.instructions.md"
-    echo -e "\n- $HOME/.codex/instructions/agent.instructions.md" >> $LOCAL/AGENTS.md
+    echo -e "\n- $HOME/.codex/instructions/agent.instructions.md" >> $HOME/.codex/AGENTS.md
 fi
