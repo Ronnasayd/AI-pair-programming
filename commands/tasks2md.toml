@@ -1,0 +1,5 @@
+name = "tasks2md"
+description = "Use this prompt to convert all tasks to markdown format. It will execute a script that converts all tasks to markdown format and saves them in the .taskmaster/tasks directory."
+prompt = """Execute the follow command
+python3 ./convert_tasks.py --to_markdown
+"""

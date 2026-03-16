@@ -1,0 +1,5 @@
+name = "md2tasks"
+description = "Use this prompt to convert all tasks from markdown format to tasks.json format."
+prompt = """Execute the follow command
+python3 ./convert_tasks.py --to_tasks
+"""
