@@ -6,6 +6,12 @@ fi
 mkdir -p $LOCAL/.github/skills/
 ln -s "$SOURCE/skills/"* "$LOCAL/.github/skills/"
 ########################################################################################
+if [ -L "$LOCAL/.github/prompts/scripts/" ] || [ -d "$LOCAL/.github/prompts/scripts/" ]; then
+rm -rf $LOCAL/.github/prompts/scripts/
+fi
+mkdir -p $LOCAL/.github/prompts/scripts/
+ln -s "$SOURCE/commands/scripts/"* "$LOCAL/.github/prompts/scripts/"
+########################################################################################
 if [ -L "$LOCAL/.github/hooks/" ] || [ -d "$LOCAL/.github/hooks/" ]; then
 rm -rf $LOCAL/.github/hooks/
 fi
