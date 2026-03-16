@@ -8,7 +8,7 @@
     "preferredEditor": "vscode",
     "vimMode": false,
     "plan": {
-      "directory": ".taskmaster/plans"
+      "directory": "docs/plans/"
     }
   },
   "security": {
