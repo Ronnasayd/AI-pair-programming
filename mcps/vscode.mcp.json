@@ -32,37 +32,37 @@
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
-    },
-    "sonarqube": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--name",
-        "sonarqube-mcp-server",
-        "--rm",
-        "-e",
-        "SONARQUBE_TOKEN",
-        "-e",
-        "SONARQUBE_URL",
-        "--network",
-        "host",
-        "mcp/sonarqube"
-      ],
-      "env": {
-        "SONARQUBE_URL": "http://localhost:9000"
-      }
-    },
-    "figma": {
-      "url": "https://mcp.figma.com/mcp",
-      "type": "http"
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "chrome-devtools-mcp@latest"
-      ]
     }
+    // "sonarqube": {
+    //   "command": "docker",
+    //   "args": [
+    //     "run",
+    //     "-i",
+    //     "--name",
+    //     "sonarqube-mcp-server",
+    //     "--rm",
+    //     "-e",
+    //     "SONARQUBE_TOKEN",
+    //     "-e",
+    //     "SONARQUBE_URL",
+    //     "--network",
+    //     "host",
+    //     "mcp/sonarqube"
+    //   ],
+    //   "env": {
+    //     "SONARQUBE_URL": "http://localhost:9000"
+    //   }
   },
-  "inputs": []
+  "figma": {
+    "url": "https://mcp.figma.com/mcp",
+    "type": "http"
+  },
+  "chrome-devtools": {
+    "command": "npx",
+    "args": [
+      "chrome-devtools-mcp@latest"
+    ]
+  }
+},
+"inputs": []
 }

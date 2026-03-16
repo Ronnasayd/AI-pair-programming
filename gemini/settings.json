@@ -8,7 +8,7 @@
     "preferredEditor": "vscode",
     "vimMode": false,
     "plan": {
-      "directory": "docs/plans/"
+      "directory": "docs/agents/plans/"
     }
   },
   "security": {
