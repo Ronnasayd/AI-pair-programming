@@ -1,3 +1,7 @@
+#!/bin/bash
+export ASDF_NODEJS_VERSION=23.11.1
+export TASKMASTER_SKIP_AUTO_UPDATE=1
+
 export TASK_TAG="$2"
 export TASK_PROMPT="<spec_description>\n$(cat $1)\n</spec_description>\n<extreme_programming_workflow>
 # Extreme Programming Execution Workflow
@@ -57,6 +61,7 @@ Verify that:
 
 </extreme_programming_workflow>"
 
-task-master parse-prd --research --prompt="$TASK_PROMPT" --append --tag="$TASK_TAG"
-task-master analyze-complexity
-task-master expand --all --research --prompt="$TASK_PROMPT"
+echo "$TASK_PROMPT" > /tmp/prd.md
+exec asdf exec task-master parse-prd --research --input=/tmp/prd.md --append --tag="$TASK_TAG"
+exec asdf exec task-master analyze-complexity
+exec asdf exec task-master expand --all --research --prompt="$TASK_PROMPT"

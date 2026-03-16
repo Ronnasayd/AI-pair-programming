@@ -1,7 +1,7 @@
 #!/bin/bash
 export ASDF_NODEJS_VERSION=23.11.1
 export TASKMASTER_SKIP_AUTO_UPDATE=1
-
+export TASK_ID="$2"
 export TASK_PROMPT="<spec_description>\n$(cat $1)\n</spec_description>\n<extreme_programming_workflow>
 
 # Extreme Programming Execution Workflow
@@ -61,6 +61,5 @@ Verify that:
 
 </extreme_programming_workflow>"
 
-exec asdf exec task-master add-task --research --prompt="$TASK_PROMPT"
 exec asdf exec task-master analyze-complexity
-exec asdf exec task-master expand --all --research --prompt="$TASK_PROMPT"
+exec asdf exec task-master expand --research --prompt="$TASK_PROMPT" --id="$TASK_ID"
