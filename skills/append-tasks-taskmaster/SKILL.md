@@ -7,6 +7,6 @@ argument-hint: "[task_spec_path]: A string containing the path to a markdown fil
 Execute one of the following commands in your terminal:
 
 ```shell
-bash .github/skills/append-tasks-taskmaster/append-tasks.sh $0
-bash $HOME/.gemini/skills/append-tasks-taskmaster/append-tasks.sh $0
+bash .github/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path}
+bash $HOME/.gemini/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path}
 ```

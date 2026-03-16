@@ -5,7 +5,7 @@ argument-hint: "[git_diff_command]: A string command containing the git diff out
 ---
 
 MANDATORY: Use documentations-specialist agent
-MANDATORY: execute the **$0** argument as a git diff command or any other command that produces a diff-like output or a code file and analyze the output according to the system instructions.
+MANDATORY: execute the **{git_diff_command}** argument as a git diff command or any other command that produces a diff-like output or a code file and analyze the output according to the system instructions.
 
 ## TASK:
 
