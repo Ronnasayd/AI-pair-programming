@@ -62,6 +62,6 @@ Verify that:
 </extreme_programming_workflow>"
 
 echo "$TASK_PROMPT" > /tmp/prd.md
-exec asdf exec task-master parse-prd --research --input=/tmp/prd.md --append --tag="$TASK_TAG"
-exec asdf exec task-master analyze-complexity
-exec asdf exec task-master expand --all --research --prompt="$TASK_PROMPT"
+asdf exec task-master parse-prd --research --input=/tmp/prd.md --append --tag="$TASK_TAG"
+asdf exec task-master analyze-complexity
+asdf exec task-master expand --all --research --prompt="$TASK_PROMPT"

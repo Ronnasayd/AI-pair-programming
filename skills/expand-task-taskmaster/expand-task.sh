@@ -61,5 +61,5 @@ Verify that:
 
 </extreme_programming_workflow>"
 
-exec asdf exec task-master analyze-complexity
-exec asdf exec task-master expand --research --prompt="$TASK_PROMPT" --id="$TASK_ID"
+asdf exec task-master analyze-complexity
+asdf exec task-master expand --research --prompt="$TASK_PROMPT" --id="$TASK_ID"
