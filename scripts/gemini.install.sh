@@ -1,15 +1,15 @@
 ## GEMINI
 ############################################################################################
-if ! grep -q "@.github/instructions/copilot.instructions.md" $LOCAL/GEMINI.md; then
-    echo -e "\n@.github/instructions/copilot.instructions.md" >> $LOCAL/GEMINI.md
+if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/GEMINI.md; then
+    echo -e "\n@.github/instructions/code.instructions.md" >> $LOCAL/GEMINI.md
 fi
 ############################################################################################
 if ! grep -q "@.github/instructions/orchestration.instructions.md" $LOCAL/GEMINI.md; then
     echo -e "\n@.github/instructions/orchestration.instructions.md" >> $LOCAL/GEMINI.md
 fi
 ############################################################################################
-if ! grep -q "@.github/instructions/lessons.instructions.md" $LOCAL/GEMINI.md; then
-    echo -e "\n@.github/instructions/lessons.instructions.md" >> $LOCAL/GEMINI.md
+if ! grep -q "@.github/instructions/agent.instructions.md" $LOCAL/GEMINI.md; then
+    echo -e "\n@.github/instructions/agent.instructions.md" >> $LOCAL/GEMINI.md
 fi
 #######################################################################################
 if [ -L "$HOME/.gemini/commands/" ] || [ -d "$HOME/.gemini/commands/" ]; then

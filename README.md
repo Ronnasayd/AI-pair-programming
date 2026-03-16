@@ -17,7 +17,7 @@ The project acts as a centralized repository for AI development "intelligence." 
 - `src/`: Core logic, including the MCP server and utility scripts for token counting, context generation, and search.
 - `agents/`: Definitions for various AI personas and their specific instructions.
 - `skills/`: Reusable skill sets for different programming languages and methodologies.
-- `instructions/`: Deep-dive guidelines for specific tasks (e.g., `copilot.instructions.md`).
+- `instructions/`: Deep-dive guidelines for specific tasks (e.g., `code.instructions.md`).
 - `templates/`: Standardized JSON/Markdown templates for PRDs, SRS, and Plans.
 - `docs/`: Project-specific documentation and workflow diagrams.
 - `mcps/`: Configuration files for Model Context Protocol (MCP) clients like VS Code.

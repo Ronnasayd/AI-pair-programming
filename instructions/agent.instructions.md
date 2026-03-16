@@ -1,9 +1,38 @@
 ---
-description: Lessons learned from past mistakes, corrections, and feedback. This file is for self-improvement and continuous learning to avoid repeating the same errors in future tasks.
+description: This file outlines the instructions for the agent's behavior, including documentation retrieval and mandatory rules to follow and avoid during task execution.
 applyTo: "**/*"
 ---
 
-## Mandatory: Avoid
+## Enviroments
+
+- Prefer `yarn`instead of `npm` for JavaScript/TypeScript projects, unless the project explicitly uses `npm`.
+- For Python projects, prefer `pip` and `venv` for dependency management and virtual
+
+## Documentation
+
+Directories and files to search for context:
+
+- `docs/**`
+- `docs/agents/**`
+- `docs/agents/specs/**`
+- `docs/architecture.md`
+- `docs/setup.md`
+- `docs/usage.md`
+- `docs/modules.md`
+- `docs/contribution.md`
+- `docs/adr/**`
+- `docs/techs/**`
+- `docs/misc/**`
+- `docs/faq.md`
+- `docs/agents/reviews/**`
+
+Retrieval process:
+
+1. Determine the task domain.
+2. Search the appropriate documentation directory.
+3. Load only the minimal required sections.
+
+## Mandatory: Rules to Avoid
 
 - Over-Engineering in the First Iteration
 - Creating Unsolicited Files (e.g., IMPLEMENTATION_SUMMARY.md, test files without explicit request)
@@ -17,7 +46,7 @@ applyTo: "**/*"
 - Merging code without full integration test validation
 - Assuming file paths and locations without verification
 
-## Mandatory: Follow
+## Mandatory: Rules toFollow
 
 - List each requirement as a checklist
 - Validate each requirement
