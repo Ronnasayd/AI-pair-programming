@@ -83,7 +83,8 @@
   },
   "experimental": {
     "enableAgents": true,
-    "plan": true
+    "plan": true,
+    "directWebFetch": true
   },
   "ui": {
     "inlineThinkingMode": "full",
@@ -94,14 +95,15 @@
     },
     "showCitations": true,
     "showModelInfoInChat": true,
-    "showStatusInTitle": true
+    "showStatusInTitle": true,
+    "useAlternateBuffer": true
   },
   "model": {
     "name": ""
   },
   "context": {
     "fileFiltering": {
-      "respectGitIgnore": true
+      "respectGitIgnore": false
     }
   },
   "checkpointing": {
