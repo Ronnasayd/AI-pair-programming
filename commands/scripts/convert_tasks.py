@@ -2,7 +2,7 @@
 import os
 from typing import Any, Dict
 import re
-import datetime
+from datetime import datetime
 import json
 import sys
 
