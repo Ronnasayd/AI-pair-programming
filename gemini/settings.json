@@ -6,7 +6,10 @@
       "warningAcknowledged": true
     },
     "preferredEditor": "vscode",
-    "vimMode": false
+    "vimMode": false,
+    "plan": {
+      "directory": ".taskmaster/plans"
+    }
   },
   "security": {
     "auth": {
@@ -90,7 +93,8 @@
       "hideContextPercentage": false
     },
     "showCitations": true,
-    "showModelInfoInChat": true
+    "showModelInfoInChat": true,
+    "showStatusInTitle": true
   },
   "model": {
     "name": ""
@@ -102,5 +106,8 @@
   },
   "checkpointing": {
     "enabled": true
+  },
+  "billing": {
+    "overageStrategy": "ask"
   }
 }
