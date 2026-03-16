@@ -276,7 +276,7 @@ PHASE 5 — TASKMASTER INTEGRATION & UPDATE
    ```
 
 2. **Create Agent Ledger**
-   - Generate a file at `.taskmaster/agents/ALLOCATION.md` that documents:
+   - Generate a file at `docs/agents/ALLOCATION.md` that documents:
      - Which agents are assigned to which subtasks
      - Expected timeline for each agent's work
      - Points of handoff between agents
@@ -299,7 +299,7 @@ PHASE 6 — FINAL VERIFICATION & REPORTING
    - [ ] Risk factors documented
 
 2. **Generate Final Summary Report**
-   - Path: `.taskmaster/reports/orchestration-summary.md`
+   - Path: `docs/reports/orchestration-summary.md`
    - Include: Agent workload, timeline, critical decisions, next steps
 
 3. **Output to User**
@@ -311,7 +311,7 @@ PHASE 6 — FINAL VERIFICATION & REPORTING
 EXECUTION WORKFLOW
 ====================
 
-**If input is a task specification file (.taskmaster/specs/\*.md)**:
+**If input is a task specification file (docs/specs/\*.md)**:
 
 ```bash
 # 1. Load and analyze specification
@@ -324,7 +324,7 @@ export SPEC_CONTENT="$(cat "$SPEC_PATH")"
 # [Execute PHASES 1-6 above]
 
 # 4. Save orchestration document
-# .taskmaster/orchestration/<sanitized_name>-agent-orchestration.md
+# docs/orchestration/<sanitized_name>-agent-orchestration.md
 
 # 5. Update taskmaster if task exists
 # task-master update-subtask <id> --metadata="..." [for each subtask]
@@ -343,7 +343,7 @@ task-master get-task --id=$1
 # [Execute PHASES 2-6 above]
 
 # 4. Save orchestration document
-# .taskmaster/orchestration/<task_id>-agent-orchestration.md
+# docs/orchestration/<task_id>-agent-orchestration.md
 
 # 5. Update each subtask in taskmaster
 # task-master update-subtask <subtask_id> --metadata="..." [for each]

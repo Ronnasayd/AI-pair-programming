@@ -33,7 +33,7 @@ PHASE 2 — SPECIFICATION GENERATION
 
 Based on your analysis, generate a task specification and save it as:
 
-.taskmaster/specs/dd-MM-YYYY-<short-task-description>.md
+docs/specs/dd-MM-YYYY-<short-task-description>.md
 
 ⚠️ **COMPACT FORMAT STRATEGY**: Keep document size 400-600 lines by:
 

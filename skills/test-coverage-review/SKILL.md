@@ -26,6 +26,7 @@ PHASE 2 — COVERAGE ANALYSIS
 ====================
 
 Evaluate the target against the following dimensions:
+
 - **Happy Path**: Are the primary success flows covered?
 - **Alternate Paths**: Are secondary success scenarios addressed?
 - **Edge Cases**: Are boundary values, empty states, and null/undefined handled and tested?
@@ -37,7 +38,7 @@ PHASE 3 — REPORT GENERATION
 ====================
 
 Generate a report and save it as:
-`.taskmaster/reviews/coverage/dd-MM-YYYY-<short-description>.md`
+`docs/reviews/coverage/dd-MM-YYYY-<short-description>.md`
 
 The report MUST follow this structure:
 
@@ -46,27 +47,31 @@ The report MUST follow this structure:
 # Test Coverage Review: <Task Title>
 
 ## Summary of Analysis
+
 Brief overview of the current coverage state (e.g., "Good happy path coverage, but missing error handling tests").
 
 ## Identified Scenarios & Coverage Status
 
-| Scenario Type | Description | Status | Missing/Improvement |
-|---------------|-------------|--------|----------------------|
-| Happy Path    | ...         | [x]    | -                    |
+| Scenario Type | Description | Status | Missing/Improvement          |
+| ------------- | ----------- | ------ | ---------------------------- |
+| Happy Path    | ...         | [x]    | -                            |
 | Edge Case     | ...         | [ ]    | Missing test for empty input |
-| Error Path    | ...         | [ ]    | No test for 500 API error |
+| Error Path    | ...         | [ ]    | No test for 500 API error    |
 
 ## Critical Logic Branch Mapping
+
 List key decision points in the code/spec and whether they have tests.
 
 ## Recommended Test Cases
+
 Specific descriptions of tests that should be added.
 
 | Level | Description | Inputs | Expected Output |
-|-------|-------------|--------|-----------------|
+| ----- | ----------- | ------ | --------------- |
 | Unit  | Handle null | null   | Throw error     |
 
 ## Best Practices & Quality Feedback
+
 Feedback on AAA pattern, naming, mocking, and assertion precision.
 
 </format>
