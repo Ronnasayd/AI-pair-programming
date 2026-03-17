@@ -1,0 +1,35 @@
+{
+  "skill_name": "tailwind-config-conformance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Please validate and refactor this React component. Use the inline tailwind.config.ts I provide: const config = { theme: { extend: { colors: { primary: '#007AFF', 'primary-dark': '#0051D5' }, spacing: { 'custom-lg': '18px' } } } }. Here's the component:\n\n```jsx\nexport function Card() {\n  return (\n    <div className=\"p-7.5 rounded-2xl bg-gradient-blue shadow-lg\">\n      <h2 className=\"text-xl font-bold text-navy-new\">Title</h2>\n      <p className=\"text-sm text-gray-500 mt-12 md:mt-6\">Description</p>\n      <button className=\"px-custom-lg py-2 bg-primary hover:bg-primary-dark\">Action</button>\n    </div>\n  );\n}\n```",
+      "expected_output": "Refactored React component with all invalid Tailwind classes replaced with valid alternatives from the config. Invalid classes like 'p-7.5', 'rounded-2xl', 'bg-gradient-blue', 'text-navy-new', 'mt-12' should be replaced with closest valid alternatives. Valid extended config classes like 'bg-primary', 'px-custom-lg' should be preserved.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Validate this Vue template against a minimal Tailwind config. Config: { theme: { colors: { gray: { 50: '#f9fafb', 100: '#f3f4f6', 500: '#6b7280', 900: '#111827' }, blue: { 500: '#3b82f6' } }, spacing: { 2: '0.5rem', 4: '1rem', 6: '1.5rem' } } }. Template:\n\n```vue\n<template>\n  <div class=\"p-8 bg-gray-100 rounded-lg\">\n    <h1 class=\"text-2xl font-bold text-gray-9000 mb-8\">Dashboard</h1>\n    <div class=\"grid grid-cols-4 gap-6\">\n      <div class=\"p-custom bg-blue-400 text-white\">Card 1</div>\n      <div class=\"p-4 bg-blue-500 text-white\">Card 2</div>\n    </div>\n  </div>\n</template>\n```",
+      "expected_output": "Refactored Vue template with validation results. Classes to flag: 'text-gray-9000' (typo, should be 'text-gray-900'), 'grid-cols-4' (not in config, suggest alternatives), 'gap-6' (valid), 'p-custom' (not defined, suggest 'p-4' or 'p-6'), 'bg-blue-400' (not in config, use 'bg-blue-500'). Valid classes like 'p-8', 'bg-gray-100', 'p-4' should remain.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Complex case: Validate this React component with responsive prefixes, dark mode, and state variants. Config has: colors { slate: 900, 800, 50 }, spacing { 2, 4, 8, 10 }, and `darkMode: 'class'`. Code:\n\n```jsx\nconst Button = ({ variant }) => (\n  <button className=\"px-7 py-3 bg-slate-950 hover:bg-slate-900 dark:bg-slate-900 dark:hover:bg-slate-800 sm:px-4 md:px-6 lg:px-8 text-white rounded-full shadow-huge md:shadow-md\">\n    Click me\n  </button>\n);\n```",
+      "expected_output": "Validate prefixed and state variants correctly. 'px-7' (not in config, suggest 'px-8'), 'py-3' (not in config, suggest 'py-4'), 'bg-slate-950' (not in config, use 'bg-slate-900'), 'sm:px-4' (valid), 'md:px-6' (valid), 'shadow-huge' (not in config, suggest 'shadow-lg' or 'shadow-xl'). Dark mode variants and responsive prefixes should be stripped during validation then re-applied.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Edge case: Arbitrary values. Config has spacing { 2, 4, 8 } and colors { red: 500, 600 }. Should arbitrary values like w-[100px] and bg-[#ff0000] be preserved or flagged? Code:\n\n```html\n<div class=\"w-[200px] bg-[#ff000088] p-3.5 text-red-550\">\n  <span class=\"absolute left-[calc(100%-1px)] top-0\">Custom</span>\n</div>\n```",
+      "expected_output": "Determine if arbitrary values w-[200px], bg-[#ff000088], left-[calc(100%-1px)] are preserved with warnings, or replaced. 'p-3.5' (not in config, suggest 'p-4'), 'text-red-550' (not in config, suggest 'text-red-500' or 'text-red-600'). Report should note which arbitrary values are allowed vs. suggested to be moved to config.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Tailwind directives in CSS. Validate this @apply usage and ensure the classes conform: Config has { spacing { 2, 4 }, colors { gray: 100, 500 } }. CSS file:\n\n```css\n@layer components {\n  .btn {\n    @apply px-5 py-2.5 bg-gray-150 text-gray-700 rounded-md shadow-lg;\n  }\n  .btn-small {\n    @apply px-2 py-1 text-xs bg-gray-50 rounded;\n  }\n}\n```",
+      "expected_output": "Validate @apply directives. 'px-5' (not in config, suggest 'px-4'), 'py-2.5' (not in config, suggest 'py-2' or 'py-4'), 'bg-gray-150' (not in config, use 'bg-gray-100'), 'text-gray-700' (not defined, suggest closest), 'shadow-lg' (standard Tailwind, check if available). Refactored CSS with valid classes in each @apply block.",
+      "files": []
+    }
+  ]
+}
