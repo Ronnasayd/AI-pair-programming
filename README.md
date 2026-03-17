@@ -36,6 +36,59 @@ The server in `src/my_mcp_server.py` exposes several tools:
 
 - `install.sh`: A bash script that symlinks commands, skills, and agents to the user's `~/.gemini/` and `.github/` directories, setting up the local environment.
 
+## Copilot Ollama Proxy (`src/copilot/`)
+
+The `copilot_ollama.py` server exposes an Ollama-compatible HTTP API backed by GitHub Copilot. It maps Ollama clients to the Copilot API transparently.
+
+### Multi-Model Configuration
+
+The proxy reads the allowed model list from **`src/copilot/config.models.yaml`** at startup. If the file is missing or malformed the server exits immediately with a clear error.
+
+```yaml
+# src/copilot/config.models.yaml
+models:
+  - "github-copilot:gpt-4"
+  - "github-copilot:gpt-4.1"
+  - "gpt-4.1"
+  - "gpt-4-turbo"
+  - "gpt-3.5-turbo"
+
+# Must be one of the entries in models above.
+default_model: "github-copilot:gpt-4.1"
+```
+
+**Rules:**
+
+- `models` — non-empty list of strings; each entry is an accepted model identifier.
+- `default_model` — must be present in `models`; used whenever a client sends an unknown or missing model name.
+
+### Fallback Behaviour
+
+When a request specifies a model not in the `models` list the proxy **silently falls back** to `default_model` and logs:
+
+```
+Unknown model 'some-model', using default 'github-copilot:gpt-4.1'
+```
+
+This ensures backward compatibility: legacy clients that hardcode a model name continue to work as long as that name is in the list (or are gracefully handled via fallback).
+
+### Adding a New Model
+
+1. Edit `src/copilot/config.models.yaml` and append the new model name to `models`.
+2. Restart the proxy — no code changes required.
+
+### Endpoints Affected
+
+| Endpoint                    | Behaviour                              |
+| --------------------------- | -------------------------------------- |
+| `GET /api/tags`             | Returns all models from `models` list  |
+| `GET /v1/models`            | Same, in OpenAI format                 |
+| `POST /api/chat`            | Validates model, falls back to default |
+| `POST /api/generate`        | Validates model, falls back to default |
+| `POST /v1/chat/completions` | Validates model, falls back to default |
+
+---
+
 ## Development Conventions
 
 - **Instruction-Driven:** Always refer to the relevant `.agent.md` or `.instructions.md` file before performing significant tasks.

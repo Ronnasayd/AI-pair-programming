@@ -6,11 +6,13 @@ import json
 import logging
 import os
 import re
+import sys
 import time
 import uuid
 from datetime import datetime, timedelta
 
 import uvicorn
+import yaml
 from copilot_api import CopilotAPI
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,6 +28,80 @@ logging.basicConfig(
     ],
 )
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Model configuration — populated at startup by load_model_config()
+# ---------------------------------------------------------------------------
+ALLOWED_MODELS: set[str] = set()
+DEFAULT_MODEL: str = ""
+
+
+def load_model_config() -> None:
+    """Load allowed models and default model from config.models.yaml.
+
+    Reads the YAML file located next to this module.  Aborts server startup
+    with a clear error message when the file is missing, malformed, or fails
+    schema validation.
+    """
+    global ALLOWED_MODELS, DEFAULT_MODEL
+
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.models.yaml")
+
+    try:
+        with open(config_path, "r", encoding="utf-8") as fh:
+            config = yaml.safe_load(fh)
+    except FileNotFoundError:
+        logging.critical(f"❌ Model config file not found: {config_path}")
+        sys.exit(1)
+    except yaml.YAMLError as exc:
+        logging.critical(f"❌ Invalid YAML in model config: {exc}")
+        sys.exit(1)
+
+    if not isinstance(config, dict):
+        logging.critical("❌ Model config must be a YAML mapping")
+        sys.exit(1)
+
+    models = config.get("models")
+    default_model = config.get("default_model")
+
+    if not models or not isinstance(models, list) or len(models) == 0:
+        logging.critical("❌ Model config 'models' must be a non-empty list")
+        sys.exit(1)
+
+    # Guard against non-string entries
+    for entry in models:
+        if not isinstance(entry, str):
+            logging.critical(f"❌ Model config 'models' contains non-string entry: {entry!r}")
+            sys.exit(1)
+
+    if not default_model or not isinstance(default_model, str):
+        logging.critical("❌ Model config 'default_model' must be a non-empty string")
+        sys.exit(1)
+
+    if default_model not in models:
+        logging.critical(
+            f"❌ Model config 'default_model' ({default_model!r}) must be listed in 'models'"
+        )
+        sys.exit(1)
+
+    ALLOWED_MODELS = set(models)
+    DEFAULT_MODEL = default_model
+    logging.info(f"✅ Model config loaded: {len(ALLOWED_MODELS)} model(s), default: {DEFAULT_MODEL}")
+
+
+# Load configuration immediately so globals are populated before routes are registered.
+load_model_config()
+
+
+def get_validated_model(model: str | None) -> str:
+    """Return model as-is when valid; otherwise log and return the default."""
+    if not model:
+        return DEFAULT_MODEL
+    if model not in ALLOWED_MODELS:
+        logging.info(f"Unknown model {model!r}, using default {DEFAULT_MODEL!r}")
+        return DEFAULT_MODEL
+    return model
+
 
 app = FastAPI()
 
@@ -131,9 +207,6 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-MODEL_NAME = "github-copilot"
-MODEL_TAG = "gpt-4.1"
-MODEL_FULL_NAME = f"{MODEL_NAME}:{MODEL_TAG}"
 DIGEST = "copilot-" + str(uuid.uuid4()).replace("-", "")[:32]
 # Set MODIFIED_AT to current UTC time in ISO format with nanoseconds
 MODIFIED_AT = datetime.utcnow().isoformat() + "Z"
@@ -205,7 +278,7 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
                         "id": idref,
                         "object": "chat.completion",
                         "created": int(time.time()),
-                        "model": MODEL_NAME,
+                        "model": DEFAULT_MODEL,
                         "choices": [
                             {
                                 "index": 0,
@@ -223,7 +296,7 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
                         "id": idref,
                         "object": "chat.completion",
                         "created": int(time.time()),
-                        "model": MODEL_NAME,
+                        "model": DEFAULT_MODEL,
                         "choices": [
                             {
                                 "index": 0,
@@ -349,7 +422,7 @@ def get_model_details():
 def get_model_info(model_name=None):
     """Return detailed model information for any model name."""
     if not model_name:
-        model_name = MODEL_FULL_NAME
+        model_name = DEFAULT_MODEL
 
     return {
         "name": model_name,
@@ -365,22 +438,16 @@ def get_model_info(model_name=None):
 
 
 def is_valid_model(model_name: str) -> bool:
-    """Check if the model name is valid/supported.
-
-    For maximum compatibility, we accept any model name format.
-    """
+    """Return True only when model_name is in the configured allowed set."""
     if not model_name:
         return False
-
-    # Accept any model name for maximum compatibility
-    # This proxy will handle any model request and route it to Copilot
-    return True
+    return model_name in ALLOWED_MODELS
 
 
 def normalize_model_name(model_name: str) -> str:
     """Normalize model name to a consistent form."""
     if not model_name:
-        return MODEL_FULL_NAME
+        return DEFAULT_MODEL
 
     # For logging and consistency, we can normalize but still accept any name
     # If no tag specified, assume latest
@@ -400,7 +467,7 @@ async def root():
         content={
             "status": "copilot ollama proxy server is running",
             "version": "0.6.4",
-            "models": [MODEL_FULL_NAME],
+            "models": sorted(ALLOWED_MODELS),
             "backend": "github-copilot",
         }
     )
@@ -419,8 +486,7 @@ async def version():
 async def list_models():
     """List models that are available locally."""
     logger.info("📋 GET /api/tags - Listando modelos disponíveis")
-    # Return a generic model that can handle any requests
-    return JSONResponse(content={"models": [get_model_info()]})
+    return JSONResponse(content={"models": [get_model_info(m) for m in sorted(ALLOWED_MODELS)]})
 
 
 @app.get("/api/models")
@@ -430,8 +496,9 @@ async def list_models_alias():
 
 
 @app.get("/api/show")
-async def show_model_get(name: str = Query(MODEL_FULL_NAME)):
+async def show_model_get(name: str = Query(None)):
     """Show model information via GET request."""
+    name = name or DEFAULT_MODEL
     logger.info(f"ℹ️ GET /api/show - Modelo: {name}")
 
     if not is_valid_model(name):
@@ -473,7 +540,7 @@ max_tokens                     4096""",
 async def show_model_post(request: Request):
     """Show model information via POST request."""
     body = await request.json()
-    name = body.get("name", MODEL_FULL_NAME)
+    name = body.get("name", DEFAULT_MODEL)
     return await show_model_get(name=name)
 
 
@@ -481,7 +548,7 @@ async def show_model_post(request: Request):
 async def chat(request: Request):
     """Generate a chat completion."""
     body = await request.json()
-    model = body.get("model", MODEL_FULL_NAME)
+    model = get_validated_model(body.get("model", ""))
     messages = body.get("messages", [])
     stream = body.get("stream", True)
     _options = body.get("options", {})
@@ -493,10 +560,6 @@ async def chat(request: Request):
     logger.debug(
         f"📨 Mensagens recebidas: {json.dumps(messages, ensure_ascii=False)[:500]}{'...' if len(str(messages)) > 500 else ''}"
     )
-
-    # Validate model
-    if not is_valid_model(model):
-        raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
 
     # Normalize the model name for consistency in responses
     normalized_model = normalize_model_name(model)
@@ -624,7 +687,7 @@ async def chat(request: Request):
 async def generate(request: Request):
     """Generate a completion."""
     body = await request.json()
-    model = body.get("model", MODEL_FULL_NAME)
+    model = get_validated_model(body.get("model", ""))
     prompt = body.get("prompt", "")
     stream = body.get("stream", True)
     suffix = body.get("suffix", "")
@@ -642,10 +705,6 @@ async def generate(request: Request):
     )
     logger.debug(f"📝 Prompt: {prompt[:200]}{'...' if len(prompt) > 200 else ''}")
     logger.debug(f"🔧 Sistema: {system[:100]}{'...' if len(system) > 100 else ''}")
-
-    # Validate model
-    if not is_valid_model(model):
-        raise HTTPException(status_code=404, detail=f"Model '{model}' not found")
 
     # Handle model loading (empty prompt)
     if not prompt.strip():
@@ -770,14 +829,14 @@ async def generate(request: Request):
 async def list_running_models():
     """List models that are currently loaded into memory."""
     logger.info("🏃 GET /api/ps - Listando modelos em execução")
-    return JSONResponse(content={"models": [get_model_info()]})
+    return JSONResponse(content={"models": [get_model_info(m) for m in sorted(ALLOWED_MODELS)]})
 
 
 @app.post("/api/embed")
 async def generate_embeddings(request: Request):
     """Generate embeddings from a model."""
     body = await request.json()
-    model = body.get("model", MODEL_FULL_NAME)
+    model = get_validated_model(body.get("model", ""))
     input_text = body.get("input", "")
 
     logger.info(f"🔢 POST /api/embed - Modelo: {model}")
@@ -893,7 +952,7 @@ async def generate_embedding_legacy(request: Request):
 async def openai_chat_completions(request: Request):
     """OpenAI-compatible chat completions endpoint."""
     body = await request.json()
-    model = body.get("model", MODEL_FULL_NAME)
+    model = get_validated_model(body.get("model", ""))
     messages = body.get("messages", [])
     stream = body.get("stream", False)
 
@@ -961,14 +1020,15 @@ async def openai_list_models():
             "object": "list",
             "data": [
                 {
-                    "id": MODEL_FULL_NAME,
+                    "id": m,
                     "object": "model",
                     "created": int(time.time()),
                     "owned_by": "github-copilot",
                     "permission": [],
-                    "root": MODEL_FULL_NAME,
+                    "root": m,
                     "parent": None,
                 }
+                for m in sorted(ALLOWED_MODELS)
             ],
         }
     )
@@ -976,7 +1036,8 @@ async def openai_list_models():
 
 if __name__ == "__main__":
     print("🚀 Starting Copilot Ollama API proxy server on port 11434")
-    print(f"📦 Available model: {MODEL_FULL_NAME}")
+    print(f"📦 Available models: {', '.join(sorted(ALLOWED_MODELS))}")
+    print(f"🎯 Default model: {DEFAULT_MODEL}")
     print("🔗 Endpoints:")
     print("  - GET  /api/tags          - List available models")
     print("  - POST /api/show          - Show model information")
@@ -995,7 +1056,8 @@ if __name__ == "__main__":
     print("🔧 Backend: GitHub Copilot API")
 
     logger.info("🚀 Iniciando servidor Copilot Ollama API proxy na porta 11434")
-    logger.info(f"📦 Modelo disponível: {MODEL_FULL_NAME}")
+    logger.info(f"📦 Modelos disponíveis: {', '.join(sorted(ALLOWED_MODELS))}")
+    logger.info(f"🎯 Modelo padrão: {DEFAULT_MODEL}")
     logger.info("🔧 Backend: GitHub Copilot API")
 
     # Initialize temporary attachment directory

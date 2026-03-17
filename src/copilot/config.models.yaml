@@ -1,0 +1,13 @@
+# Copilot Ollama Proxy - Model Configuration
+# List all model names accepted by this proxy.
+# Requests for unlisted models silently fall back to default_model.
+models:
+  - "github-copilot:gpt-5.4"
+  - "github-copilot:gpt-4.1"
+  - "github-copilot:gpt-4o"
+  - "github-copilot:gemini-3-flash-preview"
+  - "github-copilot:claude-haiku-4.5"
+
+# The model used when a request omits a model name or specifies an unknown one.
+# Must be present in the models list above.
+default_model: "github-copilot:gpt-4.1"

@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "generatedAt": "2026-03-17T13:43:36.487Z",
+    "tasksAnalyzed": 1,
+    "totalTasks": 2,
+    "analysisCount": 1,
+    "thresholdScore": 5,
+    "projectName": "Taskmaster",
+    "usedResearch": false
+  },
+  "complexityAnalysis": []
+}
