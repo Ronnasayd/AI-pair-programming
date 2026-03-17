@@ -4,4 +4,4 @@ description: "A skill for executing a specified task based on a provided task sp
 argument-hint: "[spec_file]: A file path to a markdown file containing the task description, [task_id]: The unique identifier of the task to be executed."
 ---
 
-Read the {spec_file} file when provided to gather the necessary information to execute the task. Then, get the task to the system using the get_task tool with the {task_id} and reason step-by-step using the sequentialthinking tool to execute the task. Finally, create a task list using the todos tool to execute the task. When available, delegate task execution to the expert developer agent or subagent.
+Read the {spec_file} file when provided to gather the necessary information to execute the task. Then, get the task to the system using the **get_task tool** with the {task_id} and reason step-by-step using the **sequentialthinking tool** to execute the task. Finally, create a task list using the **todos tool** to execute the task. When available, delegate task execution to the expert developer agent or subagent.
