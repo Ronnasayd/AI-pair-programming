@@ -1,5 +1,5 @@
 ---
-name: expand-task-taskmaster
+name: taskmaster-expand-task
 description: "A skill for expanding existing task specifications with additional details and context. This skill takes a task specification in markdown format and generates an expanded version that includes more comprehensive information, examples, and clarifications to help users better understand the task requirements and expectations."
 argument-hint: "[task_spec_path]: Path to task specification file. [task_id]: ID of task to expand. [task_tag] (optional): Tag context (default: 'master'). [additional_args]: Additional options to pass to task-master (e.g., --model='gpt-4')."
 ---

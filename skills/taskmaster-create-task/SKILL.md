@@ -1,5 +1,5 @@
 ---
-name: create-task-taskmaster
+name: taskmaster-create-task
 description: "A skill for creating structured task specifications based on detailed analysis of the provided task description. Use this skill to generate comprehensive technical specifications that will serve as input for task-master, ensuring that all necessary context, relevant files, code snippets, and a clear action plan are included to facilitate efficient task implementation."
 argument-hint: "[task_spec_path]: Path to task specification file. [task_tag] (optional): Tag to categorize tasks (default: 'master'). [additional_args]: Additional options to pass to task-master (e.g., --model='gpt-4')."
 ---
