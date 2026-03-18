@@ -8,15 +8,15 @@ Execute one of the following commands in your terminal:
 
 ```shell
 # Basic usage (uses 'master' as default task_tag)
-bash .github/skills/expand-task-taskmaster/expand-task.sh {task_spec_path} {task_id}
-bash $HOME/.gemini/skills/expand-task-taskmaster/expand-task.sh {task_spec_path} {task_id}
+bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id}
+bash $HOME/.gemini/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id}
 
 # With custom task_tag
-bash .github/skills/expand-task-taskmaster/expand-task.sh {task_spec_path} {task_id} custom-tag
-bash .github/skills/expand-task-taskmaster/expand-task.sh {task_spec_path} {task_id} custom-tag --model="gpt-4"
+bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id} custom-tag
+bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id} custom-tag --model="gpt-4"
 
 # With additional options only (uses default 'master' tag)
-bash .github/skills/expand-task-taskmaster/expand-task.sh {task_spec_path} {task_id} master --model="gpt-4"
+bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id} master --model="gpt-4"
 ```
 
 All additional arguments (like `--model`, `--project-id`, etc.) are passed through to the task-master commands.

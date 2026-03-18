@@ -8,15 +8,15 @@ Execute one of the following commands in your terminal:
 
 ```shell
 # Basic usage (uses 'master' as default task_tag)
-bash .github/skills/create-task-taskmaster/create-task.sh {task_spec_path}
-bash $HOME/.gemini/skills/create-task-taskmaster/create-task.sh {task_spec_path}
+bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path}
+bash $HOME/.gemini/skills/taskmaster-create-task/create-task.sh {task_spec_path}
 
 # With custom task_tag
-bash .github/skills/create-task-taskmaster/create-task.sh {task_spec_path} custom-tag
-bash .github/skills/create-task-taskmaster/create-task.sh {task_spec_path} custom-tag --model="gpt-4"
+bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path} custom-tag
+bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path} custom-tag --model="gpt-4"
 
 # With additional options only (uses default 'master' tag)
-bash .github/skills/create-task-taskmaster/create-task.sh {task_spec_path} master --model="gpt-4"
+bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path} master --model="gpt-4"
 ```
 
 All additional arguments (like `--model`, `--project-id`, etc.) are passed through to the task-master commands.

@@ -81,9 +81,9 @@
 - **[✨ Features]** Add context configuration for file filtering in settings.json ([9fb9ba4](https://github.com/Ronnasayd/AI-pair-programming/commit/9fb9ba4))
 - **[✨ Features]** Add chrome-devtools command to vscode.mcp.json and update installation script for mcp.json symlink ([0bab1d5](https://github.com/Ronnasayd/AI-pair-programming/commit/0bab1d5))
 - **[✨ Features]** Add mcp-server-enablement.json and update installation script for server configuration ([4fb36b5](https://github.com/Ronnasayd/AI-pair-programming/commit/4fb36b5))
-- **[✨ Features]** Add append-tasks-taskmaster skill for enhancing task specifications with new context and action plans ([7ae0d06](https://github.com/Ronnasayd/AI-pair-programming/commit/7ae0d06))
+- **[✨ Features]** Add taskmaster-append-tasks skill for enhancing task specifications with new context and action plans ([7ae0d06](https://github.com/Ronnasayd/AI-pair-programming/commit/7ae0d06))
 - **[✨ Features]** Add prd-reviewer-specialist and test-coverage-specialist agents with detailed analysis frameworks ([750ada8](https://github.com/Ronnasayd/AI-pair-programming/commit/750ada8))
-- **[✨ Features]** Add create-task-taskmaster skill for generating structured task specifications ([72c64d3](https://github.com/Ronnasayd/AI-pair-programming/commit/72c64d3))
+- **[✨ Features]** Add taskmaster-create-task skill for generating structured task specifications ([72c64d3](https://github.com/Ronnasayd/AI-pair-programming/commit/72c64d3))
 - **[✨ Features]** Create new skill for generating structured task specifications based on detailed analysis ([f0ff28b](https://github.com/Ronnasayd/AI-pair-programming/commit/f0ff28b))
 - **[📚 Documentation]** Enhance skill.md with compact specification best practices and formatting guidelines ([50ac5d6](https://github.com/Ronnasayd/AI-pair-programming/commit/50ac5d6))
 - **[🐛 Bug Fixes]** Correct task and impact sections in pr description template for clarity ([46e2fe0](https://github.com/Ronnasayd/AI-pair-programming/commit/46e2fe0))
@@ -460,4 +460,5 @@
 - **[🚧 Other Changes]** D83773e - first commit | 2025-09-11
 
 ---
+
 Generated on 2026-03-17 11:38:44
