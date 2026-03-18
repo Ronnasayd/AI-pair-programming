@@ -2,8 +2,39 @@
 export ASDF_NODEJS_VERSION=23.11.1
 export TASKMASTER_SKIP_AUTO_UPDATE=1
 
-export TASK_TAG="$2"
-export TASK_PROMPT="<spec_description>\n$(cat $1)\n</spec_description>\n<extreme_programming_workflow>
+# Parse arguments
+SPEC_FILE="$1"
+TASK_TAG="${2:-master}"
+ADDITIONAL_ARGS=()
+
+# Parse named arguments from $3 onwards
+shift 2 2>/dev/null || shift $(($# - 1))
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --task-tag=*)
+      TASK_TAG="${1#*=}"
+      shift
+      ;;
+    --task-tag)
+      TASK_TAG="$2"
+      shift 2
+      ;;
+    --model=*|--*=*)
+      ADDITIONAL_ARGS+=("$1")
+      shift
+      ;;
+    --model|--*)
+      ADDITIONAL_ARGS+=("$1" "$2")
+      shift 2
+      ;;
+    *)
+      echo "Unknown argument: $1"
+      shift
+      ;;
+  esac
+done
+
+export TASK_PROMPT="<spec_description>\n$(cat "$SPEC_FILE")\n</spec_description>\n<extreme_programming_workflow>
 # Extreme Programming Execution Workflow
 
 ## 1. Understand the Problem
@@ -62,5 +93,5 @@ Verify that:
 </extreme_programming_workflow>"
 
 echo "$TASK_PROMPT" > /tmp/prd.md
-asdf exec task-master parse-prd --research --input=/tmp/prd.md --append --tag="$TASK_TAG"
-asdf exec task-master analyze-complexity
+asdf exec task-master parse-prd --research --input=/tmp/prd.md --append --tag="$TASK_TAG" "${ADDITIONAL_ARGS[@]}"
+asdf exec task-master analyze-complexity "${ADDITIONAL_ARGS[@]}"
