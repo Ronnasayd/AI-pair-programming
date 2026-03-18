@@ -174,18 +174,13 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+AGENTS.md
+.taskmaster/state.json
 .github/skills/
 .github/prompts/
 .github/instructions/
-.taskmaster/
 .github/agents/
-GEMINI.md
 .github/hooks/
-.agent/skills/
-.agent/prompts/
-.agent/instructions/
-.agent/agents/
-.agent/hooks/
-.codex/
+GEMINI.md
+.taskmaster/
 docs/agents/
-AGENTS.md
