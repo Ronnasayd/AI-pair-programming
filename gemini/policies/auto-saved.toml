@@ -1,5 +1,182 @@
+# =====================================
+# SAFE CORE (allow)
+# =====================================
+
 [[rule]]
-decision = "allow"
-priority = 950
 toolName = "run_shell_command"
-commandPrefix = [ "which" ]
+commandRegex = "(cd|ls|pwd|cat|head|tail|find|grep|wc|echo|which|file|env|printenv|mkdir|cp|mv|touch)\\b"
+decision = "allow"
+priority = 100
+
+# =====================================
+# GIT (safe ops)
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+(status|diff|log|show|branch|fetch|pull|merge|tag|ls-files|rev-parse)\\b"
+decision = "allow"
+priority = 110
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+(checkout|switch)\\b"
+decision = "allow"
+priority = 110
+
+# =====================================
+# NODE / DEV
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "(node|npm|npx|yarn|pnpm|bun)\\b"
+decision = "allow"
+priority = 100
+
+# =====================================
+# LANGUAGES
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "(python|pip|go)\\b"
+decision = "allow"
+priority = 100
+
+# =====================================
+# DOCKER (SAFE ONLY)
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "docker\\s+(ps|logs|images)\\b"
+decision = "allow"
+priority = 120
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "docker\\s+compose\\b"
+decision = "allow"
+priority = 120
+
+# =====================================
+# UTILITIES
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "(jq|sed|awk|sort|uniq|diff|curl)\\b"
+decision = "allow"
+priority = 90
+
+# =====================================
+# VERSION / HELP
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "(--version|--help)"
+decision = "allow"
+priority = 80
+
+# =====================================
+# HARD BLOCKS (deny)
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "(rm|rmdir|del)\\b"
+decision = "deny"
+priority = 900
+deny_message = "Deletion commands (rm/rmdir/del) are blocked. Use version control or manual review instead."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "rm\\s+-r(f)?\\b"
+decision = "deny"
+priority = 950
+deny_message = "Recursive deletion is permanently blocked."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "sudo\\b"
+decision = "deny"
+priority = 950
+deny_message = "Privilege escalation via sudo is not allowed."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "chmod\\b"
+decision = "deny"
+priority = 800
+deny_message = "Changing file permissions is not allowed."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+reset\\s+--hard"
+decision = "deny"
+priority = 950
+deny_message = "Hard resets are irreversible and blocked. Use --soft or --mixed instead."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+clean"
+decision = "deny"
+priority = 950
+deny_message = "git clean permanently removes untracked files and is blocked."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+push\\s+--force"
+decision = "deny"
+priority = 950
+deny_message = "Force pushes are blocked. Use --force-with-lease if absolutely necessary."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "docker\\s+(rm|rmi)"
+decision = "deny"
+priority = 900
+deny_message = "Removing Docker containers/images is blocked."
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "docker\\s+system\\s+prune"
+decision = "deny"
+priority = 950
+deny_message = "Docker system prune is irreversible and blocked."
+
+# =====================================
+# REQUIRE APPROVAL (ask_user)
+# =====================================
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+push\\b"
+decision = "ask_user"
+priority = 700
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+rebase\\b"
+decision = "ask_user"
+priority = 700
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+branch\\s+-D"
+decision = "ask_user"
+priority = 750
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "git\\s+branch\\s+-d"
+decision = "ask_user"
+priority = 700
+
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "docker\\s+(run|exec|stop)\\b"
+decision = "ask_user"
+priority = 700
