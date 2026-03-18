@@ -1,0 +1,116 @@
+{
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.agent.thinkingTool": true,
+  "github.copilot.chat.agent.currentEditorContext.enabled": true,
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "github.copilot.chat.languageContext.fix.typescript.enabled": true,
+  "github.copilot.chat.summarizeAgentConversationHistory.enabled": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made."
+    }
+  ],
+  "chat.agent.maxRequests": 120,
+  "chat.fontSize": 17,
+  "remote.defaultExtensionsIfInstalledLocally": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "GitHub.vscode-pull-request-github"
+  ],
+  "chat.tips.enabled": false,
+  "github.copilot.chat.copilotMemory.enabled": true,
+  "chat.viewProgressBadge.enabled": true,
+  "chat.tools.terminal.autoApprove": {
+    // ========================
+    // SAFE CORE (Claude allow)
+    // ========================
+    "cd": true,
+    "ls": true,
+    "pwd": true,
+    "cat": true,
+    "head": true,
+    "tail": true,
+    "find": true,
+    "grep": true,
+    "wc": true,
+    "echo": true,
+    "which": true,
+    "file": true,
+    "env": true,
+    "printenv": true,
+    "mkdir": true,
+    "cp": true,
+    "mv": true,
+    "touch": true,
+    // ========================
+    // GIT (allow safe ops)
+    // ========================
+    "/^git\\s+(status|diff|log|show|branch|fetch|pull|merge|tag|ls-files|rev-parse)\\b/": true,
+    // checkout / switch permitido
+    "/^git\\s+(checkout|switch)\\b/": true,
+    // ========================
+    // NODE / DEV
+    // ========================
+    "node": true,
+    "npm": true,
+    "npx": true,
+    "yarn": true,
+    "pnpm": true,
+    "bun": true,
+    // ========================
+    // LANGUAGES
+    // ========================
+    "python": true,
+    "pip": true,
+    "go": true,
+    // ========================
+    // DOCKER (SAFE ONLY)
+    // ========================
+    "/^docker\\s+(ps|logs|images)\\b/": true,
+    "/^docker\\s+compose\\b/": true,
+    // ========================
+    // UTILIDADES
+    // ========================
+    "jq": true,
+    "sed": true,
+    "awk": true,
+    "sort": true,
+    "uniq": true,
+    "diff": true,
+    "curl": true,
+    // ========================
+    // VERSION / HELP
+    // ========================
+    "/--version$/": true,
+    "/--help$/": true,
+    // ========================
+    // BLOCKS (Claude deny)
+    // ========================
+    "rm": false,
+    "rmdir": false,
+    "del": false,
+    "/^rm\\s+-rf/": false,
+    "/^rm\\s+-r/": false,
+    "sudo": false,
+    "chmod": false,
+    "/^git\\s+reset\\s+--hard/": false,
+    "/^git\\s+clean/": false,
+    "/^git\\s+push\\s+--force/": false,
+    "/^docker\\s+rm/": false,
+    "/^docker\\s+rmi/": false,
+    "/^docker\\s+system\\s+prune/": false,
+    // ========================
+    // ASK → BLOCK (Claude ask)
+    // ========================
+    "/^git\\s+push\\b/": false,
+    "/^git\\s+rebase\\b/": false,
+    "/^git\\s+branch\\s+-D/": false,
+    "/^git\\s+branch\\s+-d/": false,
+    "/^docker\\s+run\\b/": false,
+    "/^docker\\s+exec\\b/": false,
+    "/^docker\\s+stop\\b/": false
+  },
+  "chat.tools.terminal.enableAutoApprove": true
+}
