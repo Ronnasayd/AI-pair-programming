@@ -371,8 +371,8 @@ Before delivering the orchestration plan:
 
 ## Related Skills
 
-- **create-task-taskmaster**: Use to initially create structured task specifications
-- **append-tasks-taskmaster**: Use to add new subtasks to existing task specifications
+- **taskmaster-create-task**: Use to initially create structured task specifications
+- **taskmaster-append-tasks**: Use to add new subtasks to existing task specifications
 - **context-map**: Use to understand file dependencies before agent assignment
 - **taskmaster**: Core task management workflows
 
