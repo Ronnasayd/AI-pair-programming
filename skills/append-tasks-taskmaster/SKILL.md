@@ -1,13 +1,22 @@
 ---
 name: append-tasks-taskmaster
 description: "A skill for appending new tasks to an existing task specification in task-master. Use this skill to enhance and expand the original task specification with additional context, relevant files, code snippets, and a clear action plan for efficient task implementation. This skill is designed to ensure that any new information or requirements are seamlessly integrated into the existing task specification, maintaining a comprehensive and organized structure for task execution."
-argument-hint: "[task_spec_path]: A string containing the path to a markdown file with the task specification. The file should be located in the docs/agents/specs/ directory and follow the naming convention dd-MM-YYYY-<description>.md."
+argument-hint: "[task_spec_path]: Path to task specification file. [task_tag] (optional): Tag to categorize appended tasks (default: 'master'). [additional_args]: Additional options to pass to task-master (e.g., --model='gpt-4')."
 ---
 
-Generate a {task_tag} for the new tasks being appended to the existing task specification. The {task_tag} should be a concise and descriptive identifier that categorizes the new tasks, making it easier to manage and track them within task-master. The {task_tag} will be used to label the appended tasks, allowing for efficient organization and retrieval of information related to those specific tasks in the future.
 Execute one of the following commands in your terminal:
 
 ```shell
-bash .github/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path} {task_tag}
-bash $HOME/.gemini/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path} {task_tag}
+# Basic usage (appends with 'master' tag)
+bash .github/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path}
+bash $HOME/.gemini/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path}
+
+# With custom task_tag
+bash .github/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path} custom-tag
+bash .github/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path} custom-tag --model="gpt-4"
+
+# With additional options only (uses default 'master' tag)
+bash .github/skills/append-tasks-taskmaster/append-tasks.sh {task_spec_path} master --model="gpt-4"
 ```
+
+All additional arguments (like `--model`, `--project-id`, etc.) are passed through to the task-master commands.

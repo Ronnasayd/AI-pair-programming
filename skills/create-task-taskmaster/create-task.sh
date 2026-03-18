@@ -2,7 +2,12 @@
 export ASDF_NODEJS_VERSION=23.11.1
 export TASKMASTER_SKIP_AUTO_UPDATE=1
 
-export TASK_PROMPT="<spec_description>\n$(cat $1)\n</spec_description>\n<extreme_programming_workflow>
+# Parse arguments
+SPEC_FILE="$1"
+TASK_TAG="${2:-master}"
+ADDITIONAL_ARGS=("${@:3}")
+
+export TASK_PROMPT="<spec_description>\n$(cat "$SPEC_FILE")\n</spec_description>\n<extreme_programming_workflow>
 
 # Extreme Programming Execution Workflow
 
@@ -61,6 +66,6 @@ Verify that:
 
 </extreme_programming_workflow>"
 
-asdf exec task-master add-task --research --prompt="$TASK_PROMPT"
-asdf exec task-master analyze-complexity
-asdf exec task-master expand --all --research --prompt="$TASK_PROMPT"
+asdf exec task-master add-task --research --prompt="$TASK_PROMPT" --tag="$TASK_TAG" "${ADDITIONAL_ARGS[@]}"
+asdf exec task-master analyze-complexity "${ADDITIONAL_ARGS[@]}"
+asdf exec task-master expand --all --research --prompt="$TASK_PROMPT" "${ADDITIONAL_ARGS[@]}"
