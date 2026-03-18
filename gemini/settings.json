@@ -14,7 +14,10 @@
   "security": {
     "auth": {
       "selectedType": "oauth-personal"
-    }
+    },
+    "enablePermanentToolApproval": true,
+    "autoAddToPolicyByDefault": true,
+    "enableConseca": true
   },
   "mcpServers": {
     "sequentialthinking": {
