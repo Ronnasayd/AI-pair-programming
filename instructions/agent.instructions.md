@@ -27,6 +27,7 @@ Directories and files to search for context:
 - `docs/contribution.md`
 - `docs/faq.md`
 - `docs/SUMMARY.md`
+- `.taskmaster/tasks/*.md`
 - `README.md`
 - `GEMINI.md`
 - `CLAUDE.md`
