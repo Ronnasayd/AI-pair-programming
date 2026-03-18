@@ -16,11 +16,7 @@ $SOURCE/scripts/copilot.install.sh
 # $SOURCE/scripts/codex.install.sh
 $SOURCE/scripts/gemini.install.sh
 $SOURCE/scripts/taskmaster.install.sh
-
-## GITIGNORE
-if ! grep -q "docs/agents/" .gitignore; then
-    echo "docs/agents/" >> .gitignore
-fi
+$SOURCE/scripts/gitignore.install.sh
 ###########################################################################################
 
 
