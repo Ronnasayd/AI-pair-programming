@@ -1,16 +1,8 @@
-# =====================================
-# SAFE CORE (allow)
-# =====================================
-
 [[rule]]
 toolName = "run_shell_command"
 commandRegex = "(cd|ls|pwd|cat|head|tail|find|grep|wc|echo|which|file|env|printenv|mkdir|cp|mv|touch)\\b"
 decision = "allow"
 priority = 100
-
-# =====================================
-# GIT (safe ops)
-# =====================================
 
 [[rule]]
 toolName = "run_shell_command"
@@ -24,29 +16,17 @@ commandRegex = "git\\s+(checkout|switch)\\b"
 decision = "allow"
 priority = 110
 
-# =====================================
-# NODE / DEV
-# =====================================
-
 [[rule]]
 toolName = "run_shell_command"
 commandRegex = "(node|npm|npx|yarn|pnpm|bun)\\b"
 decision = "allow"
 priority = 100
 
-# =====================================
-# LANGUAGES
-# =====================================
-
 [[rule]]
 toolName = "run_shell_command"
 commandRegex = "(python|pip|go)\\b"
 decision = "allow"
 priority = 100
-
-# =====================================
-# DOCKER (SAFE ONLY)
-# =====================================
 
 [[rule]]
 toolName = "run_shell_command"
@@ -60,29 +40,17 @@ commandRegex = "docker\\s+compose\\b"
 decision = "allow"
 priority = 120
 
-# =====================================
-# UTILITIES
-# =====================================
-
 [[rule]]
 toolName = "run_shell_command"
 commandRegex = "(jq|sed|awk|sort|uniq|diff|curl)\\b"
 decision = "allow"
 priority = 90
 
-# =====================================
-# VERSION / HELP
-# =====================================
-
 [[rule]]
 toolName = "run_shell_command"
 commandRegex = "(--version|--help)"
 decision = "allow"
 priority = 80
-
-# =====================================
-# HARD BLOCKS (deny)
-# =====================================
 
 [[rule]]
 toolName = "run_shell_command"
@@ -147,10 +115,6 @@ decision = "deny"
 priority = 950
 deny_message = "Docker system prune is irreversible and blocked."
 
-# =====================================
-# REQUIRE APPROVAL (ask_user)
-# =====================================
-
 [[rule]]
 toolName = "run_shell_command"
 commandRegex = "git\\s+push\\b"
@@ -180,3 +144,9 @@ toolName = "run_shell_command"
 commandRegex = "docker\\s+(run|exec|stop)\\b"
 decision = "ask_user"
 priority = 700
+
+[[rule]]
+decision = "allow"
+priority = 950
+toolName = "run_shell_command"
+commandPrefix = [ "python3" ]
