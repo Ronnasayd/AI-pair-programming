@@ -4,7 +4,8 @@ description: "A skill for performing structured code reviews based on git diffs 
 argument-hint: "[git_diff_command]: A string command containing the git diff output to be analyzed for code review."
 ---
 
-MANDATORY: Use review-refactor-specialist agent and git-specialist agent
+MANDATORY: Use agents [review-refactor-specialist, git-specialist,design-pattern-specialist, security-specialist]
+
 MANDATORY: execute the **{git_diff_command}** argument as a git diff command or any other command that produces a diff-like output or a code file and analyze the output according to the system instructions.
 
 TASK:
