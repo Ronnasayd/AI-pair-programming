@@ -3,7 +3,7 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": ".github/hooks/scripts/protect-files.sh"
+        "command": ".github/hooks/scripts/protect_files.py"
       }
     ]
   }
