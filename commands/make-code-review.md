@@ -1,5 +1,5 @@
 ---
-name: code-review
+name: make-code-review
 description: Use this prompt to perform a comprehensive security and quality review of uncommitted changes. It will guide you through the process.
 ---
 
