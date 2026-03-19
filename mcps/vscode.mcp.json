@@ -62,6 +62,10 @@
       "args": [
         "chrome-devtools-mcp@latest"
       ]
+    },
+    "exa": {
+      "type": "http",
+      "url": "https://mcp.exa.ai/mcp"
     }
   }
 }
