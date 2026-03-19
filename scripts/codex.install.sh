@@ -41,20 +41,6 @@ mkdir -p "$CODEX_DIR"
     echo "max_threads = 6"
     echo "# Spawned agent nesting depth root session starts at 0 (Codex default: 1)"
     echo "max_depth = 1"
-
-    echo "[mcp_servers.figma]"
-    echo "url = \"https://mcp.figma.com/mcp\""
-    echo ""
-    echo "[mcp_servers.taskmaster]"
-    echo "command = \"npx\""
-    echo "args = ["
-
-    echo "  \"-y\","
-    echo "  \"-p\", \"@modelcontextprotocol/sdk@1.17.2\","
-    echo "  \"-p\", \"fastmcp@3.23.0\","
-    echo "  \"-p\", \"task-master-ai\","
-    echo "  \"task-master-ai\""
-    echo "]"
     echo ""
 
 [mcp_servers.taskmaster.env]
