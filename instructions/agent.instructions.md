@@ -54,7 +54,7 @@ Retrieval process:
 - Do not manually analyze large code diffs (>1000 lines) in real-time without parallelizing work via specialist agents
 - Do not assume task completion is the natural endpoint — reflect on whether the user would value retrospective or rule extraction
 
-## Mandatory: Rules toFollow
+## Mandatory: Rules to Follow
 
 - List each requirement as a checklist
 - Validate each requirement
