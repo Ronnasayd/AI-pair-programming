@@ -10,8 +10,6 @@ export LOCAL="$(pwd)"
 # echo $LOCAL
 chmod -R +x $SOURCE/hooks/scripts
 
-
-
 $SOURCE/scripts/copilot.install.sh
 # $SOURCE/scripts/codex.install.sh
 $SOURCE/scripts/gemini.install.sh
