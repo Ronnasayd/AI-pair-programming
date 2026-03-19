@@ -13,7 +13,7 @@ python3 $SOURCE/toml2md.py $SOURCE/commands/  $LOCAL/.github/prompts/
 
 
 $SOURCE/scripts/copilot.install.sh
-$SOURCE/scripts/codex.install.sh
+# $SOURCE/scripts/codex.install.sh
 $SOURCE/scripts/gemini.install.sh
 $SOURCE/scripts/taskmaster.install.sh
 $SOURCE/scripts/gitignore.install.sh
