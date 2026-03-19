@@ -1,40 +1,41 @@
 ## GITHUB COPILOT
+DEFAULT_FOLDER=".github"
 ########################################################################################
-if [ -L "$LOCAL/.github/skills/" ] || [ -d "$LOCAL/.github/skills/" ]; then
-rm -rf $LOCAL/.github/skills/
+if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skills/" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
 fi
-mkdir -p $LOCAL/.github/skills/
-ln -s "$SOURCE/skills/"* "$LOCAL/.github/skills/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
+ln -s "$SOURCE/skills/"* "$LOCAL/$DEFAULT_FOLDER/skills/"
 ########################################################################################
-if [ -L "$LOCAL/.github/prompts/scripts/" ] || [ -d "$LOCAL/.github/prompts/scripts/" ]; then
-rm -rf $LOCAL/.github/prompts/scripts/
+if [ -L "$LOCAL/$DEFAULT_FOLDER/prompts/scripts/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/prompts/scripts/" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/prompts/scripts/
 fi
-mkdir -p $LOCAL/.github/prompts/scripts/
-ln -s "$SOURCE/commands/scripts/"* "$LOCAL/.github/prompts/scripts/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/prompts/scripts/
+ln -s "$SOURCE/commands/scripts/"* "$LOCAL/$DEFAULT_FOLDER/prompts/scripts/"
 ########################################################################################
-if [ -L "$LOCAL/.github/hooks/" ] || [ -d "$LOCAL/.github/hooks/" ]; then
-rm -rf $LOCAL/.github/hooks/
+if [ -L "$LOCAL/$DEFAULT_FOLDER/hooks/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/hooks/" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/hooks/
 fi
-mkdir -p $LOCAL/.github/hooks/
-ln -s "$SOURCE/hooks/"* "$LOCAL/.github/hooks/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/hooks/
+ln -s "$SOURCE/hooks/"* "$LOCAL/$DEFAULT_FOLDER/hooks/"
 ########################################################################################
-if [ -L "$LOCAL/.github/agents/" ] || [ -d "$LOCAL/.github/agents/" ]; then
-rm -rf $LOCAL/.github/agents/
+if [ -L "$LOCAL/$DEFAULT_FOLDER/agents/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/agents/" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/agents/
 fi
-mkdir -p $LOCAL/.github/agents/
-ln -s "$SOURCE/agents/"* "$LOCAL/.github/agents/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/agents/
+ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
 ########################################################################################3
 # Função auxiliar para criar symlinks de instruções
 setup_instruction_file() {
     local file_name="$1"
     local source_file="$SOURCE/instructions/$file_name"
-    local local_file="$LOCAL/.github/instructions/$file_name"
+    local local_file="$LOCAL/$DEFAULT_FOLDER/instructions/$file_name"
 
     if [ -L "$local_file" ] || [ -f "$local_file" ]; then
         rm -rf "$local_file"
     fi
 
-    mkdir -p "$LOCAL/.github/instructions/"
+    mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions/"
     ln -s "$source_file" "$local_file"
 }
 
@@ -49,19 +50,19 @@ fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GITIGNORE
-if ! grep -q ".github/skills/" .gitignore; then
-    echo ".github/skills/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/skills/" .gitignore; then
+    echo "$DEFAULT_FOLDER/skills/" >> .gitignore
 fi
-if ! grep -q ".github/prompts/" .gitignore; then
-    echo ".github/prompts/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/prompts/" .gitignore; then
+    echo "$DEFAULT_FOLDER/prompts/" >> .gitignore
 fi
-if ! grep -q ".github/instructions/" .gitignore; then
-    echo ".github/instructions/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/instructions/" .gitignore; then
+    echo "$DEFAULT_FOLDER/instructions/" >> .gitignore
 fi
-if ! grep -q ".github/agents/" .gitignore; then
-    echo ".github/agents/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/agents/" .gitignore; then
+    echo "$DEFAULT_FOLDER/agents/" >> .gitignore
 fi
-if ! grep -q ".github/hooks/" .gitignore; then
-    echo ".github/hooks/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/hooks/" .gitignore; then
+    echo "$DEFAULT_FOLDER/hooks/" >> .gitignore
 fi
 ###########################################################################################
