@@ -3,7 +3,7 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": ".github/hooks/scripts/log-tools-call.py"
+        "command": ".github/hooks/scripts/log_tools_call.py"
       }
     ]
   }
