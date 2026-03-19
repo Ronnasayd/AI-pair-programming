@@ -51,8 +51,7 @@ if [ -L "$HOME/$DEFAULT_FOLDER/hooks/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/h
 rm -rf $HOME/$DEFAULT_FOLDER/hooks/scripts
 fi
 mkdir -p $HOME/$DEFAULT_FOLDER/hooks/scripts
-cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks/scripts"
-python3 "$SOURCE/hooks/generator.py" --config "$SOURCE/hooks/config.json" --agent gemini --output "$HOME/.gemini"
+cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks"
 ########################################################################################
 ## GITIGNORE
 if ! grep -q "GEMINI.md" .gitignore; then
