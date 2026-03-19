@@ -51,6 +51,8 @@ Retrieval process:
 - Rushing into implementation before specification is approved
 - Merging code without full integration test validation
 - Assuming file paths and locations without verification
+- Do not manually analyze large code diffs (>1000 lines) in real-time without parallelizing work via specialist agents
+- Do not assume task completion is the natural endpoint — reflect on whether the user would value retrospective or rule extraction
 
 ## Mandatory: Rules toFollow
 
@@ -67,3 +69,8 @@ Retrieval process:
 - Delegate specialized work to expert agents
 - Verify file existence and line numbers in code references before making edits
 - Keep functions focused and single-responsibility
+- Always read the applicable SKILL.md file before starting specialized or complex work — skills contain tested workflows, format requirements, and tool guidance
+- For analyses involving large code artifacts (>1000 lines), delegate to specialist agents via runSubagent rather than processing sequentially
+- When delegating analysis or complex work to agents, provide explicit success criteria, category frameworks, and expected output structure
+- After completing complex analysis tasks, proactively offer synthesis, retrospective, or rule extraction as a natural next step
+- Include specific line references and code examples in all review findings — abstract concerns must be grounded in verifiable evidence
