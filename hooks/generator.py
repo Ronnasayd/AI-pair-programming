@@ -44,9 +44,9 @@ def generate_hook_json(hook_config: dict, base_path: str, agent: str):
             }
 
 
-def create_hook_files(config: dict, agent: str):
+def create_hook_files(config: dict, output_dir: str, agent: str):
     """Cria arquivos JSON de hooks no diretório especificado"""
-    output_path = Path(f"{agent}/hooks")
+    output_path = Path(f"{output_dir}/hooks")
     output_path.mkdir(parents=True, exist_ok=True)
 
     base_path = output_path
@@ -104,6 +104,11 @@ def main():
         help='Nome do agente (padrão: copilot)'
     )
     parser.add_argument(
+        '--output',
+        default='./github',
+        help='Diretório de saída para os arquivos gerados (padrão: ./hooks/output)'
+    )
+    parser.add_argument(
         '--list',
         action='store_true',
         help='Apenas lista os hooks disponíveis sem gerar arquivos'
@@ -126,7 +131,7 @@ def main():
         list_hooks(config)
     else:
         print(f"Gerando hooks a partir de: {config_path}")
-        create_hook_files(config, args.agent)
+        create_hook_files(config, args.output, args.agent)
         print("\n✓ Hooks gerados com sucesso!")
 
 

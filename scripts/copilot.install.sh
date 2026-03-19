@@ -18,7 +18,7 @@ rm -rf $LOCAL/$DEFAULT_FOLDER/hooks/scripts
 fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/hooks/scripts
 ln -s "$SOURCE/hooks/scripts/"* "$LOCAL/$DEFAULT_FOLDER/hooks/scripts"
-python3 "$SOURCE/hooks/generator.py" --config "$SOURCE/hooks/config.json" --agent .github
+python3 "$SOURCE/hooks/generator.py" --config "$SOURCE/hooks/config.json" --agent copilot --output "$LOCAL/.github"
 ########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/agents/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/agents/" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/agents/

@@ -5,14 +5,14 @@
       "name": "log-tool-calls",
       "description": "Registra todas as chamadas de ferramentas em log",
       "script": "scripts/log-tools-call.py",
-      "triggers": ".github:PreToolUse|.gemini:BeforeTool",
+      "triggers": "copilot:PreToolUse|gemini:BeforeTool",
       "enabled": true
     },
     {
       "name": "protect-files",
       "description": "Protege arquivos sensíveis contra modificação (.env, .git, secrets, etc)",
       "script": "scripts/protect_files.py",
-      "triggers": ".github:PreToolUse|.gemini:BeforeTool",
+      "triggers": "copilot:PreToolUse|gemini:BeforeTool",
       "enabled": true
     }
   ]
