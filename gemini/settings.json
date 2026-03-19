@@ -51,24 +51,24 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
     },
-    "sonarqube": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "SONARQUBE_TOKEN",
-        "-e",
-        "SONARQUBE_URL",
-        "--network",
-        "host",
-        "mcp/sonarqube"
-      ],
-      "env": {
-        "SONARQUBE_URL": "http://localhost:9000"
-      }
-    },
+    // "sonarqube": {
+    //   "command": "docker",
+    //   "args": [
+    //     "run",
+    //     "-i",
+    //     "--rm",
+    //     "-e",
+    //     "SONARQUBE_TOKEN",
+    //     "-e",
+    //     "SONARQUBE_URL",
+    //     "--network",
+    //     "host",
+    //     "mcp/sonarqube"
+    //   ],
+    //   "env": {
+    //     "SONARQUBE_URL": "http://localhost:9000"
+    //   }
+    // },
     "figma": {
       "type": "http",
       "url": "https://mcp.figma.com/mcp"
