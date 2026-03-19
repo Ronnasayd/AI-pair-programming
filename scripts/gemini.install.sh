@@ -1,4 +1,5 @@
 ## GEMINI
+DEFAULT_FOLDER=".gemini"
 ############################################################################################
 if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/GEMINI.md; then
     echo -e "\n@.github/instructions/code.instructions.md" >> $LOCAL/GEMINI.md
@@ -12,38 +13,38 @@ if ! grep -q "@.github/instructions/agent.instructions.md" $LOCAL/GEMINI.md; the
     echo -e "\n@.github/instructions/agent.instructions.md" >> $LOCAL/GEMINI.md
 fi
 #######################################################################################
-if [ -L "$HOME/.gemini/commands/" ] || [ -d "$HOME/.gemini/commands/" ]; then
-rm -rf $HOME/.gemini/commands/
+if [ -L "$HOME/$DEFAULT_FOLDER/commands/" ] || [ -d "$HOME/$DEFAULT_FOLDER/commands/" ]; then
+rm -rf $HOME/$DEFAULT_FOLDER/commands/
 fi
-mkdir -p $HOME/.gemini/commands
-ln -s "$SOURCE/commands/"* "$HOME/.gemini/commands/"
+mkdir -p $HOME/$DEFAULT_FOLDER/commands
+ln -s "$SOURCE/commands/"* "$HOME/$DEFAULT_FOLDER/commands/"
 #######################################################################################
-if [ -L "$HOME/.gemini/settings.json" ] || [ -f "$HOME/.gemini/settings.json" ]; then
-rm $HOME/.gemini/settings.json
+if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/settings.json" ]; then
+rm $HOME/$DEFAULT_FOLDER/settings.json
 fi
-ln -s "$SOURCE/gemini/settings.json" "$HOME/.gemini/settings.json"
+ln -s "$SOURCE/gemini/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
 #######################################################################################
-if [ -L "$HOME/.gemini/policies" ] || [ -f "$HOME/.gemini/policies" ]; then
-rm $HOME/.gemini/policies
+if [ -L "$HOME/$DEFAULT_FOLDER/policies" ] || [ -f "$HOME/$DEFAULT_FOLDER/policies" ]; then
+rm $HOME/$DEFAULT_FOLDER/policies
 fi
-ln -s "$SOURCE/gemini/policies"* "$HOME/.gemini/policies"
+ln -s "$SOURCE/gemini/policies"* "$HOME/$DEFAULT_FOLDER/policies"
 #######################################################################################
-if [ -L "$HOME/.gemini/mcp-server-enablement.json" ] || [ -f "$HOME/.gemini/mcp-server-enablement.json" ]; then
-rm $HOME/.gemini/mcp-server-enablement.json
+if [ -L "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json" ]; then
+rm $HOME/$DEFAULT_FOLDER/mcp-server-enablement.json
 fi
-ln -s "$SOURCE/gemini/mcp-server-enablement.json" "$HOME/.gemini/mcp-server-enablement.json"
+ln -s "$SOURCE/gemini/mcp-server-enablement.json" "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json"
 #######################################################################################
-if [ -L "$HOME/.gemini/skills/" ] || [ -d "$HOME/.gemini/skills/" ]; then
-rm -rf $HOME/.gemini/skills/
+if [ -L "$HOME/$DEFAULT_FOLDER/skills/" ] || [ -d "$HOME/$DEFAULT_FOLDER/skills/" ]; then
+rm -rf $HOME/$DEFAULT_FOLDER/skills/
 fi
-mkdir -p $HOME/.gemini/skills
-ln -s "$SOURCE/skills/"* "$HOME/.gemini/skills/"
+mkdir -p $HOME/$DEFAULT_FOLDER/skills
+ln -s "$SOURCE/skills/"* "$HOME/$DEFAULT_FOLDER/skills/"
 ########################################################################################
-if [ -L "$HOME/.gemini/agents/" ] || [ -d "$HOME/.gemini/agents/" ]; then
-rm -rf $HOME/.gemini/agents/
+if [ -L "$HOME/$DEFAULT_FOLDER/agents/" ] || [ -d "$HOME/$DEFAULT_FOLDER/agents/" ]; then
+rm -rf $HOME/$DEFAULT_FOLDER/agents/
 fi
-mkdir -p $HOME/.gemini/agents
-cp -r "$SOURCE/agents/"* "$HOME/.gemini/agents/"
+mkdir -p $HOME/$DEFAULT_FOLDER/agents
+cp -r "$SOURCE/agents/"* "$HOME/$DEFAULT_FOLDER/agents/"
 ########################################################################################
 ## GITIGNORE
 if ! grep -q "GEMINI.md" .gitignore; then
