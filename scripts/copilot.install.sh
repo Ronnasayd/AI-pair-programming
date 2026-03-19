@@ -7,11 +7,11 @@ fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 ln -s "$SOURCE/skills/"* "$LOCAL/$DEFAULT_FOLDER/skills/"
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/prompts/scripts/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/prompts/scripts/" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/prompts/scripts/
+if [ -L "$LOCAL/$DEFAULT_FOLDER/prompts" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/prompts" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/prompts
 fi
-mkdir -p $LOCAL/$DEFAULT_FOLDER/prompts/scripts/
-ln -s "$SOURCE/commands/scripts/"* "$LOCAL/$DEFAULT_FOLDER/prompts/scripts/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/prompts
+ln -s "$SOURCE/commands/"* "$LOCAL/$DEFAULT_FOLDER/prompts/"
 ########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/hooks/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/hooks/" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/hooks/
