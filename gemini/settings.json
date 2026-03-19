@@ -135,12 +135,12 @@
           {
             "name": "log-tool-calls",
             "type": "command",
-            "command": "/home/ronnas/.gemini/hooks/scripts/log-tools-call.py"
+            "command": "$HOME/.gemini/hooks/scripts/log-tools-call.py"
           },
           {
             "name": "protect-files",
             "type": "command",
-            "command": "/home/ronnas/.gemini/hooks/scripts/protect_files.py"
+            "command": "$HOME/.gemini/hooks/scripts/protect_files.py"
           }
         ]
       }
