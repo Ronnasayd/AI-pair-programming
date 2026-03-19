@@ -47,14 +47,14 @@ def main():
 
     if blocked:
         print(
-            json.dumps({           # saída estruturada, fácil de logar/auditar
-                "blocked": True,
+            json.dumps({    
+                "decision": "deny",       # saída estruturada, fácil de logar/auditar
                 "file": file_path,
                 "reason": f"matches protected pattern '{pattern}'",
             }),
             file=sys.stderr,
         )
-        sys.exit(2)
+        sys.exit(2)  # código específico para bloqueio
 
     sys.exit(0)
 
