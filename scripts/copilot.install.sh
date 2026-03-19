@@ -13,12 +13,11 @@ fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/prompts
 ln -s "$SOURCE/commands/"* "$LOCAL/$DEFAULT_FOLDER/prompts/"
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/hooks/scripts" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/hooks/scripts" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/hooks/scripts
+if [ -L "$LOCAL/$DEFAULT_FOLDER/hooks" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/hooks" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/hooks
 fi
-mkdir -p $LOCAL/$DEFAULT_FOLDER/hooks/scripts
-ln -s "$SOURCE/hooks/scripts/"* "$LOCAL/$DEFAULT_FOLDER/hooks/scripts"
-python3 "$SOURCE/hooks/generator.py" --config "$SOURCE/hooks/config.json" --agent copilot --output "$LOCAL/.github"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/hooks
+ln -s "$SOURCE/hooks/"* "$LOCAL/$DEFAULT_FOLDER/hooks"
 ########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/agents/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/agents/" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/agents/
