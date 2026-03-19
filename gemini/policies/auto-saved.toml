@@ -1,48 +1,48 @@
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "(cd|ls|pwd|cat|head|tail|find|grep|wc|echo|which|file|env|printenv|mkdir|cp|mv|touch)\\b"
+commandRegex = "(cd|ls|pwd|cat|head|tail|find|grep|wc|echo|which|file|env|printenv|mkdir|cp|mv|touch)"
 decision = "allow"
 priority = 100
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "git\\s+(status|diff|log|show|branch|fetch|pull|merge|tag|ls-files|rev-parse)\\b"
+commandRegex = "git (status|diff|log|show|branch|fetch|pull|merge|tag|ls-files|rev-parse)"
 decision = "allow"
 priority = 110
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "git\\s+(checkout|switch)\\b"
+commandRegex = "git (checkout|switch)"
 decision = "allow"
 priority = 110
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "(node|npm|npx|yarn|pnpm|bun)\\b"
+commandRegex = "(node|npm|npx|yarn|pnpm|bun)"
 decision = "allow"
 priority = 100
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "(python|pip|go)\\b"
+commandRegex = "(python|pip|go)"
 decision = "allow"
 priority = 100
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "docker\\s+(ps|logs|images)\\b"
+commandRegex = "docker (ps|logs|images)"
 decision = "allow"
 priority = 120
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "docker\\s+compose\\b"
+commandRegex = "docker (compose)"
 decision = "allow"
 priority = 120
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "(jq|sed|awk|sort|uniq|diff|curl)\\b"
+commandRegex = "(jq|sed|awk|sort|uniq|diff|curl)"
 decision = "allow"
 priority = 90
 
@@ -54,94 +54,70 @@ priority = 80
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "(rm|rmdir|del)\\b"
+commandRegex = "(rm|rmdir|del)"
 decision = "deny"
 priority = 900
 deny_message = "Deletion commands (rm/rmdir/del) are blocked. Use version control or manual review instead."
 
-[[rule]]
-toolName = "run_shell_command"
-commandRegex = "rm\\s+-r(f)?\\b"
-decision = "deny"
-priority = 950
-deny_message = "Recursive deletion is permanently blocked."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "sudo\\b"
+commandPrefix = "sudo"
 decision = "deny"
 priority = 950
 deny_message = "Privilege escalation via sudo is not allowed."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "chmod\\b"
+commandPrefix = "chmod"
 decision = "deny"
 priority = 800
 deny_message = "Changing file permissions is not allowed."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "git\\s+reset\\s+--hard"
+commandPrefix = "git reset --hard"
 decision = "deny"
 priority = 950
 deny_message = "Hard resets are irreversible and blocked. Use --soft or --mixed instead."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "git\\s+clean"
+commandPrefix = "git clean"
 decision = "deny"
 priority = 950
 deny_message = "git clean permanently removes untracked files and is blocked."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "git\\s+push\\s+--force"
+commandPrefix = "git push --force"
 decision = "deny"
 priority = 950
 deny_message = "Force pushes are blocked. Use --force-with-lease if absolutely necessary."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "docker\\s+(rm|rmi)"
+commandPrefix = "docker rm"
 decision = "deny"
 priority = 900
 deny_message = "Removing Docker containers/images is blocked."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "docker\\s+system\\s+prune"
+commandPrefix = "docker system prune"
 decision = "deny"
 priority = 950
 deny_message = "Docker system prune is irreversible and blocked."
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "git\\s+push\\b"
+commandRegex = "git (commit|push|rebase|branch)"
 decision = "ask_user"
 priority = 700
 
 [[rule]]
 toolName = "run_shell_command"
-commandRegex = "git\\s+rebase\\b"
-decision = "ask_user"
-priority = 700
-
-[[rule]]
-toolName = "run_shell_command"
-commandRegex = "git\\s+branch\\s+-D"
-decision = "ask_user"
-priority = 750
-
-[[rule]]
-toolName = "run_shell_command"
-commandRegex = "git\\s+branch\\s+-d"
-decision = "ask_user"
-priority = 700
-
-[[rule]]
-toolName = "run_shell_command"
-commandRegex = "docker\\s+(run|exec|stop)\\b"
+commandRegex = "docker (run|exec|stop)"
 decision = "ask_user"
 priority = 700
 
@@ -149,4 +125,4 @@ priority = 700
 decision = "allow"
 priority = 950
 toolName = "run_shell_command"
-commandPrefix = [ "python3" ]
+commandPrefix = "python3"
