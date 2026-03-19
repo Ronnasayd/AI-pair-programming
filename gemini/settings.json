@@ -17,7 +17,7 @@
     },
     "enablePermanentToolApproval": true,
     "autoAddToPolicyByDefault": true,
-    "enableConseca": true
+    "enableConseca": false
   },
   "mcpServers": {
     "sequentialthinking": {
