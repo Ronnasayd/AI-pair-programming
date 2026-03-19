@@ -1,6 +1,7 @@
 ## GEMINI
 DEFAULT_FOLDER=".gemini"
 python3 $SOURCE/md2toml.py $SOURCE/commands/  $HOME/$DEFAULT_FOLDER/commands/
+
 ############################################################################################
 if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/GEMINI.md; then
     echo -e "\n@.github/instructions/code.instructions.md" >> $LOCAL/GEMINI.md
@@ -18,6 +19,11 @@ if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/s
 rm $HOME/$DEFAULT_FOLDER/settings.json
 fi
 ln -s "$SOURCE/gemini/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
+#######################################################################################
+if [ -L "$HOME/$DEFAULT_FOLDER/commands/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/commands/scripts" ]; then
+rm -rf $HOME/$DEFAULT_FOLDER/commands/scripts
+fi
+ln -s "$SOURCE/commands/scripts"* "$HOME/$DEFAULT_FOLDER/commands/scripts"
 #######################################################################################
 if [ -L "$HOME/$DEFAULT_FOLDER/policies" ] || [ -f "$HOME/$DEFAULT_FOLDER/policies" ]; then
 rm $HOME/$DEFAULT_FOLDER/policies
