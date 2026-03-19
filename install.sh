@@ -9,7 +9,7 @@ export LOCAL="$(pwd)"
 # echo $SOURCE
 # echo $LOCAL
 chmod -R +x $SOURCE/hooks/scripts
-python3 $SOURCE/toml2md.py $SOURCE/commands/  $LOCAL/.github/prompts/
+
 
 
 $SOURCE/scripts/copilot.install.sh

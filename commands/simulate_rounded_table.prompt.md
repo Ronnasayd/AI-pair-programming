@@ -1,6 +1,8 @@
-name = "simulate_rounded_table"
-description = "Use this prompt to simulate a roundtable discussion among technology experts. It will guide you through the process."
-prompt = """
+---
+name: simulate_rounded_table
+description: Use this prompt to simulate a roundtable discussion among technology experts. It will guide you through the process.
+---
+
 <instructions>
 
 # Simulate a roundtable discussion among technology experts.
@@ -20,4 +22,3 @@ Also ask: _“Would you like to define which experts will participate in the rou
 - The response must be written in a **roundtable dialogue format**, with alternating statements from the experts.
 
 </instructions>
-"""
