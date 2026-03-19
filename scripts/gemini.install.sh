@@ -47,6 +47,13 @@ fi
 mkdir -p $HOME/$DEFAULT_FOLDER/agents
 cp -r "$SOURCE/agents/"* "$HOME/$DEFAULT_FOLDER/agents/"
 ########################################################################################
+if [ -L "$HOME/$DEFAULT_FOLDER/hooks/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/hooks/scripts" ]; then
+rm -rf $HOME/$DEFAULT_FOLDER/hooks/scripts
+fi
+mkdir -p $HOME/$DEFAULT_FOLDER/hooks/scripts
+cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks/scripts"
+python3 "$SOURCE/hooks/generator.py" --config "$SOURCE/hooks/config.json" --agent gemini --output "$HOME/.gemini"
+########################################################################################
 ## GITIGNORE
 if ! grep -q "GEMINI.md" .gitignore; then
     echo "GEMINI.md" >> .gitignore
