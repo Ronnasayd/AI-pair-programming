@@ -1,6 +1,9 @@
-name = "create_react_component_by_figma"
-description = "Use this prompt to create a new React component based on a Figma design. It will guide you through the process."
-prompt = """# Design Conversion to React Components
+---
+name: create_react_component_by_figma
+description: Use this prompt to create a new React component based on a Figma design. It will guide you through the process.
+---
+
+# Design Conversion to React Components
 
 Analyze the attached design (screenshot or Figma frame) and convert it into React components following the standards below.
 
@@ -262,5 +265,3 @@ import * as Menu from "@base-ui/react/menu";
 ---
 
 Now analyze the attached design and generate the component code.
-
-"""
