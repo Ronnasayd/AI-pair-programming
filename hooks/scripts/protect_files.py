@@ -30,7 +30,6 @@ def is_protected(file_path: str) -> tuple[bool, str]:
 def main():
     try:
         payload = json.load(sys.stdin)
-        print(payload)
     except json.JSONDecodeError as e:
         logging.error(f"JSON inválido: {e}")
         sys.exit(1)
