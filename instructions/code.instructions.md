@@ -58,19 +58,14 @@ When generating code, adhere to the following rules:
 - Do not ignore localization requirements in multi-language projects.
 - Avoid environment inconsistencies (hardcoded configs, absolute paths).
 
-<!-- THE RULES BELOW APPLY ONLY WHEN CREATING OR EDITING CODE FILES -->
-<!-- THESE RULES TAKE PRECEDENCE OVER ALL OTHERS -->
-
 ## Workflow for Significant Code Changes
 
 For any significant code addition, deletion, or modification:
 
-- Use skills whenever they are available and consistent with what is being asked.
-- Whenever possible, delegate parts of the process or the entire task to a specialist agent.
 - Explain what will be done and why
 - Wait for explicit user confirmation before proceeding
 - Adjust the plan if the user provides feedback
-- Show a preview of the key parts of the code to be generated
+- Show a little preview of the key parts of the code to be generated
 - Explain important lines or decisions
 - Wait for explicit user confirmation before applying changes
 - After applying changes, provide a summary of what was done and any next steps or considerations
