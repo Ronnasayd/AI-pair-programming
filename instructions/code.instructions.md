@@ -1,6 +1,6 @@
 ---
 description: Comprehensive guide to generate high-quality code.
-applyTo: "**/*"
+applyTo: "**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx"
 ---
 
 ## Context
