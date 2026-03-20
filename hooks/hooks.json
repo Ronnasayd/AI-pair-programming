@@ -4,6 +4,10 @@
       {
         "type": "command",
         "command": ".github/hooks/scripts/log_tools_call.py"
+      },
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/protect_files.py"
       }
     ]
   }
