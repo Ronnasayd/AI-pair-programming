@@ -135,12 +135,14 @@
           {
             "name": "log-tool-calls",
             "type": "command",
-            "command": "$HOME/.gemini/hooks/scripts/log_tools_call.py"
+            "command": "$HOME/.gemini/hooks/scripts/log_tools_call.py",
+            "description": "Log the tool usage to a file for auditing purposes."
           },
           {
             "name": "protect-files",
             "type": "command",
-            "command": "$HOME/.gemini/hooks/scripts/protect_files.py"
+            "command": "$HOME/.gemini/hooks/scripts/protect_files.py",
+            "description": "Protect sensitive files from being modified or deleted."
           }
         ]
       }
