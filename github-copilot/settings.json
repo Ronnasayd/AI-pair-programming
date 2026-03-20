@@ -17,9 +17,6 @@
   "github.copilot.chat.copilotMemory.enabled": true,
   "chat.viewProgressBadge.enabled": true,
   "chat.tools.terminal.autoApprove": {
-    // ========================
-    // SAFE CORE (Claude allow)
-    // ========================
     "cd": true,
     "ls": true,
     "pwd": true,
@@ -38,35 +35,20 @@
     "cp": true,
     "mv": true,
     "touch": true,
-    // ========================
-    // GIT (allow safe ops)
-    // ========================
     "/^git\\s+(status|diff|log|show|branch|fetch|pull|merge|tag|ls-files|rev-parse)\\b/": true,
-    // checkout / switch permitido
     "/^git\\s+(checkout|switch)\\b/": true,
-    // ========================
-    // NODE / DEV
-    // ========================
     "node": true,
     "npm": true,
     "npx": true,
     "yarn": true,
     "pnpm": true,
     "bun": true,
-    // ========================
-    // LANGUAGES
-    // ========================
     "python": true,
+    "python3": true,
     "pip": true,
     "go": true,
-    // ========================
-    // DOCKER (SAFE ONLY)
-    // ========================
     "/^docker\\s+(ps|logs|images)\\b/": true,
     "/^docker\\s+compose\\b/": true,
-    // ========================
-    // UTILIDADES
-    // ========================
     "jq": true,
     "sed": true,
     "awk": true,
@@ -74,14 +56,8 @@
     "uniq": true,
     "diff": true,
     "curl": true,
-    // ========================
-    // VERSION / HELP
-    // ========================
     "/--version$/": true,
     "/--help$/": true,
-    // ========================
-    // BLOCKS (Claude deny)
-    // ========================
     "rm": false,
     "rmdir": false,
     "del": false,
@@ -95,16 +71,15 @@
     "/^docker\\s+rm/": false,
     "/^docker\\s+rmi/": false,
     "/^docker\\s+system\\s+prune/": false,
-    // ========================
-    // ASK → BLOCK (Claude ask)
-    // ========================
     "/^git\\s+push\\b/": false,
     "/^git\\s+rebase\\b/": false,
     "/^git\\s+branch\\s+-D/": false,
     "/^git\\s+branch\\s+-d/": false,
     "/^docker\\s+run\\b/": false,
     "/^docker\\s+exec\\b/": false,
-    "/^docker\\s+stop\\b/": false
+    "/^docker\\s+stop\\b/": false,
+    "timeout": true,
+    "test": true
   },
   "chat.tools.terminal.enableAutoApprove": true
 }
