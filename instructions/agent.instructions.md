@@ -53,6 +53,11 @@ Retrieval process:
 - Assuming file paths and locations without verification
 - Do not manually analyze large code diffs (>1000 lines) in real-time without parallelizing work via specialist agents
 - Do not assume task completion is the natural endpoint — reflect on whether the user would value retrospective or rule extraction
+- Never assume task status without querying current state first — confirm done/pending before planning modifications
+- Don't deploy bulk tool operations (MCP expand_task, etc.) without spot-checking 2–3 outputs — sample-verify before trusting bulk changes
+- Don't mark parent task "done" while subtasks remain "pending" — establish task status semantics upfront (structure complete vs. work complete)
+- Avoid one-task-per-component patterns for groups of related items — 50+ tasks are harder to navigate than 5-7 category tasks with subtasks
+- Don't skip gap analysis before large task restructuring — identify missing coverage upfront to prevent rework
 
 ## Mandatory: Rules to Follow
 
@@ -74,3 +79,9 @@ Retrieval process:
 - When delegating analysis or complex work to agents, provide explicit success criteria, category frameworks, and expected output structure
 - After completing complex analysis tasks, proactively offer synthesis, retrospective, or rule extraction as a natural next step
 - Include specific line references and code examples in all review findings — abstract concerns must be grounded in verifiable evidence
+- Verify current task status (done/pending/in-progress) before modifying existing tasks — "done" tasks may be locked and prevent edits
+- Use structured gap analysis matrices (category × component × task mapping) before bulk task operations — prevents missing coverage
+- Organize complex task hierarchies by domain/theme rather than sequential numbering — matches developer mental models (Navigation, Chat, Forms)
+- Generate before/after coverage metrics when modifying task structures — document components covered %, gaps resolved, remaining gaps
+- Prefer expanding existing tasks to creating new ones for related components — keeps structure lean and reduces cognitive load
+- Create PRDs or specifications BEFORE expanding unreviewed task structures — prevents wasted effort if scope changes
