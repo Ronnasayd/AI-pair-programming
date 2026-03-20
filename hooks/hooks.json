@@ -11,6 +11,13 @@
         "command": ".github/hooks/scripts/protect_files.py",
         "description": "Protect sensitive files from being modified or deleted."
       }
-    ]
+    ],
+    "PostToolUse": [],
+    "SessionStart": [],
+    "Stop": [],
+    "PreCompact": [],
+    "SubagentStart": [],
+    "SubagentStop": [],
+    "UserPromptSubmit": []
   }
 }
