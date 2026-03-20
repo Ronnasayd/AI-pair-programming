@@ -3,11 +3,13 @@
     "PreToolUse": [
       {
         "type": "command",
-        "command": ".github/hooks/scripts/log_tools_call.py"
+        "command": ".github/hooks/scripts/log_tools_call.py",
+        "description": "Log the tool usage to a file for auditing purposes."
       },
       {
         "type": "command",
-        "command": ".github/hooks/scripts/protect_files.py"
+        "command": ".github/hooks/scripts/protect_files.py",
+        "description": "Protect sensitive files from being modified or deleted."
       }
     ]
   }
