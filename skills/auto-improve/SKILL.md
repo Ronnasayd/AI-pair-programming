@@ -1,5 +1,5 @@
 ---
-name: task-retrospective
+name: auto-improve
 description: >
   After completing any task, process, feature, bug fix, refactoring, or agent workflow — perform a structured retrospective that evaluates decisions made during execution, identifies what worked and what failed, and generates actionable rules in the exact format used by agent.instructions.md (## Mandatory: Rules to Follow / ## Mandatory: Rules to Avoid).
   Use this skill whenever a task has just finished and the user asks for a review, reflection, or lessons learned; whenever someone asks what went wrong, what could be improved, or what rules should be extracted from a recently completed process; whenever an agent wants to close an execution loop and capture reusable knowledge. Trigger even when the request is implicit — phrases like "what did we learn", "what should we avoid next time", "summarize what went well", "extract rules from this", or "what mistakes were made" are all strong signals to invoke this skill.

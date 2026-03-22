@@ -1,5 +1,5 @@
 ---
-name: task-validator
+name: taskmaster-task-validator
 description: Validate taskmaster tasks against requirements and ensure 100% coverage of all requisites. Use when you need to verify that created tasks fully address all requirements from a PRD or specification. Triggers on phrases like "validate my tasks", "check task coverage", "verify tasks against requirements", "validate task completeness", "ensure tasks meet requirements", or when assessing whether a task structure comprehensively addresses a given specification. This skill will analyze requirements in parallel using isolated subagents to validate different aspects (requirement coverage, task structure, dependencies, traceability, and test adequacy), generate a comprehensive gaps report, and after user approval, iteratively update and improve tasks and subtasks until they meet all parameters.
 compatibility: Requires taskmaster CLI tools and access to .taskmaster/tasks.json and requirement documents (PRD, specification files).
 ---
