@@ -128,7 +128,18 @@
     "overageStrategy": "ask"
   },
   "hooks": {
-    "SessionStart": [],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.gemini/hooks/scripts/session_start.py",
+            "description": "Log the session start to a file for auditing purposes."
+          }
+        ]
+      }
+    ],
     "SessionEnd": [],
     "BeforeAgent": [],
     "AfterAgent": [],
