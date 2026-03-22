@@ -128,6 +128,37 @@
     "overageStrategy": "ask"
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.gemini/hooks/scripts/session-start.js",
+            "description": "Handle tasks when a session starts, such as loading previous context or initializing resources."
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.gemini/hooks/scripts/session-end.js",
+            "description": "Handle tasks when a session ends, such as saving state or cleaning up resources."
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.gemini/hooks/scripts/evaluate-session.js",
+            "description": "Evaluate the session's performance and log metrics for analysis."
+          }
+        ]
+      }
+    ],
+    "BeforeAgent": [],
+    "AfterAgent": [],
     "BeforeTool": [
       {
         "matcher": "*",
@@ -146,6 +177,9 @@
           }
         ]
       }
-    ]
+    ],
+    "AfterTool": [],
+    "PreCompress": [],
+    "Notification": []
   }
 }
