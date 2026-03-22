@@ -13,8 +13,20 @@
       }
     ],
     "PostToolUse": [],
-    "SessionStart": [],
-    "Stop": [],
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/session-start.js",
+        "description": "Handle tasks when a session starts, such as loading previous context or initializing resources."
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/session-end.js",
+        "description": "Handle tasks when a session ends, such as saving state or cleaning up resources."
+      }
+    ],
     "PreCompact": [],
     "SubagentStart": [],
     "SubagentStop": [],
