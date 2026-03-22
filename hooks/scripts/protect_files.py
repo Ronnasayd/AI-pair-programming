@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 PROTECTED_PATTERNS = [
     ".env",
     ".env.*",
-    ".git/*",
     "secrets/*",
     "**/*.pem",
     "**/*.key",
