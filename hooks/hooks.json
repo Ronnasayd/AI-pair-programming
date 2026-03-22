@@ -27,7 +27,13 @@
         "description": "Handle tasks when a session ends, such as saving state or cleaning up resources."
       }
     ],
-    "PreCompact": [],
+    "PreCompact": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/pre-compact.js",
+        "description": "Handle tasks before context compaction, such as saving state or logging events."
+      }
+    ],
     "SubagentStart": [],
     "SubagentStop": [],
     "UserPromptSubmit": []
