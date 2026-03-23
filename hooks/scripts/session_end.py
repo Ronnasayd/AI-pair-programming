@@ -216,6 +216,85 @@ def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
     }
 
 
+def extract_session_summary_gemini(transcript_path: Path) -> dict | None:
+    """
+    Extract a meaningful summary from the Gemini session JSON.
+    Reads the JSON transcript and pulls out key information:
+    - User messages (tasks requested)
+    - Tools used (from toolCalls)
+    - Files modified (from tool arguments)
+    """
+    content = read_file(transcript_path)
+    if not content:
+        return None
+
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        return None
+
+    messages = data.get("messages", [])
+    if not isinstance(messages, list):
+        return None
+
+    user_messages: list[str] = []
+    tools_used: set[str] = set()
+    files_modified: set[str] = set()
+
+    for msg in messages:
+        if not isinstance(msg, dict):
+            continue
+
+        msg_type = msg.get("type", "")
+
+        # ── User messages ────────────────────────────────────────────────
+        if msg_type == "user":
+            raw_content = msg.get("content", [])
+            if isinstance(raw_content, list):
+                text = " ".join(
+                    (c.get("text") or "") for c in raw_content if isinstance(c, dict)
+                )
+            elif isinstance(raw_content, str):
+                text = raw_content
+            else:
+                text = ""
+            cleaned = strip_ansi(text).strip()
+            if cleaned:
+                user_messages.append(cleaned[:200])
+
+        # ── Tool calls from gemini messages ──────────────────────────────
+        if msg_type == "gemini":
+            tool_calls = msg.get("toolCalls", [])
+            if isinstance(tool_calls, list):
+                for tool_call in tool_calls:
+                    if not isinstance(tool_call, dict):
+                        continue
+                    tool_name = tool_call.get("name", "")
+                    if tool_name:
+                        tools_used.add(tool_name)
+                    # Extract file paths from tool arguments
+                    args = tool_call.get("args", {})
+                    if isinstance(args, dict):
+                        file_path = (
+                            args.get("filePath")
+                            or args.get("file_path")
+                            or args.get("path")
+                            or ""
+                        )
+                        if file_path and tool_name in _WRITE_TOOLS_COPILOT:
+                            files_modified.add(file_path)
+
+    if not user_messages:
+        return None
+
+    return {
+        "user_messages": user_messages[-10:],
+        "tools_used": list(tools_used)[:20],
+        "files_modified": list(files_modified)[:30],
+        "total_messages": len(user_messages),
+    }
+
+
 # ---------------------------------------------------------------------------
 # Session file building
 # ---------------------------------------------------------------------------
@@ -342,7 +421,7 @@ def main() -> None:
     summary: dict | None = None
     if transcript_path:
         if transcript_path.exists():
-            summary = extract_session_summary_copilot(transcript_path)
+            summary = get_summary(transcript_path)
         else:
             log(f"[SessionEnd] Transcript not found: {transcript_path}")
 
@@ -394,6 +473,13 @@ def main() -> None:
         log(f"[SessionEnd] Created session file: {session_file}")
 
     sys.exit(0)
+
+def get_summary(transcript_path):
+    if "gemini" in transcript_path.lower():
+        summary = extract_session_summary_gemini(transcript_path)
+        return summary
+    summary = extract_session_summary_copilot(transcript_path)
+    return summary
 
 
 if __name__ == "__main__":
