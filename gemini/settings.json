@@ -147,19 +147,7 @@
     ],
     "SessionEnd": [],
     "BeforeAgent": [],
-    "AfterAgent": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "name": "session_end",
-            "type": "command",
-            "command": "$HOME/.gemini/hooks/scripts/session_end.py",
-            "description": "Log the session end to a file for auditing purposes."
-          }
-        ]
-      }
-    ],
+    "AfterAgent": [],
     "BeforeTool": [
       {
         "matcher": "*",
@@ -181,6 +169,20 @@
     ],
     "AfterTool": [],
     "PreCompress": [],
-    "Notification": []
+    "Notification": [],
+    "BeforeModel": [],
+    "AfterModel": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "name": "session_end",
+            "type": "command",
+            "command": "$HOME/.gemini/hooks/scripts/session_end.py",
+            "description": "Log the session end to a file for auditing purposes."
+          }
+        ]
+      }
+    ]
   }
 }
