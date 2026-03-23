@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # check_available_files.py
 
+import os
 import sys
 import json
 from pathlib import Path
@@ -109,9 +110,11 @@ def _build_markdown(available: dict) -> str:
     for name, info in available.items():
         if "files" in info:
             for f in info["files"]:
-                lines.append(f"- `{f}`")
+                if os.path.isfile(f):
+                    lines.append(f"- `{f}`")
         elif "path" in info:
-            lines.append(f"- `{name}`")
+            if os.path.isfile(name):
+                lines.append(f"- `{name}`")
 
     return "\n".join(lines)
 
@@ -136,6 +139,8 @@ def main() -> None:
         output_path = Path(".github/instructions/available_files.instructions.md")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(markdown, encoding="utf-8")
+        # For gemini, we can output the markdown directly in the hook output so it can be accessed by agents in the same session.
+        print(json.dumps({"hookSpecificOutput":{"additionalContext": markdown}}))
 
     except json.JSONDecodeError:
         sys.exit(0)
