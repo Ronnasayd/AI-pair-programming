@@ -331,7 +331,7 @@ def main() -> None:
 
     sessions_dir = get_sessions_dir()
     today = get_date_string()
-    short_id = get_session_id_short()
+    short_id = get_session_id_short(data.get("session_id", ""))
     session_file = sessions_dir / f"{today}-{short_id}-session.tmp"
     session_metadata = get_session_metadata()
 
