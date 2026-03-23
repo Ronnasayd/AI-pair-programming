@@ -6,6 +6,7 @@ import json
 import logging
 from pathlib import Path
 from os import makedirs
+from datetime import datetime
 
 
 def main():
@@ -13,7 +14,7 @@ def main():
         payload = json.load(sys.stdin)
         makedirs("/tmp/sessions/", exist_ok=True)
         session_id = payload.get("session_id", {})
-        LOG_FILE = Path("/tmp/sessions") / f"{session_id}.log"
+        LOG_FILE = Path("/tmp/sessions") / f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{session_id}.log"
         LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
         logger = logging.getLogger("session_start")
