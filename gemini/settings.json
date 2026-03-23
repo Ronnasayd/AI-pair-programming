@@ -139,7 +139,7 @@
           },
           {
             "type": "command",
-            "command": "$HOME/.gemini/hooks/scripts/check_available_files.py",
+            "command": "$HOME/.gemini/hooks/scripts/memory.py",
             "description": "Check available files and load them into the session registry."
           }
         ]
