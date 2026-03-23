@@ -14,7 +14,9 @@ def main():
         payload = json.load(sys.stdin)
         makedirs("/tmp/sessions/", exist_ok=True)
         session_id = payload.get("session_id", {})
-        LOG_FILE = Path("/tmp/sessions") / f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{session_id}.log"
+        cwd = payload.get('cwd', {})
+        project_name = cwd.split("/")[-1].lower() if cwd else "unknown"
+        LOG_FILE = Path("/tmp/sessions") / f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{project_name}.log"
         LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
         logger = logging.getLogger("session_start")

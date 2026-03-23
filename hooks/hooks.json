@@ -25,7 +25,13 @@
         "description": "Check available files and load them into the session registry."
       }
     ],
-    "Stop": [],
+    "Stop": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/session_end.py",
+        "description": "Log the session end to a file for auditing purposes."
+      }
+    ],
     "PreCompact": [],
     "SubagentStart": [],
     "SubagentStop": [],
