@@ -420,13 +420,12 @@ def main() -> None:
     # Try to extract summary from transcript
     summary: dict | None = None
     if transcript_path.exists():
-        if "gemini" in transcript_path.name.lower():
+        if "gemini" in str(transcript_path).lower():
             summary = extract_session_summary_gemini(transcript_path)
         else:
             summary = extract_session_summary_copilot(transcript_path)
     else:
             log(f"[SessionEnd] Transcript not found: {transcript_path}")
-
     if session_file.exists():
         existing = read_file(session_file)
         updated_content = existing or ""
