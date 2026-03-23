@@ -32,9 +32,9 @@ def get_time_string() -> str:
     return datetime.now().strftime("%H:%M:%S")
     
 
-def get_session_id_short() -> str:
+def get_session_id_short(session_id:str) -> str:
     """Return a short session identifier from env var or a timestamp fallback."""
-    return Path.cwd().name.lower() if Path.cwd().name else datetime.now().strftime("%H%M%S")
+    return session_id[:8] if session_id else datetime.now().strftime("%H%M%S")
 
 
 def get_project_name() -> str:
