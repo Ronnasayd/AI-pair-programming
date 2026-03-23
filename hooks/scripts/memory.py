@@ -128,7 +128,7 @@ def main() -> None:
         latest_created_file = max(list_of_files, key=os.path.getctime)
         latest_session = open(latest_created_file).read()
         result = f"""---
-description: \"Useful memory for agent.\"
+description: \"Provide useful memory for agents, such as relevant documentation files in the repository and the latest session information.\"
 applyTo: \"**/*\"
 ---
 # [SessionStart] Reference Documentation Files:
