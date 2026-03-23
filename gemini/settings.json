@@ -136,6 +136,11 @@
             "type": "command",
             "command": "$HOME/.gemini/hooks/scripts/session_start.py",
             "description": "Log the session start to a file for auditing purposes."
+          },
+          {
+            "type": "command",
+            "command": "$HOME/.gemini/hooks/scripts/check_available_files.py",
+            "description": "Check which documentation files are available in the workspace and log availability status."
           }
         ]
       }
