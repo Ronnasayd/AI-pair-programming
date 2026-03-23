@@ -59,7 +59,6 @@ decision = "deny"
 priority = 900
 deny_message = "Deletion commands (rm/rmdir/del) are blocked. Use version control or manual review instead."
 
-
 [[rule]]
 toolName = "run_shell_command"
 commandPrefix = "sudo"
@@ -126,3 +125,14 @@ decision = "allow"
 priority = 950
 toolName = "run_shell_command"
 commandPrefix = "python3"
+
+[[rule]]
+decision = "allow"
+priority = 950
+toolName = "activate_skill"
+
+[[rule]]
+decision = "allow"
+priority = 950
+mcpName = "exa"
+toolName = "mcp_exa_web_search_exa"
