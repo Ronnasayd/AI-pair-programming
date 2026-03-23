@@ -127,18 +127,10 @@ def main() -> None:
         payload        = json.load(sys.stdin)
         workspace_root = payload.get("workspace_root", ".")
 
-        available_files = check_documentation_files(workspace_root)
-        _load_into_registry(available_files)
-
-        available = {
-            name: info for name, info in available_files.items()
-            if info.get("exists")
-        }
-
-        markdown = _build_markdown(available)
+        markdown = make_doc_files(workspace_root)
 
         # For github copilot, we can write the markdown to a file in the repository so it can be easily accessed by agents. 
-        output_path = Path(".github/instructions/available_files.instructions.md")
+        output_path = Path(".github/instructions/memory.instructions.md")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(markdown, encoding="utf-8")
         # For gemini, we can output the markdown directly in the hook output so it can be accessed by agents in the same session.
@@ -150,6 +142,18 @@ def main() -> None:
         sys.exit(0)
 
     sys.exit(0)
+
+def make_doc_files(workspace_root):
+    available_files = check_documentation_files(workspace_root)
+    _load_into_registry(available_files)
+
+    available = {
+            name: info for name, info in available_files.items()
+            if info.get("exists")
+        }
+
+    markdown = _build_markdown(available)
+    return markdown
 
 
 if __name__ == "__main__":
