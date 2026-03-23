@@ -7,14 +7,28 @@ import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from os import makedirs
-from datetime import datetime
+
+def get_session_log_file(session_id):
+    """Find the existing session log file for the given session_id, or create new one"""
+    sessions_dir = Path("/tmp/sessions")
+    makedirs(sessions_dir, exist_ok=True)
+    
+    # Look for files matching pattern with this session_id
+    pattern = f"*-{session_id}.log"
+    matching_files = list(sessions_dir.glob(pattern))
+    
+    if matching_files:
+        # Return the most recently modified file (created by session_start)
+        return max(matching_files, key=lambda p: p.stat().st_mtime)
+    
+    # Fallback: create new file if none exists
+    return sessions_dir / f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{session_id}.log"
 
 def main():
     try:
         payload = json.load(sys.stdin)
-        makedirs("/tmp/sessions/", exist_ok=True)
         session_id = payload.get("session_id", {})
-        LOG_FILE = Path("/tmp/sessions") / f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-{session_id}.log"
+        LOG_FILE = get_session_log_file(session_id)
         LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
         logger = logging.getLogger("tool-calls")
@@ -32,6 +46,7 @@ def main():
         "tool": payload.get("tool_name", "unknown"),
         "input": payload.get("tool_input", {}),
         "session_id": payload.get("session_id", {}),
+        "transcript_path":payload.get("transcript_path", {}),
     }
 
     logger.debug(json.dumps(entry))
