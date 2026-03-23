@@ -132,6 +132,7 @@ def main() -> None:
 
         markdown = _build_markdown(available)
 
+        # For github copilot, we can write the markdown to a file in the repository so it can be easily accessed by agents. 
         output_path = Path(".github/instructions/available_files.instructions.md")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(markdown, encoding="utf-8")
