@@ -18,6 +18,11 @@
         "type": "command",
         "command": ".github/hooks/scripts/session_start.py",
         "description": "Log the session start to a file for auditing purposes."
+      },
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/check_available_files.py",
+        "description": "Check available files and load them into the session registry."
       }
     ],
     "Stop": [],

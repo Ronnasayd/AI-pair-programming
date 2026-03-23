@@ -12,7 +12,6 @@ _SESSION_FILES: dict[str, str] = {}
 
 
 def get_file(path: str) -> str:
-    """Retrieve a file loaded during session start."""
     if path not in _SESSION_FILES:
         raise KeyError(
             f"'{path}' is not in the session registry. "
@@ -22,7 +21,6 @@ def get_file(path: str) -> str:
 
 
 def list_files() -> list[str]:
-    """Return all keys currently in the session registry."""
     return list(_SESSION_FILES.keys())
 
 
@@ -43,6 +41,7 @@ def check_documentation_files(workspace_root: str) -> dict:
         "docs/faq.md":          "docs/faq.md",
         "docs/SUMMARY.md":      "docs/SUMMARY.md",
         ".taskmaster/tasks/":   ".taskmaster/tasks/*.json",
+        ".taskmaster/prds/":    ".taskmaster/prds/*.md",
         "README.md":            "README.md",
         "GEMINI.md":            "GEMINI.md",
         "CLAUDE.md":            "CLAUDE.md",
@@ -71,7 +70,6 @@ def check_documentation_files(workspace_root: str) -> dict:
 
 # ── File loader ───────────────────────────────────────────────────────────────
 def _load_into_registry(available_files: dict) -> None:
-    """Read every existing file into _SESSION_FILES."""
     global _SESSION_FILES
 
     for name, info in available_files.items():
@@ -90,7 +88,6 @@ def _load_into_registry(available_files: dict) -> None:
 
 
 def _read_and_store(path: Path) -> None:
-    """Read a single file into _SESSION_FILES; skip silently on errors."""
     global _SESSION_FILES
     key = str(path)
     if key in _SESSION_FILES:
@@ -101,39 +98,43 @@ def _read_and_store(path: Path) -> None:
         pass
 
 
+# ── Markdown builder ──────────────────────────────────────────────────────────
+def _build_markdown(available: dict) -> str:
+    lines = ["---", 
+             "description: List relevant doc files in repository. read the content of these files and make them available for agents to use if necessary.", 
+             "applyTo: \"**/*\"", 
+             "---", 
+             "# Available Files\n"]
+
+    for name, info in available.items():
+        if "files" in info:
+            for f in info["files"]:
+                lines.append(f"- `{f}`")
+        elif "path" in info:
+            lines.append(f"- `{name}`")
+
+    return "\n".join(lines)
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main() -> None:
     try:
         payload        = json.load(sys.stdin)
         workspace_root = payload.get("workspace_root", ".")
-        session_id     = payload.get("session_id", "unknown")
 
-        # 1. Discover which documentation files exist
         available_files = check_documentation_files(workspace_root)
-
-        # 2. Load every existing file into the in-process registry
         _load_into_registry(available_files)
 
-        # 3. Build result payload
         available = {
             name: info for name, info in available_files.items()
             if info.get("exists")
         }
-        not_found = [
-            name for name, info in available_files.items()
-            if not info.get("exists")
-        ]
 
-        result = {
-            "session_id":    session_id,
-            "registry_size": len(_SESSION_FILES),
-            "registry_keys": list(_SESSION_FILES.keys()),
-            "available":     available,
-            "not_found":     not_found,
-        }
+        markdown = _build_markdown(available)
 
-        # 4. Print to stdout so the agent receives it
-        print(json.dumps(result, indent=2))
+        output_path = Path(".github/instructions/available_files.instructions.md")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(markdown, encoding="utf-8")
 
     except json.JSONDecodeError:
         sys.exit(0)
