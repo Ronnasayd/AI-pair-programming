@@ -140,7 +140,7 @@
           {
             "type": "command",
             "command": "$HOME/.gemini/hooks/scripts/memory.py",
-            "description": "Check available files and load them into the session registry."
+            "description": "Provide useful memory for agents, such as relevant documentation files in the repository and the latest session information."
           }
         ]
       }
