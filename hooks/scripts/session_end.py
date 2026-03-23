@@ -451,8 +451,6 @@ def main() -> None:
         if summary:
             summary_section = (
                 f"{build_summary_block(summary)}\n\n"
-                "### Notes for Next Session\n-\n\n"
-                "### Context to Load\n```\n[relevant files]\n```"
             )
         else:
             summary_section = (
@@ -460,8 +458,6 @@ def main() -> None:
                 "[Session context goes here]\n\n"
                 "### Completed\n- [ ]\n\n"
                 "### In Progress\n- [ ]\n\n"
-                "### Notes for Next Session\n-\n\n"
-                "### Context to Load\n```\n[relevant files]\n```"
             )
 
         header = build_session_header(today, current_time, session_metadata)
