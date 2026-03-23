@@ -103,11 +103,7 @@ def _read_and_store(path: Path) -> None:
 
 # ── Markdown builder ──────────────────────────────────────────────────────────
 def _build_markdown(available: dict) -> str:
-    lines = ["---", 
-             "description: List relevant doc files in repository. read the content of these files and make them available for agents to use if necessary.", 
-             "applyTo: \"**/*\"", 
-             "---", 
-             "# Available Files\n"]
+    lines = []
 
     for name, info in available.items():
         if "files" in info:
@@ -125,16 +121,34 @@ def _build_markdown(available: dict) -> str:
 def main() -> None:
     try:
         payload        = json.load(sys.stdin)
-        workspace_root = payload.get("workspace_root", ".")
+        workspace_root = payload.get("cwd", ".")
 
-        markdown = make_doc_files(workspace_root)
+        markdown_doc_files = make_doc_files(workspace_root)
+        list_of_files = [f for f in glob(f".sessions/*.*") if os.path.isfile(f)]
+        latest_created_file = max(list_of_files, key=os.path.getctime)
+        latest_session = open(latest_created_file).read()
+        result = f"""---
+description: \"Useful memory for agent.\"
+applyTo: \"**/*\"
+---
+# [SessionStart] Reference Documentation Files:
+{markdown_doc_files}
+
+# [SessionStart] Found:
+{len(list_of_files)} session files.
+
+# [SessionStart] Latest:
+```markdown
+{latest_session}
+```
+"""
 
         # For github copilot, we can write the markdown to a file in the repository so it can be easily accessed by agents. 
         output_path = Path(".github/instructions/memory.instructions.md")
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(markdown, encoding="utf-8")
+        output_path.write_text(result, encoding="utf-8")
         # For gemini, we can output the markdown directly in the hook output so it can be accessed by agents in the same session.
-        print(json.dumps({"hookSpecificOutput":{"additionalContext": markdown}}))
+        print(json.dumps({"hookSpecificOutput":{"additionalContext": result}}))
 
     except json.JSONDecodeError:
         sys.exit(0)
