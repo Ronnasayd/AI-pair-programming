@@ -1,6 +1,6 @@
 ## GITIGNORE
 ###############################################################################
-# if ! grep -q "docs/agents/" .gitignore; then
-#     echo "docs/agents/" >> .gitignore
-# fi
+if ! grep -q ".sessions/" .gitignore; then
+    echo ".sessions/" >> .gitignore
+fi
 ###############################################################################
