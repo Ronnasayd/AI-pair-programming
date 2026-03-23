@@ -28,7 +28,9 @@ def main():
     try:
         payload = json.load(sys.stdin)
         session_id = payload.get("session_id", {})
-        LOG_FILE = get_session_log_file(session_id)
+        cwd = payload.get('cwd', {})
+        project_name = cwd.split("/")[-1].lower() if cwd else "unknown"
+        LOG_FILE = get_session_log_file(project_name)
         LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
         logger = logging.getLogger("tool-calls")
