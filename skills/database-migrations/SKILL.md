@@ -1,7 +1,6 @@
 ---
 name: database-migrations
 description: Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Django, TypeORM, golang-migrate).
-origin: ECC
 ---
 
 # Database Migration Patterns
@@ -325,11 +324,11 @@ Day 7: Migration drops old status column
 
 ## Anti-Patterns
 
-| Anti-Pattern | Why It Fails | Better Approach |
-|-------------|-------------|-----------------|
-| Manual SQL in production | No audit trail, unrepeatable | Always use migration files |
-| Editing deployed migrations | Causes drift between environments | Create new migration instead |
-| NOT NULL without default | Locks table, rewrites all rows | Add nullable, backfill, then add constraint |
-| Inline index on large table | Blocks writes during build | CREATE INDEX CONCURRENTLY |
-| Schema + data in one migration | Hard to rollback, long transactions | Separate migrations |
-| Dropping column before removing code | Application errors on missing column | Remove code first, drop column next deploy |
+| Anti-Pattern                         | Why It Fails                         | Better Approach                             |
+| ------------------------------------ | ------------------------------------ | ------------------------------------------- |
+| Manual SQL in production             | No audit trail, unrepeatable         | Always use migration files                  |
+| Editing deployed migrations          | Causes drift between environments    | Create new migration instead                |
+| NOT NULL without default             | Locks table, rewrites all rows       | Add nullable, backfill, then add constraint |
+| Inline index on large table          | Blocks writes during build           | CREATE INDEX CONCURRENTLY                   |
+| Schema + data in one migration       | Hard to rollback, long transactions  | Separate migrations                         |
+| Dropping column before removing code | Application errors on missing column | Remove code first, drop column next deploy  |
