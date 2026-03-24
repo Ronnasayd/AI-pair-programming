@@ -99,11 +99,6 @@ if ! grep -q "$HOME/.codex/instructions/code.instructions.md" $HOME/.codex/AGENT
     echo -e "\n- $HOME/.codex/instructions/code.instructions.md" >> $HOME/.codex/AGENTS.md
 fi
 ############################################################################################
-if ! grep -q "$HOME/.codex/instructions/orchestration.instructions.md" $HOME/.codex/AGENTS.md; then
-    ln -s "$SOURCE/instructions/orchestration.instructions.md" "$HOME/.codex/instructions/orchestration.instructions.md"
-    echo -e "\n- $HOME/.codex/instructions/orchestration.instructions.md" >> $HOME/.codex/AGENTS.md
-fi
-############################################################################################
 if ! grep -q "$HOME/.codex/instructions/agent.instructions.md" $HOME/.codex/AGENTS.md; then
     ln -s "$SOURCE/instructions/agent.instructions.md" "$HOME/.codex/instructions/agent.instructions.md"
     echo -e "\n- $HOME/.codex/instructions/agent.instructions.md" >> $HOME/.codex/AGENTS.md
