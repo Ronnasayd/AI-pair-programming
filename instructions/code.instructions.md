@@ -1,75 +1,40 @@
 ---
-description: Comprehensive guide to generate high-quality code.
+description: Rules for code generation and modification tasks.
 applyTo: "**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx"
 ---
 
 ## Context
 
-This instruction file applies exclusively to code generation or code modification tasks.
-Code review, auditing, analysis, or diff inspection are handled by a separate review prompt.
-Do not perform review-only activities unless explicitly requested.
+This file applies exclusively to code generation and modification tasks.
+Code review, auditing, or diff inspection are handled separately — do not perform those unless explicitly requested.
 
-## Rules for Code Generation
+## Rules
 
-When generating code, adhere to the following rules:
+- Integrate new code compatibly with the existing codebase; follow established patterns and boundaries.
+- Avoid breaking backward compatibility unless required; document migration steps if you do.
+- Include automated tests, examples, or validation instructions whenever technically feasible.
+- Include clear documentation when introducing significant new components, endpoints, or public interfaces.
 
-- [ ] Generate production-ready code aligned with the project's existing architecture, constraints, and conventions.
-- [ ] Ensure the code follows recognized industry best practices and is optimized for performance, security, and scalability.
-- [ ] Ensure the code is clean, well-structured, readable, and easy to maintain.
-- [ ] Strictly follow coding conventions, naming standards, and the style guidelines of the project or chosen language.
-- [ ] Avoid obsolete or deprecated methods, APIs, or libraries; always prefer current, well-supported alternatives.
-- [ ] Include explanatory comments for complex logic, architectural decisions, known limitations, and non-trivial code sections.
-- [ ] Integrate new implementations compatibly with the existing codebase, following established patterns and boundaries.
-- [ ] Avoid changes that break backward compatibility unless explicitly required; in such cases, provide clear documentation and migration instructions.
-- [ ] Use clear, descriptive, and consistent names for functions, methods, classes, and modules, avoiding ambiguity.
-- [ ] Implement robust error handling and input validation at all relevant points.
-- [ ] Include automated tests, examples, or validation instructions whenever technically feasible.
-- [ ] For front-end code, ensure responsiveness, accessibility, and cross-browser/device compatibility (WCAG, ARIA).
-- [ ] For back-end code, prioritize security (injection protection, authN/authZ, encryption), scalability, and efficient data access.
-- [ ] If the request is ambiguous, incomplete, or contradictory, ask for clarification before generating code.
-- [ ] Avoid slang, informal language, or excessive abbreviations in comments, documentation, and log messages.
-- [ ] Adopt defensive programming, modularization, reuse, and separation of concerns.
-- [ ] Include clear and objective documentation when introducing significant changes, new components, endpoints, or public interfaces.
-- [ ] Consider internationalization/localization requirements when applicable.
-- [ ] Prefer native language features or well-established libraries over custom implementations unless technically justified.
+## Anti-Patterns
 
-## Avoid the following anti-patterns:
+- Do not use confusing, generic, or abbreviated identifiers (e.g., `x`, `temp1`, `doStuff`).
+- Do not duplicate code; prefer reuse through functions, modules, or abstractions.
+- Do not use magic values; use named constants or enums.
+- Do not mix multiple responsibilities in a single function, class, or module.
+- Do not ignore performance in critical paths (inefficient loops, heavy queries, blocking calls).
+- Do not leave dead code, commented-out code, or unused functions.
+- Do not catch overly broad exceptions without justification; prefer specific exception types.
+- Avoid circular dependencies and excessive coupling; respect dependency inversion.
+- Avoid hardcoded configs or absolute paths; do not create environment inconsistencies.
+- Do not use outdated cryptographic algorithms or security practices.
 
-- [ ] Avoid confusing, generic, or abbreviated names for identifiers (e.g., `x`, `temp1`, `doStuff`).
-- [ ] Do not write complex or non-trivial code without appropriate comments.
-- [ ] Avoid code duplication; prefer reuse through functions, modules, or abstractions.
-- [ ] Do not ignore error handling or assume success in critical operations (I/O, external services).
-- [ ] Do not use magic values without explanation or named constants/enums.
-- [ ] Avoid mixing multiple responsibilities in a single function, class, or module.
-- [ ] Do not ignore performance in critical paths (inefficient loops, heavy queries, blocking calls).
-- [ ] Never trust user input without proper validation or protection against vulnerabilities (XSS, CSRF).
-- [ ] Do not leave dead code, commented-out code, unused functions, or obsolete snippets.
-- [ ] Do not reimplement functionality already provided by stable libraries without justification.
-- [ ] Do not disregard project conventions, style guides, or team standards.
-- [ ] Avoid excessive nested conditionals; prefer clearer control-flow alternatives or patterns.
-- [ ] Never import modules outside the top level unless explicitly necessary.
-- [ ] Do not catch overly broad exceptions without justification; prefer specific exceptions.
-- [ ] Do not access protected or private members outside their intended scope.
-- [ ] Avoid unused variables, arguments, or parameters.
-- [ ] Do not use overly permissive typing (e.g., `any`) without a clear reason.
-- [ ] Avoid circular dependencies and excessive coupling; respect dependency inversion.
-- [ ] Do not use outdated security practices or cryptographic algorithms.
-- [ ] Do not ignore localization requirements in multi-language projects.
-- [ ] Avoid environment inconsistencies (hardcoded configs, absolute paths).
+## Workflow for Significant Changes
 
-## Workflow for Significant Code Changes
+> If the request is ambiguous, incomplete, or contradictory — ask for clarification before writing any code.
 
-> **Order of operations:**
->
-> 1. If the request is **ambiguous, incomplete, or contradictory** → ask for clarification first, before producing any plan or code.
-> 2. If the request is **clear** → follow the steps below in sequence.
+For significant additions, deletions, or modifications:
 
-For any significant code addition, deletion, or modification:
-
-- [ ] Explain what will be done and why
-- [ ] Wait for explicit user confirmation before proceeding
-- [ ] Adjust the plan if the user provides feedback
-- [ ] Show a little preview of the key parts of the code to be generated
-- [ ] Explain important lines or decisions
-- [ ] Wait for explicit user confirmation before applying changes
-- [ ] After applying changes, provide a summary of what was done and any next steps or considerations
+1. Explain what will be done and why, then wait for confirmation.
+2. Show a preview of key code sections with notes on important decisions, then wait for confirmation.
+3. Apply the changes.
+4. Summarize what was done and flag any follow-up considerations.
