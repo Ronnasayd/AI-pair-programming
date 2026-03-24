@@ -8,6 +8,10 @@ TASK_ID="$2"
 TASK_TAG="${3:-master}"
 ADDITIONAL_ARGS=("${@:4}")
 
-export TASK_PROMPT="Add \"$SPEC_FILE\" to references links. Extract the relevant information and expand the task in subtasks. The subtasks should be clear, concise, and actionable. They should capture the essence of the specification and provide a clear direction for implementation."
-
+export TASK_PROMPT=`cat <<EOF
+<context filepath="$SPEC_FILE">
+$(cat $SPEC_FILE)
+</context>
+EOF
+`
 asdf exec task-master expand --research --id="$TASK_ID" --tag="$TASK_TAG" --prompt="$TASK_PROMPT" "${ADDITIONAL_ARGS[@]}"
