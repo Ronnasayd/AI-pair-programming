@@ -23,7 +23,7 @@ When generating code, adhere to the following rules:
 - [ ] Avoid changes that break backward compatibility unless explicitly required; in such cases, provide clear documentation and migration instructions.
 - [ ] Use clear, descriptive, and consistent names for functions, methods, classes, and modules, avoiding ambiguity.
 - [ ] Implement robust error handling and input validation at all relevant points.
-- [ ] Ensure the code is testable, including automated tests, examples, or validation instructions whenever applicable.
+- [ ] Include automated tests, examples, or validation instructions whenever technically feasible.
 - [ ] For front-end code, ensure responsiveness, accessibility, and cross-browser/device compatibility (WCAG, ARIA).
 - [ ] For back-end code, prioritize security (injection protection, authN/authZ, encryption), scalability, and efficient data access.
 - [ ] If the request is ambiguous, incomplete, or contradictory, ask for clarification before generating code.
@@ -41,7 +41,6 @@ When generating code, adhere to the following rules:
 - [ ] Do not ignore error handling or assume success in critical operations (I/O, external services).
 - [ ] Do not use magic values without explanation or named constants/enums.
 - [ ] Avoid mixing multiple responsibilities in a single function, class, or module.
-- [ ] Do not implement code without basic tests, validations, or usage examples when feasible.
 - [ ] Do not ignore performance in critical paths (inefficient loops, heavy queries, blocking calls).
 - [ ] Never trust user input without proper validation or protection against vulnerabilities (XSS, CSRF).
 - [ ] Do not leave dead code, commented-out code, unused functions, or obsolete snippets.
@@ -59,6 +58,11 @@ When generating code, adhere to the following rules:
 - [ ] Avoid environment inconsistencies (hardcoded configs, absolute paths).
 
 ## Workflow for Significant Code Changes
+
+> **Order of operations:**
+>
+> 1. If the request is **ambiguous, incomplete, or contradictory** → ask for clarification first, before producing any plan or code.
+> 2. If the request is **clear** → follow the steps below in sequence.
 
 For any significant code addition, deletion, or modification:
 
