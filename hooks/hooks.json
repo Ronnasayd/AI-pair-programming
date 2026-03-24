@@ -12,7 +12,13 @@
         "description": "Protect sensitive files from being modified or deleted."
       }
     ],
-    "PostToolUse": [],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/quality_gate.py",
+        "description": "Run quality gate checks after tool usage."
+      }
+    ],
     "SessionStart": [
       {
         "type": "command",
