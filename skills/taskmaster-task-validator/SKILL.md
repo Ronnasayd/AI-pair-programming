@@ -155,19 +155,6 @@ I created tasks for the Lingopass design system. Validate them against ACTION-PL
 - Traceability matrix (CSV or JSON)
 - Change summary: "3 new subtasks created, 5 tasks updated, 2 dependency chains fixed"
 
-## CLI Integration (if using taskmaster CLI)
-
-```bash
-# Validate tasks
-taskmaster validate --requirements docs/SPEC.md --tasks .taskmaster/tasks/tasks.json
-
-# Validate and auto-fix
-taskmaster validate --requirements docs/SPEC.md --auto-refine --approval-required
-
-# Export traceability matrix
-taskmaster validate --requirements docs/SPEC.md --export-matrix traceability.csv
-```
-
 ## Key Principles
 
 1. **Isolation**: Each subagent operates independently to avoid bias
