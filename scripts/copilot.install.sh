@@ -41,7 +41,6 @@ setup_instruction_file() {
 
 # Configurar arquivos de instruções
 setup_instruction_file "code.instructions.md"
-setup_instruction_file "orchestration.instructions.md"
 setup_instruction_file "agent.instructions.md"
 ##########################################################################################
 if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
