@@ -85,3 +85,5 @@ Retrieval process:
 - Generate before/after coverage metrics when modifying task structures — document components covered %, gaps resolved, remaining gaps
 - Prefer expanding existing tasks to creating new ones for related components — keeps structure lean and reduces cognitive load
 - Create PRDs or specifications BEFORE expanding unreviewed task structures — prevents wasted effort if scope changes
+- When adding a new export to a module that has manual `jest.mock(...)` overrides in test files, audit every mock site and add the new export before running any test — partial mocks produce silent `undefined` runtime failures
+- Before implementing a field that writes to both local DB and an external API payload, explicitly document which layer owns each representation — DB stores canonical value, external payload applies formatting
