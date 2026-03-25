@@ -77,8 +77,8 @@ def run_command(cmd: str) -> dict:
             "success": result.returncode == 0,
             "output": result.stdout.strip(),
         }
-    except Exception:
-        return {"success": False, "output": ""}
+    except Exception as err:
+        return {"success": False, "output": str(err)}
 
 
 def escape_regexp(value: str) -> str:
