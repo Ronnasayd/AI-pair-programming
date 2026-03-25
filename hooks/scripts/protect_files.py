@@ -5,9 +5,16 @@ import sys
 import json
 import shlex
 import fnmatch
-import logging
+import os
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+
+from utils import get_hooks_logger
+
+logger = get_hooks_logger("protect-files")
+
 
 PROTECTED_PATTERNS = [
     ".env",
@@ -71,6 +78,7 @@ def deny(file_path: str, pattern: str, source: str) -> None:
         }),
         file=sys.stderr,
     )
+    logger.debug(f"Denied access to '{file_path}' from {source} due to pattern '{pattern}'")
     sys.exit(2)
 
 
@@ -78,7 +86,7 @@ def main():
     try:
         payload = json.load(sys.stdin)
     except json.JSONDecodeError as e:
-        logging.error(f"JSON inválido: {e}")
+        logger.debug(f"JSON inválido: {e}")
         sys.exit(1)
 
     tool_input = payload.get("tool_input", {})
