@@ -91,7 +91,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
     # ── JS / TS / JSON / MD ──────────────────────────────────────────────────
     if ext in _BIOME_EXTS:
         project_root = find_project_root(str(resolved.parent))
-        formatter    = detect_formatter(project_root)
+        formatter    = detect_formatter(project_root,logger)
         logger.debug(f"[QualityGate] Detected formatter for {resolved}: {formatter}")
         logger.debug(f"[QualityGate] Detected project root for {resolved}: {project_root}")
 

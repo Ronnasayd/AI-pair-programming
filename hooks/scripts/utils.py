@@ -187,13 +187,14 @@ def find_project_root(start_dir: str) -> str:
     return start_dir
 
 
-def detect_formatter(project_root: str) -> str | None:
+def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
     """
     Detect the formatter configured in the project.
     Biome takes priority over Prettier.
     Returns 'biome', 'prettier', or None.
     """
     if project_root in _formatter_cache:
+        logger.debug(f"[detect_formatter] Cache hit for {project_root}: {_formatter_cache[project_root]}")
         return _formatter_cache[project_root]
 
     root = Path(project_root)
@@ -202,6 +203,7 @@ def detect_formatter(project_root: str) -> str | None:
     for cfg in _BIOME_CONFIGS:
         if (root / cfg).exists():
             _formatter_cache[project_root] = "biome"
+            logger.debug(f"[detect_formatter] Detected Biome config for {project_root}: {cfg}")
             return "biome"
 
     # package.json "prettier" key before standalone config files
@@ -211,6 +213,7 @@ def detect_formatter(project_root: str) -> str | None:
             pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
             if "prettier" in pkg:
                 _formatter_cache[project_root] = "prettier"
+                logger.debug(f"[detect_formatter] Detected Prettier config in package.json for {project_root}")
                 return "prettier"
         except (json.JSONDecodeError, OSError):
             pass  # Malformed package.json — continue to file-based detection
@@ -218,9 +221,11 @@ def detect_formatter(project_root: str) -> str | None:
     for cfg in _PRETTIER_CONFIGS:
         if (root / cfg).exists():
             _formatter_cache[project_root] = "prettier"
+            logger.debug(f"[detect_formatter] Detected Prettier config file for {project_root}: {cfg}")
             return "prettier"
 
     _formatter_cache[project_root] = None
+    logger.debug(f"[detect_formatter] No formatter detected for {project_root}")
     return None
 
 
