@@ -23,8 +23,8 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import detect_formatter, find_project_root, log, resolve_formatter_bin, run_command
-
+from utils import detect_formatter, find_project_root, resolve_formatter_bin, run_command,get_hooks_logger
+logger = get_hooks_logger("quality-gate")
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -87,7 +87,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
 
             result = _exec(fmt_bin["bin"], args, cwd=project_root)
             if not result["success"] and strict:
-                log(f"[QualityGate] Biome check failed for {resolved}")
+                logger.debug(f"[QualityGate] Biome check failed for {resolved}")
             return
 
         if formatter == "prettier":
@@ -98,7 +98,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
             args = [*fmt_bin["prefix"], "--write" if fix else "--check", str(resolved)]
             result = _exec(fmt_bin["bin"], args, cwd=project_root)
             if not result["success"] and strict:
-                log(f"[QualityGate] Prettier check failed for {resolved}")
+                logger.debug(f"[QualityGate] Prettier check failed for {resolved}")
             return
 
         # No formatter configured — skip
@@ -109,13 +109,13 @@ def maybe_run_quality_gate(file_path: str) -> None:
         if fix:
             result = _exec("gofmt", ["-w", str(resolved)])
             if not result["success"] and strict:
-                log(f"[QualityGate] gofmt failed for {resolved}")
+                logger.debug(f"[QualityGate] gofmt failed for {resolved}")
         elif strict:
             result = _exec("gofmt", ["-l", str(resolved)])
             if not result["success"]:
-                log(f"[QualityGate] gofmt failed for {resolved}")
+                logger.debug(f"[QualityGate] gofmt failed for {resolved}")
             elif result.get("output", "").strip():
-                log(f"[QualityGate] gofmt check failed for {resolved}")
+                logger.debug(f"[QualityGate] gofmt check failed for {resolved}")
         return
 
     # ── Python ───────────────────────────────────────────────────────────────
@@ -127,7 +127,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
 
         result = _exec("ruff", args)
         if not result["success"] and strict:
-            log(f"[QualityGate] Ruff check failed for {resolved}")
+            logger.debug(f"[QualityGate] Ruff check failed for {resolved}")
 
 
 # ---------------------------------------------------------------------------
@@ -158,5 +158,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:
-        log(f"[QualityGate] Error: {exc}")
+        logger.debug(f"[QualityGate] Error: {exc}")
         sys.exit(0)

@@ -19,7 +19,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
     
-from utils import  log, strip_ansi, get_sessions_dir, get_date_string, get_time_string, get_session_id_short, get_project_name, ensure_dir, read_file, write_file, run_command
+from utils import  get_hooks_logger, strip_ansi, get_sessions_dir, get_date_string, get_time_string, get_session_id_short, get_project_name, ensure_dir, read_file, write_file, run_command
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -33,6 +33,7 @@ MAX_STDIN = 1024 * 1024  # 1 MB
 _WRITE_TOOLS_COPILOT = {"write_file", "edit_file", "create_file", "apply_edit"}
 
 
+logger = get_hooks_logger("session_end")
 
 # ---------------------------------------------------------------------------
 # Transcript parsing
@@ -110,7 +111,7 @@ def extract_session_summary_claude(transcript_path: Path) -> dict | None:
             parse_errors += 1
 
     if parse_errors > 0:
-        log(f"[SessionEnd] Skipped {parse_errors}/{len(lines)} unparseable transcript lines")
+        logger.debug(f"[SessionEnd] Skipped {parse_errors}/{len(lines)} unparseable transcript lines")
 
     if not user_messages:
         return None
@@ -425,7 +426,7 @@ def main() -> None:
         else:
             summary = extract_session_summary_copilot(transcript_path)
     else:
-            log(f"[SessionEnd] Transcript not found: {transcript_path}")
+            logger.debug(f"[SessionEnd] Transcript not found: {transcript_path}")
     if session_file.exists():
         existing = read_file(session_file)
         updated_content = existing or ""
@@ -435,7 +436,7 @@ def main() -> None:
             if merged:
                 updated_content = merged
             else:
-                log(f"[SessionEnd] Failed to normalize header in {session_file}")
+                logger.debug(f"[SessionEnd] Failed to normalize header in {session_file}")
 
         # Update only the generated summary block (idempotent)
         if summary and updated_content:
@@ -452,7 +453,7 @@ def main() -> None:
         if updated_content:
             write_file(session_file, updated_content)
 
-        log(f"[SessionEnd] Updated session file: {session_file}")
+        logger.debug(f"[SessionEnd] Updated session file: {session_file}")
 
     else:
         # Create new session file
@@ -471,7 +472,7 @@ def main() -> None:
         header = build_session_header(today, current_time, session_metadata)
         template = f"{header}{SESSION_SEPARATOR}{summary_section}\n"
         write_file(session_file, template)
-        log(f"[SessionEnd] Created session file: {session_file}")
+        logger.debug(f"[SessionEnd] Created session file: {session_file}")
 
     sys.exit(0)
 

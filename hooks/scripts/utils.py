@@ -6,6 +6,7 @@ from pathlib import Path
 import json
 import os
 import sys
+import logging
 # ---------------------------------------------------------------------------
 # Utility helpers
 # ---------------------------------------------------------------------------
@@ -81,6 +82,18 @@ def run_command(cmd: str) -> dict:
 def escape_regexp(value: str) -> str:
     return re.escape(value)
 
+def get_hooks_logger(name:str="hooks") -> logging.Logger:
+    LOG_FILE = "/tmp/hooks.log"
+    Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+
+    file_handler = logging.FileHandler(LOG_FILE)
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logging.Formatter("%(message)s"))
+    logger.addHandler(file_handler)
+    return logger
 
 # ---------------------------------------------------------------------------
 # Inlined resolver helpers (ported from resolve_formatter.js)

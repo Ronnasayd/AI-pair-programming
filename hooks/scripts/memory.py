@@ -7,6 +7,14 @@ import json
 from pathlib import Path
 from glob import glob
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+
+from utils import get_hooks_logger
+
+logger = get_hooks_logger("memory")
+
 
 # ── Session-level file registry (in-process cache) ───────────────────────────
 _SESSION_FILES: dict[str, str] = {}
@@ -149,6 +157,8 @@ applyTo: \"**/*\"
         output_path.write_text(result, encoding="utf-8")
         # For gemini, we can output the markdown directly in the hook output so it can be accessed by agents in the same session.
         print(json.dumps({"hookSpecificOutput":{"additionalContext": result}}))
+        logger.debug(json.dumps({"hookSpecificOutput":{"additionalContext": result}}))
+        logger.debug("Memory hook executed successfully.")
 
     except json.JSONDecodeError:
         sys.exit(0)
