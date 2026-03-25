@@ -198,6 +198,7 @@ def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
         return _formatter_cache[project_root]
 
     root = Path(project_root)
+    logger.debug(f"[detect_formatter] Detecting formatter for {project_root} with root {root}")
 
     # Biome config files take top priority
     for cfg in _BIOME_CONFIGS:
