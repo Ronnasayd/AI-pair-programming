@@ -76,10 +76,12 @@ def maybe_run_quality_gate(file_path: str) -> None:
         file_path: Path to the edited file.
     """
     if not file_path:
+        logger.debug("[QualityGate] No file_path provided, skipping quality gate.")
         return
 
     resolved = Path(file_path).resolve()
     if not resolved.exists():
+        logger.debug(f"[QualityGate] File {resolved} does not exist, skipping quality gate.")
         return
 
     ext    = resolved.suffix.lower()
@@ -90,15 +92,19 @@ def maybe_run_quality_gate(file_path: str) -> None:
     if ext in _BIOME_EXTS:
         project_root = find_project_root(str(resolved.parent))
         formatter    = detect_formatter(project_root)
+        logger.debug(f"[QualityGate] Detected formatter for {resolved}: {formatter}")
+        logger.debug(f"[QualityGate] Detected project root for {resolved}: {project_root}")
 
         if formatter == "biome":
             # JS/TS already handled by post-edit-format via `biome check --write`
             if ext in _JS_TS_EXTS:
+                logger.debug(f"[QualityGate] Skipping Biome check for {resolved} (handled by post-edit-format)")
                 return
 
             # .json / .md — still need quality gate
             fmt_bin = resolve_formatter_bin(project_root, "biome")
             if not fmt_bin:
+                logger.debug(f"[QualityGate] Biome configured but binary not found, skipping check for {resolved}")
                 return
 
             args = [*fmt_bin["prefix"], "check", str(resolved)]
@@ -106,7 +112,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
                 args.append("--write")
 
             result = _exec(fmt_bin["bin"], args, cwd=project_root)
-            logger.debug(f"[QualityGate] Ruff result for {resolved}: {result}")
+            logger.debug(f"[QualityGate] Biome result for {resolved}: {result}")
             if not result["success"] and strict:
                 logger.debug(f"[QualityGate] Biome check failed for {resolved}")
             return
@@ -114,11 +120,12 @@ def maybe_run_quality_gate(file_path: str) -> None:
         if formatter == "prettier":
             fmt_bin = resolve_formatter_bin(project_root, "prettier")
             if not fmt_bin:
+                logger.debug(f"[QualityGate] Prettier configured but binary not found, skipping check for {resolved}")
                 return
 
             args = [*fmt_bin["prefix"], "--write" if fix else "--check", str(resolved)]
             result = _exec(fmt_bin["bin"], args, cwd=project_root)
-            logger.debug(f"[QualityGate] Ruff result for {resolved}: {result}")
+            logger.debug(f"[QualityGate] Prettier result for {resolved}: {result}")
             if not result["success"] and strict:
                 logger.debug(f"[QualityGate] Prettier check failed for {resolved}")
             return
@@ -134,7 +141,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
                 logger.debug(f"[QualityGate] gofmt failed for {resolved}")
         elif strict:
             result = _exec("gofmt", ["-l", str(resolved)])
-            logger.debug(f"[QualityGate] Ruff result for {resolved}: {result}")
+            logger.debug(f"[QualityGate] gofmt result for {resolved}: {result}")
             if not result["success"]:
                 logger.debug(f"[QualityGate] gofmt failed for {resolved}")
             elif result.get("output", "").strip():
@@ -145,6 +152,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
     if ext == ".py":
         args = ["format"]
         if not fix:
+            logger.debug(f"[QualityGate] Running Ruff in check mode for {resolved}")
             args.append("--check")
         args.append(str(resolved))
 
