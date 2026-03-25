@@ -86,6 +86,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
                 args.append("--write")
 
             result = _exec(fmt_bin["bin"], args, cwd=project_root)
+            logger.debug(f"[QualityGate] Ruff result for {resolved}: {result}")
             if not result["success"] and strict:
                 logger.debug(f"[QualityGate] Biome check failed for {resolved}")
             return
@@ -97,6 +98,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
 
             args = [*fmt_bin["prefix"], "--write" if fix else "--check", str(resolved)]
             result = _exec(fmt_bin["bin"], args, cwd=project_root)
+            logger.debug(f"[QualityGate] Ruff result for {resolved}: {result}")
             if not result["success"] and strict:
                 logger.debug(f"[QualityGate] Prettier check failed for {resolved}")
             return
@@ -112,6 +114,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
                 logger.debug(f"[QualityGate] gofmt failed for {resolved}")
         elif strict:
             result = _exec("gofmt", ["-l", str(resolved)])
+            logger.debug(f"[QualityGate] Ruff result for {resolved}: {result}")
             if not result["success"]:
                 logger.debug(f"[QualityGate] gofmt failed for {resolved}")
             elif result.get("output", "").strip():
@@ -126,6 +129,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
         args.append(str(resolved))
 
         result = _exec("ruff", args)
+        logger.debug(f"[QualityGate] Ruff result for {resolved}: {result}")
         if not result["success"] and strict:
             logger.debug(f"[QualityGate] Ruff check failed for {resolved}")
 
