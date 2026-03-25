@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 ALLOWED_MODELS: set[str] = set()
 DEFAULT_MODEL: str = ""
+VERSION="0.18.2"
 
 
 def load_model_config() -> None:
@@ -466,7 +467,7 @@ async def root():
     return JSONResponse(
         content={
             "status": "copilot ollama proxy server is running",
-            "version": "0.6.4",
+            "version": VERSION,
             "models": sorted(ALLOWED_MODELS),
             "backend": "github-copilot",
         }
@@ -477,7 +478,7 @@ async def root():
 async def version():
     """Get server version information."""
     return JSONResponse(
-        content={"version": "0.6.4", "proxy": True, "backend": "github-copilot"}
+        content={"version": VERSION, "proxy": True, "backend": "github-copilot"}
     )
 
 
