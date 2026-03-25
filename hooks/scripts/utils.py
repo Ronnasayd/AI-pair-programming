@@ -91,7 +91,7 @@ def get_hooks_logger(name:str="hooks") -> logging.Logger:
 
     file_handler = logging.FileHandler(LOG_FILE)
     file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(logging.Formatter("%(message)s"))
+    file_handler.setFormatter(logging.Formatter("%(name)s %(levelname)s %(asctime)s %(message)s"))
     logger.addHandler(file_handler)
     return logger
 
