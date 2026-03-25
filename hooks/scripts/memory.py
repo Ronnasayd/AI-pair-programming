@@ -135,7 +135,7 @@ applyTo: \"**/*\"
 {markdown_doc_files}
 
 # [SessionStart] Found:
-{len(list_of_files)} session files.
+{len(list_of_files)} session files found at .sessions/.
 
 # [SessionStart] Latest:
 ```markdown
