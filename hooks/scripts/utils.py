@@ -7,6 +7,8 @@ import json
 import os
 import sys
 import logging
+import re
+from typing import Any, Mapping, Optional
 # ---------------------------------------------------------------------------
 # Utility helpers
 # ---------------------------------------------------------------------------
@@ -91,9 +93,41 @@ def get_hooks_logger(name:str="hooks") -> logging.Logger:
 
     file_handler = logging.FileHandler(LOG_FILE)
     file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(logging.Formatter("%(name)s %(levelname)s %(asctime)s %(message)s"))
+    file_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s]-[%(name)s]: %(message)s"))
     logger.addHandler(file_handler)
     return logger
+
+
+
+
+def normalize_key(key: str) -> str:
+    """
+    Normaliza:
+    - camelCase / PascalCase → snake_case
+    - remove separadores inconsistentes
+    - lower case
+    """
+    # camelCase → snake_case
+    s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", key)
+    s2 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1)
+
+    # normaliza separadores e case
+    return s2.replace("-", "_").lower()
+
+
+def get_by_key(data: Mapping[str, Any], target_key: str) -> Optional[Any]:
+    """
+    Busca valor independente do formato da chave.
+    Ex:
+        tool_input, toolInput, ToolInput, TOOL_INPUT → todos equivalentes
+    """
+    target_norm = normalize_key(target_key)
+
+    for k, v in data.items():
+        if normalize_key(k) == target_norm:
+            return v
+
+    return None
 
 # ---------------------------------------------------------------------------
 # Inlined resolver helpers (ported from resolve_formatter.js)

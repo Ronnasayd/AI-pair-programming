@@ -23,7 +23,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import detect_formatter, find_project_root, resolve_formatter_bin, run_command,get_hooks_logger
+from utils import detect_formatter, find_project_root, get_by_key, resolve_formatter_bin, run_command,get_hooks_logger
 logger = get_hooks_logger("quality-gate")
 # ---------------------------------------------------------------------------
 # Constants
@@ -147,7 +147,8 @@ def main() -> None:
 
     try:
         data = json.loads(stdin_data)
-        file_path = str((data.get("tool_input") or {}).get("file_path") or "")
+        file_path = get_by_key(get_by_key(data,"tool_input"),"file_path")
+        logger.debug(f"[QualityGate] Received file_path: {file_path}")
         maybe_run_quality_gate(file_path)
     except (json.JSONDecodeError, AttributeError):
         # Ignore parse errors — pass through silently
