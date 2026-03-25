@@ -84,7 +84,7 @@ def run_command(cmd: str) -> dict:
 def escape_regexp(value: str) -> str:
     return re.escape(value)
 
-def get_hooks_logger(name:str="hooks") -> logging.Logger:
+def get_hooks_logger(name:str="Hooks") -> logging.Logger:
     LOG_FILE = "/tmp/hooks.log"
     Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
 

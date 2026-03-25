@@ -13,7 +13,7 @@ if script_dir not in sys.path:
 
 from utils import get_hooks_logger
 
-logger = get_hooks_logger("memory")
+logger = get_hooks_logger("Memory")
 
 
 # ── Session-level file registry (in-process cache) ───────────────────────────

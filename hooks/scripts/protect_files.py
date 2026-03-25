@@ -11,9 +11,9 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_hooks_logger
+from utils import get_by_key, get_hooks_logger
 
-logger = get_hooks_logger("protect-files")
+logger = get_hooks_logger("ProtectFiles")
 
 
 PROTECTED_PATTERNS = [
@@ -89,15 +89,11 @@ def main():
         logger.debug(f"JSON inválido: {e}")
         sys.exit(1)
 
-    tool_input = payload.get("tool_input", {})
-    tool_name  = payload.get("tool_name", "")
+    tool_input = get_by_key(payload, "tool_input")  # Valida que tool_input existe e é um dict
 
     # ── 1. Direct file-path tools (Write, Read, Edit …) ──────────────────────
-    file_path = (
-        tool_input.get("filePath")
-        or tool_input.get("file_path")
-        or ""
-    )
+    file_path = get_by_key(tool_input, "file_path") 
+    
 
     if file_path:
         blocked, pattern = is_protected(file_path)
@@ -105,7 +101,7 @@ def main():
             deny(file_path, pattern, "file_path")
 
     # ── 2. Bash tool — intercept `cat <file>` ────────────────────────────────
-    command = tool_input.get("command", "")
+    command = get_by_key(tool_input, "command") 
 
     if command:
         targets = extract_cat_targets(command)

@@ -33,7 +33,7 @@ MAX_STDIN = 1024 * 1024  # 1 MB
 _WRITE_TOOLS_COPILOT = {"write_file", "edit_file", "create_file", "apply_edit"}
 
 
-logger = get_hooks_logger("session_end")
+logger = get_hooks_logger("SessionEnd")
 
 # ---------------------------------------------------------------------------
 # Transcript parsing
