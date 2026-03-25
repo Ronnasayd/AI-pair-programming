@@ -12,7 +12,7 @@ if script_dir not in sys.path:
 from utils import get_hooks_logger
 
 
-logger = get_hooks_logger("session_start")
+logger = get_hooks_logger("SessionStart")
 def main():
     try:
         payload = json.load(sys.stdin)

@@ -16,6 +16,7 @@ Cross-platform (Windows, macOS, Linux)
 
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -24,7 +25,7 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import detect_formatter, find_project_root, get_by_key, resolve_formatter_bin, run_command,get_hooks_logger
-logger = get_hooks_logger("quality-gate")
+logger = get_hooks_logger("QualityGate")
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -33,6 +34,25 @@ MAX_STDIN = 1024 * 1024  # 1 MB
 
 _JS_TS_EXTS = {".ts", ".tsx", ".js", ".jsx"}
 _BIOME_EXTS = {".ts", ".tsx", ".js", ".jsx", ".json", ".md"}
+
+
+def run_command(cmd: str, cwd: str | None = None) -> dict:
+    """Run a shell command and return {success, output}."""
+    try:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=cwd,
+        )
+        return {
+            "success": result.returncode == 0,
+            "output": result.stdout.strip(),
+        }
+    except Exception:
+        return {"success": False, "output": ""}
 
 def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
     """

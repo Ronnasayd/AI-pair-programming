@@ -10,9 +10,9 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_hooks_logger
+from utils import get_by_key, get_hooks_logger
 
-logger = get_hooks_logger("tool-calls")
+logger = get_hooks_logger("ToolCalls")
 def main():
     try:
         payload = json.load(sys.stdin)
@@ -22,10 +22,10 @@ def main():
 
     entry = {
         "ts": datetime.now(timezone.utc).isoformat(),
-        "tool": payload.get("tool_name", "unknown"),
-        "input": payload.get("tool_input", {}),
-        "session_id": payload.get("session_id", {}),
-        "transcript_path":payload.get("transcript_path", {}),
+        "tool": get_by_key(payload, "tool_name") or "unknown",
+        "input": get_by_key(payload, "tool_input") or {},
+        "session_id": get_by_key(payload, "session_id") or {},
+        "transcript_path": get_by_key(payload, "transcript_path") or {},
     }
 
     logger.debug(json.dumps(entry))
