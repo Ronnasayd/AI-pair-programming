@@ -102,7 +102,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
                 return
 
             # .json / .md — still need quality gate
-            fmt_bin = resolve_formatter_bin(project_root, "biome")
+            fmt_bin = resolve_formatter_bin(project_root, "biome",logger)
             if not fmt_bin:
                 logger.debug(f"[QualityGate] Biome configured but binary not found, skipping check for {resolved}")
                 return
@@ -118,7 +118,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
             return
 
         if formatter == "prettier":
-            fmt_bin = resolve_formatter_bin(project_root, "prettier")
+            fmt_bin = resolve_formatter_bin(project_root, "prettier", logger)
             if not fmt_bin:
                 logger.debug(f"[QualityGate] Prettier configured but binary not found, skipping check for {resolved}")
                 return
@@ -131,6 +131,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
             return
 
         # No formatter configured — skip
+        logger.debug(f"[QualityGate] No formatter configured for {resolved}, skipping quality gate.")
         return
 
     # ── Go ───────────────────────────────────────────────────────────────────

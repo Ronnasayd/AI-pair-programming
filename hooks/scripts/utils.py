@@ -262,7 +262,7 @@ def _get_runner_from_package_manager(project_root: str) -> dict:
     return {"bin": bin_, "prefix": prefix}
 
 
-def resolve_formatter_bin(project_root: str, formatter: str) -> dict | None:
+def resolve_formatter_bin(project_root: str, formatter: str, logger: logging.Logger) -> dict | None:
     """
     Resolve the formatter binary, preferring the local node_modules/.bin
     installation over the package-manager exec command.
@@ -271,10 +271,12 @@ def resolve_formatter_bin(project_root: str, formatter: str) -> dict | None:
     """
     cache_key = f"{project_root}:{formatter}"
     if cache_key in _bin_cache:
+        logger.debug(f"[resolve_formatter_bin] Cache hit for {cache_key}: {_bin_cache[cache_key]}")
         return _bin_cache[cache_key]
 
     pkg = _FORMATTER_PACKAGES.get(formatter)
     if not pkg:
+        logger.debug(f"[resolve_formatter_bin] No package info for formatter '{formatter}'")
         _bin_cache[cache_key] = None
         return None
 
@@ -285,11 +287,13 @@ def resolve_formatter_bin(project_root: str, formatter: str) -> dict | None:
     if local_bin.exists():
         result = {"bin": str(local_bin), "prefix": []}
         _bin_cache[cache_key] = result
+        logger.debug(f"[resolve_formatter_bin] Found local binary for {formatter} at {local_bin}")
         return result
 
     runner = _get_runner_from_package_manager(project_root)
     result = {"bin": runner["bin"], "prefix": [*runner["prefix"], pkg["pkg_name"]]}
     _bin_cache[cache_key] = result
+    logger.debug(f"[resolve_formatter_bin] Using package manager runner for {formatter}: {result}")
     return result
 
 
