@@ -209,6 +209,7 @@ def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
 
     # package.json "prettier" key before standalone config files
     pkg_path = root / "package.json"
+    logger.debug(f"[detect_formatter] Checking for package.json at {pkg_path}")
     if pkg_path.exists():
         try:
             pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
