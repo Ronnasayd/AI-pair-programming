@@ -19,7 +19,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
     
-from utils import  get_hooks_logger, strip_ansi, get_sessions_dir, get_date_string, get_time_string, get_session_id_short, get_project_name, ensure_dir, read_file, write_file, run_command
+from utils import  get_hooks_logger, strip_ansi, get_sessions_dir, get_date_string, get_time_string, get_session_id_short, get_project_name, ensure_dir, read_file, write_file, run_command, get_by_key
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -62,11 +62,11 @@ def extract_session_summary_claude(transcript_path: Path) -> dict | None:
             entry = json.loads(line)
 
             # Collect user messages (first 200 chars each)
-            role = entry.get("type") or entry.get("role") or (entry.get("message") or {}).get("role")
+            role = get_by_key(entry, "type") or get_by_key(entry, "role") or (get_by_key(entry, "message") or {}).get("role")
             if role == "user":
                 raw_content = (
-                    (entry.get("message") or {}).get("content")
-                    or entry.get("content")
+                    (get_by_key(entry, "message") or {}).get("content")
+                    or get_by_key(entry, "content")
                     or ""
                 )
                 if isinstance(raw_content, str):
@@ -82,18 +82,18 @@ def extract_session_summary_claude(transcript_path: Path) -> dict | None:
                     user_messages.append(cleaned[:200])
 
             # Collect tool names and modified files (direct tool_use entries)
-            if entry.get("type") == "tool_use" or entry.get("tool_name"):
-                tool_name = entry.get("tool_name") or entry.get("name") or ""
+            if get_by_key(entry, "type") == "tool_use" or get_by_key(entry, "tool_name"):
+                tool_name = get_by_key(entry, "tool_name") or get_by_key(entry, "name") or ""
                 if tool_name:
                     tools_used.add(tool_name)
-                tool_input = entry.get("tool_input") or entry.get("input") or {}
+                tool_input = get_by_key(entry, "tool_input") or get_by_key(entry, "input") or {}
                 file_path = tool_input.get("file_path", "")
                 if file_path and tool_name in ("Edit", "Write"):
                     files_modified.add(file_path)
 
             # Extract tool uses from assistant message content blocks
-            if entry.get("type") == "assistant":
-                message = entry.get("message") or {}
+            if get_by_key(entry, "type") == "assistant":
+                message = get_by_key(entry, "message") or {}
                 content_blocks = message.get("content") or []
                 if isinstance(content_blocks, list):
                     for block in content_blocks:
@@ -149,12 +149,12 @@ def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
         except json.JSONDecodeError:
             parse_errors += 1
             continue
-        entry_type = entry.get("type", "")
-        data = entry.get("data") or {}
+        entry_type = get_by_key(entry, "type") or ""
+        data = get_by_key(entry, "data") or {}
 
             # ── User messages ────────────────────────────────────────────────
         if entry_type == "user.message":
-            raw = data.get("content", "")
+            raw = get_by_key(data, "content") or ""
             if isinstance(raw, str):
                 text = raw
             elif isinstance(raw, list):
@@ -169,11 +169,11 @@ def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
 
         # ── Tool executions ──────────────────────────────────────────────
         elif entry_type == "tool.execution_start":
-            tool_name = data.get("toolName", "")
+            tool_name = get_by_key(data, "toolName") or ""
             if tool_name:
                 tools_used.add(tool_name)
 
-            arguments = data.get("arguments") or {}
+            arguments = get_by_key(data, "arguments") or {}
             # Copilot uses "filePath" for read_file / write_file
             file_path = (
                 arguments.get("filePath")
@@ -186,7 +186,7 @@ def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
 
         # ── Tool requests embedded in assistant.message ──────────────────
         elif entry_type == "assistant.message":
-            for req in data.get("toolRequests") or []:
+            for req in get_by_key(data, "toolRequests") or []:
                 tool_name = req.get("name", "")
                 if tool_name:
                     tools_used.add(tool_name)
@@ -234,7 +234,7 @@ def extract_session_summary_gemini(transcript_path: Path) -> dict | None:
     except json.JSONDecodeError:
         return None
 
-    messages = data.get("messages", [])
+    messages = get_by_key(data, "messages") or []
     if not isinstance(messages, list):
         return None
 
@@ -246,11 +246,11 @@ def extract_session_summary_gemini(transcript_path: Path) -> dict | None:
         if not isinstance(msg, dict):
             continue
 
-        msg_type = msg.get("type", "")
+        msg_type = get_by_key(msg, "type") or ""
 
         # ── User messages ────────────────────────────────────────────────
         if msg_type == "user":
-            raw_content = msg.get("content", [])
+            raw_content = get_by_key(msg, "content") or []
             if isinstance(raw_content, list):
                 text = " ".join(
                     (c.get("text") or "") for c in raw_content if isinstance(c, dict)
@@ -265,16 +265,16 @@ def extract_session_summary_gemini(transcript_path: Path) -> dict | None:
 
         # ── Tool calls from gemini messages ──────────────────────────────
         if msg_type == "gemini":
-            tool_calls = msg.get("toolCalls", [])
+            tool_calls = get_by_key(msg, "toolCalls") or []
             if isinstance(tool_calls, list):
                 for tool_call in tool_calls:
                     if not isinstance(tool_call, dict):
                         continue
-                    tool_name = tool_call.get("name", "")
+                    tool_name = get_by_key(tool_call, "name") or ""
                     if tool_name:
                         tools_used.add(tool_name)
                     # Extract file paths from tool arguments
-                    args = tool_call.get("args", {})
+                    args = get_by_key(tool_call, "args") or {}
                     if isinstance(args, dict):
                         file_path = (
                             args.get("filePath")
@@ -401,8 +401,8 @@ def main() -> None:
     transcript_path: Path | None = None
     try:
         data = json.loads(stdin_data)
-        if data.get("transcript_path"):
-            transcript_path = Path(data["transcript_path"])
+        if get_by_key(data, "transcript_path"):
+            transcript_path = Path(get_by_key(data, "transcript_path"))
     except (json.JSONDecodeError, ValueError):
         # Fallback: env var for backwards compatibility
         env_path = os.environ.get("CLAUDE_TRANSCRIPT_PATH")
@@ -411,7 +411,7 @@ def main() -> None:
 
     sessions_dir = get_sessions_dir()
     today = get_date_string()
-    short_id = get_session_id_short(data.get("session_id", ""))
+    short_id = get_session_id_short(get_by_key(data, "session_id") or "")
     session_file = sessions_dir / f"{today}-{short_id}-session.tmp"
     session_metadata = get_session_metadata()
 
