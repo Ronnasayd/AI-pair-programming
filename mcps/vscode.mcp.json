@@ -1,38 +1,50 @@
 {
   "servers": {
-    "sequentialthinking": {
-      "command": "npx",
+    // "sequentialthinking": {
+    //   "command": "npx",
+    //   "args": [
+    //     "-y",
+    //     "@modelcontextprotocol/server-sequential-thinking"
+    //   ],
+    //   "type": "stdio"
+    // },
+    // "taskmaster-ai": {
+    //   "command": "npx",
+    //   "args": [
+    //     "-y",
+    //     "-p",
+    //     "@modelcontextprotocol/sdk@1.17.2",
+    //     "-p",
+    //     "fastmcp@3.23.0",
+    //     "-p",
+    //     "task-master-ai",
+    //     "task-master-ai"
+    //   ],
+    //   "env": {
+    //     "TASK_MASTER_ALLOW_METADATA_UPDATES": "true"
+    //   }
+    // },
+    "mcp-manager": {
+      "command": "/home/ronnas/develop/personal/mcp-manager/venv/bin/mcp-manager",
       "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
+        "--config",
+        "/home/ronnas/develop/personal/mcp-manager/backends.json",
+        "--catalog",
+        "/home/ronnas/develop/personal/mcp-manager/catalog.json",
+        "--transport",
+        "stdio"
       ],
       "type": "stdio"
-    },
-    "taskmaster-ai": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "-p",
-        "@modelcontextprotocol/sdk@1.17.2",
-        "-p",
-        "fastmcp@3.23.0",
-        "-p",
-        "task-master-ai",
-        "task-master-ai"
-      ],
-      "env": {
-        "TASK_MASTER_ALLOW_METADATA_UPDATES": "true"
-      }
-    },
-    "my-mcp-server": {
-      "type": "stdio",
-      "command": "my_mcp_server",
-      "args": []
-    },
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp"
-    },
+    }
+    // "my-mcp-server": {
+    //   "type": "stdio",
+    //   "command": "my_mcp_server",
+    //   "args": []
+    // },
+    // "context7": {
+    //   "type": "http",
+    //   "url": "https://mcp.context7.com/mcp"
+    // },
     // "sonarqube": {
     //   "command": "docker",
     //   "args": [
@@ -53,27 +65,27 @@
     //     "SONARQUBE_URL": "http://localhost:9000"
     //   }
     // },
-    "figma": {
-      "url": "https://mcp.figma.com/mcp",
-      "type": "http"
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "chrome-devtools-mcp@latest"
-      ]
-    },
-    "exa": {
-      "type": "http",
-      "url": "https://mcp.exa.ai/mcp"
-    },
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "atlassian": {
-      "type": "http",
-      "url": "https://mcp.atlassian.com/v1/mcp"
-    }
+    // "figma": {
+    //   "url": "https://mcp.figma.com/mcp",
+    //   "type": "http"
+    // },
+    // "chrome-devtools": {
+    //   "command": "npx",
+    //   "args": [
+    //     "chrome-devtools-mcp@latest"
+    //   ]
+    // },
+    // "exa": {
+    //   "type": "http",
+    //   "url": "https://mcp.exa.ai/mcp"
+    // },
+    // "github": {
+    //   "type": "http",
+    //   "url": "https://api.githubcopilot.com/mcp/"
+    // },
+    // "atlassian": {
+    //   "type": "http",
+    //   "url": "https://mcp.atlassian.com/v1/mcp"
+    // }
   }
 }
