@@ -4,6 +4,7 @@
 import os
 import sys
 import json
+import subprocess
 from pathlib import Path
 from glob import glob
 
@@ -125,22 +126,70 @@ def _build_markdown(available: dict) -> str:
     return "\n".join(lines)
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# ── Git diff files ────────────────────────────────────────────────────────────
+def get_diff_files(workspace_root: str = ".") -> str:
+    """Get list of modified files using git diff.
+    
+    Tries main..HEAD first, falls back to master..HEAD if main doesn't exist.
+    Returns markdown formatted list or empty string if no changes or git fails.
+    """
+    try:
+        os.chdir(workspace_root)
+        
+        # Try main..HEAD first
+        try:
+            result = subprocess.run(
+                ["git", "diff", "--name-only", "main..HEAD"],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                files = result.stdout.strip().split("\n")
+                return "\n".join(f"- `{f}`" for f in files if f)
+        except Exception:
+            pass
+        
+        # Fall back to master..HEAD
+        try:
+            result = subprocess.run(
+                ["git", "diff", "--name-only", "master..HEAD"],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                files = result.stdout.strip().split("\n")
+                return "\n".join(f"- `{f}`" for f in files if f)
+        except Exception:
+            pass
+        
+        return ""
+    except Exception:
+        return ""
+
+
 def main() -> None:
     try:
         payload        = json.load(sys.stdin)
         workspace_root = payload.get("cwd", ".")
 
         markdown_doc_files = make_doc_files(workspace_root)
+        diff_files = get_diff_files(workspace_root)
         list_of_files = [f for f in glob(f".sessions/*.*") if os.path.isfile(f)]
         latest_created_file = max(list_of_files, key=os.path.getctime)
         latest_session = open(latest_created_file).read()
+        
+        diff_section = ""
+        if diff_files:
+            diff_section = f"\n\n# [SessionStart] Diff files:\n{diff_files}"
+        
         result = f"""---
 description: \"Provide useful memory for agents, such as relevant documentation files in the repository and the latest session information.\"
 applyTo: \"**/*\"
 ---
 # [SessionStart] Reference Documentation Files:
-{markdown_doc_files}
+{markdown_doc_files}{diff_section}
 
 # [SessionStart] Found:
 {len(list_of_files)} session files found at .sessions/.
