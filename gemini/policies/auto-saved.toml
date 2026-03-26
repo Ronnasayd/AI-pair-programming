@@ -136,3 +136,9 @@ decision = "allow"
 priority = 950
 mcpName = "exa"
 toolName = "mcp_exa_web_search_exa"
+
+[[rule]]
+decision = "allow"
+priority = 950
+mcpName = "exa"
+toolName = "web_search_exa"

@@ -11,9 +11,6 @@
   "sonarqube": {
     "enabled": false
   },
-  "github": {
-    "enabled": false
-  },
   "atlassian": {
     "enabled": false
   }
