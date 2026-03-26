@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## CODEX
-python3 "$SOURCE/md2toml.py" "$SOURCE/agents/" "$HOME/.codex/agents/"
+python3 "$SOURCE/scripts/md2toml.py" "$SOURCE/agents/" "$HOME/.codex/agents/"
 
 ###########################################################################################
 ## Rename 'prompt' to 'developer_instructions' in all agent TOML files
