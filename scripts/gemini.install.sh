@@ -1,6 +1,6 @@
 ## GEMINI
 DEFAULT_FOLDER=".gemini"
-python3 $SOURCE/md2toml.py $SOURCE/commands/  $HOME/$DEFAULT_FOLDER/commands/
+python3 $SOURCE/scripts/md2toml.py $SOURCE/commands/  $HOME/$DEFAULT_FOLDER/commands/
 
 ############################################################################################
 if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/GEMINI.md; then
