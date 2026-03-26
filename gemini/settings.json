@@ -20,68 +20,9 @@
     "enableConseca": false
   },
   "mcpServers": {
-    "sequentialthinking": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ]
-    },
-    "taskmaster-ai": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "-p",
-        "@modelcontextprotocol/sdk@1.17.2",
-        "-p",
-        "fastmcp@3.23.0",
-        "-p",
-        "task-master-ai",
-        "task-master-ai"
-      ],
-      "env": {
-        "TASK_MASTER_ALLOW_METADATA_UPDATES": "true"
-      }
-    },
-    "my-mcp-server": {
-      "command": "my_mcp_server",
-      "args": []
-    },
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp"
-    },
-    "sonarqube": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "SONARQUBE_TOKEN",
-        "-e",
-        "SONARQUBE_URL",
-        "--network",
-        "host",
-        "mcp/sonarqube"
-      ],
-      "env": {
-        "SONARQUBE_URL": "http://localhost:9000"
-      }
-    },
     "figma": {
-      "type": "http",
-      "url": "https://mcp.figma.com/mcp"
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "chrome-devtools-mcp@latest"
-      ]
-    },
-    "exa": {
-      "type": "http",
-      "url": "https://mcp.exa.ai/mcp"
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
     },
     "github": {
       "type": "http",
@@ -89,7 +30,19 @@
     },
     "atlassian": {
       "type": "http",
-      "url": "ttps://mcp.atlassian.com/v1/mcp"
+      "url": "https://mcp.atlassian.com/v1/mcp"
+    },
+    "mcp-manager": {
+      "command": "/home/ronnas/develop/personal/mcp-manager/venv/bin/mcp-manager",
+      "args": [
+        "--config",
+        "/home/ronnas/develop/personal/mcp-manager/backends.json",
+        "--catalog",
+        "/home/ronnas/develop/personal/mcp-manager/catalog.json",
+        "--transport",
+        "stdio"
+      ],
+      "type": "stdio"
     }
   },
   "ide": {
