@@ -64,7 +64,8 @@
     "showCitations": true,
     "showModelInfoInChat": true,
     "showStatusInTitle": true,
-    "useAlternateBuffer": true
+    "useAlternateBuffer": true,
+    "errorVerbosity": "full"
   },
   "model": {
     "name": ""
@@ -72,7 +73,8 @@
   "context": {
     "fileFiltering": {
       "respectGitIgnore": false
-    }
+    },
+    "loadMemoryFromIncludeDirectories": false
   },
   "checkpointing": {
     "enabled": true
