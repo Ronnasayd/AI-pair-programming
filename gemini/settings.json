@@ -134,7 +134,18 @@
         ]
       }
     ],
-    "AfterTool": [],
+    "AfterTool": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.gemini/hooks/scripts/quality_gate.py",
+            "description": "Run quality gate checks after tool usage."
+          }
+        ]
+      }
+    ],
     "PreCompress": [],
     "Notification": [],
     "BeforeModel": [],
