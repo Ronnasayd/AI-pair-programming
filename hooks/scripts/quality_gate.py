@@ -24,7 +24,15 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import detect_formatter, find_project_root, get_by_key, resolve_formatter_bin, run_command,get_hooks_logger
+from utils import (
+    detect_formatter,
+    find_project_root,
+    get_by_key,
+    resolve_formatter_bin,
+    run_command,
+    get_hooks_logger,
+)
+
 logger = get_hooks_logger("QualityGate")
 # ---------------------------------------------------------------------------
 # Constants
@@ -54,6 +62,7 @@ def run_command(cmd: str, cwd: str | None = None) -> dict:
     except Exception:
         return {"success": False, "output": ""}
 
+
 def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
     """
     Thin wrapper around run_command for formatter/linter invocations.
@@ -66,6 +75,7 @@ def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
 # ---------------------------------------------------------------------------
 # Quality gate logic
 # ---------------------------------------------------------------------------
+
 
 def maybe_run_quality_gate(file_path: str) -> None:
     """
@@ -81,30 +91,38 @@ def maybe_run_quality_gate(file_path: str) -> None:
 
     resolved = Path(file_path).resolve()
     if not resolved.exists():
-        logger.debug(f"[QualityGate] File {resolved} does not exist, skipping quality gate.")
+        logger.debug(
+            f"[QualityGate] File {resolved} does not exist, skipping quality gate."
+        )
         return
 
-    ext    = resolved.suffix.lower()
-    fix    = True
+    ext = resolved.suffix.lower()
+    fix = True
     strict = False
 
     # ── JS / TS / JSON / MD ──────────────────────────────────────────────────
     if ext in _BIOME_EXTS:
         project_root = find_project_root(str(resolved.parent))
-        formatter    = detect_formatter(project_root,logger)
+        formatter = detect_formatter(project_root, logger)
         logger.debug(f"[QualityGate] Detected formatter for {resolved}: {formatter}")
-        logger.debug(f"[QualityGate] Detected project root for {resolved}: {project_root}")
+        logger.debug(
+            f"[QualityGate] Detected project root for {resolved}: {project_root}"
+        )
 
         if formatter == "biome":
             # JS/TS already handled by post-edit-format via `biome check --write`
             if ext in _JS_TS_EXTS:
-                logger.debug(f"[QualityGate] Skipping Biome check for {resolved} (handled by post-edit-format)")
+                logger.debug(
+                    f"[QualityGate] Skipping Biome check for {resolved} (handled by post-edit-format)"
+                )
                 return
 
             # .json / .md — still need quality gate
-            fmt_bin = resolve_formatter_bin(project_root, "biome",logger)
+            fmt_bin = resolve_formatter_bin(project_root, "biome", logger)
             if not fmt_bin:
-                logger.debug(f"[QualityGate] Biome configured but binary not found, skipping check for {resolved}")
+                logger.debug(
+                    f"[QualityGate] Biome configured but binary not found, skipping check for {resolved}"
+                )
                 return
 
             args = [*fmt_bin["prefix"], "check", str(resolved)]
@@ -120,7 +138,9 @@ def maybe_run_quality_gate(file_path: str) -> None:
         if formatter == "prettier":
             fmt_bin = resolve_formatter_bin(project_root, "prettier", logger)
             if not fmt_bin:
-                logger.debug(f"[QualityGate] Prettier configured but binary not found, skipping check for {resolved}")
+                logger.debug(
+                    f"[QualityGate] Prettier configured but binary not found, skipping check for {resolved}"
+                )
                 return
 
             args = [*fmt_bin["prefix"], "--write" if fix else "--check", str(resolved)]
@@ -131,7 +151,9 @@ def maybe_run_quality_gate(file_path: str) -> None:
             return
 
         # No formatter configured — skip
-        logger.debug(f"[QualityGate] No formatter configured for {resolved}, skipping quality gate.")
+        logger.debug(
+            f"[QualityGate] No formatter configured for {resolved}, skipping quality gate."
+        )
         return
 
     # ── Go ───────────────────────────────────────────────────────────────────
@@ -167,6 +189,7 @@ def maybe_run_quality_gate(file_path: str) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     stdin_data = ""
     try:
@@ -176,7 +199,7 @@ def main() -> None:
 
     try:
         data = json.loads(stdin_data)
-        file_path = get_by_key(get_by_key(data,"tool_input"),"file_path")
+        file_path = get_by_key(get_by_key(data, "tool_input"), "file_path")
         logger.debug(f"[QualityGate] Received file_path: {file_path}")
         maybe_run_quality_gate(file_path)
     except (json.JSONDecodeError, AttributeError):
