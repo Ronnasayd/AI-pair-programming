@@ -16,6 +16,11 @@ rm $HOME/$DEFAULT_FOLDER/settings.json
 fi
 ln -s "$SOURCE/gemini/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
 #######################################################################################
+if [ -L "$HOME/$DEFAULT_FOLDER/.geminignore" ] || [ -f "$HOME/$DEFAULT_FOLDER/.geminignore" ]; then
+rm $HOME/$DEFAULT_FOLDER/.geminignore
+fi
+ln -s "$SOURCE/gemini/.geminignore" "$HOME/$DEFAULT_FOLDER/.geminignore"
+#######################################################################################
 if [ -L "$HOME/$DEFAULT_FOLDER/commands/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/commands/scripts" ]; then
 rm -rf $HOME/$DEFAULT_FOLDER/commands/scripts
 fi
