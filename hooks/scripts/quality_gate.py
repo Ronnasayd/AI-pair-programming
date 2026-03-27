@@ -85,8 +85,8 @@ def maybe_run_quality_gate(file_path: str) -> None:
         return
 
     ext    = resolved.suffix.lower()
-    fix    = os.environ.get("ECC_QUALITY_GATE_FIX", "").lower() == "true"
-    strict = os.environ.get("ECC_QUALITY_GATE_STRICT", "").lower() == "true"
+    fix    = True
+    strict = False
 
     # ── JS / TS / JSON / MD ──────────────────────────────────────────────────
     if ext in _BIOME_EXTS:
