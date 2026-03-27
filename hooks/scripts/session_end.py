@@ -18,8 +18,22 @@ from pathlib import Path
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
-    
-from utils import  get_hooks_logger, strip_ansi, get_sessions_dir, get_date_string, get_time_string, get_session_id_short, get_project_name, ensure_dir, read_file, write_file, run_command, get_by_key
+
+from utils import (
+    get_hooks_logger,
+    strip_ansi,
+    get_sessions_dir,
+    get_date_string,
+    get_time_string,
+    get_session_id_short,
+    get_project_name,
+    ensure_dir,
+    read_file,
+    write_file,
+    run_command,
+    get_by_key,
+)
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -39,6 +53,89 @@ logger = get_hooks_logger("SessionEnd")
 # Transcript parsing
 # ---------------------------------------------------------------------------
 
+
+def _extract_user_message(entry):
+    role = (
+        get_by_key(entry, "type")
+        or get_by_key(entry, "role")
+        or (get_by_key(entry, "message") or {}).get("role")
+    )
+    if role != "user":
+        return None
+    raw_content = (
+        (get_by_key(entry, "message") or {}).get("content")
+        or get_by_key(entry, "content")
+        or ""
+    )
+    if isinstance(raw_content, str):
+        text = raw_content
+    elif isinstance(raw_content, list):
+        text = " ".join(
+            (c.get("text") or "") for c in raw_content if isinstance(c, dict)
+        )
+    else:
+        text = ""
+    cleaned = strip_ansi(text).strip()
+    return cleaned[:200] if cleaned else None
+
+
+def _extract_tool_and_file_from_entry(entry, tools_used, files_modified):
+    if get_by_key(entry, "type") == "tool_use" or get_by_key(entry, "tool_name"):
+        tool_name = get_by_key(entry, "tool_name") or get_by_key(entry, "name") or ""
+        if tool_name:
+            tools_used.add(tool_name)
+        tool_input = get_by_key(entry, "tool_input") or get_by_key(entry, "input") or {}
+        file_path = tool_input.get("file_path", "")
+        if file_path and tool_name in ("Edit", "Write"):
+            files_modified.add(file_path)
+
+
+def _process_assistant_tool_block(block, tools_used, files_modified):
+    """Process a single tool_use content block from an assistant message."""
+    if not isinstance(block, dict) or block.get("type") != "tool_use":
+        return
+    tool_name = block.get("name") or ""
+    if tool_name:
+        tools_used.add(tool_name)
+    file_path = (block.get("input") or {}).get("file_path", "")
+    if file_path and tool_name in ("Edit", "Write"):
+        files_modified.add(file_path)
+
+
+def _extract_tool_from_assistant_block(entry, tools_used, files_modified):
+    if get_by_key(entry, "type") != "assistant":
+        return
+    message = get_by_key(entry, "message") or {}
+    content_blocks = message.get("content") or []
+    if isinstance(content_blocks, list):
+        for block in content_blocks:
+            _process_assistant_tool_block(block, tools_used, files_modified)
+
+
+def _parse_claude_transcript_lines(lines):
+    """Parse JSONL lines from a Claude transcript into summary components."""
+    user_messages = []
+    tools_used = set()
+    files_modified = set()
+    parse_errors = 0
+
+    for line in lines:
+        try:
+            entry = json.loads(line)
+        except (json.JSONDecodeError, AttributeError):
+            parse_errors += 1
+            continue
+
+        msg = _extract_user_message(entry)
+        if msg:
+            user_messages.append(msg)
+
+        _extract_tool_and_file_from_entry(entry, tools_used, files_modified)
+        _extract_tool_from_assistant_block(entry, tools_used, files_modified)
+
+    return user_messages, tools_used, files_modified, parse_errors
+
+
 def extract_session_summary_claude(transcript_path: Path) -> dict | None:
     """
     Extract a meaningful summary from the session transcript.
@@ -52,77 +149,90 @@ def extract_session_summary_claude(transcript_path: Path) -> dict | None:
         return None
 
     lines = [l for l in content.split("\n") if l.strip()]
-    user_messages: list[str] = []
-    tools_used: set[str] = set()
-    files_modified: set[str] = set()
-    parse_errors = 0
-
-    for line in lines:
-        try:
-            entry = json.loads(line)
-
-            # Collect user messages (first 200 chars each)
-            role = get_by_key(entry, "type") or get_by_key(entry, "role") or (get_by_key(entry, "message") or {}).get("role")
-            if role == "user":
-                raw_content = (
-                    (get_by_key(entry, "message") or {}).get("content")
-                    or get_by_key(entry, "content")
-                    or ""
-                )
-                if isinstance(raw_content, str):
-                    text = raw_content
-                elif isinstance(raw_content, list):
-                    text = " ".join(
-                        (c.get("text") or "") for c in raw_content if isinstance(c, dict)
-                    )
-                else:
-                    text = ""
-                cleaned = strip_ansi(text).strip()
-                if cleaned:
-                    user_messages.append(cleaned[:200])
-
-            # Collect tool names and modified files (direct tool_use entries)
-            if get_by_key(entry, "type") == "tool_use" or get_by_key(entry, "tool_name"):
-                tool_name = get_by_key(entry, "tool_name") or get_by_key(entry, "name") or ""
-                if tool_name:
-                    tools_used.add(tool_name)
-                tool_input = get_by_key(entry, "tool_input") or get_by_key(entry, "input") or {}
-                file_path = tool_input.get("file_path", "")
-                if file_path and tool_name in ("Edit", "Write"):
-                    files_modified.add(file_path)
-
-            # Extract tool uses from assistant message content blocks
-            if get_by_key(entry, "type") == "assistant":
-                message = get_by_key(entry, "message") or {}
-                content_blocks = message.get("content") or []
-                if isinstance(content_blocks, list):
-                    for block in content_blocks:
-                        if not isinstance(block, dict):
-                            continue
-                        if block.get("type") == "tool_use":
-                            tool_name = block.get("name") or ""
-                            if tool_name:
-                                tools_used.add(tool_name)
-                            file_path = (block.get("input") or {}).get("file_path", "")
-                            if file_path and tool_name in ("Edit", "Write"):
-                                files_modified.add(file_path)
-
-        except (json.JSONDecodeError, AttributeError):
-            parse_errors += 1
+    user_messages, tools_used, files_modified, parse_errors = (
+        _parse_claude_transcript_lines(lines)
+    )
 
     if parse_errors > 0:
-        logger.debug(f"[SessionEnd] Skipped {parse_errors}/{len(lines)} unparseable transcript lines")
+        logger.debug(
+            "[SessionEnd] Skipped %d/%d unparseable transcript lines",
+            parse_errors,
+            len(lines),
+        )
 
     if not user_messages:
         return None
 
     return {
-        "user_messages": user_messages[-10:],   # Last 10 user messages
+        "user_messages": user_messages[-10:],
         "tools_used": list(tools_used)[:20],
         "files_modified": list(files_modified)[:30],
         "total_messages": len(user_messages),
     }
 
+
+# ---------------------------------------------------------------------------
+# Copilot transcript helpers (module-level to reduce per-function locals)
+# ---------------------------------------------------------------------------
+
+
+def _copilot_user_message(entry_type, data):
+    if entry_type != "user.message":
+        return None
+    raw = get_by_key(data, "content") or ""
+    if isinstance(raw, str):
+        text = raw
+    elif isinstance(raw, list):
+        text = " ".join((c.get("text") or "") for c in raw if isinstance(c, dict))
+    else:
+        text = ""
+    cleaned = strip_ansi(text).strip()
+    return cleaned[:200] if cleaned else None
+
+
+def _copilot_tool_execution(entry_type, data, tools_used, files_modified):
+    if entry_type != "tool.execution_start":
+        return
+    tool_name = get_by_key(data, "toolName") or ""
+    if tool_name:
+        tools_used.add(tool_name)
+    arguments = get_by_key(data, "arguments") or {}
+    file_path = (
+        arguments.get("filePath")
+        or arguments.get("file_path")
+        or arguments.get("path")
+        or ""
+    )
+    if file_path and tool_name in _WRITE_TOOLS_COPILOT:
+        files_modified.add(file_path)
+
+
+def _copilot_tool_request_file(raw_args, tool_name):
+    """Extract a modified file path from a single Copilot tool request."""
+    if isinstance(raw_args, str):
+        try:
+            raw_args = json.loads(raw_args)
+        except json.JSONDecodeError:
+            raw_args = {}
+    file_path = (
+        raw_args.get("filePath")
+        or raw_args.get("file_path")
+        or raw_args.get("path")
+        or ""
+    )
+    return file_path if (file_path and tool_name in _WRITE_TOOLS_COPILOT) else ""
+
+
+def _copilot_assistant_message(entry_type, data, tools_used, files_modified):
+    if entry_type != "assistant.message":
+        return
+    for req in get_by_key(data, "toolRequests") or []:
+        tool_name = req.get("name", "")
+        if tool_name:
+            tools_used.add(tool_name)
+        file_path = _copilot_tool_request_file(req.get("arguments", {}), tool_name)
+        if file_path:
+            files_modified.add(file_path)
 
 
 def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
@@ -152,59 +262,18 @@ def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
         entry_type = get_by_key(entry, "type") or ""
         data = get_by_key(entry, "data") or {}
 
-            # ── User messages ────────────────────────────────────────────────
-        if entry_type == "user.message":
-            raw = get_by_key(data, "content") or ""
-            if isinstance(raw, str):
-                text = raw
-            elif isinstance(raw, list):
-                text = " ".join(
-                    (c.get("text") or "") for c in raw if isinstance(c, dict)
-                )
-            else:
-                text = ""
-            cleaned = strip_ansi(text).strip()
-            if cleaned:
-                user_messages.append(cleaned[:200])
+        msg = _copilot_user_message(entry_type, data)
+        if msg:
+            user_messages.append(msg)
+        _copilot_tool_execution(entry_type, data, tools_used, files_modified)
+        _copilot_assistant_message(entry_type, data, tools_used, files_modified)
 
-        # ── Tool executions ──────────────────────────────────────────────
-        elif entry_type == "tool.execution_start":
-            tool_name = get_by_key(data, "toolName") or ""
-            if tool_name:
-                tools_used.add(tool_name)
-
-            arguments = get_by_key(data, "arguments") or {}
-            # Copilot uses "filePath" for read_file / write_file
-            file_path = (
-                arguments.get("filePath")
-                or arguments.get("file_path")
-                or arguments.get("path")
-                or ""
-            )
-            if file_path and tool_name in _WRITE_TOOLS_COPILOT:
-                files_modified.add(file_path)
-
-        # ── Tool requests embedded in assistant.message ──────────────────
-        elif entry_type == "assistant.message":
-            for req in get_by_key(data, "toolRequests") or []:
-                tool_name = req.get("name", "")
-                if tool_name:
-                    tools_used.add(tool_name)
-                # arguments may be a JSON string here
-                raw_args = req.get("arguments", {})
-                if isinstance(raw_args, str):
-                    try:
-                        raw_args = json.loads(raw_args)
-                    except json.JSONDecodeError:
-                        raw_args = {}
-                file_path = (
-                    raw_args.get("filePath")
-                    or raw_args.get("file_path")
-                    or raw_args.get("path")
-                    or ""
-                )
-                if file_path and tool_name in _WRITE_TOOLS_COPILOT:
-                    files_modified.add(file_path)
+    if parse_errors > 0:
+        logger.debug(
+            "[SessionEnd] Skipped %d/%d unparseable transcript lines",
+            parse_errors,
+            len(lines),
+        )
 
     if not user_messages:
         return None
@@ -215,6 +284,50 @@ def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
         "files_modified": list(files_modified)[:30],
         "total_messages": len(user_messages),
     }
+
+
+# ---------------------------------------------------------------------------
+# Gemini transcript parsing
+# ---------------------------------------------------------------------------
+
+
+def _gemini_process_message(msg, user_messages, tools_used, files_modified):
+    """Process a single Gemini message dict into summary components."""
+    msg_type = get_by_key(msg, "type") or ""
+
+    if msg_type == "user":
+        raw_content = get_by_key(msg, "content") or []
+        if isinstance(raw_content, list):
+            text = " ".join(
+                (c.get("text") or "") for c in raw_content if isinstance(c, dict)
+            )
+        elif isinstance(raw_content, str):
+            text = raw_content
+        else:
+            text = ""
+        cleaned = strip_ansi(text).strip()
+        if cleaned:
+            user_messages.append(cleaned[:200])
+
+    if msg_type == "gemini":
+        tool_calls = get_by_key(msg, "toolCalls") or []
+        if isinstance(tool_calls, list):
+            for tool_call in tool_calls:
+                if not isinstance(tool_call, dict):
+                    continue
+                tool_name = get_by_key(tool_call, "name") or ""
+                if tool_name:
+                    tools_used.add(tool_name)
+                args = get_by_key(tool_call, "args") or {}
+                if isinstance(args, dict):
+                    file_path = (
+                        args.get("filePath")
+                        or args.get("file_path")
+                        or args.get("path")
+                        or ""
+                    )
+                    if file_path and tool_name in _WRITE_TOOLS_COPILOT:
+                        files_modified.add(file_path)
 
 
 def extract_session_summary_gemini(transcript_path: Path) -> dict | None:
@@ -243,47 +356,8 @@ def extract_session_summary_gemini(transcript_path: Path) -> dict | None:
     files_modified: set[str] = set()
 
     for msg in messages:
-        if not isinstance(msg, dict):
-            continue
-
-        msg_type = get_by_key(msg, "type") or ""
-
-        # ── User messages ────────────────────────────────────────────────
-        if msg_type == "user":
-            raw_content = get_by_key(msg, "content") or []
-            if isinstance(raw_content, list):
-                text = " ".join(
-                    (c.get("text") or "") for c in raw_content if isinstance(c, dict)
-                )
-            elif isinstance(raw_content, str):
-                text = raw_content
-            else:
-                text = ""
-            cleaned = strip_ansi(text).strip()
-            if cleaned:
-                user_messages.append(cleaned[:200])
-
-        # ── Tool calls from gemini messages ──────────────────────────────
-        if msg_type == "gemini":
-            tool_calls = get_by_key(msg, "toolCalls") or []
-            if isinstance(tool_calls, list):
-                for tool_call in tool_calls:
-                    if not isinstance(tool_call, dict):
-                        continue
-                    tool_name = get_by_key(tool_call, "name") or ""
-                    if tool_name:
-                        tools_used.add(tool_name)
-                    # Extract file paths from tool arguments
-                    args = get_by_key(tool_call, "args") or {}
-                    if isinstance(args, dict):
-                        file_path = (
-                            args.get("filePath")
-                            or args.get("file_path")
-                            or args.get("path")
-                            or ""
-                        )
-                        if file_path and tool_name in _WRITE_TOOLS_COPILOT:
-                            files_modified.add(file_path)
+        if isinstance(msg, dict):
+            _gemini_process_message(msg, user_messages, tools_used, files_modified)
 
     if not user_messages:
         return None
@@ -299,6 +373,7 @@ def extract_session_summary_gemini(transcript_path: Path) -> dict | None:
 # ---------------------------------------------------------------------------
 # Session file building
 # ---------------------------------------------------------------------------
+
 
 def get_session_metadata() -> dict:
     branch_result = run_command("git rev-parse --abbrev-ref HEAD")
@@ -350,7 +425,7 @@ def merge_session_header(
         return None
 
     existing_header = content[:separator_index]
-    body = content[separator_index + len(SESSION_SEPARATOR):]
+    body = content[separator_index + len(SESSION_SEPARATOR) :]
     next_header = build_session_header(today, current_time, metadata, existing_header)
     return f"{next_header}{SESSION_SEPARATOR}{body}"
 
@@ -385,25 +460,106 @@ def build_summary_block(summary: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Main helpers
+# ---------------------------------------------------------------------------
+
+
+def _select_summary_extractor(transcript_path: Path):
+    """Return the appropriate summary extractor for the given transcript path."""
+    path_lower = str(transcript_path).lower()
+    if "gemini" in path_lower:
+        return extract_session_summary_gemini
+    if "copilot" in path_lower:
+        return extract_session_summary_copilot
+    return extract_session_summary_claude
+
+
+def _replace_summary_block(content: str, summary: dict) -> str:
+    """Replace an existing summary block in content, or return content unchanged."""
+    summary_block = build_summary_block(summary)
+    if SUMMARY_START_MARKER in content and SUMMARY_END_MARKER in content:
+        pattern = (
+            re.escape(SUMMARY_START_MARKER)
+            + r"[\s\S]*?"
+            + re.escape(SUMMARY_END_MARKER)
+        )
+        return re.sub(pattern, summary_block, content)
+    return content
+
+
+def _update_existing_session(
+    session_file: Path,
+    today: str,
+    current_time: str,
+    metadata: dict,
+    summary: dict | None,
+) -> None:
+    """Update an already-existing session file in place."""
+    existing = read_file(session_file)
+    updated_content = existing or ""
+
+    if existing:
+        merged = merge_session_header(existing, today, current_time, metadata)
+        if merged:
+            updated_content = merged
+        else:
+            logger.debug("[SessionEnd] Failed to normalize header in %s", session_file)
+
+    if summary and updated_content:
+        updated_content = _replace_summary_block(updated_content, summary)
+
+    if updated_content:
+        write_file(session_file, updated_content)
+
+    logger.debug("[SessionEnd] Updated session file: %s", session_file)
+
+
+def _create_new_session(
+    session_file: Path,
+    today: str,
+    current_time: str,
+    metadata: dict,
+    summary: dict | None,
+) -> None:
+    """Create a brand-new session file."""
+    if summary:
+        summary_section = f"{build_summary_block(summary)}\n\n"
+    else:
+        summary_section = (
+            "## Current State\n\n"
+            "[Session context goes here]\n\n"
+            "### Completed\n- [ ]\n\n"
+            "### In Progress\n- [ ]\n\n"
+        )
+
+    header = build_session_header(today, current_time, metadata)
+    template = f"{header}{SESSION_SEPARATOR}{summary_section}\n"
+    write_file(session_file, template)
+    logger.debug("[SessionEnd] Created session file: %s", session_file)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     # Read stdin (limited to MAX_STDIN)
     stdin_data = ""
     try:
-        raw = sys.stdin.read(MAX_STDIN)
-        stdin_data = raw
-    except Exception:
-        pass
+        stdin_data = sys.stdin.read(MAX_STDIN)
+    except OSError as exc:
+        logger.debug("[SessionEnd] Error reading stdin: %s", exc)
 
     # Parse stdin JSON to get transcript_path
+    data = {}
     transcript_path: Path | None = None
     try:
         data = json.loads(stdin_data)
         if get_by_key(data, "transcript_path"):
             transcript_path = Path(get_by_key(data, "transcript_path"))
-    except (json.JSONDecodeError, ValueError):
+    except (json.JSONDecodeError, ValueError) as exc:
+        logger.debug("[SessionEnd] Error parsing stdin JSON: %s", exc)
         # Fallback: env var for backwards compatibility
         env_path = os.environ.get("CLAUDE_TRANSCRIPT_PATH")
         if env_path:
@@ -420,67 +576,27 @@ def main() -> None:
 
     # Try to extract summary from transcript
     summary: dict | None = None
-    if transcript_path.exists():
-        if "gemini" in str(transcript_path).lower():
-            summary = extract_session_summary_gemini(transcript_path)
-        else:
-            summary = extract_session_summary_copilot(transcript_path)
-    else:
-            logger.debug(f"[SessionEnd] Transcript not found: {transcript_path}")
+    if transcript_path and transcript_path.exists():
+        extractor = _select_summary_extractor(transcript_path)
+        summary = extractor(transcript_path)
+    elif transcript_path:
+        logger.debug("[SessionEnd] Transcript not found: %s", transcript_path)
+
     if session_file.exists():
-        existing = read_file(session_file)
-        updated_content = existing or ""
-
-        if existing:
-            merged = merge_session_header(existing, today, current_time, session_metadata)
-            if merged:
-                updated_content = merged
-            else:
-                logger.debug(f"[SessionEnd] Failed to normalize header in {session_file}")
-
-        # Update only the generated summary block (idempotent)
-        if summary and updated_content:
-            summary_block = build_summary_block(summary)
-
-            if SUMMARY_START_MARKER in updated_content and SUMMARY_END_MARKER in updated_content:
-                pattern = (
-                    re.escape(SUMMARY_START_MARKER)
-                    + r"[\s\S]*?"
-                    + re.escape(SUMMARY_END_MARKER)
-                )
-                updated_content = re.sub(pattern, summary_block, updated_content)
-
-        if updated_content:
-            write_file(session_file, updated_content)
-
-        logger.debug(f"[SessionEnd] Updated session file: {session_file}")
-
+        _update_existing_session(
+            session_file, today, current_time, session_metadata, summary
+        )
     else:
-        # Create new session file
-        if summary:
-            summary_section = (
-                f"{build_summary_block(summary)}\n\n"
-            )
-        else:
-            summary_section = (
-                "## Current State\n\n"
-                "[Session context goes here]\n\n"
-                "### Completed\n- [ ]\n\n"
-                "### In Progress\n- [ ]\n\n"
-            )
-
-        header = build_session_header(today, current_time, session_metadata)
-        template = f"{header}{SESSION_SEPARATOR}{summary_section}\n"
-        write_file(session_file, template)
-        logger.debug(f"[SessionEnd] Created session file: {session_file}")
+        _create_new_session(
+            session_file, today, current_time, session_metadata, summary
+        )
 
     sys.exit(0)
-
 
 
 if __name__ == "__main__":
     try:
         main()
-    except Exception as exc:
-        print(f"[SessionEnd] Error: {exc}", file=sys.stderr)
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.error("[SessionEnd] Error: %s", exc)
         sys.exit(0)
