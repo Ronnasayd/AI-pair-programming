@@ -37,26 +37,26 @@ def list_files() -> list[str]:
 # ── File discovery ────────────────────────────────────────────────────────────
 def check_documentation_files(workspace_root: str) -> dict:
     patterns = {
-        "docs/agents/specs/":   "docs/agents/specs/**",
-        "docs/agents/plans/":   "docs/agents/plans/**",
+        "docs/agents/specs/": "docs/agents/specs/**",
+        "docs/agents/plans/": "docs/agents/plans/**",
         "docs/agents/reviews/": "docs/agents/reviews/**",
-        "docs/adr/":            "docs/adr/**",
-        "docs/techs/":          "docs/techs/**",
-        "docs/misc/":           "docs/misc/**",
-        "docs/features/":       "docs/features/**",
+        "docs/adr/": "docs/adr/**",
+        "docs/techs/": "docs/techs/**",
+        "docs/misc/": "docs/misc/**",
+        "docs/features/": "docs/features/**",
         "docs/architecture.md": "docs/architecture.md",
-        "docs/setup.md":        "docs/setup.md",
-        "docs/usage.md":        "docs/usage.md",
-        "docs/modules.md":      "docs/modules.md",
+        "docs/setup.md": "docs/setup.md",
+        "docs/usage.md": "docs/usage.md",
+        "docs/modules.md": "docs/modules.md",
         "docs/contribution.md": "docs/contribution.md",
-        "docs/faq.md":          "docs/faq.md",
-        "docs/SUMMARY.md":      "docs/SUMMARY.md",
-        ".taskmaster/tasks/":   ".taskmaster/tasks/*.json",
-        ".taskmaster/prds/":    ".taskmaster/prds/*.md",
-        ".taskmaster/tasksmd/":   ".taskmaster/tasks/*.md",
-        "README.md":            "README.md",
-        "GEMINI.md":            "GEMINI.md",
-        "CLAUDE.md":            "CLAUDE.md",
+        "docs/faq.md": "docs/faq.md",
+        "docs/SUMMARY.md": "docs/SUMMARY.md",
+        ".taskmaster/tasks/": ".taskmaster/tasks/*.json",
+        ".taskmaster/prds/": ".taskmaster/prds/*.md",
+        ".taskmaster/tasksmd/": ".taskmaster/tasks/*.md",
+        "README.md": "README.md",
+        "GEMINI.md": "GEMINI.md",
+        "CLAUDE.md": "CLAUDE.md",
     }
 
     available_files: dict = {}
@@ -67,14 +67,14 @@ def check_documentation_files(workspace_root: str) -> dict:
             matches = glob(str(root_path / pattern), recursive=True)
             available_files[name] = {
                 "exists": len(matches) > 0,
-                "count":  len(matches),
-                "files":  matches[:10],
+                "count": len(matches),
+                "files": matches[:10],
             }
         else:
             file_path = root_path / pattern
             available_files[name] = {
                 "exists": file_path.exists(),
-                "path":   str(file_path),
+                "path": str(file_path),
             }
 
     return available_files
@@ -129,41 +129,41 @@ def _build_markdown(available: dict) -> str:
 # ── Git diff files ────────────────────────────────────────────────────────────
 def get_diff_files(workspace_root: str = ".") -> str:
     """Get list of modified files using git diff.
-    
+
     Tries main..HEAD first, falls back to master..HEAD if main doesn't exist.
     Returns markdown formatted list or empty string if no changes or git fails.
     """
     try:
         os.chdir(workspace_root)
-        
+
         # Try main..HEAD first
         try:
             result = subprocess.run(
                 ["git", "diff", "--name-only", "main..HEAD"],
                 capture_output=True,
                 text=True,
-                timeout=5
+                timeout=5,
             )
             if result.returncode == 0 and result.stdout.strip():
                 files = result.stdout.strip().split("\n")
                 return "\n".join(f"- `{f}`" for f in files if f)
         except Exception:
             pass
-        
+
         # Fall back to master..HEAD
         try:
             result = subprocess.run(
                 ["git", "diff", "--name-only", "master..HEAD"],
                 capture_output=True,
                 text=True,
-                timeout=5
+                timeout=5,
             )
             if result.returncode == 0 and result.stdout.strip():
                 files = result.stdout.strip().split("\n")
                 return "\n".join(f"- `{f}`" for f in files if f)
         except Exception:
             pass
-        
+
         return ""
     except Exception:
         return ""
@@ -171,7 +171,7 @@ def get_diff_files(workspace_root: str = ".") -> str:
 
 def main() -> None:
     try:
-        payload        = json.load(sys.stdin)
+        payload = json.load(sys.stdin)
         workspace_root = payload.get("cwd", ".")
 
         markdown_doc_files = make_doc_files(workspace_root)
@@ -179,11 +179,11 @@ def main() -> None:
         list_of_files = [f for f in glob(f".sessions/*.*") if os.path.isfile(f)]
         latest_created_file = max(list_of_files, key=os.path.getctime)
         latest_session = open(latest_created_file).read()
-        
+
         diff_section = ""
         if diff_files:
             diff_section = f"\n\n# [SessionStart] Diff files:\n{diff_files}"
-        
+
         result = f"""---
 description: \"Provide useful memory for agents, such as relevant documentation files in the repository and the latest session information.\"
 applyTo: \"**/*\"
@@ -200,13 +200,13 @@ applyTo: \"**/*\"
 ```
 """
 
-        # For github copilot, we can write the markdown to a file in the repository so it can be easily accessed by agents. 
+        # For github copilot, we can write the markdown to a file in the repository so it can be easily accessed by agents.
         output_path = Path(".github/instructions/memory.instructions.md")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(result, encoding="utf-8")
         # For gemini, we can output the markdown directly in the hook output so it can be accessed by agents in the same session.
-        print(json.dumps({"hookSpecificOutput":{"additionalContext": result}}))
-        logger.debug(json.dumps({"hookSpecificOutput":{"additionalContext": result}}))
+        print(json.dumps({"hookSpecificOutput": {"additionalContext": result}}))
+        logger.debug(json.dumps({"hookSpecificOutput": {"additionalContext": result}}))
         logger.debug("Memory hook executed successfully.")
 
     except json.JSONDecodeError:
@@ -216,14 +216,14 @@ applyTo: \"**/*\"
 
     sys.exit(0)
 
+
 def make_doc_files(workspace_root):
     available_files = check_documentation_files(workspace_root)
     _load_into_registry(available_files)
 
     available = {
-            name: info for name, info in available_files.items()
-            if info.get("exists")
-        }
+        name: info for name, info in available_files.items() if info.get("exists")
+    }
 
     markdown = _build_markdown(available)
     return markdown
