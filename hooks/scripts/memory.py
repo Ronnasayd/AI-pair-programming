@@ -82,9 +82,8 @@ def check_documentation_files(workspace_root: str) -> dict:
 
 # ── File loader ───────────────────────────────────────────────────────────────
 def _load_into_registry(available_files: dict) -> None:
-    global _SESSION_FILES
-
-    for name, info in available_files.items():
+    # W0602: No global statement needed — we only mutate the dict, never rebind it
+    for info in available_files.values():  # W0612: dropped unused 'name'
         if not info.get("exists"):
             continue
 
@@ -100,7 +99,7 @@ def _load_into_registry(available_files: dict) -> None:
 
 
 def _read_and_store(path: Path) -> None:
-    global _SESSION_FILES
+    # W0602: No global statement needed — only mutating the dict
     key = str(path)
     if key in _SESSION_FILES:
         return
@@ -111,17 +110,17 @@ def _read_and_store(path: Path) -> None:
 
 
 # ── Markdown builder ──────────────────────────────────────────────────────────
-def _build_markdown(available: dict) -> str:
+def _build_markdown(available: dict, workspace_root: str) -> str:
     lines = []
 
     for name, info in available.items():
         if "files" in info:
             for f in info["files"]:
                 if os.path.isfile(f):
-                    lines.append(f"- `{f}`")
+                    lines.append(f"- `{os.path.relpath(f, workspace_root)}`")
         elif "path" in info:
             if os.path.isfile(name):
-                lines.append(f"- `{name}`")
+                lines.append(f"- `{os.path.relpath(name, workspace_root)}`")
 
     return "\n".join(lines)
 
@@ -138,34 +137,36 @@ def get_diff_files(workspace_root: str = ".") -> str:
 
         # Try main..HEAD first
         try:
-            result = subprocess.run(
+            result = subprocess.run(  # W1510: check=False is intentional — we inspect returncode
                 ["git", "diff", "--name-only", "main..HEAD"],
                 capture_output=True,
                 text=True,
                 timeout=5,
+                check=False,
             )
             if result.returncode == 0 and result.stdout.strip():
                 files = result.stdout.strip().split("\n")
                 return "\n".join(f"- `{f}`" for f in files if f)
-        except Exception:
+        except subprocess.TimeoutExpired:  # W0718: catch specific exception
             pass
 
         # Fall back to master..HEAD
         try:
-            result = subprocess.run(
+            result = subprocess.run(  # W1510: check=False is intentional — we inspect returncode
                 ["git", "diff", "--name-only", "master..HEAD"],
                 capture_output=True,
                 text=True,
                 timeout=5,
+                check=False,
             )
             if result.returncode == 0 and result.stdout.strip():
                 files = result.stdout.strip().split("\n")
                 return "\n".join(f"- `{f}`" for f in files if f)
-        except Exception:
+        except subprocess.TimeoutExpired:  # W0718: catch specific exception
             pass
 
         return ""
-    except Exception:
+    except OSError:  # W0718: os.chdir raises OSError on failure
         return ""
 
 
@@ -176,42 +177,46 @@ def main() -> None:
 
         markdown_doc_files = make_doc_files(workspace_root)
         diff_files = get_diff_files(workspace_root)
-        list_of_files = [f for f in glob(f".sessions/*.*") if os.path.isfile(f)]
+        list_of_files = [f for f in glob(".sessions/*.*") if os.path.isfile(f)]
         latest_created_file = max(list_of_files, key=os.path.getctime)
-        latest_session = open(latest_created_file).read()
+        # R1732 + W1514: use 'with' and specify encoding explicitly
+        with open(latest_created_file, encoding="utf-8") as fh:
+            latest_session = fh.read()
 
         diff_section = ""
         if diff_files:
-            diff_section = f"\n\n# [SessionStart] Diff files:\n{diff_files}"
+            # W1309: removed spurious f-prefix — no interpolation needed
+            diff_section = "\n\n# [SessionStart] Diff files:\n" + diff_files
 
-        result = f"""---
-description: \"Provide useful memory for agents, such as relevant documentation files in the repository and the latest session information.\"
-applyTo: \"**/*\"
----
-# [SessionStart] Reference Documentation Files:
-{markdown_doc_files}{diff_section}
+        result = (
+            "---\n"
+            'description: "Provide useful memory for agents, such as relevant'
+            ' documentation files in the repository and the latest session information."\n'
+            'applyTo: "**/*"\n'
+            "---\n"
+            "# [SessionStart] Reference Documentation Files:\n"
+            f"{markdown_doc_files}{diff_section}\n\n"
+            "# [SessionStart] Found:\n"
+            f"{len(list_of_files)} session files found at .sessions/.\n\n"
+            "# [SessionStart] Latest:\n"
+            "```markdown\n"
+            f"{latest_session}\n"
+            "```\n"
+        )
 
-# [SessionStart] Found:
-{len(list_of_files)} session files found at .sessions/.
-
-# [SessionStart] Latest:
-```markdown
-{latest_session}
-```
-"""
-
-        # For github copilot, we can write the markdown to a file in the repository so it can be easily accessed by agents.
+        # For github copilot: write markdown to the repository for easy agent access.
         output_path = Path(".github/instructions/memory.instructions.md")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(result, encoding="utf-8")
-        # For gemini, we can output the markdown directly in the hook output so it can be accessed by agents in the same session.
+        # For gemini: output markdown directly in hook output for same-session agents.
         print(json.dumps({"hookSpecificOutput": {"additionalContext": result}}))
         logger.debug(json.dumps({"hookSpecificOutput": {"additionalContext": result}}))
         logger.debug("Memory hook executed successfully.")
 
     except json.JSONDecodeError:
         sys.exit(0)
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
+        # Top-level safety net — hook must never crash the parent process
         sys.exit(0)
 
     sys.exit(0)
@@ -225,7 +230,7 @@ def make_doc_files(workspace_root):
         name: info for name, info in available_files.items() if info.get("exists")
     }
 
-    markdown = _build_markdown(available)
+    markdown = _build_markdown(available, workspace_root)
     return markdown
 
 
