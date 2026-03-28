@@ -37,9 +37,10 @@ def list_files() -> list[str]:
 # ── File discovery ────────────────────────────────────────────────────────────
 def check_documentation_files(workspace_root: str) -> dict:
     patterns = {
-        "docs/agents/specs/": "docs/agents/specs/**",
-        "docs/agents/plans/": "docs/agents/plans/**",
-        "docs/agents/reviews/": "docs/agents/reviews/**",
+        "README.md": "README.md",
+        "GEMINI.md": "GEMINI.md",
+        "CLAUDE.md": "CLAUDE.md",
+        "docs/SUMMARY.md": "docs/SUMMARY.md",
         "docs/adr/": "docs/adr/**",
         "docs/techs/": "docs/techs/**",
         "docs/misc/": "docs/misc/**",
@@ -50,13 +51,12 @@ def check_documentation_files(workspace_root: str) -> dict:
         "docs/modules.md": "docs/modules.md",
         "docs/contribution.md": "docs/contribution.md",
         "docs/faq.md": "docs/faq.md",
-        "docs/SUMMARY.md": "docs/SUMMARY.md",
+        "docs/agents/specs/": "docs/agents/specs/**",
+        "docs/agents/plans/": "docs/agents/plans/**",
+        "docs/agents/reviews/": "docs/agents/reviews/**",
         ".taskmaster/tasks/": ".taskmaster/tasks/*.json",
         ".taskmaster/prds/": ".taskmaster/prds/*.md",
         ".taskmaster/tasksmd/": ".taskmaster/tasks/*.md",
-        "README.md": "README.md",
-        "GEMINI.md": "GEMINI.md",
-        "CLAUDE.md": "CLAUDE.md",
     }
 
     available_files: dict = {}
@@ -113,7 +113,7 @@ def _read_and_store(path: Path) -> None:
 def _build_markdown(available: dict, workspace_root: str) -> str:
     lines = []
 
-    for name, info in available.items():
+    for name, info in list(available.items())[:20]:
         if "files" in info:
             for f in info["files"]:
                 if os.path.isfile(f):
