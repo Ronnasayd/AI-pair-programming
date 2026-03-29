@@ -20,6 +20,9 @@ mcp = FastMCP(name="postgresql_tool")
 
 @mcp.tool()
 def my_mcp_postgresql(query: str) -> Dict[str, Any]:
+    """
+    Execute a single SQL query against a PostgreSQL database.
+    """
     try:
         conn = psycopg2.connect(os.getenv("POSTGRES_URL"))
         cur = conn.cursor()

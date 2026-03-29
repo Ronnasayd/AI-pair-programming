@@ -31,12 +31,10 @@
       ],
       "type": "stdio"
     },
-    "postgres-mcp-server": {
-      "command": "npx",
-      "args": [
-        "@ahmedmustahid/postgres-mcp-server",
-        "stdio"
-      ],
+    "postgresql": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql.py",
+      "args": [],
       "env": {
         "POSTGRES_URL": "${input:pg_url}"
       }
