@@ -1,5 +1,11 @@
 {
-  "inputs": [],
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "pg_url",
+      "description": "PostgreSQL URL (e.g. postgresql://user:pass@host.docker.internal:5432/mydb)"
+    }
+  ],
   "servers": {
     "figma": {
       "url": "https://mcp.figma.com/mcp",
@@ -24,6 +30,16 @@
         "stdio"
       ],
       "type": "stdio"
+    },
+    "postgres-mcp-server": {
+      "command": "npx",
+      "args": [
+        "@ahmedmustahid/postgres-mcp-server",
+        "stdio"
+      ],
+      "env": {
+        "POSTGRES_URL": "${input:pg_url}"
+      }
     }
   }
 }
