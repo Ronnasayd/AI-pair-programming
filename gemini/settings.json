@@ -43,6 +43,39 @@
         "stdio"
       ],
       "type": "stdio"
+    },
+    "postgresql": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql_mcp.py",
+      "args": [],
+      "env": {
+        "POSTGRES_URL": "$POSTGRES_URL"
+      }
+    },
+    "mysql": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mysql_mcp.py",
+      "args": [],
+      "env": {
+        "MYSQL_URL": "$MYSQL_URL"
+      }
+    },
+    "mongodb": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mongodb_mcp.py",
+      "args": [],
+      "env": {
+        "MONGODB_URL": "$MONGODB_URL",
+        "MONGODB_DATABASE": "$MONGODB_DATABASE"
+      }
+    },
+    "sqlite": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/sqlite_mcp.py",
+      "args": [],
+      "env": {
+        "SQLITEDB_PATH": "$SQLITEDB_PATH"
+      }
     }
   },
   "ide": {

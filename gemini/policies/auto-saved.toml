@@ -148,3 +148,9 @@ decision = "allow"
 priority = 950
 mcpName = "mcp-manager"
 toolName = "list_servers"
+
+[[rule]]
+decision = "allow"
+priority = 950
+mcpName = "sqlite"
+toolName = "my_mcp_sqlite"
