@@ -10,14 +10,17 @@ export LOCAL="$(pwd)"
 # echo $LOCAL
 chmod -R +x $SOURCE/hooks/scripts
 
-rtk init -g --gemini
-rtk init -g --copilot
-
 $SOURCE/scripts/copilot.install.sh
 # $SOURCE/scripts/codex.install.sh
 $SOURCE/scripts/gemini.install.sh
 $SOURCE/scripts/taskmaster.install.sh
 $SOURCE/scripts/gitignore.install.sh
+
+
+# install rtk
+rtk init -g --copilot
+rtk init -g --gemini
+mv .github/copilot-instructions.md .github/instructions/rtk.instructions.md
 ###########################################################################################
 
 
