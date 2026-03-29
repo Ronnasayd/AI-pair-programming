@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/ronnas/develop/personal/AI-pair-programming/src/venv/bin/python3
 """
 sqlite_mcp.py
 
@@ -16,7 +16,7 @@ from mcp.server.fastmcp import FastMCP
 mcp = FastMCP(name="sqlite_tool")
 
 # Caminho do banco de dados via variável de ambiente ou fallback para ./database.db
-SQLITEDB_PATH = os.getenv("SQLITE_DB_PATH", "database.db")
+SQLITEDB_PATH = os.getenv("SQLITEDB_PATH", "database.db")
 
 # Palavras-chave que indicam operações de escrita — bloqueadas em modo somente leitura
 _WRITE_KEYWORDS = {
