@@ -17,10 +17,7 @@ $SOURCE/scripts/taskmaster.install.sh
 $SOURCE/scripts/gitignore.install.sh
 
 
-# install rtk
-rtk init -g --copilot
-rtk init -g --gemini
-mv .github/copilot-instructions.md .github/instructions/rtk.instructions.md
+
 ###########################################################################################
 
 
