@@ -1,5 +1,6 @@
 ## GEMINI
 DEFAULT_FOLDER=".gemini"
+rtk init -g --gemini
 python3 $SOURCE/scripts/md2toml.py $SOURCE/commands/  $HOME/$DEFAULT_FOLDER/commands/
 
 ############################################################################################

@@ -1,5 +1,7 @@
 ## GITHUB COPILOT
 DEFAULT_FOLDER=".github"
+
+
 ########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skills/" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
@@ -65,3 +67,5 @@ if ! grep -q "$DEFAULT_FOLDER/hooks/" .gitignore; then
     echo "$DEFAULT_FOLDER/hooks/" >> .gitignore
 fi
 ###########################################################################################
+rtk init -g --copilot
+mv .github/copilot-instructions.md .github/instructions/rtk.instructions.md
