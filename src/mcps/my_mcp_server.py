@@ -1,3 +1,4 @@
+#!/home/ronnas/develop/personal/AI-pair-programming/src/venv/bin/python3
 """
 my_mcp_server.py
 
@@ -17,10 +18,11 @@ import requests
 from markdownify import markdownify as md
 from mcp.server.fastmcp import FastMCP
 
-from search_engine import search_codebase
+from src.mcps.search_engine import search_codebase
 
 # Properly initializes the MCP server
 mcp = FastMCP(name="my-mcp")
+
 
 def run(cmd, cwd=None):
     return subprocess.run(
@@ -30,6 +32,7 @@ def run(cmd, cwd=None):
         text=True,
         check=False,
     ).stdout.strip()
+
 
 def load_instructions(instructions_ref="") -> str:
     with open(
@@ -50,11 +53,10 @@ def load_template(template_ref="") -> str:
         template = f.read()
     return template
 
+
 def _format_error(message: str, exc: Exception) -> Dict[str, str]:
     """Helper to format error responses consistently."""
     return {"error": f"{message}: {str(exc)}"}
-
-
 
 
 # Constantes para caminhos de arquivos e diretórios
@@ -74,8 +76,6 @@ PRD_TEMPLATE = "PRD-template.json"
 VENV_DIRS = ("venv", "env")
 BIN_DIR = "bin"
 ACTIVATE_SCRIPT = "activate"
-
-
 
 
 @mcp.tool()
@@ -168,7 +168,6 @@ def my_mcp_get_context(
         return _format_error("Subprocess error when running command", e)
 
 
-
 @mcp.tool()
 def my_mcp_run_prompt(name: str) -> Dict[str, Any]:
     """
@@ -192,7 +191,9 @@ def my_mcp_run_prompt(name: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_mcp_generate_docs_sync(rootProject: Optional[str] = None, filter:str="") -> Dict[str, Any]:
+def my_mcp_generate_docs_sync(
+    rootProject: Optional[str] = None, filter: str = ""
+) -> Dict[str, Any]:
     """
     Generates a documentation update context by computing the git diff from the
     oldest commit that modified the `docs/` directory up to the current HEAD.
@@ -287,7 +288,9 @@ def my_mcp_styleguide(language: str = "python") -> Dict[str, Any]:
 
 
 @mcp.tool()
-def my_mcp_search_references(query: str, rootProject: Optional[str] = None,globs=["*.*"], top_n: int = 10) -> Dict[str, Any]:
+def my_mcp_search_references(
+    query: str, rootProject: Optional[str] = None, globs=["*.*"], top_n: int = 10
+) -> Dict[str, Any]:
     """
     Returns relevant references from the codebase based on the search query.
 
@@ -302,7 +305,7 @@ def my_mcp_search_references(query: str, rootProject: Optional[str] = None,globs
     """
     if not rootProject:
         rootProject = os.getcwd()
-    results = search_codebase(query, rootProject, globs,top_n)
+    results = search_codebase(query, rootProject, globs, top_n)
     return {"query": query, "results": results}
 
 
