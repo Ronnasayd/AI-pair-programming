@@ -43,6 +43,7 @@ hyperframe==6.1.0
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
+iniconfig==2.3.0
 itemadapter==0.12.2
 itemloaders==1.3.2
 itsdangerous==2.2.0
@@ -64,6 +65,7 @@ mmh3==5.2.0
 mpmath==1.3.0
 msgpack==1.1.1
 multidict==6.6.4
+mysql-connector-python==9.6.0
 numpy==2.3.5
 onnxruntime==1.23.2
 packaging==25.0
@@ -71,9 +73,11 @@ parsel==1.10.0
 passlib==1.7.4
 pillow==11.3.0
 playwright==1.55.0
+pluggy==1.6.0
 propcache==0.3.2
 Protego==0.5.0
 protobuf==6.33.1
+psycopg2-binary==2.9.11
 publicsuffix2==2.20191221
 py_rust_stemmers==0.1.5
 pyasn1==0.6.1
@@ -85,10 +89,13 @@ pydantic_core==2.33.2
 PyDispatcher==2.0.7
 pyee==13.0.0
 pyenchant==3.2.2
+Pygments==2.19.2
 pylsqpack==0.3.22
 pyOpenSSL==25.1.0
 pyparsing==3.2.3
 pyperclip==1.9.0
+pytest==9.0.2
+pytest-asyncio==1.3.0
 python-dotenv==1.1.1
 python-multipart==0.0.20
 PyYAML==6.0.3

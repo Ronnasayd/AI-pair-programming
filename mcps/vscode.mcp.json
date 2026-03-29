@@ -3,7 +3,12 @@
     {
       "type": "promptString",
       "id": "pg_url",
-      "description": "PostgreSQL URL (e.g. postgresql://user:pass@host.docker.internal:5432/mydb)"
+      "description": "PostgreSQL URL"
+    },
+    {
+      "type": "promptString",
+      "id": "mysql_url",
+      "description": "MySQL URL"
     }
   ],
   "servers": {
@@ -33,10 +38,18 @@
     },
     "postgresql": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql.py",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql_mcp.py",
       "args": [],
       "env": {
         "POSTGRES_URL": "${input:pg_url}"
+      }
+    },
+    "mysql": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mysql_mcp.py",
+      "args": [],
+      "env": {
+        "MYSQL_URL": "${input:mysql_url}"
       }
     }
   }
