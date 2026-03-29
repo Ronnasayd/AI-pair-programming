@@ -9,6 +9,16 @@
       "type": "promptString",
       "id": "mysql_url",
       "description": "MySQL URL"
+    },
+    {
+      "type": "promptString",
+      "id": "mongodb_url",
+      "description": "MongoDB URL"
+    },
+    {
+      "type": "promptString",
+      "id": "mongodb_database",
+      "description": "MongoDB Database Name"
     }
   ],
   "servers": {
@@ -50,6 +60,15 @@
       "args": [],
       "env": {
         "MYSQL_URL": "${input:mysql_url}"
+      }
+    },
+    "mongodb": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mongodb_mcp.py",
+      "args": [],
+      "env": {
+        "MONGODB_URL": "${input:mongodb_url}",
+        "MONGODB_DATABASE": "${input:mongodb_database}"
       }
     }
   }
