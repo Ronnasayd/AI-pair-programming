@@ -19,6 +19,11 @@
       "type": "promptString",
       "id": "mongodb_database",
       "description": "MongoDB Database Name"
+    },
+    {
+      "type": "promptString",
+      "id": "sqlitedb_path",
+      "description": "SQLite Database Path"
     }
   ],
   "servers": {
@@ -69,6 +74,14 @@
       "env": {
         "MONGODB_URL": "${input:mongodb_url}",
         "MONGODB_DATABASE": "${input:mongodb_database}"
+      }
+    },
+    "sqlite": {
+      "type": "stdio",
+      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/sqlite_mcp.py",
+      "args": [],
+      "env": {
+        "SQLITEDB_PATH": "${input:sqlitedb_path}"
       }
     }
   }
