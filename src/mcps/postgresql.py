@@ -14,26 +14,28 @@ from psycopg2 import OperationalError
 from mcp.server.fastmcp import FastMCP
 
 
-# Properly initializes the MCP server
 mcp = FastMCP(name="postgresql_tool")
 
 
 @mcp.tool()
 def my_mcp_postgresql(query: str) -> Dict[str, Any]:
     """
-    Execute a single SQL query against a PostgreSQL database.
+    Execute a single read-only SQL query against a PostgreSQL database.
     """
     try:
         conn = psycopg2.connect(os.getenv("POSTGRES_URL"))
+        conn.set_session(readonly=True, autocommit=True)  # força readonly na sessão
         cur = conn.cursor()
         cur.execute(query)
-        result = cur.fetchone()
+        result = cur.fetchall()  # fetchall em vez de fetchone
         cur.close()
         conn.close()
         return {"result": result}
     except OperationalError as e:
         return {"error": str(e)}
+    except psycopg2.errors.ReadOnlySqlTransaction as e:  # captura tentativas de escrita
+        return {"error": f"Operação bloqueada: sessão é somente leitura. {e}"}
 
 
 if __name__ == "__main__":
-    mcp.run()  # Starts the server using stdio by default
+    mcp.run()
