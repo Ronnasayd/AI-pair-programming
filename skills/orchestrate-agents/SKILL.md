@@ -1,6 +1,6 @@
 ---
 name: orchestrate-agents
-description: "Analyze a task specification or taskmaster task and dynamically orchestrate work across available specialist agents. Updates specifications with agent recommendations and integrates with taskmaster to assign agents to subtasks."
+description: "Given a task spec or taskmaster task, decide which specialist agents should handle which subtasks, assign them, and update the spec with agent recommendations. Use when a task has already been broken into subtasks and needs agent assignment. Do NOT use to execute the work itself — use execute-task for that. If no subtask breakdown exists yet, use blueprint or create-task-spec first."
 argument-hint: "[spec_path_or_task_id]: Path to a specification file or taskmaster task ID. The skill analyzes the content and orchestrates agent assignments directly in the original file/task."
 ---
 
