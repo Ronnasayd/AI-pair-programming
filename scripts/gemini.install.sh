@@ -1,7 +1,7 @@
 ## GEMINI
 DEFAULT_FOLDER=".gemini"
 yes | rtk init -g --gemini
-python3 $SOURCE/scripts/md2toml.py $SOURCE/commands/  $HOME/$DEFAULT_FOLDER/commands/
+python3 $SOURCE/scripts/md2toml.py $SOURCE/commands/  $LOCAL/$DEFAULT_FOLDER/commands/
 
 ############################################################################################
 if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/GEMINI.md; then
@@ -22,10 +22,10 @@ rm $HOME/$DEFAULT_FOLDER/.geminignore
 fi
 ln -s "$SOURCE/gemini/.geminignore" "$HOME/$DEFAULT_FOLDER/.geminignore"
 #######################################################################################
-if [ -L "$HOME/$DEFAULT_FOLDER/commands/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/commands/scripts" ]; then
-rm -rf $HOME/$DEFAULT_FOLDER/commands/scripts
+if [ -L "$LOCAL/$DEFAULT_FOLDER/commands/scripts" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/commands/scripts" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/commands/scripts
 fi
-ln -s "$SOURCE/commands/scripts"* "$HOME/$DEFAULT_FOLDER/commands/scripts"
+ln -s "$SOURCE/commands/scripts"* "$LOCAL/$DEFAULT_FOLDER/commands/scripts"
 #######################################################################################
 if [ -L "$HOME/$DEFAULT_FOLDER/policies" ] || [ -f "$HOME/$DEFAULT_FOLDER/policies" ]; then
 rm $HOME/$DEFAULT_FOLDER/policies
@@ -37,17 +37,17 @@ rm $HOME/$DEFAULT_FOLDER/mcp-server-enablement.json
 fi
 ln -s "$SOURCE/gemini/mcp-server-enablement.json" "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json"
 #######################################################################################
-if [ -L "$HOME/$DEFAULT_FOLDER/skills/" ] || [ -d "$HOME/$DEFAULT_FOLDER/skills/" ]; then
-rm -rf $HOME/$DEFAULT_FOLDER/skills/
+if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skills/" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
 fi
-mkdir -p $HOME/$DEFAULT_FOLDER/skills
-ln -s "$SOURCE/skills/"* "$HOME/$DEFAULT_FOLDER/skills/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/skills
+ln -s "$SOURCE/skills/"* "$LOCAL/$DEFAULT_FOLDER/skills/"
 ########################################################################################
-if [ -L "$HOME/$DEFAULT_FOLDER/agents/" ] || [ -d "$HOME/$DEFAULT_FOLDER/agents/" ]; then
-rm -rf $HOME/$DEFAULT_FOLDER/agents/
+if [ -L "$LOCAL/$DEFAULT_FOLDER/agents/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/agents/" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/agents/
 fi
-mkdir -p $HOME/$DEFAULT_FOLDER/agents
-cp -r "$SOURCE/agents/"* "$HOME/$DEFAULT_FOLDER/agents/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/agents
+cp -r "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
 ########################################################################################
 if [ -L "$HOME/$DEFAULT_FOLDER/hooks/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/hooks/scripts" ]; then
 rm -rf $HOME/$DEFAULT_FOLDER/hooks/scripts
@@ -59,4 +59,9 @@ cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks"
 if ! grep -q "GEMINI.md" .gitignore; then
     echo "GEMINI.md" >> .gitignore
 fi
+if ! grep -q "$DEFAULT_FOLDER/" .gitignore; then
+    echo "$DEFAULT_FOLDER/" >> .gitignore
+fi
 ###########################################################################################
+
+source $SOURCE/scripts/ignores.sh
