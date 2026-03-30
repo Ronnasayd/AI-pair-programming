@@ -47,7 +47,7 @@ if [ -L "$LOCAL/$DEFAULT_FOLDER/agents/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/agent
 rm -rf $LOCAL/$DEFAULT_FOLDER/agents/
 fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/agents
-cp -r "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
+ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
 ########################################################################################
 if [ -L "$HOME/$DEFAULT_FOLDER/hooks/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/hooks/scripts" ]; then
 rm -rf $HOME/$DEFAULT_FOLDER/hooks/scripts
