@@ -77,3 +77,15 @@ echo "description: rtk usage rules." >> .github/instructions/rtk.instructions.md
 echo "applyTo: \"**/*\"" >> .github/instructions/rtk.instructions.md
 echo "---" >> .github/instructions/rtk.instructions.md
 echo  "$BODY" >> .github/instructions/rtk.instructions.md
+
+if [ -L "$LOCAL/.skillsignore" ] || [ -f "$LOCAL/.skillsignore" ]; then
+    while IFS= read -r pattern || [ -n "$pattern" ]; do
+        [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+        for skill in "$LOCAL/$DEFAULT_FOLDER/skills/"$pattern; do
+            if [ -L "$skill" ]; then
+                rm "$skill"
+                echo "Removed skill: $(basename "$skill") (matched pattern: $pattern)"
+            fi
+        done
+    done < "$LOCAL/.skillsignore"
+fi
