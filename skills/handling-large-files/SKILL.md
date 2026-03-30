@@ -1,6 +1,6 @@
 ---
 name: handling-large-files
-description: Strategies for efficiently processing large files while optimizing token consumption and memory usage. Use when working with large codebases, documentation, datasets, or logs. Essential for keeping tasks within token budgets and improving agent performance with substantial file inputs.
+description: Strategies for reading, chunking, and processing files that exceed practical token limits. Covers streaming reads, selective extraction, summarization-before-analysis, and memory-efficient patterns for large codebases, logs, or datasets. Use whenever a file or set of files is too large to fit in context at once. Do NOT use for normally-sized files — adds unnecessary overhead.
 ---
 
 # Handling Large Files
