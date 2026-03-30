@@ -208,7 +208,7 @@ $$;
 class CachedMarketRepository implements MarketRepository {
   constructor(
     private baseRepo: MarketRepository,
-    private redis: RedisClient,
+    private redis: RedisClient
   ) {}
 
   async findById(id: string): Promise<Market | null> {
@@ -267,7 +267,7 @@ class ApiError extends Error {
   constructor(
     public statusCode: number,
     public message: string,
-    public isOperational = true,
+    public isOperational = true
   ) {
     super(message);
     Object.setPrototypeOf(this, ApiError.prototype);
@@ -279,9 +279,9 @@ export function errorHandler(error: unknown, req: Request): Response {
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
+        error: error.message
       },
-      { status: error.statusCode },
+      { status: error.statusCode }
     );
   }
 
@@ -290,9 +290,9 @@ export function errorHandler(error: unknown, req: Request): Response {
       {
         success: false,
         error: "Validation failed",
-        details: error.errors,
+        details: error.errors
       },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -302,9 +302,9 @@ export function errorHandler(error: unknown, req: Request): Response {
   return NextResponse.json(
     {
       success: false,
-      error: "Internal server error",
+      error: "Internal server error"
     },
-    { status: 500 },
+    { status: 500 }
   );
 }
 
@@ -324,7 +324,7 @@ export async function GET(request: Request) {
 ```typescript
 async function fetchWithRetry<T>(
   fn: () => Promise<T>,
-  maxRetries = 3,
+  maxRetries = 3
 ): Promise<T> {
   let lastError: Error;
 
@@ -404,7 +404,7 @@ interface User {
 const rolePermissions: Record<User["role"], Permission[]> = {
   admin: ["read", "write", "delete", "admin"],
   moderator: ["read", "write", "delete"],
-  user: ["read", "write"],
+  user: ["read", "write"]
 };
 
 export function hasPermission(user: User, permission: Permission): boolean {
@@ -428,7 +428,7 @@ export function requirePermission(permission: Permission) {
 // Usage - HOF wraps the handler
 export const DELETE = requirePermission("delete")(async (
   request: Request,
-  user: User,
+  user: User
 ) => {
   // Handler receives authenticated user with verified permission
   return new Response("Deleted", { status: 200 });
@@ -446,7 +446,7 @@ class RateLimiter {
   async checkLimit(
     identifier: string,
     maxRequests: number,
-    windowMs: number,
+    windowMs: number
   ): Promise<boolean> {
     const now = Date.now();
     const requests = this.requests.get(identifier) || [];
@@ -476,9 +476,9 @@ export async function GET(request: Request) {
   if (!allowed) {
     return NextResponse.json(
       {
-        error: "Rate limit exceeded",
+        error: "Rate limit exceeded"
       },
-      { status: 429 },
+      { status: 429 }
     );
   }
 
@@ -560,7 +560,7 @@ class Logger {
       timestamp: new Date().toISOString(),
       level,
       message,
-      ...context,
+      ...context
     };
 
     console.log(JSON.stringify(entry));
@@ -578,7 +578,7 @@ class Logger {
     this.log("error", message, {
       ...context,
       error: error.message,
-      stack: error.stack,
+      stack: error.stack
     });
   }
 }
@@ -592,7 +592,7 @@ export async function GET(request: Request) {
   logger.info("Fetching markets", {
     requestId,
     method: "GET",
-    path: "/api/markets",
+    path: "/api/markets"
   });
 
   try {
