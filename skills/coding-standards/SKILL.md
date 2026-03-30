@@ -82,7 +82,7 @@ function email(e) {}
 // ✅ ALWAYS use spread operator
 const updatedUser = {
   ...user,
-  name: "New Name",
+  name: "New Name"
 };
 
 const updatedArray = [...items, newItem];
@@ -125,7 +125,7 @@ async function fetchData(url) {
 const [users, markets, stats] = await Promise.all([
   fetchUsers(),
   fetchMarkets(),
-  fetchStats(),
+  fetchStats()
 ]);
 
 // ❌ BAD: Sequential when unnecessary
@@ -273,16 +273,16 @@ interface ApiResponse<T> {
 return NextResponse.json({
   success: true,
   data: markets,
-  meta: { total: 100, page: 1, limit: 10 },
+  meta: { total: 100, page: 1, limit: 10 }
 });
 
 // Error response
 return NextResponse.json(
   {
     success: false,
-    error: "Invalid request",
+    error: "Invalid request"
   },
-  { status: 400 },
+  { status: 400 }
 );
 ```
 
@@ -296,7 +296,7 @@ const CreateMarketSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().min(1).max(2000),
   endDate: z.string().datetime(),
-  categories: z.array(z.string()).min(1),
+  categories: z.array(z.string()).min(1)
 });
 
 export async function POST(request: Request) {
@@ -311,9 +311,9 @@ export async function POST(request: Request) {
         {
           success: false,
           error: "Validation failed",
-          details: error.errors,
+          details: error.errors
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
   }
@@ -391,7 +391,7 @@ name = user.name;
  */
 export async function searchMarkets(
   query: string,
-  limit: number = 10,
+  limit: number = 10
 ): Promise<Market[]> {
   // Implementation
 }

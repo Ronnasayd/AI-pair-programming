@@ -77,7 +77,7 @@ echo "description: rtk usage rules." >> .github/instructions/rtk.instructions.md
 echo "applyTo: \"**/*\"" >> .github/instructions/rtk.instructions.md
 echo "---" >> .github/instructions/rtk.instructions.md
 echo  "$BODY" >> .github/instructions/rtk.instructions.md
-
+##########################################################################################
 if [ -L "$LOCAL/.skillsignore" ] || [ -f "$LOCAL/.skillsignore" ]; then
     while IFS= read -r pattern || [ -n "$pattern" ]; do
         [[ -z "$pattern" || "$pattern" == \#* ]] && continue
@@ -88,4 +88,17 @@ if [ -L "$LOCAL/.skillsignore" ] || [ -f "$LOCAL/.skillsignore" ]; then
             fi
         done
     done < "$LOCAL/.skillsignore"
+fi
+
+
+if [ -L "$LOCAL/.agentsignore" ] || [ -f "$LOCAL/.agentsignore" ]; then
+    while IFS= read -r pattern || [ -n "$pattern" ]; do
+        [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+        for agent in "$LOCAL/$DEFAULT_FOLDER/agents/"$pattern; do
+            if [ -L "$agent" ]; then
+                rm "$agent"
+                echo "Removed agent: $(basename "$agent") (matched pattern: $pattern)"
+            fi
+        done
+    done < "$LOCAL/.agentsignore"
 fi
