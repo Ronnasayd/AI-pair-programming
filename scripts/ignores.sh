@@ -4,7 +4,7 @@ if [ -L "$LOCAL/.skillsignore" ] || [ -f "$LOCAL/.skillsignore" ]; then
         for skill in "$LOCAL/$DEFAULT_FOLDER/skills/"$pattern; do
             if [ -L "$skill" ]; then
                 rm "$skill"
-                # echo "Removed skill: $(basename "$skill") (matched pattern: $pattern)"
+                # echo "Removed skill($DEFAULT_FOLDER): $(basename "$skill") (matched pattern: $pattern)"
             fi
         done
     done < "$LOCAL/.skillsignore"
@@ -17,7 +17,7 @@ if [ -L "$LOCAL/.agentsignore" ] || [ -f "$LOCAL/.agentsignore" ]; then
         for agent in "$LOCAL/$DEFAULT_FOLDER/agents/"$pattern; do
             if [ -L "$agent" ]; then
                 rm "$agent"
-                # echo "Removed agent: $(basename "$agent") (matched pattern: $pattern)"
+                # echo "Removed agent($DEFAULT_FOLDER): $(basename "$agent") (matched pattern: $pattern)"
             fi
         done
     done < "$LOCAL/.agentsignore"
