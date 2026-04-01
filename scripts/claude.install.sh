@@ -1,6 +1,14 @@
 ## CLAUDE
 DEFAULT_FOLDER=".claude"
 
+############################################################################################
+if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/CLAUDE.md; then
+    echo -e "\n@.github/instructions/code.instructions.md" >> $LOCAL/CLAUDE.md
+fi
+############################################################################################
+if ! grep -q "@.github/instructions/agent.instructions.md" $LOCAL/CLAUDE.md; then
+    echo -e "\n@.github/instructions/agent.instructions.md" >> $LOCAL/CLAUDE.md
+fi
 ########################################################################################
 if [ -L "$LOCAL/.mcp.json" ] || [ -d "$LOCAL/.mcp.json" ]; then
 rm -rf $LOCAL/.mcp.json
@@ -83,3 +91,17 @@ echo "---" >> .github/instructions/rtk.instructions.md
 echo  "$BODY" >> .github/instructions/rtk.instructions.md
 ##########################################################################################
 source $SOURCE/scripts/ignores.sh
+
+
+########################################################################################
+## GITIGNORE
+if ! grep -q "CLAUDE.md" .gitignore; then
+    echo "CLAUDE.md" >> .gitignore
+fi
+if ! grep -q "$DEFAULT_FOLDER/" .gitignore; then
+    echo "$DEFAULT_FOLDER/" >> .gitignore
+fi
+if ! grep -q ".mcp.json" .gitignore; then
+    echo ".mcp.json" >> .gitignore
+fi
+###########################################################################################
