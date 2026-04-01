@@ -18,7 +18,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
-LOG_SIZE = 100
+LOG_SIZE = 500
 
 # Configure logging
 logging.basicConfig(
@@ -133,15 +133,15 @@ def extrair_attachments(texto: str) -> str:
     e retorna uma string no formato:
     <attachments><attachment id="ARQUIVO_1"/><attachment id="ARQUIVO_2"/>...</attachments>
     """
-    regex1 = r'<attachment\s+filePath=\"([^"]+)">([\s\S]*?)<\/attachment>'
+    # Regex matches both: <attachment filePath="..."> content </attachment> and <attachment filePath="..."/>
+    regex1 = r'<attachment\s+filePath=\"([^"]+)\"(?:\s*>[\s\S]*?<\/attachment>|\s*/>)'
     match1 = re.findall(regex1, texto)
-    paths1 = []
-    for m in match1:
-        if os.path.exists(m[0]):
-            paths1.append(m[0])
+    paths1 = [p for p in match1 if os.path.exists(p)]
+
     if paths1:
+        # Remove all attachment tags (both formats)
         new_prompt = re.sub(
-            r'<attachment\s+filePath=\"([^"]+)">([\s\S]*?)<\/attachment>',
+            r'<attachment\s+filePath=\"([^"]+)\"(?:\s*>[\s\S]*?<\/attachment>|\s*/>)',
             "",
             texto,
             count=0,
@@ -385,7 +385,8 @@ def convert_large_prompt_to_attachment(text: str) -> tuple[str, str | None]:
         )
 
         # Return attachment tag and file path
-        attachment_tag = f"<attachment filePath='{temp_file_path}'/>"
+        # Use double quotes for compatibility with extrair_attachments regex
+        attachment_tag = f'<attachment filePath="{temp_file_path}"/>'
         return (attachment_tag, temp_file_path)
 
     except Exception as e:
