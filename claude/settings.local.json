@@ -16,13 +16,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_tools_call.py",
-            "description": "Log the tool usage to a file for auditing purposes."
+            "command": ".claude/hooks/scripts/log_tools_call.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/protect_files.py",
-            "description": "Protect sensitive files from being modified or deleted."
+            "command": ".claude/hooks/scripts/protect_files.py"
           }
         ]
       }
@@ -33,8 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/quality_gate.py",
-            "description": "Run quality gate checks after tool usage."
+            "command": ".claude/hooks/scripts/quality_gate.py"
           }
         ]
       }
@@ -45,13 +42,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/session_start.py",
-            "description": "Log the session start to a file for auditing purposes."
+            "command": ".claude/hooks/scripts/session_start.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/memory.py",
-            "description": "Provide useful memory for agents, such as relevant documentation files in the repository and the latest session information."
+            "command": ".claude/hooks/scripts/memory.py"
           }
         ]
       }
@@ -62,8 +57,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/session_end.py",
-            "description": "Log the session end to a file for auditing purposes."
+            "command": ".claude/hooks/scripts/session_end.py"
           }
         ]
       }
@@ -72,5 +66,11 @@
     "SubagentStart": [],
     "SubagentStop": [],
     "UserPromptSubmit": []
-  }
+  },
+  "disabledMcpServers": [
+    "mongodb",
+    "mysql",
+    "postgresql",
+    "sqlite"
+  ]
 }
