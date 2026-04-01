@@ -2,12 +2,12 @@
 DEFAULT_FOLDER=".claude"
 
 ############################################################################################
-if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/CLAUDE.md; then
-    echo -e "\n@.github/instructions/code.instructions.md" >> $LOCAL/CLAUDE.md
+if ! grep -q "@.claude/instructions/code.instructions.md" $LOCAL/CLAUDE.md; then
+    echo -e "\n@.claude/instructions/code.instructions.md" >> $LOCAL/CLAUDE.md
 fi
 ############################################################################################
-if ! grep -q "@.github/instructions/agent.instructions.md" $LOCAL/CLAUDE.md; then
-    echo -e "\n@.github/instructions/agent.instructions.md" >> $LOCAL/CLAUDE.md
+if ! grep -q "@.claude/instructions/agent.instructions.md" $LOCAL/CLAUDE.md; then
+    echo -e "\n@.claude/instructions/agent.instructions.md" >> $LOCAL/CLAUDE.md
 fi
 ########################################################################################
 if [ -L "$LOCAL/.mcp.json" ] || [ -d "$LOCAL/.mcp.json" ]; then
