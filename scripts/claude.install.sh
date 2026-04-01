@@ -85,15 +85,6 @@ if ! grep -q "$DEFAULT_FOLDER/hooks/" .gitignore; then
 fi
 ###########################################################################################
 rtk init -g
-# rm .github/instructions/rtk.instructions.md
-# touch .github/instructions/rtk.instructions.md
-# BODY=`cat .github/copilot-instructions.md`
-# rm .github/copilot-instructions.md
-# echo "---" >> .github/instructions/rtk.instructions.md
-# echo "description: rtk usage rules." >> .github/instructions/rtk.instructions.md
-# echo "applyTo: \"**/*\"" >> .github/instructions/rtk.instructions.md
-# echo "---" >> .github/instructions/rtk.instructions.md
-# echo  "$BODY" >> .github/instructions/rtk.instructions.md
 ##########################################################################################
 source $SOURCE/scripts/ignores.sh
 
