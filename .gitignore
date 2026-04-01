@@ -185,3 +185,8 @@ GEMINI.md
 docs/agents/
 .sessions/
 .gemini/
+.claude/skills/
+.claude/prompts/
+.claude/instructions/
+.claude/agents/
+.claude/hooks/

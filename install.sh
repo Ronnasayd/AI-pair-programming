@@ -11,6 +11,7 @@ export LOCAL="$(pwd)"
 chmod -R +x $SOURCE/hooks/scripts
 
 $SOURCE/scripts/copilot.install.sh
+$SOURCE/scripts/claude.install.sh
 # $SOURCE/scripts/codex.install.sh
 $SOURCE/scripts/gemini.install.sh
 $SOURCE/scripts/taskmaster.install.sh
