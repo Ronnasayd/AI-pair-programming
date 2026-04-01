@@ -18,6 +18,8 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
+LOG_SIZE = 100
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -183,7 +185,7 @@ async def log_requests(request: Request, call_next):
     # Capturar corpo da requisição
     request_body = await request.body()
     logger.info(
-        f"📝 Corpo da requisição: {request_body.decode('utf-8', errors='ignore')}"
+        f"📝 Corpo da requisição: {request_body.decode('utf-8', errors='ignore')[:LOG_SIZE]}"
     )
 
     # Processar a requisição
@@ -207,7 +209,7 @@ async def log_requests(request: Request, call_next):
         f"📤 {request.method} {request.url.path} - Status: {response.status_code} - Tempo: {process_time:.3f}s"
     )
     logger.info(
-        f"📝 Corpo da resposta: {response_body[:50000]}{'...' if len(response_body) > 50000 else ''}"
+        f"📝 Corpo da resposta: {response_body[:100]}{'...' if len(response_body) > 100 else ''}"
     )
 
     return response
@@ -296,22 +298,25 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
                             }
                         ],
                     }
-                    yield f"data: {json.dumps(data,ensure_ascii=False)}\n\n"
-                yield f"data: {json.dumps(
-                    {
-                        "id": idref,
-                        "object": "chat.completion",
-                        "created": int(time.time()),
-                        "model": DEFAULT_MODEL,
-                        "choices": [
-                            {
-                                "index": 0,
-                                "delta": {},
-                                "finish_reason": "stop",
-                            }
-                        ],
-                    }
-                ,ensure_ascii=False)}\n\n"
+                    yield f"data: {json.dumps(data, ensure_ascii=False)}\n\n"
+                yield f"data: {
+                    json.dumps(
+                        {
+                            'id': idref,
+                            'object': 'chat.completion',
+                            'created': int(time.time()),
+                            'model': DEFAULT_MODEL,
+                            'choices': [
+                                {
+                                    'index': 0,
+                                    'delta': {},
+                                    'finish_reason': 'stop',
+                                }
+                            ],
+                        },
+                        ensure_ascii=False,
+                    )
+                }\n\n"
 
             return openapi_generator
         else:
@@ -380,7 +385,7 @@ def convert_large_prompt_to_attachment(text: str) -> tuple[str, str | None]:
         )
 
         # Return attachment tag and file path
-        attachment_tag = f"<attachment id='{filename}'/>"
+        attachment_tag = f"<attachment filePath='{temp_file_path}'/>"
         return (attachment_tag, temp_file_path)
 
     except Exception as e:
@@ -403,7 +408,7 @@ def cleanup_temp_files(file_paths: list[str]) -> None:
             continue
 
         try:
-            os.remove(path)
+            # os.remove(path)
             logger.debug(f"Temp file deleted: {path}")
         except FileNotFoundError:
             logger.warning(f"Temp file not found (already cleaned): {path}")
@@ -1083,18 +1088,18 @@ async def anthropic_messages(request: Request):
 
     prompt = "\n\n".join(prompt_parts)
 
+    # Convert large prompts to temp file
+    temp_files = []
+    prompt, temp_file = convert_large_prompt_to_attachment(prompt)
+    if temp_file:
+        temp_files.append(temp_file)
+
     # Extract attachments
     references = []
     info = extrair_attachments(prompt)
     if len(info) > 1:
         prompt = info[0]
         references = info[1]
-
-    # Convert large prompts to temp file
-    temp_files = []
-    prompt, temp_file = convert_large_prompt_to_attachment(prompt)
-    if temp_file:
-        temp_files.append(temp_file)
 
     message_id = f"msg_{uuid.uuid4().hex[:24]}"
     created_at = int(time.time())
@@ -1109,26 +1114,37 @@ async def anthropic_messages(request: Request):
 
         async def anthropic_stream():
             # message_start event
-            yield f"event: message_start\ndata: {json.dumps({
-                'type': 'message_start',
-                'message': {
-                    'id': message_id,
-                    'type': 'message',
-                    'role': 'assistant',
-                    'content': [],
-                    'model': model,
-                    'stop_reason': None,
-                    'stop_sequence': None,
-                    'usage': {'input_tokens': len(prompt.split()), 'output_tokens': 0},
-                }
-            })}\n\n"
+            yield f"event: message_start\ndata: {
+                json.dumps(
+                    {
+                        'type': 'message_start',
+                        'message': {
+                            'id': message_id,
+                            'type': 'message',
+                            'role': 'assistant',
+                            'content': [],
+                            'model': model,
+                            'stop_reason': None,
+                            'stop_sequence': None,
+                            'usage': {
+                                'input_tokens': len(prompt.split()),
+                                'output_tokens': 0,
+                            },
+                        },
+                    }
+                )
+            }\n\n"
 
             # content_block_start
-            yield f"event: content_block_start\ndata: {json.dumps({
-                'type': 'content_block_start',
-                'index': 0,
-                'content_block': {'type': 'text', 'text': ''},
-            })}\n\n"
+            yield f"event: content_block_start\ndata: {
+                json.dumps(
+                    {
+                        'type': 'content_block_start',
+                        'index': 0,
+                        'content_block': {'type': 'text', 'text': ''},
+                    }
+                )
+            }\n\n"
 
             # Stream chunks from Copilot generator
             output_tokens = 0
@@ -1144,21 +1160,32 @@ async def anthropic_messages(request: Request):
                     )
                     if delta_content:
                         output_tokens += len(delta_content.split())
-                        yield f"event: content_block_delta\ndata: {json.dumps({
-                            'type': 'content_block_delta',
-                            'index': 0,
-                            'delta': {'type': 'text_delta', 'text': delta_content},
-                        })}\n\n"
+                        yield f"event: content_block_delta\ndata: {
+                            json.dumps(
+                                {
+                                    'type': 'content_block_delta',
+                                    'index': 0,
+                                    'delta': {
+                                        'type': 'text_delta',
+                                        'text': delta_content,
+                                    },
+                                }
+                            )
+                        }\n\n"
                 except (json.JSONDecodeError, IndexError):
                     continue
 
             yield f"event: content_block_stop\ndata: {json.dumps({'type': 'content_block_stop', 'index': 0})}\n\n"
 
-            yield f"event: message_delta\ndata: {json.dumps({
-                'type': 'message_delta',
-                'delta': {'stop_reason': 'end_turn', 'stop_sequence': None},
-                'usage': {'output_tokens': output_tokens},
-            })}\n\n"
+            yield f"event: message_delta\ndata: {
+                json.dumps(
+                    {
+                        'type': 'message_delta',
+                        'delta': {'stop_reason': 'end_turn', 'stop_sequence': None},
+                        'usage': {'output_tokens': output_tokens},
+                    }
+                )
+            }\n\n"
 
             yield f"event: message_stop\ndata: {json.dumps({'type': 'message_stop'})}\n\n"
 
