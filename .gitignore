@@ -192,3 +192,4 @@ docs/agents/
 .claude/hooks/
 .mcp.json
 CLAUDE.md
+.claude/commands/

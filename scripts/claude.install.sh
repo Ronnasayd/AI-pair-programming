@@ -26,11 +26,11 @@ fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 ln -s "$SOURCE/skills/"* "$LOCAL/$DEFAULT_FOLDER/skills/"
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/prompts" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/prompts" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/prompts
+if [ -L "$LOCAL/$DEFAULT_FOLDER/commands" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/commands" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/commands
 fi
-mkdir -p $LOCAL/$DEFAULT_FOLDER/prompts
-ln -s "$SOURCE/commands/"* "$LOCAL/$DEFAULT_FOLDER/prompts/"
+mkdir -p $LOCAL/$DEFAULT_FOLDER/commands
+ln -s "$SOURCE/commands/"* "$LOCAL/$DEFAULT_FOLDER/commands/"
 ########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/hooks" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/hooks" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/hooks
@@ -71,8 +71,8 @@ ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 if ! grep -q "$DEFAULT_FOLDER/skills/" .gitignore; then
     echo "$DEFAULT_FOLDER/skills/" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/prompts/" .gitignore; then
-    echo "$DEFAULT_FOLDER/prompts/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/commands/" .gitignore; then
+    echo "$DEFAULT_FOLDER/commands/" >> .gitignore
 fi
 if ! grep -q "$DEFAULT_FOLDER/instructions/" .gitignore; then
     echo "$DEFAULT_FOLDER/instructions/" >> .gitignore
@@ -102,9 +102,6 @@ source $SOURCE/scripts/ignores.sh
 ## GITIGNORE
 if ! grep -q "CLAUDE.md" .gitignore; then
     echo "CLAUDE.md" >> .gitignore
-fi
-if ! grep -q "$DEFAULT_FOLDER/" .gitignore; then
-    echo "$DEFAULT_FOLDER/" >> .gitignore
 fi
 if ! grep -q ".mcp.json" .gitignore; then
     echo ".mcp.json" >> .gitignore
