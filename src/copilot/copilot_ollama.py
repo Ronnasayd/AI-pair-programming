@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 ALLOWED_MODELS: set[str] = set()
 DEFAULT_MODEL: str = ""
-VERSION="0.18.2"
+VERSION = "0.18.2"
 
 
 def load_model_config() -> None:
@@ -46,7 +46,9 @@ def load_model_config() -> None:
     """
     global ALLOWED_MODELS, DEFAULT_MODEL
 
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.models.yaml")
+    config_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "config.models.yaml"
+    )
 
     try:
         with open(config_path, "r", encoding="utf-8") as fh:
@@ -72,7 +74,9 @@ def load_model_config() -> None:
     # Guard against non-string entries
     for entry in models:
         if not isinstance(entry, str):
-            logging.critical(f"❌ Model config 'models' contains non-string entry: {entry!r}")
+            logging.critical(
+                f"❌ Model config 'models' contains non-string entry: {entry!r}"
+            )
             sys.exit(1)
 
     if not default_model or not isinstance(default_model, str):
@@ -87,7 +91,9 @@ def load_model_config() -> None:
 
     ALLOWED_MODELS = set(models)
     DEFAULT_MODEL = default_model
-    logging.info(f"✅ Model config loaded: {len(ALLOWED_MODELS)} model(s), default: {DEFAULT_MODEL}")
+    logging.info(
+        f"✅ Model config loaded: {len(ALLOWED_MODELS)} model(s), default: {DEFAULT_MODEL}"
+    )
 
 
 # Load configuration immediately so globals are populated before routes are registered.
@@ -140,8 +146,7 @@ def extrair_attachments(texto: str) -> str:
             flags=re.DOTALL,
         )
         return [new_prompt, paths1]
-    
-    
+
     match2 = re.search(r"<attachments>(.*)<\/attachments>", texto, re.DOTALL)
     if not match2:
         return []
@@ -337,47 +342,47 @@ async def call_copilot(prompt: str, references: list = None, stream: bool = Fals
 
 def convert_large_prompt_to_attachment(text: str) -> tuple[str, str | None]:
     """Convert large prompts (>100KB) to temporary file attachments.
-    
+
     Args:
         text: The prompt text to potentially convert
-        
+
     Returns:
         tuple of (processed_prompt, temp_file_path | None)
         - If text is <= 100KB: returns (text, None)
         - If text is > 100KB: creates file and returns ("<attachment id='filename'/>", file_path)
     """
     # Check byte size (UTF-8 encoded)
-    text_bytes = text.encode('utf-8')
+    text_bytes = text.encode("utf-8")
     byte_size = len(text_bytes)
     threshold = 102400  # 100KB in bytes
-    
+
     if byte_size <= threshold:
         # Prompt is small enough, return as-is
         return (text, None)
-    
+
     # Prompt is too large, convert to attachment
     try:
         # Create temp directory (idempotent)
         temp_dir = "/tmp/copilot-ollama/"
         os.makedirs(temp_dir, exist_ok=True)
-        
+
         # Generate unique filename
         filename = f"copilot-{uuid.uuid4().hex[:8]}.tmp"
         temp_file_path = os.path.join(temp_dir, filename)
-        
+
         # Write text to file
-        with open(temp_file_path, 'w', encoding='utf-8') as f:
+        with open(temp_file_path, "w", encoding="utf-8") as f:
             f.write(text)
-        
+
         # Log conversion
         logger.info(
             f"Large prompt auto-converted to attachment: {byte_size} bytes (>{threshold}) → {filename}"
         )
-        
+
         # Return attachment tag and file path
         attachment_tag = f"<attachment id='{filename}'/>"
         return (attachment_tag, temp_file_path)
-        
+
     except Exception as e:
         logger.error(f"Failed to create attachment for large prompt: {e}")
         # Fallback: return original text if conversion fails
@@ -386,17 +391,17 @@ def convert_large_prompt_to_attachment(text: str) -> tuple[str, str | None]:
 
 def cleanup_temp_files(file_paths: list[str]) -> None:
     """Safely clean up temporary files.
-    
+
     Args:
         file_paths: List of file paths to delete
-        
+
     Note:
         Never raises exceptions; logs all errors but continues cleanup.
     """
     for path in file_paths:
         if not path:
             continue
-            
+
         try:
             os.remove(path)
             logger.debug(f"Temp file deleted: {path}")
@@ -487,7 +492,9 @@ async def version():
 async def list_models():
     """List models that are available locally."""
     logger.info("📋 GET /api/tags - Listando modelos disponíveis")
-    return JSONResponse(content={"models": [get_model_info(m) for m in sorted(ALLOWED_MODELS)]})
+    return JSONResponse(
+        content={"models": [get_model_info(m) for m in sorted(ALLOWED_MODELS)]}
+    )
 
 
 @app.get("/api/models")
@@ -509,9 +516,9 @@ async def show_model_get(name: str = Query(None)):
     logger.debug(f"🔧 Nome normalizado: {normalized_name}")
 
     return JSONResponse(
-    content={
-        "license": "GitHub Copilot Terms of Service",
-        "modelfile": f"""# Modelfile generated by "ollama show"
+        content={
+            "license": "GitHub Copilot Terms of Service",
+            "modelfile": f"""# Modelfile generated by "ollama show"
 # To build a new Modelfile based on this, replace FROM with:
 # FROM {normalized_name}
 
@@ -519,22 +526,22 @@ FROM github-copilot:gpt-4.1
 TEMPLATE "{{{{ .System }}}}\\n\\n{{{{ if .Tools }}}}{{{{ .Tools }}}}\\n\\n{{{{ end }}}}{{{{ .Prompt }}}}"
 PARAMETER temperature 0.7
 PARAMETER max_tokens 4096""",
-        "parameters": """temperature                    0.7
+            "parameters": """temperature                    0.7
 max_tokens                     4096""",
-        "template": "{{ .System }}\n\n{{ if .Tools }}{{ .Tools }}\n\n{{ end }}{{ .Prompt }}",
-        "details": get_model_details(),
-        "model_info": {
-            "general.architecture": "transformer",
-            "general.parameter_count": 175000000000,
-            "general.quantization_version": 2,
-            "tokenizer.model": "gpt-4",
-            "tokenizer.ggml.merges": [],
-            "tokenizer.ggml.token_type": [],
-            "tokenizer.ggml.tokens": [],
-        },
-        "capabilities": ["completion", "tools"], 
-    }
-)
+            "template": "{{ .System }}\n\n{{ if .Tools }}{{ .Tools }}\n\n{{ end }}{{ .Prompt }}",
+            "details": get_model_details(),
+            "model_info": {
+                "general.architecture": "transformer",
+                "general.parameter_count": 175000000000,
+                "general.quantization_version": 2,
+                "tokenizer.model": "gpt-4",
+                "tokenizer.ggml.merges": [],
+                "tokenizer.ggml.token_type": [],
+                "tokenizer.ggml.tokens": [],
+            },
+            "capabilities": ["completion", "tools"],
+        }
+    )
 
 
 @app.post("/api/show")
@@ -593,21 +600,21 @@ async def chat(request: Request):
     logger.debug(
         f"🔧 Prompt construído: {prompt[:300]}{'...' if len(prompt) > 300 else ''}"
     )
-    
+
     # Initialize temp files tracking
     temp_files = []
-    
+
     # Convert large prompt to attachment if necessary
     prompt, temp_file = convert_large_prompt_to_attachment(prompt)
     if temp_file:
         temp_files.append(temp_file)
-    
+
     references = []
     info = extrair_attachments(prompt)
     if len(info) > 1:
         prompt = info[0]
         references = info[1]
-    
+
     # Call Copilot with try-finally to ensure cleanup
     try:
         start_time = time.time()
@@ -728,24 +735,26 @@ async def generate(request: Request):
     logger.debug(
         f"🔧 Prompt completo: {full_prompt[:300]}{'...' if len(full_prompt) > 300 else ''}"
     )
-    
+
     # Initialize temp files tracking
     temp_files = []
-    
+
     # Convert large prompt to attachment if necessary
     full_prompt, temp_file = convert_large_prompt_to_attachment(full_prompt)
     if temp_file:
         temp_files.append(temp_file)
-    
+
     # Add temp file path to references list if conversion occurred
     references = []
     if temp_file:
         references = [temp_file]
-    
+
     # Call Copilot with try-finally to ensure cleanup
     try:
         start_time = time.time()
-        copilot_resp = await call_copilot(full_prompt, references if temp_file else None, stream=stream)
+        copilot_resp = await call_copilot(
+            full_prompt, references if temp_file else None, stream=stream
+        )
         end_time = time.time()
     finally:
         # Always clean up temp files, even if there's an error
@@ -830,7 +839,9 @@ async def generate(request: Request):
 async def list_running_models():
     """List models that are currently loaded into memory."""
     logger.info("🏃 GET /api/ps - Listando modelos em execução")
-    return JSONResponse(content={"models": [get_model_info(m) for m in sorted(ALLOWED_MODELS)]})
+    return JSONResponse(
+        content={"models": [get_model_info(m) for m in sorted(ALLOWED_MODELS)]}
+    )
 
 
 @app.post("/api/embed")
@@ -1035,6 +1046,147 @@ async def openai_list_models():
     )
 
 
+@app.post("/v1/messages")
+async def anthropic_messages(request: Request):
+    """Anthropic-compatible /v1/messages endpoint."""
+    body = await request.json()
+    model = get_validated_model(body.get("model", ""))
+    messages = body.get("messages", [])
+    stream = body.get("stream", False)
+    system = body.get("system", "")
+    max_tokens = body.get("max_tokens", 1024)
+
+    logger.info(f"🧠 POST /v1/messages - Model: {model}, Stream: {stream}")
+
+    # Build prompt from Anthropic message format
+    prompt_parts = []
+    if system:
+        prompt_parts.append(f"System: {system}")
+
+    for msg in messages:
+        role = msg.get("role", "user")
+        content = msg.get("content", "")
+
+        # Anthropic supports content as string or list of blocks
+        if isinstance(content, list):
+            text_parts = [
+                block.get("text", "")
+                for block in content
+                if block.get("type") == "text"
+            ]
+            content = " ".join(text_parts)
+
+        if role == "user":
+            prompt_parts.append(f"User: {content}")
+        elif role == "assistant":
+            prompt_parts.append(f"Assistant: {content}")
+
+    prompt = "\n\n".join(prompt_parts)
+
+    # Extract attachments
+    references = []
+    info = extrair_attachments(prompt)
+    if len(info) > 1:
+        prompt = info[0]
+        references = info[1]
+
+    # Convert large prompts to temp file
+    temp_files = []
+    prompt, temp_file = convert_large_prompt_to_attachment(prompt)
+    if temp_file:
+        temp_files.append(temp_file)
+
+    message_id = f"msg_{uuid.uuid4().hex[:24]}"
+    created_at = int(time.time())
+
+    try:
+        copilot_resp = await call_copilot(prompt, references, stream=stream)
+    finally:
+        cleanup_temp_files(temp_files)
+
+    # --- Streaming ---
+    if stream:
+
+        async def anthropic_stream():
+            # message_start event
+            yield f"event: message_start\ndata: {json.dumps({
+                'type': 'message_start',
+                'message': {
+                    'id': message_id,
+                    'type': 'message',
+                    'role': 'assistant',
+                    'content': [],
+                    'model': model,
+                    'stop_reason': None,
+                    'stop_sequence': None,
+                    'usage': {'input_tokens': len(prompt.split()), 'output_tokens': 0},
+                }
+            })}\n\n"
+
+            # content_block_start
+            yield f"event: content_block_start\ndata: {json.dumps({
+                'type': 'content_block_start',
+                'index': 0,
+                'content_block': {'type': 'text', 'text': ''},
+            })}\n\n"
+
+            # Stream chunks from Copilot generator
+            output_tokens = 0
+            async for chunk in copilot_resp():
+                # copilot_resp() yields SSE strings like "data: {...}\n\n"
+                # parse the content out of them
+                if not chunk.startswith("data: "):
+                    continue
+                try:
+                    data = json.loads(chunk[6:])
+                    delta_content = (
+                        data.get("choices", [{}])[0].get("delta", {}).get("content", "")
+                    )
+                    if delta_content:
+                        output_tokens += len(delta_content.split())
+                        yield f"event: content_block_delta\ndata: {json.dumps({
+                            'type': 'content_block_delta',
+                            'index': 0,
+                            'delta': {'type': 'text_delta', 'text': delta_content},
+                        })}\n\n"
+                except (json.JSONDecodeError, IndexError):
+                    continue
+
+            yield f"event: content_block_stop\ndata: {json.dumps({'type': 'content_block_stop', 'index': 0})}\n\n"
+
+            yield f"event: message_delta\ndata: {json.dumps({
+                'type': 'message_delta',
+                'delta': {'stop_reason': 'end_turn', 'stop_sequence': None},
+                'usage': {'output_tokens': output_tokens},
+            })}\n\n"
+
+            yield f"event: message_stop\ndata: {json.dumps({'type': 'message_stop'})}\n\n"
+
+        return StreamingResponse(anthropic_stream(), media_type="text/event-stream")
+
+    # --- Non-streaming ---
+    if copilot_resp.get("error"):
+        raise HTTPException(status_code=500, detail=copilot_resp["error"])
+
+    response_content = copilot_resp.get("text", "")
+
+    return JSONResponse(
+        content={
+            "id": message_id,
+            "type": "message",
+            "role": "assistant",
+            "content": [{"type": "text", "text": response_content}],
+            "model": model,
+            "stop_reason": "end_turn",
+            "stop_sequence": None,
+            "usage": {
+                "input_tokens": len(prompt.split()),
+                "output_tokens": len(response_content.split()),
+            },
+        }
+    )
+
+
 if __name__ == "__main__":
     print("🚀 Starting Copilot Ollama API proxy server on port 11434")
     print(f"📦 Available models: {', '.join(sorted(ALLOWED_MODELS))}")
@@ -1052,6 +1204,7 @@ if __name__ == "__main__":
     print("  - POST /api/push          - Push model")
     print("  - POST /api/embeddings    - Generate embedding (legacy)")
     print("  - POST /v1/chat/completions - OpenAI-compatible chat completions")
+    print("  - POST /v1/messages           - Anthropic-compatible messages")
     print("  - GET  /v1/models         - OpenAI-compatible models list")
     print("📝 Logs serão salvos em: /tmp/copilot_ollama_proxy.log")
     print("🔧 Backend: GitHub Copilot API")
