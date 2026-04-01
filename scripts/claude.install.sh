@@ -1,7 +1,11 @@
 ## CLAUDE
 DEFAULT_FOLDER=".claude"
 
-
+########################################################################################
+if [ -L "$LOCAL/.mcp.json" ] || [ -d "$LOCAL/.mcp.json" ]; then
+rm -rf $LOCAL/.mcp.json
+fi
+ln -s "$SOURCE/claude/.mcp.json" "$LOCAL/.mcp.json"
 ########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skills/" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
