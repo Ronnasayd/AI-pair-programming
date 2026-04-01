@@ -18,7 +18,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
-LOG_SIZE = 500
+LOG_SIZE = 5000  # Max characters to log for prompts and responses to prevent log flooding
 
 # Configure logging
 logging.basicConfig(
