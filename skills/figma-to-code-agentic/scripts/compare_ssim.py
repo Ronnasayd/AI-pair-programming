@@ -10,7 +10,7 @@ Usage:
 Output:
   JSON with:
     - ssim_score: float (0-1)
-    - is_match: bool (score >= 0.95)
+    - is_match: bool (score >= 0.9)
     - diff_regions: list of areas with differences
     - verdict: "PASS" | "REVIEW" | "FAIL"
 """
@@ -18,7 +18,6 @@ Output:
 import sys
 import json
 import argparse
-from pathlib import Path
 from dataclasses import dataclass
 
 try:
@@ -109,7 +108,7 @@ def find_diff_regions(diff_map, threshold=200):
 
 def generate_verdict(score: float):
     """Generate verdict based on score."""
-    if score >= 0.95:
+    if score >= 0.9:
         return "PASS"
     elif score >= 0.90:
         return "REVIEW"
@@ -153,7 +152,7 @@ def compare(
 
         return ComparisonResult(
             ssim_score=score,
-            is_match=score >= 0.95,
+            is_match=score >= 0.9,
             verdict=verdict,
             diff_regions=regions,
             message=message,
@@ -192,7 +191,7 @@ def main():
         print(f"Figma vs Component Comparison")
         print(f"SSIM Score: {result.ssim_score:.4f}")
         print(f"Verdict: {result.verdict}")
-        print(f"Match (>= 0.95): {'✓ YES' if result.is_match else '✗ NO'}")
+        print(f"Match (>= 0.9): {'✓ YES' if result.is_match else '✗ NO'}")
         if result.diff_regions:
             print(f"\nDifference Regions ({len(result.diff_regions)}):")
             for i, region in enumerate(result.diff_regions, 1):

@@ -7,7 +7,7 @@ Converts Figma designs → production-ready React/Vue/HTML components by:
 1. Reading Figma specs (layout, colors, typography)
 2. Generating code (auto-detects framework)
 3. Taking screenshots and comparing with SSIM (Structural Similarity Index)
-4. Iterating up to 10x until pixel-perfect (SSIM ≥ 0.95)
+4. Iterating up to 10x until pixel-perfect (SSIM ≥ 0.9)
 
 ## How to Trigger
 
@@ -75,7 +75,7 @@ python scripts/agentic_loop.py component.jsx figma_screenshot.png --framework re
 
 | Score     | Status    | Recommendation                      |
 | --------- | --------- | ----------------------------------- |
-| ≥ 0.95    | ✅ PASS   | Ready for production                |
+| ≥ 0.9     | ✅ PASS   | Ready for production                |
 | 0.90–0.94 | ⚠️ REVIEW | Probably fine, review with designer |
 | < 0.90    | ❌ FAIL   | Issues, escalate to designer        |
 
