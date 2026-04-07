@@ -21,6 +21,10 @@ if [ ! -L "$LOCAL/.agentsignore" ] && [ ! -f "$LOCAL/.agentsignore" ]; then
 cp $SOURCE/.agentsignore $LOCAL/.agentsignore
 fi
 
+if [ ! -L "$LOCAL/.skillsignore" ] && [ ! -f "$LOCAL/.skillsignore" ]; then
+cp $SOURCE/.skillsignore $LOCAL/.skillsignore
+fi
+
 ###########################################################################################
 
 
