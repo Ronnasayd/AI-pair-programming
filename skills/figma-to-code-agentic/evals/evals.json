@@ -1,0 +1,23 @@
+{
+  "skill_name": "figma-to-code-agentic",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a Figma design for a product card component. It has an image at the top, a title with bold text, a description below it, and two buttons at the bottom (one primary blue button on the left, one secondary outline button on the right). The card has a white background, rounded corners, and a subtle shadow. Generate a React component that matches this design exactly.",
+      "expected_output": "A ReactJS component (.jsx) with Tailwind CSS that renders the card with image, title, description, and buttons positioned exactly as described. Must include responsive behavior and match Figma pixel-perfect (SSIM >= 0.95).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Create a Vue 3 component from this Figma design: a navigation header with a logo on the left, a horizontal menu with 5 items in the center, and a search bar with an icon on the right. The header is dark blue (#1E3A8A), text is white, and there's a thin white border at the bottom. Make it responsive for mobile (hamburger menu) and desktop.",
+      "expected_output": "A Vue 3 single-file component (.vue) with scoped styling that matches the header design. Should render at 1280×720 and match the Figma spec with SSIM >= 0.95.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "A landing page hero section from Figma has a gradient background (blue to purple), a large headline text (48px), a subtitle below (18px), and a call-to-action button (white text on orange background). Generate vanilla HTML + CSS + JS. The section should be 100% width and full viewport height with centered content.",
+      "expected_output": "A standalone HTML file with inline CSS and JavaScript that renders the hero section matching the Figma spec exactly. SSIM score should be >= 0.95.",
+      "files": []
+    }
+  ]
+}
