@@ -3,302 +3,172 @@ name: figma-to-code-agentic
 description: |
   Convert Figma designs into production-ready component code using an agentic loop that validates implementation against the design.
 
-  Use this skill whenever you need to: generate code from Figma designs, create React/Vue/HTML components that match pixel-perfect designs, iterate on component implementation until it matches the Figma spec, validate UI implementations against design screenshots, or bridge the gap between design and development.
+  Use this skill whenever: a Figma link or file is provided and the user wants code generated from it; the user says "generate this Figma design as React/Vue/HTML", "convert this Figma to code", "build a component from this design", "make it look exactly like Figma", or "match the design"; the user needs pixel-perfect design-to-development handoff; the user mentions needing to validate UI against a Figma spec.
 
-  The skill uses Figma MCP to read design specs, generates code (detecting framework automatically), takes screenshots via browser automation, compares visuals using SSIM (Structural Similarity Index), and loops up to 10 times refining code until it reaches 95% visual similarity to the original design. This is perfect for design-system components, landing pages, or any UI that needs to match a Figma spec precisely.
+  The skill reads design specs via Figma MCP, auto-detects the framework, generates code, renders a screenshot via browser automation, compares using SSIM (Structural Similarity Index), and iterates up to 10 times until reaching ≥0.95 visual similarity. Works for React, Vue 3, and vanilla HTML/CSS. Perfect for design system components, landing pages, or any UI that must match a Figma spec.
 ---
 
 # Figma-to-Code Agentic
 
-Generate pixel-perfect component code from Figma designs, automatically iterating and refining until the implementation matches the spec.
+Generate pixel-perfect component code from Figma designs, iterating automatically until the implementation matches the spec.
 
-## When to Use This Skill
+## Quick Reference
 
-**TRIGGERS:**
+| Script | Purpose | When to use |
+|---|---|---|
+| `scripts/compare_ssim.py` | SSIM visual comparison | After each screenshot |
+| `scripts/agentic_loop.py` | Loop state tracker | Throughout the loop |
+| `references/browser-automation.md` | Screenshot how-to | Phase 2 setup |
+| `references/diff-analysis.md` | Systematic diff guide | When score < 0.95 |
 
-- User provides a Figma link/file and asks to generate code for a component, page, or entire design system
-- User says: "generate this Figma design as React code", "convert this Figma to HTML", "build a component from this design"
-- User mentions needing code that "matches the design", "looks exactly like Figma", or "validates against the spec"
-- Design-to-development handoff: user has Figma designs and wants to ensure code is pixel-perfect
-- Any variant: "create a Vue component", "turn this into a landing page", "build the checkout flow from Figma"
+---
 
-**PREREQUISITES:**
+## Phase 1: Setup
 
-- Figma file/link with component or page design
-- Target framework (React, Vue, vanilla HTML/CSS) — skill auto-detects from context
-- Browser environment (for screenshot validation)
-- Figma MCP and browser automation MCP available (Playwright, Puppeteer, or Chrome via MCP)
+### 1a. Get the Figma Design
 
-## High-Level Workflow
+You need **both** the design specs and a reference screenshot.
 
+**Via Figma MCP** (preferred):
 ```
-1. Parse Figma Design
-   ↓
-2. Generate Initial Code
-   ↓
-3. Render Component (screenshot)
-   ↓
-4. Compare vs Original (SSIM score)
-   ↓
-5. Score >= 0.95?
-   └─ YES → Return refined code
-   └─ NO → Refine code, loop back to step 3 (max 10 iterations)
+1. Use Figma MCP to extract: layout, colors, typography, spacing, shadows, borders
+2. Export the design frame as PNG at 1x (1280×720 or component's native size)
+3. Save as figma_reference.png — this is the comparison target
 ```
 
-## Step-by-Step Process
+**If no Figma MCP available:**
+- Ask the user to paste the Figma link and export a PNG manually
+- Proceed with specs described in the prompt; skip SSIM validation (document this)
 
-### Phase 1: Analysis & Code Generation
+### 1b. Detect Framework & Styling
 
-1. **Read Figma Design**
-   - Use Figma MCP to extract design specs: layout, colors, typography, spacing, shadows, borders, responsive behavior
-   - Note any constraints (min/max widths, breakpoints, interactions)
+Check in this order:
+1. Explicit user request ("React", "Vue", "vanilla HTML")
+2. Codebase context: scan `package.json`, existing components, imports
+3. **Default**: React + Tailwind CSS
 
-2. **Detect Framework & Styling Approach**
-   - If no explicit framework: check codebase for hints (package.json, existing components, imports)
-   - Default stack: React + Tailwind (if neutral) OR match project conventions
-   - Styling: inspect the codebase to use the same approach (Tailwind, CSS Modules, styled-components, plain CSS)
+Styling approach: match the project's existing conventions (Tailwind, CSS Modules, styled-components, plain CSS).
 
-3. **Generate Component Code**
-   - Create a single `.jsx`, `.tsx`, `.vue`, or `.html` file with:
-     - All necessary imports
-     - Responsive classes/logic
-     - Proper spacing, colors, fonts matching Figma exactly
-     - Accessibility attributes where applicable
-   - Include comments explaining non-obvious design decisions
+### 1c. Generate Initial Component
 
-4. **Create a Render Test Page** (internally)
-   - Wrap the component in a minimal page (white background, standard viewport)
-   - Similar viewport dimensions to Figma's export (e.g., 1280×720)
+Create a single file: `.jsx`, `.tsx`, `.vue`, or `.html`
 
-### Phase 2: Validation Loop (up to 10 iterations)
+**Must include:**
+- All imports and dependencies
+- Exact spacing, colors, fonts from Figma specs
+- Responsive classes/logic (if design has breakpoints)
+- Accessibility attributes (`aria-*`, semantic HTML)
+- Comment: `// Figma match: initial generation (unvalidated)`
+
+**Wrap in a render test page** (white background, viewport matching Figma export dimensions) for screenshot purposes.
+
+---
+
+## Phase 2: Validation Loop (up to 10 iterations)
+
+Initialize the loop controller:
+```bash
+python scripts/agentic_loop.py <component_path> figma_reference.png --framework react
+```
 
 For each iteration:
 
-5. **Take Screenshot**
-   - Use browser automation MCP (Playwright, Puppeteer, Chrome MCP, or similar) to render the component
-   - Capture at same dimensions as Figma export
-   - Save as a PNG
+### Step A — Screenshot
+Use browser automation to render and capture. See `references/browser-automation.md` for platform-specific instructions (Playwright, Puppeteer, Chrome MCP).
 
-6. **Calculate Similarity**
-   - Load Figma design screenshot and component screenshot
-   - Compute SSIM (Structural Similarity Index) score using `scikit-image` or OpenCV
-   - SSIM ranges from 0 (completely different) to 1.0 (identical)
-   - Score = 1.0 is perfect match; 0.95+ is "production-ready"
+**Key settings:**
+- Same viewport dimensions as Figma export
+- White background, 1x zoom (no DPI scaling)
+- Wait for `networkidle` before capturing
+- Disable CSS animations: `* { animation: none !important; transition: none !important; }`
 
-7. **Analyze Differences** (if score < 0.95)
-   - Visually inspect both images side-by-side
-   - Identify discrepancies: spacing, colors, font sizing, shadows, borders, layout breaks
-   - Generate a diff report with specific issues (e.g., "button text too large", "padding on left side is 2px too small")
-
-8. **Refine Code**
-   - Update component code based on diff report
-   - Make surgical edits: adjust sizing, spacing, colors—don't rewrite unnecessarily
-   - Re-test (go to step 5)
-
-9. **Convergence**
-   - **Success**: SSIM score ≥ 0.95 → return final code
-   - **Stalled**: No progress after 2 consecutive iterations → increase tolerance or escalate to human review
-   - **Max iterations hit**: Stop at iteration 10, return best version so far
-
-### Output Format
-
-**Single-file component:**
-
-```
-[component-name].jsx/.tsx/.vue/.html
+### Step B — Compare
+```bash
+python scripts/compare_ssim.py figma_reference.png screenshot_iter_N.png --json --output-diff diff_N.jpg
 ```
 
-Include:
+Output: `ssim_score`, `verdict` (PASS/REVIEW/FAIL), `diff_regions` (top 5 areas of mismatch)
 
-- Full, runnable code
-- All imports and dependencies listed
-- Comments explaining design-to-code decisions
-- Responsive behavior documented
-- SSIM validation score: `// Figma match score: 0.97 (✓ production-ready)`
+### Step C — Decide
 
-**Metadata** (provide separately):
+| Score | Action |
+|---|---|
+| ≥ 0.95 | ✅ **DONE** — return final code |
+| 0.90–0.94 | REVIEW — fix top diff regions, iterate |
+| < 0.90 | FAIL — check for structural issues first |
+| Stalled (< 0.001 gain over 3 iterations) | Stop, return best version, document open issues |
+| Iteration 10 reached | Stop, return best version |
 
+### Step D — Refine (if score < 0.95)
+
+Read `references/diff-analysis.md` for a systematic guide to diagnosing and fixing differences.
+
+**Priority order for fixes:**
+1. **Layout/structure** — wrong element type, missing wrapper, wrong display mode
+2. **Spacing** — padding/margin off by more than 4px
+3. **Color** — hex values not matching Figma exactly
+4. **Typography** — font size, weight, line-height
+5. **Shadows/borders** — blur radius, spread, opacity
+
+Make surgical edits addressing **multiple issues per iteration**. Don't rewrite the whole component.
+
+---
+
+## Output Format
+
+**Component file:**
 ```
-Framework: React, Language: TypeScript
+// [component-name].jsx — Figma match: 0.97 ✓ (3 iterations, viewport: 1280×720)
+```
+
+**Metadata block** (provide separately):
+```
+Framework: React / TypeScript
 Styling: Tailwind CSS
 Figma Link: https://figma.com/...
 SSIM Score: 0.97
+Verdict: PASS
 Iterations: 3
 Viewport: 1280×720
 ```
 
-## Best Practices
+---
 
-### Code Quality
+## Thresholds by Component Type
 
-- Match existing project conventions (indentation, naming, structure)
-- Use semantic HTML (proper heading hierarchy, ARIA labels)
-- Keep components focused and reusable
-- Prefer composition over deep nesting
-
-### Styling
-
-- Never hardcode colors if design system exists—reference tokens
-- Use grid/flexbox instead of absolute positioning (unless required by design)
-- Ensure mobile responsiveness, test breakpoints
-- Respect Figma's constraints (fixed width, fluid, fill, etc.)
-
-### Iteration Strategy
-
-- Each iteration should address multiple issues from the diff report, not just one
-- If SSIM score is stuck, check for:
-  - Subtle anti-aliasing differences (usually OK to ignore)
-  - Font rendering differences across systems (consider using web fonts)
-  - Viewport or DPI mismatches
-- If trapped, document issues and recommend human review (e.g., "needs design clarification on shadow blur radius")
-
-### When to Stop
-
-- SSIM ≥ 0.95 = ship it
-- SSIM 0.90–0.94 = probably fine, review differences with designer
-- SSIM < 0.90 = likely structural issues, escalate to designer or request clarification
-
-## Example: React + Tailwind Component
-
-**Input:** Figma design of a card component (title, description, CTA button, drop shadow)
-
-**Generated Code:**
-
-```jsx
-// card.jsx - Match: 0.96 ✓
-export function Card({ title, description, onAction }) {
-  return (
-    <div className="w-80 rounded-lg bg-white shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-3">{title}</h2>
-      <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-        {description}
-      </p>
-      <button
-        onClick={onAction}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition-colors"
-      >
-        Learn More
-      </button>
-    </div>
-  );
-}
-```
-
-**SSIM Validation:** 0.96 (Button text padding +2px, shadow slightly softer than Figma, but within acceptable tolerance.)
-
-## Compatibility
-
-**Required MCPs:**
-
-- Figma MCP (for design extraction)
-- Browser automation (Playwright, Puppeteer, Chrome MCP, or equivalent)
-- Python environment (for SSIM calculation via `scikit-image` or `opencv-python`)
-
-**Optional:**
-
-- Design tokens MCP (if design system available)
-- CSS/styling linter (e.g., Stylelint)
-
-**Supported Frameworks:**
-
-- React (JSX/TSX) — most mature
-- Vue 3 (SFC or standalone)
-- Vanilla HTML + CSS + JS
-- Other frameworks (auto-detect from codebase context)
-
-## How This Skill Integrates With Its Tools
-
-This skill uses bundled scripts and references to automate the agentic loop:
-
-### Scripts (in `scripts/` folder)
-
-1. **compare_ssim.py** — SSIM comparison engine
-   - Called after each iteration to score visual similarity
-   - Usage: `python scripts/compare_ssim.py figma_screenshot.png component_screenshot.png --json`
-   - Returns: SSIM score (0–1), verdict (PASS/REVIEW/FAIL), diff regions
-
-2. **agentic_loop.py** — Loop controller
-   - Tracks iteration history, detects convergence, manages state
-   - Used internally by the skill to know when to stop iterating
-   - Saves iteration summary as JSON for reporting
-
-### References (in `references/` folder)
-
-- **browser-automation.md** — How to take screenshots with Playwright/Puppeteer/Chrome MCP
-- Used by the skill when rendering components to screenshot
-
-### Runtime Flow
-
-```
-Skill Execution:
-  1. Figma MCP reads design specs
-  2. Claude generates code (using skill guidance)
-  3. Browser renders component → screenshot taken
-  4. Python script (compare_ssim.py) invoked:
-     → Compares Figma screenshot vs component screenshot
-     → Returns SSIM score
-  5. Agentic loop controller (agentic_loop.py) evaluates:
-     → Score >= 0.95? DONE ✓
-     → Score stalled? DONE (return best version)
-     → Iterations < 10? Refine code and loop back to step 3
-  6. Return final code + SSIM metadata
-```
-
-## Limitations & Gotchas
-
-1. **Complex Interactions:** Skill generates static components. If design includes animations, hover states, or complex interactions, generate the visual structure and document interaction specs separately.
-
-2. **Image Assets:** Figma may include images; skill will reference them as placeholders (`<img alt="..." />`) unless explicitly provided.
-
-3. **Responsive Design:** Skill validates at a single viewport. If design has multiple breakpoints, document all viewport sizes and iterate per breakpoint or use media queries to handle all at once.
-
-4. **SSIM Sensitivity:** SSIM can be sensitive to anti-aliasing, font rendering, and sub-pixel differences. A 0.92–0.95 score often looks visually identical; don't over-optimize.
-
-5. **System Font Rendering:** Font rendering varies across OS (macOS, Windows, Linux). Web fonts (e.g., Google Fonts) are more consistent.
-
-## Troubleshooting
-
-| Issue                       | Cause                                           | Solution                                                           |
-| --------------------------- | ----------------------------------------------- | ------------------------------------------------------------------ |
-| SSIM score stuck ~0.88      | Likely font rendering or anti-aliasing mismatch | Use web fonts, ensure consistent DPI scaling                       |
-| Screenshot is blank         | Browser failed to load/render                   | Check component code for errors, ensure dependencies are available |
-| Colors don't match          | Color space or gamma difference                 | Verify hex/RGB values match Figma exactly; check CSS parsing       |
-| Layout breaks at iterations | Over-aggressive refinement                      | Roll back last change, make smaller adjustments                    |
-| Max iterations reached      | Design too complex or ambiguous                 | Escalate to designer for clarification; document open issues       |
+| Component type | Recommended threshold |
+|---|---|
+| Design system components (buttons, cards) | 0.95+ |
+| Landing page / hero sections | 0.93+ |
+| Complex data tables / forms | 0.90+ |
 
 ---
 
-## Workflow Integration
+## Common Issues
 
-**For Teams:**
-
-- Designer finalizes spec in Figma → pass link to developer
-- Developer runs this skill → gets pixel-perfect component code
-- Code review focuses on logic, accessibility, performance—not pixel matching
-- SSIM score in code comment serves as "design approval stamp"
-
-**For Solo Devs:**
-
-- Faster iteration between design and code
-- Confidence that UI matches spec
-- No context switch between Figma and IDE
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Score stuck ~0.88 | Font rendering / anti-aliasing | Use web fonts; accept if visually correct |
+| Screenshot blank | Component render error | Check console errors; verify dependencies |
+| Colors off | Hex mismatch or color space | Copy hex from Figma exactly; check `rgb()` vs `hex` |
+| Layout breaks during iteration | Over-aggressive edits | Roll back last change; make smaller adjustments |
+| Score regresses | New bug introduced | Check diff vs previous iteration; revert last change |
+| Max iterations reached | Ambiguous or complex design | Document open issues; escalate to designer |
 
 ---
 
-## Advanced: Customizing SSIM Threshold
+## When to Skip SSIM
 
-If your project has different quality bars:
-
-- **Landing pages / hero sections:** 0.93+ (some breathing room for type rendering)
-- **Design system components (buttons, cards):** 0.95+ (strict, reusable)
-- **Complex data tables / forms:** 0.90+ (acceptable given layout complexity)
-
-Adjust the `iteration_config` in code generation if needed.
+- No browser automation MCP available → generate code from specs only; note "SSIM validation skipped"
+- No Figma MCP available → generate from user-described specs; skip validation
+- Design has significant animations/interactions → validate static structure only; document interaction specs separately
 
 ---
 
-## See Also
+## Limitations
 
-- [Figma API Docs](https://www.figma.com/developers/api)
-- [SSIM Reference](https://en.wikipedia.org/wiki/Structural_similarity)
-- [Playwright / Browser MCP](https://playwright.dev/)
+- **Static only**: generates visual structure. Animations, complex hover states, and interactions are documented as specs, not implemented.
+- **Image assets**: Figma images become `<img alt="placeholder" />` unless explicitly provided.
+- **Single viewport**: validates at one breakpoint. For multi-breakpoint designs, iterate per breakpoint or use media queries.
+- **Font rendering**: varies across OS. Use web fonts (Google Fonts, etc.) for consistency.
+- **SSIM sensitivity**: 0.92–0.95 often looks visually identical due to anti-aliasing. Don't over-optimize.

@@ -1,154 +1,248 @@
 #!/usr/bin/env python3
 """
 Agentic Loop Controller
-Manages the iteration loop for refining component code until SSIM >= 0.95.
+Tracks state, detects convergence, and manages the iteration lifecycle
+for the Figma-to-Code validation loop.
 
 Usage:
-  python agentic_loop.py <component_code_path> <figma_screenshot_path> --framework react --max-iterations 10
+  # Initialize / start a new loop session:
+  python scripts/agentic_loop.py init --framework react --max-iterations 10
+
+  # Log an iteration result:
+  python scripts/agentic_loop.py log --ssim 0.91 --verdict REVIEW --notes "padding off on left side"
+
+  # Check whether to continue:
+  python scripts/agentic_loop.py status
+
+  # Save final report:
+  python scripts/agentic_loop.py report --output loop_report.json
 """
 
 import json
 import argparse
+import sys
 from pathlib import Path
 from datetime import datetime
 
+SESSION_FILE = "/tmp/figma_loop_session.json"
+
 
 class AgenticLoopController:
-    def __init__(
-        self, framework: str, max_iterations: int = 10, ssim_threshold: float = 0.95
-    ):
+    def __init__(self, framework: str = "react", max_iterations: int = 10, ssim_threshold: float = 0.95):
         self.framework = framework
         self.max_iterations = max_iterations
         self.ssim_threshold = ssim_threshold
         self.iteration = 0
         self.history = []
+        self.started_at = datetime.now().isoformat()
 
-    def log_iteration(
-        self,
-        iteration_num: int,
-        ssim_score: float,
-        verdict: str,
-        diff_regions: list,
-        notes: str = "",
-    ):
-        """Log iteration result."""
-        self.history.append(
-            {
-                "iteration": iteration_num,
-                "timestamp": datetime.now().isoformat(),
-                "ssim_score": ssim_score,
-                "verdict": verdict,
-                "diff_regions": diff_regions,
-                "notes": notes,
-            }
+    # --- Persistence ---
+
+    def save(self, path: str = SESSION_FILE):
+        data = {
+            "framework": self.framework,
+            "max_iterations": self.max_iterations,
+            "ssim_threshold": self.ssim_threshold,
+            "iteration": self.iteration,
+            "history": self.history,
+            "started_at": self.started_at,
+        }
+        Path(path).write_text(json.dumps(data, indent=2))
+
+    @classmethod
+    def load(cls, path: str = SESSION_FILE) -> "AgenticLoopController":
+        if not Path(path).exists():
+            print(f"ERROR: No active session found at {path}. Run 'init' first.", file=sys.stderr)
+            sys.exit(1)
+        data = json.loads(Path(path).read_text())
+        ctrl = cls(
+            framework=data["framework"],
+            max_iterations=data["max_iterations"],
+            ssim_threshold=data["ssim_threshold"],
         )
+        ctrl.iteration = data["iteration"]
+        ctrl.history = data["history"]
+        ctrl.started_at = data["started_at"]
+        return ctrl
 
-    def should_continue(self, ssim_score: float) -> bool:
-        """Determine if loop should continue."""
-        if ssim_score >= self.ssim_threshold:
-            return False
+    # --- Core logic ---
+
+    def log_iteration(self, ssim_score: float, verdict: str, diff_regions: list = None, notes: str = ""):
+        self.iteration += 1
+        self.history.append({
+            "iteration": self.iteration,
+            "timestamp": datetime.now().isoformat(),
+            "ssim_score": ssim_score,
+            "verdict": verdict,
+            "diff_regions": diff_regions or [],
+            "notes": notes,
+        })
+
+    def should_continue(self) -> tuple[bool, str]:
+        """Return (should_continue, reason)."""
+        if not self.history:
+            return True, "no iterations yet"
+
+        last_score = self.history[-1]["ssim_score"]
+
+        if last_score >= self.ssim_threshold:
+            return False, f"target reached: SSIM {last_score:.4f} >= {self.ssim_threshold}"
+
         if self.iteration >= self.max_iterations:
-            return False
-        return True
+            return False, f"max iterations reached ({self.max_iterations})"
+
+        stalled, reason = self.detect_convergence()
+        if stalled:
+            return False, reason
+
+        return True, f"iteration {self.iteration}/{self.max_iterations}, score {last_score:.4f}"
 
     def detect_convergence(self) -> tuple[bool, str]:
-        """Detect if score is stalling (no progress)."""
+        """Detect if score is stalling (no meaningful progress)."""
         if len(self.history) < 3:
             return False, ""
 
         recent = [h["ssim_score"] for h in self.history[-3:]]
-        if recent[-1] == recent[-2] == recent[-3]:
-            return True, "Score stalled: no improvement in last 3 iterations"
 
+        # Completely flat
+        if recent[-1] == recent[-2] == recent[-3]:
+            return True, f"Score stalled at {recent[-1]:.4f} for 3 consecutive iterations"
+
+        # Micro-improvements (< 0.001 per step)
         diffs = [recent[i] - recent[i - 1] for i in range(1, len(recent))]
         if all(d < 0.001 for d in diffs):
-            return True, "Score converging slowly: improvements < 0.001"
+            return True, f"Score improvements < 0.001 over last 3 iterations (last: {recent[-1]:.4f})"
+
+        # Regression (score went down)
+        if recent[-1] < recent[-2] - 0.01:
+            return True, f"Score regressed from {recent[-2]:.4f} to {recent[-1]:.4f} — last edit made things worse"
 
         return False, ""
 
+    def best_iteration(self) -> dict:
+        if not self.history:
+            return {}
+        return max(self.history, key=lambda h: h["ssim_score"])
+
     def get_summary(self) -> dict:
-        """Generate summary of the loop run."""
         if not self.history:
             return {"status": "no_iterations"}
 
         scores = [h["ssim_score"] for h in self.history]
+        cont, reason = self.should_continue()
+        best = self.best_iteration()
+
         return {
+            "framework": self.framework,
             "total_iterations": len(self.history),
             "final_score": scores[-1],
+            "best_score": best["ssim_score"],
+            "best_iteration": best["iteration"],
             "initial_score": scores[0],
-            "best_score": max(scores),
-            "improvement": max(scores) - scores[0],
+            "improvement": best["ssim_score"] - scores[0],
             "converged": scores[-1] >= self.ssim_threshold,
+            "should_continue": cont,
+            "stop_reason": reason if not cont else None,
+            "started_at": self.started_at,
             "history": self.history,
         }
 
-    def save_report(self, output_path: str):
-        """Save loop report to JSON."""
-        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w") as f:
-            json.dump(self.get_summary(), f, indent=2)
-        print(f"Loop report saved to: {output_path}")
 
+# --- CLI ---
 
-def run_agentic_loop(
-    component_code_path: str,
-    figma_screenshot_path: str,
-    framework: str = "react",
-    max_iterations: int = 10,
-):
-    """
-    Main agentic loop runner.
-
-    This would be called by the main skill workflow. In practice, this would be
-    orchestrated by the Claude agent running the skill, which would:
-    1. Call this to initialize the loop
-    2. Generate code
-    3. Take screenshot
-    4. Call compare_ssim.py
-    5. Refine code if needed
-    6. Loop back
-    """
-    controller = AgenticLoopController(
-        framework=framework, max_iterations=max_iterations
+def cmd_init(args):
+    ctrl = AgenticLoopController(
+        framework=args.framework,
+        max_iterations=args.max_iterations,
+        ssim_threshold=args.ssim_threshold,
     )
-    print(f"Starting agentic loop: {framework} component")
-    print(f"Target: SSIM >= 0.95 (max {max_iterations} iterations)")
-    print(f"Component: {component_code_path}")
-    print(f"Figma ref: {figma_screenshot_path}")
-    print("-" * 60)
+    ctrl.save()
+    print(json.dumps({
+        "status": "initialized",
+        "framework": ctrl.framework,
+        "max_iterations": ctrl.max_iterations,
+        "ssim_threshold": ctrl.ssim_threshold,
+        "session_file": SESSION_FILE,
+    }, indent=2))
 
-    # This is a placeholder - the actual loop is orchestrated by the skill
-    print("\nThis controller would be called from the main skill workflow.")
-    print("Current iteration would be tracked and reported to the user.")
 
-    return controller
+def cmd_log(args):
+    ctrl = AgenticLoopController.load()
+    ctrl.log_iteration(
+        ssim_score=args.ssim,
+        verdict=args.verdict,
+        notes=args.notes or "",
+    )
+    cont, reason = ctrl.should_continue()
+    ctrl.save()
+    print(json.dumps({
+        "iteration": ctrl.iteration,
+        "ssim_score": args.ssim,
+        "verdict": args.verdict,
+        "should_continue": cont,
+        "reason": reason,
+    }, indent=2))
+
+
+def cmd_status(args):
+    ctrl = AgenticLoopController.load()
+    cont, reason = ctrl.should_continue()
+    last = ctrl.history[-1] if ctrl.history else {}
+    print(json.dumps({
+        "iteration": ctrl.iteration,
+        "max_iterations": ctrl.max_iterations,
+        "last_score": last.get("ssim_score"),
+        "best_score": ctrl.best_iteration().get("ssim_score"),
+        "should_continue": cont,
+        "reason": reason,
+    }, indent=2))
+
+
+def cmd_report(args):
+    ctrl = AgenticLoopController.load()
+    summary = ctrl.get_summary()
+    output = json.dumps(summary, indent=2)
+
+    if args.output:
+        Path(args.output).write_text(output)
+        print(f"Report saved to: {args.output}")
+    else:
+        print(output)
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Agentic loop controller for Figma-to-code refinement"
-    )
-    parser.add_argument("component_code", help="Path to component code file")
-    parser.add_argument("figma_screenshot", help="Path to Figma design screenshot")
-    parser.add_argument(
-        "--framework", default="react", help="Target framework (react, vue, vanilla)"
-    )
-    parser.add_argument(
-        "--max-iterations", type=int, default=10, help="Maximum iterations"
-    )
-    parser.add_argument("--output-report", help="Path to save loop report JSON")
+    parser = argparse.ArgumentParser(description="Agentic loop controller for Figma-to-code refinement")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # init
+    p_init = subparsers.add_parser("init", help="Start a new loop session")
+    p_init.add_argument("--framework", default="react", choices=["react", "vue", "vanilla"], help="Target framework")
+    p_init.add_argument("--max-iterations", type=int, default=10, help="Maximum iterations")
+    p_init.add_argument("--ssim-threshold", type=float, default=0.95, help="Target SSIM score")
+
+    # log
+    p_log = subparsers.add_parser("log", help="Log an iteration result")
+    p_log.add_argument("--ssim", type=float, required=True, help="SSIM score (0-1)")
+    p_log.add_argument("--verdict", choices=["PASS", "REVIEW", "FAIL", "ERROR"], default="REVIEW")
+    p_log.add_argument("--notes", help="Notes about this iteration's differences")
+
+    # status
+    subparsers.add_parser("status", help="Check loop status and whether to continue")
+
+    # report
+    p_report = subparsers.add_parser("report", help="Generate final summary report")
+    p_report.add_argument("--output", help="Path to save JSON report")
 
     args = parser.parse_args()
 
-    controller = run_agentic_loop(
-        args.component_code,
-        args.figma_screenshot,
-        framework=args.framework,
-        max_iterations=args.max_iterations,
-    )
-
-    if args.output_report:
-        controller.save_report(args.output_report)
+    if args.command == "init":
+        cmd_init(args)
+    elif args.command == "log":
+        cmd_log(args)
+    elif args.command == "status":
+        cmd_status(args)
+    elif args.command == "report":
+        cmd_report(args)
 
 
 if __name__ == "__main__":
