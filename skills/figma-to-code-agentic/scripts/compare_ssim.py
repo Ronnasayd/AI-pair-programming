@@ -41,8 +41,8 @@ class ComparisonResult:
 
     def to_dict(self):
         return {
-            "ssim_score": round(self.ssim_score, 4),
-            "is_match": self.is_match,
+            "ssim_score": float(round(self.ssim_score, 4)),
+            "is_match": bool(self.is_match),
             "verdict": self.verdict,
             "diff_regions": self.diff_regions,
             "message": self.message,
