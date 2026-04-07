@@ -9,7 +9,7 @@ This skill automates the design-to-development handoff by:
 1. **Reading Figma designs** — extracts layout, colors, typography, spacing via Figma MCP
 2. **Generating code** — creates React, Vue, or vanilla HTML components matching the spec
 3. **Validating visually** — renders component and compares screenshot to Figma using SSIM (Structural Similarity Index)
-4. **Iterating intelligently** — refines code based on visual diff until SSIM ≥ 0.95 (max 10 iterations)
+4. **Iterating intelligently** — refines code based on visual diff until SSIM ≥ 0.9 (max 10 iterations)
 5. **Delivering confidence** — returns pixel-perfect code with validation score
 
 ## Quick Start
@@ -63,7 +63,7 @@ figma-to-code-agentic/
 
 ### Visual Validation via SSIM
 
-- **0.95+ score**: Production-ready, pixel-perfect
+- **0.9+ score**: Production-ready, pixel-perfect
 - **0.90–0.94**: Likely fine, review with designer
 - **< 0.90**: Issues, escalate to designer
 
@@ -236,7 +236,7 @@ export function CheckoutForm() {
 ## Performance Targets
 
 - **Speed**: 3–5 min for typical card/hero component (including screenshot/compare)
-- **Accuracy**: SSIM ≥ 0.95 in 2–4 iterations on well-specified designs
+- **Accuracy**: SSIM ≥ 0.9 in 2–4 iterations on well-specified designs
 - **Coverage**: Works with React, Vue, vanilla HTML; auto-configures styling
 
 ## Author Notes

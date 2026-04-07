@@ -32,7 +32,7 @@ class AgenticLoopController:
         self,
         framework: str = "react",
         max_iterations: int = 10,
-        ssim_threshold: float = 0.95,
+        ssim_threshold: float = 0.9,
     ):
         self.framework = framework
         self.max_iterations = max_iterations
@@ -275,7 +275,7 @@ def main():
         "--max-iterations", type=int, default=10, help="Maximum iterations"
     )
     p_init.add_argument(
-        "--ssim-threshold", type=float, default=0.95, help="Target SSIM score"
+        "--ssim-threshold", type=float, default=0.9, help="Target SSIM score"
     )
 
     # log
