@@ -28,7 +28,12 @@ SESSION_FILE = "/tmp/figma_loop_session.json"
 
 
 class AgenticLoopController:
-    def __init__(self, framework: str = "react", max_iterations: int = 10, ssim_threshold: float = 0.95):
+    def __init__(
+        self,
+        framework: str = "react",
+        max_iterations: int = 10,
+        ssim_threshold: float = 0.95,
+    ):
         self.framework = framework
         self.max_iterations = max_iterations
         self.ssim_threshold = ssim_threshold
@@ -52,7 +57,10 @@ class AgenticLoopController:
     @classmethod
     def load(cls, path: str = SESSION_FILE) -> "AgenticLoopController":
         if not Path(path).exists():
-            print(f"ERROR: No active session found at {path}. Run 'init' first.", file=sys.stderr)
+            print(
+                f"ERROR: No active session found at {path}. Run 'init' first.",
+                file=sys.stderr,
+            )
             sys.exit(1)
         data = json.loads(Path(path).read_text())
         ctrl = cls(
@@ -67,16 +75,24 @@ class AgenticLoopController:
 
     # --- Core logic ---
 
-    def log_iteration(self, ssim_score: float, verdict: str, diff_regions: list = None, notes: str = ""):
+    def log_iteration(
+        self,
+        ssim_score: float,
+        verdict: str,
+        diff_regions: list = None,
+        notes: str = "",
+    ):
         self.iteration += 1
-        self.history.append({
-            "iteration": self.iteration,
-            "timestamp": datetime.now().isoformat(),
-            "ssim_score": ssim_score,
-            "verdict": verdict,
-            "diff_regions": diff_regions or [],
-            "notes": notes,
-        })
+        self.history.append(
+            {
+                "iteration": self.iteration,
+                "timestamp": datetime.now().isoformat(),
+                "ssim_score": ssim_score,
+                "verdict": verdict,
+                "diff_regions": diff_regions or [],
+                "notes": notes,
+            }
+        )
 
     def should_continue(self) -> tuple[bool, str]:
         """Return (should_continue, reason)."""
@@ -86,7 +102,10 @@ class AgenticLoopController:
         last_score = self.history[-1]["ssim_score"]
 
         if last_score >= self.ssim_threshold:
-            return False, f"target reached: SSIM {last_score:.4f} >= {self.ssim_threshold}"
+            return (
+                False,
+                f"target reached: SSIM {last_score:.4f} >= {self.ssim_threshold}",
+            )
 
         if self.iteration >= self.max_iterations:
             return False, f"max iterations reached ({self.max_iterations})"
@@ -95,7 +114,10 @@ class AgenticLoopController:
         if stalled:
             return False, reason
 
-        return True, f"iteration {self.iteration}/{self.max_iterations}, score {last_score:.4f}"
+        return (
+            True,
+            f"iteration {self.iteration}/{self.max_iterations}, score {last_score:.4f}",
+        )
 
     def detect_convergence(self) -> tuple[bool, str]:
         """Detect if score is stalling (no meaningful progress)."""
@@ -106,16 +128,25 @@ class AgenticLoopController:
 
         # Completely flat
         if recent[-1] == recent[-2] == recent[-3]:
-            return True, f"Score stalled at {recent[-1]:.4f} for 3 consecutive iterations"
+            return (
+                True,
+                f"Score stalled at {recent[-1]:.4f} for 3 consecutive iterations",
+            )
 
         # Micro-improvements (< 0.001 per step)
         diffs = [recent[i] - recent[i - 1] for i in range(1, len(recent))]
         if all(d < 0.001 for d in diffs):
-            return True, f"Score improvements < 0.001 over last 3 iterations (last: {recent[-1]:.4f})"
+            return (
+                True,
+                f"Score improvements < 0.001 over last 3 iterations (last: {recent[-1]:.4f})",
+            )
 
         # Regression (score went down)
         if recent[-1] < recent[-2] - 0.01:
-            return True, f"Score regressed from {recent[-2]:.4f} to {recent[-1]:.4f} — last edit made things worse"
+            return (
+                True,
+                f"Score regressed from {recent[-2]:.4f} to {recent[-1]:.4f} — last edit made things worse",
+            )
 
         return False, ""
 
@@ -150,6 +181,7 @@ class AgenticLoopController:
 
 # --- CLI ---
 
+
 def cmd_init(args):
     ctrl = AgenticLoopController(
         framework=args.framework,
@@ -157,13 +189,18 @@ def cmd_init(args):
         ssim_threshold=args.ssim_threshold,
     )
     ctrl.save()
-    print(json.dumps({
-        "status": "initialized",
-        "framework": ctrl.framework,
-        "max_iterations": ctrl.max_iterations,
-        "ssim_threshold": ctrl.ssim_threshold,
-        "session_file": SESSION_FILE,
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "status": "initialized",
+                "framework": ctrl.framework,
+                "max_iterations": ctrl.max_iterations,
+                "ssim_threshold": ctrl.ssim_threshold,
+                "session_file": SESSION_FILE,
+            },
+            indent=2,
+        )
+    )
 
 
 def cmd_log(args):
@@ -175,27 +212,37 @@ def cmd_log(args):
     )
     cont, reason = ctrl.should_continue()
     ctrl.save()
-    print(json.dumps({
-        "iteration": ctrl.iteration,
-        "ssim_score": args.ssim,
-        "verdict": args.verdict,
-        "should_continue": cont,
-        "reason": reason,
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "iteration": ctrl.iteration,
+                "ssim_score": args.ssim,
+                "verdict": args.verdict,
+                "should_continue": cont,
+                "reason": reason,
+            },
+            indent=2,
+        )
+    )
 
 
 def cmd_status(args):
     ctrl = AgenticLoopController.load()
     cont, reason = ctrl.should_continue()
     last = ctrl.history[-1] if ctrl.history else {}
-    print(json.dumps({
-        "iteration": ctrl.iteration,
-        "max_iterations": ctrl.max_iterations,
-        "last_score": last.get("ssim_score"),
-        "best_score": ctrl.best_iteration().get("ssim_score"),
-        "should_continue": cont,
-        "reason": reason,
-    }, indent=2))
+    print(
+        json.dumps(
+            {
+                "iteration": ctrl.iteration,
+                "max_iterations": ctrl.max_iterations,
+                "last_score": last.get("ssim_score"),
+                "best_score": ctrl.best_iteration().get("ssim_score"),
+                "should_continue": cont,
+                "reason": reason,
+            },
+            indent=2,
+        )
+    )
 
 
 def cmd_report(args):
@@ -211,19 +258,32 @@ def cmd_report(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Agentic loop controller for Figma-to-code refinement")
+    parser = argparse.ArgumentParser(
+        description="Agentic loop controller for Figma-to-code refinement"
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # init
     p_init = subparsers.add_parser("init", help="Start a new loop session")
-    p_init.add_argument("--framework", default="react", choices=["react", "vue", "vanilla"], help="Target framework")
-    p_init.add_argument("--max-iterations", type=int, default=10, help="Maximum iterations")
-    p_init.add_argument("--ssim-threshold", type=float, default=0.95, help="Target SSIM score")
+    p_init.add_argument(
+        "--framework",
+        default="react",
+        choices=["react", "vue", "vanilla"],
+        help="Target framework",
+    )
+    p_init.add_argument(
+        "--max-iterations", type=int, default=10, help="Maximum iterations"
+    )
+    p_init.add_argument(
+        "--ssim-threshold", type=float, default=0.95, help="Target SSIM score"
+    )
 
     # log
     p_log = subparsers.add_parser("log", help="Log an iteration result")
     p_log.add_argument("--ssim", type=float, required=True, help="SSIM score (0-1)")
-    p_log.add_argument("--verdict", choices=["PASS", "REVIEW", "FAIL", "ERROR"], default="REVIEW")
+    p_log.add_argument(
+        "--verdict", choices=["PASS", "REVIEW", "FAIL", "ERROR"], default="REVIEW"
+    )
     p_log.add_argument("--notes", help="Notes about this iteration's differences")
 
     # status
