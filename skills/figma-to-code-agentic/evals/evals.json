@@ -3,21 +3,69 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "I have a Figma design for a product card component. It has an image at the top, a title with bold text, a description below it, and two buttons at the bottom (one primary blue button on the left, one secondary outline button on the right). The card has a white background, rounded corners, and a subtle shadow. Generate a React component that matches this design exactly.",
-      "expected_output": "A ReactJS component (.jsx) with Tailwind CSS that renders the card with image, title, description, and buttons positioned exactly as described. Must include responsive behavior and match Figma pixel-perfect (SSIM >= 0.95).",
-      "files": []
+      "prompt": "I have a Figma design for a product card component. It has an image at the top, a title with bold text, a description below it, and two buttons at the bottom (one primary blue button on the left, one secondary outline button on the right). The card has a white background, rounded corners (#8px radius), and a subtle drop shadow. Generate a React component that matches this design exactly.",
+      "assertions": [
+        "Output is a valid React component (.jsx or .tsx)",
+        "Component renders an image element at the top",
+        "Component has a title with bold/semibold font weight",
+        "Component has two buttons: one filled/primary and one outlined/secondary",
+        "Component applies rounded corners (border-radius or Tailwind rounded-*)",
+        "Component applies a box shadow",
+        "Output includes a Figma match comment or metadata block",
+        "Component file is complete and runnable (not a stub or pseudocode)"
+      ]
     },
     {
       "id": 2,
-      "prompt": "Create a Vue 3 component from this Figma design: a navigation header with a logo on the left, a horizontal menu with 5 items in the center, and a search bar with an icon on the right. The header is dark blue (#1E3A8A), text is white, and there's a thin white border at the bottom. Make it responsive for mobile (hamburger menu) and desktop.",
-      "expected_output": "A Vue 3 single-file component (.vue) with scoped styling that matches the header design. Should render at 1280×720 and match the Figma spec with SSIM >= 0.95.",
-      "files": []
+      "prompt": "Create a Vue 3 component from this Figma design: a navigation header with a logo on the left, a horizontal menu with 5 items in the center, and a search bar with an icon on the right. The header background is dark blue (#1E3A8A), all text is white, and there is a 1px white border at the bottom. Make it responsive for mobile (hamburger menu) and desktop.",
+      "assertions": [
+        "Output is a Vue 3 single-file component (.vue) with <template>, <script>, and <style> sections",
+        "Header background color is #1E3A8A or equivalent (blue-900 Tailwind)",
+        "Text color is white",
+        "Navigation includes 5 menu items",
+        "Component includes responsive logic: a hamburger/toggle for mobile and full nav for desktop",
+        "A search bar or input with an icon is present",
+        "A border at the bottom of the header is applied"
+      ]
     },
     {
       "id": 3,
-      "prompt": "A landing page hero section from Figma has a gradient background (blue to purple), a large headline text (48px), a subtitle below (18px), and a call-to-action button (white text on orange background). Generate vanilla HTML + CSS + JS. The section should be 100% width and full viewport height with centered content.",
-      "expected_output": "A standalone HTML file with inline CSS and JavaScript that renders the hero section matching the Figma spec exactly. SSIM score should be >= 0.95.",
-      "files": []
+      "prompt": "A landing page hero section from Figma has a gradient background (blue to purple), a large headline text (48px), a subtitle below it (18px), and a call-to-action button with white text on an orange background. Generate vanilla HTML + CSS. The section should be 100% width and full viewport height with centered content.",
+      "assertions": [
+        "Output is a standalone HTML file with embedded CSS",
+        "Background uses a CSS gradient from blue to purple (linear-gradient with blue and purple stops)",
+        "Headline font size is approximately 48px",
+        "Subtitle font size is approximately 18px",
+        "A button exists with orange/amber background and white text",
+        "Section height is 100vh or equivalent",
+        "Content is vertically and horizontally centered (flexbox or grid)"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I need to convert this Figma design to a React component but I don't have browser automation set up. The design shows a simple login form: two input fields (email and password), a 'Sign In' button, and a 'Forgot password?' link underneath. Use Tailwind CSS.",
+      "assertions": [
+        "Output is a valid React component",
+        "Component includes two input fields: one for email (type=email) and one for password (type=password)",
+        "Component includes a submit/sign-in button",
+        "Component includes a 'Forgot password' or similar link",
+        "Tailwind CSS classes are used for styling",
+        "The skill notes that SSIM validation was skipped due to missing browser automation",
+        "Component is complete and runnable"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Generate a TypeScript React component from this Figma spec: a pricing card with three tiers (Basic, Pro, Enterprise). Each tier shows: a tier name, a monthly price, a list of 4 features with checkmark icons, and a CTA button. The Pro tier should be visually highlighted (different background). Use Tailwind CSS.",
+      "assertions": [
+        "Output is a valid TypeScript React component (.tsx)",
+        "Component renders three pricing tiers: Basic, Pro, Enterprise",
+        "Each tier includes a name, price, feature list (at least 4 items), and a button",
+        "Feature list items use a checkmark icon or checkmark character",
+        "The Pro tier is visually distinct from the others (different background, border, or highlight)",
+        "Tailwind CSS classes are used",
+        "Component includes proper TypeScript types or interfaces"
+      ]
     }
   ]
 }
