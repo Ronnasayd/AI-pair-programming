@@ -17,7 +17,9 @@ $SOURCE/scripts/gemini.install.sh
 $SOURCE/scripts/taskmaster.install.sh
 $SOURCE/scripts/gitignore.install.sh
 
-
+if [ ! -L "$LOCAL/.agentsignore" ] && [ ! -f "$LOCAL/.agentsignore" ]; then
+cp $SOURCE/.agentsignore $LOCAL/.agentsignore
+fi
 
 ###########################################################################################
 
