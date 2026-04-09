@@ -1,25 +1,95 @@
-*golang*
-*python*
-*typescript*
-*docker*
-*figma*
-*tailwind*
-*cpp*
-*taskmaster*
-*tdd*
-*generate-docs*
-mcp-builder
-semantic-commit-message
-content-hash-cache-pattern
-frontend-design
-prompt-optimizer
-data-scraper-agent
-frontend-patterns
-backend-patterns
-regex-vs-llm-structured-text
-deployment-patterns
+## Agents & Orchestration ##
+
+agent-creator
 agent-harness-construction
-context7-documentation-lookup
+# orchestrate-agents
+data-scraper-agent
+
+
+## Task Management (Taskmaster) ##
+
+*taskmaster*
+
+## Planning, Research & Decision Making ##
+
+# deep-research
+# plan-generator
+# technical-decision-maker
+# blueprint
+# create-task-spec
+
+## Coding Standards & Style Guides ##
+
+coding-standards
+
+
+### Backend / API / DB ##
+
+backend-patterns
 api-design
 database-migrations
+
+### Frontend ##
+
+*frontend*
+
+### DevOps / Infra ##
+
+deployment-patterns
+docker-patterns
+
+### Language-specific ##
+
+*python*
+*golang*
+*cpp*
+*typescript*
+
+
+
+## Testing & Quality ##
+
+*tdd*
+ai-regression-testing
+test-coverage-review
+
+## Code Analysis & Review ##
+
+code-review
+codebase-rules-extractor
 resolve-conflicts
+
+## Execution & Automation ##
+
+# execute-task
+# auto-improve
+prompt-optimizer
+regex-vs-llm-structured-text
+
+## Design & Figma Ecosystem ##
+
+*figma*
+
+## Tailwind / Styling ##
+
+*tailwind*
+
+## Documentation & Content ##
+
+*generate-docs*
+context7-documentation-lookup
+
+## Git & Workflow Practices ##
+
+# git-guide
+semantic-commit-message
+
+## Utilities & Misc ##
+
+handling-large-files
+content-hash-cache-pattern
+# skill-creator
+# context-map
+# generate-pr-description
+document-summarizer
+mcp-builder
