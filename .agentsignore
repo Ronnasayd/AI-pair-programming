@@ -1,6 +1,67 @@
-english-teacher-specialist*
-generative-ai-specialist*
-product-owner-specialist*
-refactor-front-figma-specialist*
-prd-reviewer-specialist*
-task-orchestration-specialist*
+
+#########################  Architecture & System Design #########################
+
+# *context-architect-specialist*
+# *design-pattern-specialist*
+# *codebase-rules-extractor-specialist*
+
+
+######################### Development & Engineering #########################
+
+# *developer-specialist*
+# *developer-planning-specialist*
+*refactor-front-figma-specialist*
+
+
+#########################  Refactoring & Code Quality #########################
+
+# *review-refactor-specialist*
+# *task-reviewer-specialist*
+
+
+#########################  Testing & Quality Assurance #########################
+
+# *test-coverage-specialist*
+
+
+#########################  Security & Reliability #########################
+
+# *cybersecurity-specialist*
+
+
+#########################  Data & Database #########################
+
+# *database-specialist*
+
+
+#########################  AI & Advanced Tech #########################
+
+*generative-ai-specialist*
+
+
+#########################  Product & Requirements #########################
+
+*product-owner-specialist*
+*prd-reviewer-specialist*
+
+
+#########################  Task Management & Orchestration #########################
+
+*task-orchestration-specialist*
+
+
+#########################  DevOps / Git / Workflow #########################
+
+# *git-specialist*
+
+
+#########################  Documentation & Usability #########################
+
+*doc-usability-specialist*
+
+
+#########################  Learning & Skills #########################
+
+# *skill-specialist*
+*english-teacher-specialist*
+
