@@ -1,0 +1,254 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.container { padding: 16px 0; }
+.section { margin-bottom: 24px; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--color-border-tertiary); }
+.agent-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+.agent-pill { font-size: 12px; font-weight: 500; padding: 5px 10px; border-radius: 20px; white-space: nowrap; min-width: 200px; flex-shrink: 0; }
+.skills-list { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.skill-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--color-background-secondary); color: var(--color-text-secondary); border: 1px solid var(--color-border-tertiary); }
+.skill-tag.primary { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+
+/* Color sets */
+.purple { background: #EEEDFE; color: #3C3489; border: 1px solid #AFA9EC; }
+.teal   { background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; }
+.coral  { background: #FAECE7; color: #712B13; border: 1px solid #F0997B; }
+.amber  { background: #FAEEDA; color: #633806; border: 1px solid #EF9F27; }
+.blue   { background: #E6F1FB; color: #0C447C; border: 1px solid #85B7EB; }
+.green  { background: #EAF3DE; color: #27500A; border: 1px solid #97C459; }
+.pink   { background: #FBEAF0; color: #72243E; border: 1px solid #ED93B1; }
+.gray   { background: #F1EFE8; color: #444441; border: 1px solid #B4B2A9; }
+.red    { background: #FCEBEB; color: #791F1F; border: 1px solid #F09595; }
+
+@media (prefers-color-scheme: dark) {
+  .purple { background: #26215C; color: #CECBF6; border-color: #534AB7; }
+  .teal   { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+  .coral  { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+  .amber  { background: #412402; color: #FAC775; border-color: #854F0B; }
+  .blue   { background: #042C53; color: #B5D4F4; border-color: #185FA5; }
+  .green  { background: #173404; color: #C0DD97; border-color: #3B6D11; }
+  .pink   { background: #4B1528; color: #F4C0D1; border-color: #993556; }
+  .gray   { background: #2C2C2A; color: #D3D1C7; border-color: #5F5E5A; }
+  .red    { background: #501313; color: #F7C1C1; border-color: #A32D2D; }
+}
+</style>
+<div class="container">
+
+<div class="section">
+  <div class="section-title">Desenvolvimento & Código</div>
+  <div class="agent-row">
+    <span class="agent-pill blue">developer-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">coding-standards</span>
+      <span class="skill-tag primary">backend-patterns</span>
+      <span class="skill-tag primary">frontend-patterns</span>
+      <span class="skill-tag">tdd</span>
+      <span class="skill-tag">context-map</span>
+      <span class="skill-tag">execute-task</span>
+      <span class="skill-tag">semantic-commit-message</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill blue">developer-planning-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">blueprint</span>
+      <span class="skill-tag primary">technical-decision-maker</span>
+      <span class="skill-tag primary">create-task-spec</span>
+      <span class="skill-tag">context-map</span>
+      <span class="skill-tag">api-design</span>
+      <span class="skill-tag">plan-generator</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill blue">review-refactor-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">code-review</span>
+      <span class="skill-tag primary">coding-standards</span>
+      <span class="skill-tag">tdd-workflow</span>
+      <span class="skill-tag">typescript-style-guide</span>
+      <span class="skill-tag">python-style-guide</span>
+      <span class="skill-tag">golang-style-guide</span>
+      <span class="skill-tag">auto-improve</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill blue">design-pattern-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">coding-standards</span>
+      <span class="skill-tag primary">backend-patterns</span>
+      <span class="skill-tag primary">golang-patterns</span>
+      <span class="skill-tag">python-patterns</span>
+      <span class="skill-tag">frontend-patterns</span>
+      <span class="skill-tag">content-hash-cache-pattern</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Frontend & Design</div>
+  <div class="agent-row">
+    <span class="agent-pill teal">refactor-front-figma-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">frontend-design</span>
+      <span class="skill-tag primary">tailwindcss</span>
+      <span class="skill-tag primary">figma-mcp</span>
+      <span class="skill-tag">figma-to-code-agentic</span>
+      <span class="skill-tag">tailwind-config-conformance</span>
+      <span class="skill-tag">figma-design-system-to-tailwind</span>
+      <span class="skill-tag">figma-code-connect-components</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill teal">context-architect-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">context-map</span>
+      <span class="skill-tag primary">codebase-rules-extractor</span>
+      <span class="skill-tag">handling-large-files</span>
+      <span class="skill-tag">context7-documentation-lookup</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Testes & Qualidade</div>
+  <div class="agent-row">
+    <span class="agent-pill purple">test-coverage-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">tdd-workflow</span>
+      <span class="skill-tag primary">test-coverage-review</span>
+      <span class="skill-tag primary">python-testing</span>
+      <span class="skill-tag">golang-testing</span>
+      <span class="skill-tag">ai-regression-testing</span>
+      <span class="skill-tag">tdd</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Banco de Dados & Infraestrutura</div>
+  <div class="agent-row">
+    <span class="agent-pill coral">database-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">database-migrations</span>
+      <span class="skill-tag primary">deployment-patterns</span>
+      <span class="skill-tag">docker-patterns</span>
+      <span class="skill-tag">content-hash-cache-pattern</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill coral">git-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">git-guide</span>
+      <span class="skill-tag primary">semantic-commit-message</span>
+      <span class="skill-tag primary">generate-pr-description</span>
+      <span class="skill-tag">resolve-conflicts</span>
+      <span class="skill-tag">deployment-patterns</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Produto & Gestão</div>
+  <div class="agent-row">
+    <span class="agent-pill amber">product-owner-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">taskmaster-overview</span>
+      <span class="skill-tag primary">taskmaster-prd-generator</span>
+      <span class="skill-tag primary">document-summarizer</span>
+      <span class="skill-tag">taskmaster-create-task</span>
+      <span class="skill-tag">plan-generator</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill amber">prd-reviewer-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">taskmaster-task-validator</span>
+      <span class="skill-tag primary">taskmaster-prd-generator</span>
+      <span class="skill-tag">document-summarizer</span>
+      <span class="skill-tag">deep-research</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill amber">task-reviewer-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">taskmaster-task-validator</span>
+      <span class="skill-tag primary">taskmaster-expand-task</span>
+      <span class="skill-tag primary">test-coverage-review</span>
+      <span class="skill-tag">taskmaster-append-tasks</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill amber">task-orchestration-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">orchestrate-agents</span>
+      <span class="skill-tag primary">taskmaster-overview</span>
+      <span class="skill-tag">blueprint</span>
+      <span class="skill-tag">execute-task</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">IA Generativa & Segurança</div>
+  <div class="agent-row">
+    <span class="agent-pill green">generative-ai-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">prompt-optimizer</span>
+      <span class="skill-tag primary">agent-harness-construction</span>
+      <span class="skill-tag primary">mcp-builder</span>
+      <span class="skill-tag">data-scraper-agent</span>
+      <span class="skill-tag">regex-vs-llm-structured-text</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill red">cybersecurity-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">deployment-patterns</span>
+      <span class="skill-tag primary">docker-patterns</span>
+      <span class="skill-tag">database-migrations</span>
+      <span class="skill-tag">ai-regression-testing</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Documentação & Meta-skills</div>
+  <div class="agent-row">
+    <span class="agent-pill pink">doc-usability-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">generate-docs-init</span>
+      <span class="skill-tag primary">generate-docs-update</span>
+      <span class="skill-tag primary">document-summarizer</span>
+      <span class="skill-tag">deep-research</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill gray">skill-architect</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">skill-creator</span>
+      <span class="skill-tag primary">agent-creator</span>
+      <span class="skill-tag primary">auto-improve</span>
+      <span class="skill-tag">codebase-rules-extractor</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill gray">codebase-rules-extractor-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">codebase-rules-extractor</span>
+      <span class="skill-tag primary">context-map</span>
+      <span class="skill-tag">generate-docs-init</span>
+      <span class="skill-tag">handling-large-files</span>
+    </div>
+  </div>
+  <div class="agent-row">
+    <span class="agent-pill gray">english-teacher-specialist</span>
+    <div class="skills-list">
+      <span class="skill-tag primary">document-summarizer</span>
+      <span class="skill-tag">deep-research</span>
+    </div>
+  </div>
+</div>
+
+</div>
