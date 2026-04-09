@@ -1,6 +1,6 @@
 ###################### Agents & Orchestration ######################
 
-agent-creator
+# agent-creator
 agent-harness-construction
 # orchestrate-agents
 data-scraper-agent
@@ -20,7 +20,7 @@ data-scraper-agent
 
 ###################### Coding Standards & Style Guides ######################
 
-coding-standards
+# coding-standards
 
 
 ####################### Backend / API / DB ######################
@@ -53,15 +53,15 @@ test-coverage-review
 
 ###################### Code Analysis & Review ######################
 
-code-review
-codebase-rules-extractor
-resolve-conflicts
+# code-review
+# codebase-rules-extractor
+# resolve-conflicts
 
 ###################### Execution & Automation ######################
 
 # execute-task
 # auto-improve
-prompt-optimizer
+# prompt-optimizer
 regex-vs-llm-structured-text
 
 ###################### Design & Figma Ecosystem ######################
@@ -84,10 +84,10 @@ semantic-commit-message
 
 ###################### Utilities & Misc ######################
 
-handling-large-files
+# handling-large-files
 content-hash-cache-pattern
 # skill-creator
 # context-map
 # generate-pr-description
-document-summarizer
+# document-summarizer
 mcp-builder
