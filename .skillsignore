@@ -1,4 +1,4 @@
-## Agents & Orchestration ##
+###################### Agents & Orchestration ######################
 
 agent-creator
 agent-harness-construction
@@ -6,11 +6,11 @@ agent-harness-construction
 data-scraper-agent
 
 
-## Task Management (Taskmaster) ##
+###################### Task Management (Taskmaster) ######################
 
 *taskmaster*
 
-## Planning, Research & Decision Making ##
+###################### Planning, Research & Decision Making ######################
 
 # deep-research
 # plan-generator
@@ -18,73 +18,71 @@ data-scraper-agent
 # blueprint
 # create-task-spec
 
-## Coding Standards & Style Guides ##
+###################### Coding Standards & Style Guides ######################
 
 coding-standards
 
 
-### Backend / API / DB ##
+####################### Backend / API / DB ######################
 
 backend-patterns
 api-design
 database-migrations
 
-### Frontend ##
+####################### Frontend ######################
 
 *frontend*
 
-### DevOps / Infra ##
+####################### DevOps / Infra ######################
 
 deployment-patterns
 docker-patterns
 
-### Language-specific ##
+####################### Language-specific ######################
 
 *python*
 *golang*
 *cpp*
 *typescript*
 
-
-
-## Testing & Quality ##
+###################### Testing & Quality ######################
 
 *tdd*
 ai-regression-testing
 test-coverage-review
 
-## Code Analysis & Review ##
+###################### Code Analysis & Review ######################
 
 code-review
 codebase-rules-extractor
 resolve-conflicts
 
-## Execution & Automation ##
+###################### Execution & Automation ######################
 
 # execute-task
 # auto-improve
 prompt-optimizer
 regex-vs-llm-structured-text
 
-## Design & Figma Ecosystem ##
+###################### Design & Figma Ecosystem ######################
 
 *figma*
 
-## Tailwind / Styling ##
+###################### Tailwind / Styling ######################
 
 *tailwind*
 
-## Documentation & Content ##
+###################### Documentation & Content ######################
 
 *generate-docs*
 context7-documentation-lookup
 
-## Git & Workflow Practices ##
+###################### Git & Workflow Practices ######################
 
 # git-guide
 semantic-commit-message
 
-## Utilities & Misc ##
+###################### Utilities & Misc ######################
 
 handling-large-files
 content-hash-cache-pattern
