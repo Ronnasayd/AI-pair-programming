@@ -45,3 +45,7 @@ Load only the minimal required sections for the task domain.
 - Organize task hierarchies by domain/theme, not sequential numbering
 - Prefer expanding existing tasks over creating new ones
 - Proactively offer synthesis or retrospective after complex tasks
+
+## Tasks
+
+Before execute a task verify available skills and agents to ensure the task is assigned to the most appropriate agent or skill set. If a task requires multiple skills, consider breaking it down into subtasks that can be handled by specialized agents. Always confirm the current state of the task and any dependencies before proceeding with execution.
