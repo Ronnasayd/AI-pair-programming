@@ -4,19 +4,13 @@ description: "A skill for expanding existing task specifications with additional
 argument-hint: "[task_spec_path]: Path to task specification file. [task_id]: ID of task to expand. [task_tag] (optional): Tag context (default: 'master'). [additional_args]: Additional options to pass to task-master (e.g., --model='gpt-4')."
 ---
 
-Execute one of the following commands in your terminal:
+Execute the mcp tool `taskmaster-ai/expand_task` with the parameters:
+prompt(string): The integral content of the task specification file located at `task_spec_path`.
+id(string): The provided `task_id` to identify the task to expand.
+tag(string): The provided `task_tag` or 'master' if not specified.
+research(boolean): true
+force(boolean): false
+projectRoot(string): The root directory of the project, if applicable.
+Add additional arguments (`additional_args`) if needed.
 
-```shell
-# Basic usage (uses 'master' as default task_tag)
-bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id}
-bash $HOME/.gemini/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id}
-
-# With custom task_tag
-bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id} custom-tag
-bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id} custom-tag --model="gpt-4"
-
-# With additional options only (uses default 'master' tag)
-bash .github/skills/taskmaster-expand-task/expand-task.sh {task_spec_path} {task_id} master --model="gpt-4"
-```
-
-All additional arguments (like `--model`, `--project-id`, etc.) are passed through to the task-master commands.
+`
