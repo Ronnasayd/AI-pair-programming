@@ -4,19 +4,18 @@ description: "A skill for creating structured task specifications based on detai
 argument-hint: "[task_spec_path]: Path to task specification file. [task_tag] (optional): Tag to categorize tasks (default: 'master'). [additional_args]: Additional options to pass to task-master (e.g., --model='gpt-4')."
 ---
 
-Execute one of the following commands in your terminal:
+Execute the mcp tool `taskmaster-ai/add_task` with the parameters:
+prompt(string): The integral content of the task specification file located at `task_spec_path`.
+tag(string): The provided `task_tag` or 'master' if not specified.
+research(boolean): true
+projectRoot(string): The root directory of the project, if applicable.
+Add additional arguments (`additional_args`) if needed.
 
-```shell
-# Basic usage (uses 'master' as default task_tag)
-bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path}
-bash $HOME/.gemini/skills/taskmaster-create-task/create-task.sh {task_spec_path}
-
-# With custom task_tag
-bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path} custom-tag
-bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path} custom-tag --model="gpt-4"
-
-# With additional options only (uses default 'master' tag)
-bash .github/skills/taskmaster-create-task/create-task.sh {task_spec_path} master --model="gpt-4"
-```
-
-All additional arguments (like `--model`, `--project-id`, etc.) are passed through to the task-master commands.
+Execute the mcp tool `taskmaster-ai/analyze_project_complexity` with the parameters:
+prompt(string): The integral content of the task specification file located at `task_spec_path`.
+tag(string): The provided `task_tag` or 'master' if not specified.
+ids(string): The IDs of the tasks created in the previous step.
+research(boolean): true
+threshold(integer): 5
+projectRoot(string): The root directory of the project, if applicable.
+Add additional arguments (`additional_args`) if needed.
