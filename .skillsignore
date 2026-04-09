@@ -5,7 +5,9 @@
 *figma*
 *tailwind*
 *cpp*
-# *taskmaster*
+*taskmaster*
+*tdd*
+*generate-docs*
 mcp-builder
 semantic-commit-message
 content-hash-cache-pattern
@@ -20,3 +22,4 @@ agent-harness-construction
 context7-documentation-lookup
 api-design
 database-migrations
+resolve-conflicts
