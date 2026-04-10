@@ -72,8 +72,10 @@
     },
     "mongodb": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mongodb_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "mongodb-mcp"
+      ],
       "env": {
         "MONGODB_URL": "${input:mongodb_url}",
         "MONGODB_DATABASE": "${input:mongodb_database}"

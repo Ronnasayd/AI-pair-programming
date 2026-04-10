@@ -73,6 +73,7 @@ def my_mcp_sqlite(query: str) -> Dict[str, Any]:
     except Exception as e:
         return {"error": f"Erro inesperado: {e}"}
 
-
-if __name__ == "__main__":
+def main():
     mcp.run()
+if __name__ == "__main__":
+    main()

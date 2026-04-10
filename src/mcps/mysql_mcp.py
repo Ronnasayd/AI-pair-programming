@@ -64,6 +64,7 @@ def my_mcp_mysql(query: str) -> Dict[str, Any]:
         if conn and conn.is_connected():
             conn.close()
 
-
+def  main():
+     mcp.run()
 if __name__ == "__main__":
-    mcp.run()
+    main()

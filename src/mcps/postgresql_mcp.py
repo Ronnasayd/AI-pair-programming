@@ -36,6 +36,7 @@ def my_mcp_postgresql(query: str) -> Dict[str, Any]:
     except psycopg2.errors.ReadOnlySqlTransaction as e:  # captura tentativas de escrita
         return {"error": f"Operação bloqueada: sessão é somente leitura. {e}"}
 
-
-if __name__ == "__main__":
+def main():
     mcp.run()
+if __name__ == "__main__":
+    main()
