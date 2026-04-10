@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-# protect-files.py
+# protect-files.py (hardened)
 
 import sys
 import json
 import shlex
 import fnmatch
 import os
+import glob
+from pathlib import Path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -15,101 +17,199 @@ from utils import get_by_key, get_hooks_logger
 
 logger = get_hooks_logger("ProtectFiles")
 
+# ─────────────────────────────────────────────────────────────
+# CONFIG
+# ─────────────────────────────────────────────────────────────
+
+PROJECT_ROOT = os.getcwd()
 
 PROTECTED_PATTERNS = [
     ".env",
     ".env.*",
-    "secrets/*",
+    "**/*.env",
+    "**/*.secret",
+    "**/*.secrets",
+    "**/secrets/**",
     "**/*.pem",
     "**/*.key",
     "**/id_rsa*",
+    "**/.ssh/**",
+    "**/id_*",
+    "**/*.pub",  # opcional (menos crítico, mas útil)
+    "**/.gnupg/**",
+    "**/*.gpg",
+    "**/*.asc",
+    "**/.aws/**",
+    "**/.azure/**",
+    "**/.gcloud/**",
+    "**/credentials",
+    "**/.git-credentials",
+    "**/.gitconfig",
+    "**/.netrc",
+    "**/.npmrc",
+    "**/.yarnrc",
+    "**/.pypirc",
+    "**/.docker/config.json",
+    "**/.kube/config",
+    "**/kubeconfig",
+    "**/.bash_history",
+    "**/.zsh_history",
+    "**/.python_history",
+    "**/.sqlite_history",
+    "**/.psql_history",
+    "**/.mysql_history",
+    "**/.config/BraveSoftware/**",
+    "**/.config/google-chrome/**",
+    "**/.config/chromium/**",
+    "**/.mozilla/**",
+    "**/.cache/mozilla/**",
+    "**/*.crt",
+    "**/*.csr",
+    "**/*.p12",
+    "**/*.pfx",
+    "**/*.der",
 ]
 
+READ_COMMANDS = {"cat", "less", "more", "head", "tail", "grep", "awk", "sed", "bat"}
 
-def is_protected(file_path: str) -> tuple[bool, str]:
+SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";"}
+
+
+# ─────────────────────────────────────────────────────────────
+# HELPERS
+# ─────────────────────────────────────────────────────────────
+
+
+def normalize(path: str) -> str:
+    """Normalize + resolve symlinks."""
+    try:
+        return os.path.realpath(os.path.abspath(path))
+    except Exception:
+        return path
+
+
+def is_within_project(path: str) -> bool:
+    return normalize(path).startswith(PROJECT_ROOT)
+
+
+def matches_pattern(path: str) -> tuple[bool, str]:
+    """Match against protected patterns using pathlib semantics."""
+    p = Path(path)
+
     for pattern in PROTECTED_PATTERNS:
-        if fnmatch.fnmatch(file_path, pattern):
+        # direct fnmatch (string-based)
+        if fnmatch.fnmatch(path, pattern):
             return True, pattern
-        # checa também se o padrão aparece como substring
-        if pattern.strip("*./") in file_path:
+
+        # pathlib match (more robust for **)
+        if p.match(pattern):
             return True, pattern
+
     return False, ""
 
 
-def extract_cat_targets(command: str) -> list[str]:
-    """Extract file path arguments from a shell command that invokes cat.
+def expand_targets(targets: list[str]) -> list[str]:
+    """Expand globs like *.env → actual files."""
+    expanded = []
+    for t in targets:
+        matches = glob.glob(t, recursive=True)
+        if matches:
+            expanded.extend(matches)
+        else:
+            expanded.append(t)
+    return expanded
 
-    Handles:
-      - Simple:       cat .env
-      - Multi-file:   cat secrets/db.key secrets/api.key
-      - Flags:        cat -n .env
-      - Pipe prefix:  cat .env | grep SECRET
-      - Redirect:     cat .env > /tmp/out
-    """
+
+def extract_file_targets(command: str) -> list[str]:
+    """Extract file arguments from common read commands."""
     try:
         tokens = shlex.split(command)
     except ValueError:
-        # shlex fails on unmatched quotes; fall back to naive split
         tokens = command.split()
 
-    targets: list[str] = []
-    SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";"}
+    targets = []
 
     it = iter(tokens)
     for token in it:
-        if token in ("cat", "\\cat"):          # bare or escaped cat
+        cmd = os.path.basename(token)
+
+        if cmd in READ_COMMANDS:
             for arg in it:
                 if arg in SHELL_OPERATORS:
-                    break                       # stop at shell control chars
-                if not arg.startswith("-"):     # skip flags (-n, -A, -e …)
+                    break
+                if not arg.startswith("-"):
                     targets.append(arg)
-            break                               # only inspect the first cat call
+            break
+
     return targets
 
 
 def deny(file_path: str, pattern: str, source: str) -> None:
-    """Write a structured denial to stderr and exit with code 2."""
     print(
-        json.dumps({
-            "decision": "deny",
-            "file": file_path,
-            "source": source,          # "file_path" | "cat_command"
-            "reason": f"matches protected pattern '{pattern}'",
-        }),
+        json.dumps(
+            {
+                "decision": "deny",
+                "file": file_path,
+                "source": source,
+                "reason": f"matches protected pattern '{pattern}'",
+            }
+        ),
         file=sys.stderr,
     )
-    logger.debug(f"Denied access to '{file_path}' from {source} due to pattern '{pattern}'")
+    logger.debug(f"Denied '{file_path}' ({source}) due to pattern '{pattern}'")
     sys.exit(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────────────────────
 
 
 def main():
     try:
         payload = json.load(sys.stdin)
     except json.JSONDecodeError as e:
-        logger.debug(f"JSON inválido: {e}")
+        logger.debug(f"Invalid JSON: {e}")
         sys.exit(1)
 
-    tool_input = get_by_key(payload, "tool_input")  # Valida que tool_input existe e é um dict
+    tool_input = get_by_key(payload, "tool_input")
 
-    # ── 1. Direct file-path tools (Write, Read, Edit …) ──────────────────────
-    file_path = get_by_key(tool_input, "file_path") 
-    
+    # ── 1. Direct file access (Read/Write/Edit tools)
+    file_path = get_by_key(tool_input, "file_path")
 
     if file_path:
-        blocked, pattern = is_protected(file_path)
+        norm = normalize(file_path)
+
+        # optional: enforce project boundary
+        if not is_within_project(norm):
+            deny(file_path, "outside_project", "path_escape")
+
+        blocked, pattern = matches_pattern(norm)
         if blocked:
             deny(file_path, pattern, "file_path")
 
-    # ── 2. Bash tool — intercept `cat <file>` ────────────────────────────────
-    command = get_by_key(tool_input, "command") 
+        logger.debug(f"Allowed file access: {file_path}")
+
+    # ── 2. Shell command inspection
+    command = get_by_key(tool_input, "command")
 
     if command:
-        targets = extract_cat_targets(command)
-        for target in targets:
-            blocked, pattern = is_protected(target)
-            if blocked:
-                deny(target, pattern, "cat_command")
+        targets = extract_file_targets(command)
+        targets = expand_targets(targets)
 
+        for target in targets:
+            norm = normalize(target)
+
+            # block traversal outside project
+            if not is_within_project(norm):
+                deny(target, "outside_project", "command_path_escape")
+
+            blocked, pattern = matches_pattern(norm)
+            if blocked:
+                deny(target, pattern, "command_read")
+
+            logger.debug(f"Allowed command: {command} access: {target}")
+            
     sys.exit(0)
 
 
