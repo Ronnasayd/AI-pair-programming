@@ -89,7 +89,7 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "msqlite-mcp"
+         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "sqlite-mcp"
       ],
       "env": {
         "SQLITEDB_PATH": "${input:sqlitedb_path}"
