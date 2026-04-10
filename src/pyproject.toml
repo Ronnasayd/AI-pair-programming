@@ -3,7 +3,7 @@ name = "ai-pair-programmer"
 version = "0.1.0"
 description = "AI pair programmer tool"
 authors = ["Ronnasayd Machado"]
-packages = [{ include = "mcps", from = "src" }]
+packages = [{ include = "mcps" }]
 
 # [tool.poetry.dependencies]
 # python = "^3.11"
