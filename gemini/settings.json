@@ -33,8 +33,11 @@
       "url": "https://mcp.atlassian.com/v1/mcp"
     },
     "mcp-manager": {
-      "command": "/home/ronnas/develop/personal/mcp-manager/venv/bin/mcp-manager",
+      "command": "uvx",
       "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/mcp-manager.git",
+        "mcp-manager",
         "--config",
         "/home/ronnas/develop/personal/mcp-manager/backends.json",
         "--catalog",
@@ -46,24 +49,36 @@
     },
     "postgresql": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "postgresql-mcp"
+      ],
       "env": {
         "POSTGRES_URL": "$POSTGRES_URL"
       }
     },
     "mysql": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mysql_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mysql-mcp"
+      ],
       "env": {
         "MYSQL_URL": "$MYSQL_URL"
       }
     },
     "mongodb": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mongodb_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mongodb-mcp"
+      ],
       "env": {
         "MONGODB_URL": "$MONGODB_URL",
         "MONGODB_DATABASE": "$MONGODB_DATABASE"
@@ -71,8 +86,12 @@
     },
     "sqlite": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/sqlite_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "sqlite-mcp"
+      ],
       "env": {
         "SQLITEDB_PATH": "$SQLITEDB_PATH"
       }
