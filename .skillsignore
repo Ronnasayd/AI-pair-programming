@@ -63,6 +63,7 @@ test-coverage-review
 # auto-improve
 # prompt-optimizer
 regex-vs-llm-structured-text
+safe-refactor
 
 ###################### Design & Figma Ecosystem ######################
 
