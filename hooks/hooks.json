@@ -8,8 +8,8 @@
       },
       {
         "type": "command",
-        "command": ".github/hooks/scripts/protect_files.py",
-        "description": "Protect sensitive files from being modified or deleted."
+        "command": ".github/hooks/scripts/strategic-compact-suggester.py",
+        "description": "Suggest strategic compaction after tool usage."
       }
     ],
     "PostToolUse": [
