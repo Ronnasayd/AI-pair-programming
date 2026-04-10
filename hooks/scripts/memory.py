@@ -175,6 +175,10 @@ def main() -> None:
         payload = json.load(sys.stdin)
         workspace_root = payload.get("cwd", ".")
 
+        # Clean up old sessions before processing
+        sessions_dir = Path(workspace_root) / ".sessions"
+        cleanup_old_sessions(str(sessions_dir), keep_count=10)
+
         markdown_doc_files = make_doc_files(workspace_root)
         diff_files = get_diff_files(workspace_root)
         list_of_files = [f for f in glob(".sessions/*.*") if os.path.isfile(f)]
@@ -220,6 +224,35 @@ def main() -> None:
         sys.exit(0)
 
     sys.exit(0)
+
+
+def cleanup_old_sessions(sessions_dir: str = ".sessions", keep_count: int = 10) -> None:
+    """Delete old session files, keeping only the most recent ones.
+
+    Args:
+        sessions_dir: Directory containing session files
+        keep_count: Number of most recent files to keep
+    """
+    try:
+        session_path = Path(sessions_dir)
+        if not session_path.exists():
+            return
+
+        # Get all session files sorted by modification time (newest first)
+        session_files = sorted(
+            session_path.glob("*.tmp"), key=lambda p: p.stat().st_mtime, reverse=True
+        )
+
+        # Delete files beyond keep_count
+        for old_file in session_files[keep_count:]:
+            try:
+                old_file.unlink()
+                logger.debug(f"Deleted old session: {old_file.name}")
+            except OSError as e:
+                logger.debug(f"Failed to delete {old_file.name}: {e}")
+
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.debug(f"Cleanup failed: {e}")
 
 
 def make_doc_files(workspace_root):
