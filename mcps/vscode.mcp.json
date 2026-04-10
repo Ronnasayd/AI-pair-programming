@@ -56,16 +56,20 @@
     },
     "postgresql": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "postgresql-mcp"
+      ],
       "env": {
         "POSTGRES_URL": "${input:pg_url}"
       }
     },
     "mysql": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mysql_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "mysql-mcp"
+      ],
       "env": {
         "MYSQL_URL": "${input:mysql_url}"
       }
@@ -83,8 +87,10 @@
     },
     "sqlite": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/sqlite_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "msqlite-mcp"
+      ],
       "env": {
         "SQLITEDB_PATH": "${input:sqlitedb_path}"
       }
