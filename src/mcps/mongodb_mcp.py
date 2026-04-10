@@ -92,6 +92,8 @@ def _serialize(doc: Any) -> Any:
     except (TypeError, ValueError):
         return str(doc)
 
+def  main():
+    mcp.run()
 
 if __name__ == "__main__":
-    mcp.run()
+    main()
