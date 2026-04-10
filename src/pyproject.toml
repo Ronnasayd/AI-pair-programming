@@ -5,9 +5,10 @@ description = "AI pair programmer tool"
 authors = ["Ronnasayd Machado"]
 packages = [{ include = "mcps" }]
 
-# [tool.poetry.dependencies]
-# python = "^3.11"
-# fastmcp = "^2.0"
+[tool.poetry.dependencies]
+python = "^3.11"
+fastmcp = "^2.0"
+pymongo = "==4.16.0"
 
 # [tool.poetry.group.dev.dependencies]
 # pytest = "^7.0"
