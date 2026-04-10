@@ -40,8 +40,11 @@
       "url": "https://mcp.atlassian.com/v1/mcp"
     },
     "mcp-manager": {
-      "command": "/home/ronnas/develop/personal/mcp-manager/venv/bin/mcp-manager",
+      "command": "uvx",
       "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/mcp-manager.git",
+        "mcp-manager",
         "--config",
         "/home/ronnas/develop/personal/mcp-manager/backends.json",
         "--catalog",
