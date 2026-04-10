@@ -1,4 +1,4 @@
-#!/home/ronnas/develop/personal/AI-pair-programming/src/venv/bin/python3
+#! /usr/bin/env python3
 """
 mongodb.py
 
