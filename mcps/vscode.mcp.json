@@ -27,15 +27,6 @@
     }
   ],
   "servers": {
-    "burp": {
-      "command": "java",
-      "args": [
-        "-jar",
-        "/home/ronnas/mcp-proxy.jar",
-        "--sse-url",
-        "http://127.0.0.1:9876/"
-      ]
-    },
     "figma": {
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
