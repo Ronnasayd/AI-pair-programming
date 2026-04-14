@@ -92,3 +92,4 @@ content-hash-cache-pattern
 # generate-pr-description
 # document-summarizer
 mcp-builder
+*keycloack*
