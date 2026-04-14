@@ -27,6 +27,15 @@
     }
   ],
   "servers": {
+    "burp": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "/home/ronnas/mcp-proxy.jar",
+        "--sse-url",
+        "http://127.0.0.1:9876/"
+      ]
+    },
     "figma": {
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
@@ -58,7 +67,9 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "postgresql-mcp"
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "postgresql-mcp"
       ],
       "env": {
         "POSTGRES_URL": "${input:pg_url}"
@@ -68,7 +79,9 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "mysql-mcp"
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mysql-mcp"
       ],
       "env": {
         "MYSQL_URL": "${input:mysql_url}"
@@ -78,7 +91,9 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "mongodb-mcp"
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mongodb-mcp"
       ],
       "env": {
         "MONGODB_URL": "${input:mongodb_url}",
@@ -89,7 +104,9 @@
       "type": "stdio",
       "command": "uvx",
       "args": [
-         "--from", "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src", "sqlite-mcp"
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "sqlite-mcp"
       ],
       "env": {
         "SQLITEDB_PATH": "${input:sqlitedb_path}"
