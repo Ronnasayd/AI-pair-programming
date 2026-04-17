@@ -35,7 +35,7 @@ mkdir -p docs/agents/sessions
 
 ### Step 3: Write the session file
 
-Create `docs/agents/sessions/DD-MM-YYYY-<short-id>-session.tmp`, using today's actual date and a short-id that satisfies the rules enforced by `SESSION_FILENAME_REGEX` in `session-manager.js`:
+Create `docs/agents/sessions/yyyy-mm-dd-<short-id>-session.tmp`, using today's actual date and a short-id that satisfies the rules enforced by `SESSION_FILENAME_REGEX` in `session-manager.js`:
 
 - Allowed characters: lowercase `a-z`, digits `0-9`, hyphens `-`
 - Minimum length: 8 characters
