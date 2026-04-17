@@ -7,6 +7,11 @@ rm  $HOME/.copilot/mcp-config.json
 fi
 ln -s "$SOURCE/github-copilot/mcp-config.json" "$HOME/.copilot/mcp-config.json"
 ########################################################################################
+if [ -L "$HOME/.copilot/config.json" ] || [ -d "$HOME/.copilot/config.json" ]; then
+rm  $HOME/.copilot/config.json
+fi
+ln -s "$SOURCE/github-copilot/config.json" "$HOME/.copilot/config.json"
+########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skills/" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
 fi
