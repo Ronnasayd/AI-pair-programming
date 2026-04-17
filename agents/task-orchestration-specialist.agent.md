@@ -22,7 +22,7 @@ Your task is to analyze a task specification or taskmaster task and create an in
 
 1. **Receive Input**
    - Input will be either:
-     a. A file path to a task specification: `docs/agents/specs/dd-MM-YYYY-<description>.md`
+     a. A file path to a task specification: `docs/agents/specs/yyyy-mm-dd-<description>.md`
      b. A taskmaster task ID: Use `mcp_taskmaster-ai_get_task` tool
 
 2. **Load and Parse Content**

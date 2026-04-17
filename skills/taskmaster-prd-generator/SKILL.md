@@ -1,7 +1,7 @@
 ---
 name: taskmaster-prd-generator
 description: |
-  Generate structured Product Requirements Documents (PRDs) for development projects in the `.taskmaster/prds/` directory. Use this skill whenever the user wants to create a PRD, has a project idea they want to document, needs to convert specs or descriptions into a formal PRD, or mentions they want to plan a project's requirements. The skill accepts text descriptions OR spec files, asks targeted clarifying questions to fill information gaps, extracts key requirements, and lets the user review a preview before saving the file with timestamp format `dd-yy-MMMM-<short-description>.md`.
+  Generate structured Product Requirements Documents (PRDs) for development projects in the `.taskmaster/prds/` directory. Use this skill whenever the user wants to create a PRD, has a project idea they want to document, needs to convert specs or descriptions into a formal PRD, or mentions they want to plan a project's requirements. The skill accepts text descriptions OR spec files, asks targeted clarifying questions to fill information gaps, extracts key requirements, and lets the user review a preview before saving the file with timestamp format `yyyy-mm-dd-<short-description>.md`.
 
 compatibility: |
   - Requires: File system access to create files in `.taskmaster/prds/`
@@ -193,16 +193,16 @@ Regenerate only the affected section unless the user asks for a full rewrite.
 
 ### 3c. Generate the filename
 
-Format: `DD-YY-MMMM-short-description.md`
+Format: `YYYY-MM-DD-short-description.md`
 
-| Part                | Format                    | Example                   |
-| ------------------- | ------------------------- | ------------------------- |
-| `DD`                | Day of month, zero-padded | `09`                      |
-| `YY`                | 2-digit year              | `26`                      |
-| `MMMM`              | Full month name           | `April`                   |
-| `short-description` | 2–4 word kebab-case slug  | `sales-metrics-dashboard` |
+| Part                | Format                     | Example                   |
+| ------------------- | -------------------------- | ------------------------- |
+| `DD`                | Day of month, zero-padded  | `09`                      |
+| `YYYY`              | 4-digit year               | `2026`                    |
+| `MM`                | 2-digit month, zero-padded | `04`                      |
+| `short-description` | 2–4 word kebab-case slug   | `sales-metrics-dashboard` |
 
-**Full example**: `09-26-April-sales-metrics-dashboard.md`
+**Full example**: `2026-04-09-sales-metrics-dashboard.md`
 
 **Slug rules**:
 

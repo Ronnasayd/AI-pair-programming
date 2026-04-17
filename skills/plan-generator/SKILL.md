@@ -6,7 +6,7 @@ argument-hint: Describe the task or project. Include scope, constraints, team si
 
 ## Overview
 
-Creates structured, actionable plans saved to `docs/agents/plans/` with date-stamped filenames (`dd-mm-yyyy-short-description.md`).
+Creates structured, actionable plans saved to `docs/agents/plans/` with date-stamped filenames (`yyyy-mm-dd-short-description.md`).
 
 ## Instructions
 
@@ -14,7 +14,7 @@ Creates structured, actionable plans saved to `docs/agents/plans/` with date-sta
 2. **Define phases**: Break work into logical phases with clear boundaries and dependencies
 3. **Estimate and assign**: Set realistic durations and owners per phase
 4. **Define success**: Add measurable success criteria
-5. **Save file**: Use format `docs/agents/plans/dd-mm-yyyy-short-description.md`
+5. **Save file**: Use format `docs/agents/plans/yyyy-mm-dd-short-description.md`
    - Example: `17-03-2026-api-migration-plan.md`
 
 ## Plan Template

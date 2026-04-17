@@ -73,7 +73,7 @@ Output a structured Markdown report using the template below. Never skip section
 ```markdown
 # Task Retrospective: <task name or brief description>
 
-**Date:** <DD-MM-YYYY>
+**Date:** <yyyy-mm-dd>
 **Process evaluated:** <brief description of what was executed>
 
 ---
