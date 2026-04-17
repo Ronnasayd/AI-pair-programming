@@ -1,0 +1,107 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "pg_url",
+      "description": "PostgreSQL URL"
+    },
+    {
+      "type": "promptString",
+      "id": "mysql_url",
+      "description": "MySQL URL"
+    },
+    {
+      "type": "promptString",
+      "id": "mongodb_url",
+      "description": "MongoDB URL"
+    },
+    {
+      "type": "promptString",
+      "id": "mongodb_database",
+      "description": "MongoDB Database Name"
+    },
+    {
+      "type": "promptString",
+      "id": "sqlitedb_path",
+      "description": "SQLite Database Path"
+    }
+  ],
+  "mcpServers": {
+    "figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "atlassian": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v1/mcp"
+    },
+    "mcp-manager": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/mcp-manager.git",
+        "mcp-manager",
+        "--config",
+        "/home/ronnas/develop/personal/mcp-manager/backends.json",
+        "--catalog",
+        "/home/ronnas/develop/personal/mcp-manager/catalog.json",
+        "--transport",
+        "stdio"
+      ],
+      "type": "stdio"
+    },
+    "postgresql": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "postgresql-mcp"
+      ],
+      "env": {
+        "POSTGRES_URL": "${input:pg_url}"
+      }
+    },
+    "mysql": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mysql-mcp"
+      ],
+      "env": {
+        "MYSQL_URL": "${input:mysql_url}"
+      }
+    },
+    "mongodb": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mongodb-mcp"
+      ],
+      "env": {
+        "MONGODB_URL": "${input:mongodb_url}",
+        "MONGODB_DATABASE": "${input:mongodb_database}"
+      }
+    },
+    "sqlite": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "sqlite-mcp"
+      ],
+      "env": {
+        "SQLITEDB_PATH": "${input:sqlitedb_path}"
+      }
+    }
+  }
+}
