@@ -1,0 +1,20 @@
+{
+  "firstLaunchAt": "2026-03-22T13:35:52.365Z",
+  "banner": "never",
+  "disabledSkills": [],
+  "lastLoggedInUser": {
+    "host": "https://github.com",
+    "login": "Ronnasayd"
+  },
+  "loggedInUsers": [
+    {
+      "host": "https://github.com",
+      "login": "Ronnasayd"
+    }
+  ],
+  "disabledMcpServers": [
+    "figma",
+    "atlassian",
+    "github"
+  ]
+}
