@@ -24,7 +24,7 @@ The execute-task skill orchestrates work through this sequence:
 
 ### 1. **Load Task Context** (Understand the Problem)
 
-- If `task_id` provided: Use `get_task taskmaster tool` to fetch full task definition (requirements, subtasks, context, links)
+- If `task_id` provided: Use `mcp-manager/taskmaster/get_task tool` to fetch full task definition (requirements, subtasks, context, links)
 - If `spec_file` provided: Read the markdown file to extract requirements, acceptance criteria, and context
 - If both: Get task via ID first (authoritative source), then cross-reference with spec file for additional context
 - **Read specification carefully** until goal is completely clear
