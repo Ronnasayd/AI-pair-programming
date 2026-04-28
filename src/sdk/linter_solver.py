@@ -110,15 +110,19 @@ async def fix_linter_errors(
 
 
 async def main(directory: str, linter_command: str, glob_pattern: str) -> None:
-    target_dir = Path(directory).resolve()
-    if not target_dir.is_dir():
-        print(f"Error: '{directory}' is not a valid directory.", file=sys.stderr)
+    target_path = Path(directory).resolve()
+    if target_path.is_file():
+        files = [target_path]
+    elif target_path.is_dir():
+        files = collect_files(target_path, glob_pattern)
+        if not files:
+            print(f"No files matched '{glob_pattern}' in '{target_path}'.")
+            return
+    else:
+        print(
+            f"Error: '{directory}' is not a valid file or directory.", file=sys.stderr
+        )
         sys.exit(1)
-
-    files = collect_files(target_dir, glob_pattern)
-    if not files:
-        print(f"No files matched '{glob_pattern}' in '{target_dir}'.")
-        return
 
     print(f"Found {len(files)} file(s) to lint with: {linter_command}\n")
 
@@ -160,7 +164,7 @@ async def main(directory: str, linter_command: str, glob_pattern: str) -> None:
                 print(output)
                 print(f"  -> Asking Copilot to fix...")
 
-                await fix_linter_errors(session, file_path, output,linter_command)
+                await fix_linter_errors(session, file_path, output, linter_command)
 
                 # Verify fix
                 returncode_after, output_after = run_linter(linter_command, file_path)
