@@ -1,5 +1,5 @@
 ---
-name: copilot-sdk-python
+name: copilot-sdk
 description: >
   Use this skill whenever the user wants to build Python applications or scripts
   using the GitHub Copilot SDK. Triggers include: building Copilot-powered agents
