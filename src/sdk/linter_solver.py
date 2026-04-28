@@ -20,10 +20,13 @@ from pathlib import Path
 from copilot import CopilotClient
 from copilot.session import PermissionHandler
 from copilot.generated.session_events import SessionEventType
+from colorama import init, Fore
 
 
 DEFAULT_GLOB = "**/*"
 MODEL = "claude-sonnet-4.6"
+
+init(autoreset=True)
 
 
 def _print_context_bar(used: int, total: int) -> None:
@@ -79,16 +82,16 @@ async def fix_linter_errors(
     def on_event(event):
         if event.type == SessionEventType.ASSISTANT_REASONING_DELTA:
             chunk = event.data.delta_content or ""
-            sys.stderr.write(chunk)
+            sys.stderr.write(Fore.YELLOW + chunk)
             sys.stderr.flush()
         elif event.type == SessionEventType.ASSISTANT_REASONING:
             # Reasoning complete — add a separator before the fix output
-            sys.stderr.write("\n  [reasoning done]\n")
+            sys.stderr.write(Fore.YELLOW + "\n  [reasoning done]\n")
             sys.stderr.flush()
         elif event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
             part = event.data.delta_content or ""
             response_parts.append(part)
-            sys.stdout.write(part)
+            sys.stdout.write(Fore.GREEN + part)
             sys.stdout.flush()
         elif event.type == SessionEventType.ASSISTANT_MESSAGE:
             # Fallback: non-streaming full message
