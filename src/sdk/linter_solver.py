@@ -77,10 +77,10 @@ async def fix_linter_errors(
         elif event.type == SessionEventType.SESSION_IDLE:
             done.set()
 
-    session.on(on_event)
+    unsubscribe = session.on(on_event)
     await session.send(prompt)
     await done.wait()
-    session.off(on_event)
+    unsubscribe()
 
     fixed_content = "".join(response_parts).strip()
     if fixed_content:
