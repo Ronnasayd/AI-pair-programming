@@ -59,6 +59,7 @@ async def fix_linter_errors(
     session,
     file_path: Path,
     linter_output: str,
+    linter_command: str,
 ) -> None:
     """Ask Copilot to fix linter errors for a file and apply the fix."""
     source = file_path.read_text()
@@ -68,7 +69,7 @@ async def fix_linter_errors(
         f"```\n{linter_output}\n```\n\n"
         f"Here is the current file content:\n\n"
         f"```\n{source}\n```\n\n"
-        "Fix ALL linter errors"
+        f"Fix ALL linter errors. After the adjust verify if exist any linter errors with the linter command {linter_command} and if exist fix it again, repeat this process until no linter errors are found. Only return the fixed file content without any explanation or reasoning."
     )
 
     response_parts: list[str] = []
@@ -158,7 +159,7 @@ async def main(directory: str, linter_command: str, glob_pattern: str) -> None:
                 print(output)
                 print(f"  -> Asking Copilot to fix...")
 
-                await fix_linter_errors(session, file_path, output)
+                await fix_linter_errors(session, file_path, output,linter_command)
 
                 # Verify fix
                 returncode_after, output_after = run_linter(linter_command, file_path)
