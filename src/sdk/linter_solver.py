@@ -26,6 +26,17 @@ DEFAULT_GLOB = "**/*"
 MODEL = "claude-sonnet-4.6"
 
 
+def _print_context_bar(used: int, total: int) -> None:
+    """Print a context window usage progress bar to stderr."""
+    if total <= 0:
+        return
+    pct = used / total
+    filled = int(pct * 30)
+    bar = "█" * filled + "░" * (30 - filled)
+    label = f"Context: [{bar}] {pct:.1%}  ({used:,}/{total:,} tokens)"
+    print(f"  {label}", file=sys.stderr)
+
+
 def run_linter(linter_command: str, file_path: Path) -> tuple[int, str]:
     """Run linter on a single file and return (returncode, output)."""
     cmd = linter_command.split() + [str(file_path)]
@@ -65,7 +76,15 @@ async def fix_linter_errors(
     done = asyncio.Event()
 
     def on_event(event):
-        if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
+        if event.type == SessionEventType.ASSISTANT_REASONING_DELTA:
+            chunk = event.data.delta_content or ""
+            sys.stderr.write(chunk)
+            sys.stderr.flush()
+        elif event.type == SessionEventType.ASSISTANT_REASONING:
+            # Reasoning complete — add a separator before the fix output
+            sys.stderr.write("\n  [reasoning done]\n")
+            sys.stderr.flush()
+        elif event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
             part = event.data.delta_content or ""
             response_parts.append(part)
             sys.stdout.write(part)
@@ -109,6 +128,28 @@ async def main(directory: str, linter_command: str, glob_pattern: str) -> None:
             model=MODEL,
             streaming=True,
         ) as session:
+
+            def on_compaction(event):
+                event_type = (
+                    event.type.value
+                    if hasattr(event.type, "value")
+                    else str(event.type)
+                )
+                data = event.data if hasattr(event, "data") else {}
+                if event_type == "session.compaction_complete":
+                    used = getattr(data, "tokens_used", None) or (
+                        data.get("tokensUsed") if isinstance(data, dict) else None
+                    )
+                    total = getattr(data, "tokens_total", None) or (
+                        data.get("tokensTotal") if isinstance(data, dict) else None
+                    )
+                    if used is not None and total is not None:
+                        _print_context_bar(used, total)
+                elif event_type == "session.compaction_start":
+                    print("  [context] Compacting context window...", file=sys.stderr)
+
+            session.on(on_compaction)
+
             for file_path in sorted(files):
                 returncode, output = run_linter(linter_command, file_path)
                 if returncode == 0:
