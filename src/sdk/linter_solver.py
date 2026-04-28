@@ -40,6 +40,7 @@ def _print_context_bar(used: int, total: int) -> None:
 def run_linter(linter_command: str, file_path: Path) -> tuple[int, str]:
     """Run linter on a single file and return (returncode, output)."""
     cmd = linter_command.split() + [str(file_path)]
+    print(f"Running linter: {' '.join(cmd)}", file=sys.stderr)
     result = subprocess.run(
         cmd,
         capture_output=True,
