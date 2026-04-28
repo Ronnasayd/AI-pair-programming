@@ -68,8 +68,7 @@ async def fix_linter_errors(
         f"```\n{linter_output}\n```\n\n"
         f"Here is the current file content:\n\n"
         f"```\n{source}\n```\n\n"
-        "Fix ALL linter errors and return ONLY the corrected file content, "
-        "with no explanations, no markdown fences, and no extra text."
+        "Fix ALL linter errors"
     )
 
     response_parts: list[str] = []
@@ -103,7 +102,6 @@ async def fix_linter_errors(
 
     fixed_content = "".join(response_parts).strip()
     if fixed_content:
-        file_path.write_text(fixed_content + "\n")
         print(f"\n  [fixed] {file_path}")
     else:
         print(f"\n  [skipped] No fix returned for {file_path}")
