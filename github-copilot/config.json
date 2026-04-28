@@ -2,11 +2,11 @@
   "firstLaunchAt": "2026-03-22T13:35:52.365Z",
   "banner": "never",
   "disabledSkills": [],
-  "lastLoggedInUser": {
+  "last_logged_in_user": {
     "host": "https://github.com",
     "login": "Ronnasayd"
   },
-  "loggedInUsers": [
+  "logged_in_users": [
     {
       "host": "https://github.com",
       "login": "Ronnasayd"

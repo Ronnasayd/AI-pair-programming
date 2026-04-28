@@ -23,7 +23,7 @@ from copilot.generated.session_events import SessionEventType
 
 
 DEFAULT_GLOB = "**/*"
-MODEL="claude-sonnet-4.6"  
+MODEL = "claude-sonnet-4.6"
 
 
 def run_linter(linter_command: str, file_path: Path) -> tuple[int, str]:
@@ -33,6 +33,7 @@ def run_linter(linter_command: str, file_path: Path) -> tuple[int, str]:
         cmd,
         capture_output=True,
         text=True,
+        cwd=file_path.parent,
     )
     output = (result.stdout + result.stderr).strip()
     return result.returncode, output
