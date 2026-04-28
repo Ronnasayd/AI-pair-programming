@@ -95,3 +95,4 @@ content-hash-cache-pattern
 mcp-builder
 *keycloak*
 *srs*
+*copilot-sdk*
