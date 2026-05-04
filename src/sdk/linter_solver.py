@@ -24,7 +24,7 @@ from colorama import init, Fore
 
 
 DEFAULT_GLOB = "**/*"
-MODEL = "claude-sonnet-4.6"
+MODEL = "claude-haiku-4.5"
 
 init(autoreset=True)
 
