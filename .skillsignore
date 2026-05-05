@@ -50,6 +50,7 @@ docker-patterns
 *tdd*
 ai-regression-testing
 test-coverage-review
+integration-testing
 
 ###################### Code Analysis & Review ######################
 
