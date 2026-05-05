@@ -1,1 +1,1 @@
-alias rmignore="rm .skillsignore && rm .agentsignore"
+alias reloadignore="rm .skillsignore && rm .agentsignore && initai"
