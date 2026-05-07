@@ -133,7 +133,7 @@ docs/
 ```markdown
 # <Project Name>
 
-> <One-sentence description>
+<One-sentence description>
 
 ## Overview
 
@@ -158,18 +158,12 @@ docs/
 
 ### `docs/architecture.md` (1500–3500 words)
 
-````markdown
+```markdown
 # Architecture Overview
 
 ## Objectives and Context
 
 ## General Diagram
-
-```mermaid
-graph TD
-  ...
-```
-````
 
 ## Main Components
 
@@ -182,8 +176,7 @@ graph TD
 ## External Integrations
 
 ## Security / Scalability Considerations
-
-````
+```
 
 ---
 
@@ -193,13 +186,19 @@ graph TD
 # Installation and Execution
 
 ## Prerequisites
+
 ## Repository Cloning
+
 ## Environment Configuration
+
 ## Local Execution
+
 ## Tests
+
 ## Deploy (optional)
+
 ## Common Issues
-````
+```
 
 ---
 
