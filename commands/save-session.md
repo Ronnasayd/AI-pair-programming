@@ -35,7 +35,7 @@ mkdir -p docs/agents/sessions
 
 ### Step 3: Write the session file
 
-Create `docs/agents/sessions/yyyy-mm-dd-<short-id>-session.tmp`, using today's actual date and a short-id that satisfies the rules enforced by `SESSION_FILENAME_REGEX` in `session-manager.js`:
+Create `docs/agents/sessions/yyyy-mm-dd-hh-MM-ss-<short-id>-session.tmp`, using today's actual date and a short-id that satisfies the rules enforced by `SESSION_FILENAME_REGEX` in `session-manager.js`:
 
 - Allowed characters: lowercase `a-z`, digits `0-9`, hyphens `-`
 - Minimum length: 8 characters
@@ -46,7 +46,7 @@ Invalid examples: `ABC123de` (uppercase), `short` (under 8 chars), `test_id1` (u
 
 Full valid filename example: `2024-01-15-abc123de-session.tmp`
 
-The legacy filename `YYYY-MM-DD-session.tmp` is still valid, but new session files should prefer the short-id form to avoid same-day collisions.
+The legacy filename `yyyy-mm-dd-hh-MM-ss-session.tmp` is still valid, but new session files should prefer the short-id form to avoid same-day collisions.
 
 ### Step 4: Populate the file with all sections below
 
@@ -69,7 +69,7 @@ Wait for confirmation. Make edits if requested.
 ## Session File Format
 
 ```markdown
-# Session: YYYY-MM-DD
+# Session: yyyy-mm-dd-hh-MM-ss
 
 **Started:** [approximate time if known]
 **Last Updated:** [current time]
@@ -273,4 +273,4 @@ Then test with Postman — the response should include a `Set-Cookie` header.
 - If the user asks to save mid-session (not just at the end), save what's known so far and mark in-progress items clearly
 - The file is meant to be read by Claude at the start of the next session via `/resume-session`
 - Use the canonical global session store: `docs/agents/sessions/`
-- Prefer the short-id filename form (`YYYY-MM-DD-<short-id>-session.tmp`) for any new session file
+- Prefer the short-id filename form (`yyyy-mm-dd-hh-MM-ss-<short-id>-session.tmp`) for any new session file
