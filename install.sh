@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
 SCRIPT_FILE="${BASH_SOURCE[0]}"
+echo "Running install script: $SCRIPT_FILE"
+
 if [ -L "$SCRIPT_FILE" ]; then
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
+else
+  if [ ! -L "/usr/local/bin/init-ai" ]; then
+    sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/init-ai"
+  fi
 fi
+
 export SOURCE="$(dirname "$SCRIPT_FILE")"
 export LOCAL="$(pwd)"
 # echo $SOURCE
