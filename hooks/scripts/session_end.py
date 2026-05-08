@@ -567,8 +567,9 @@ def main() -> None:
 
     sessions_dir = get_sessions_dir()
     today = get_date_string()
+    today_time = get_time_string().replace(":", "-")
     short_id = get_session_id_short(get_by_key(data, "session_id") or "")
-    session_file = sessions_dir / f"{today}-{short_id}-session.tmp"
+    session_file = sessions_dir / f"{today}-{today_time}-{short_id}-session.tmp"
     session_metadata = get_session_metadata()
 
     ensure_dir(sessions_dir)
