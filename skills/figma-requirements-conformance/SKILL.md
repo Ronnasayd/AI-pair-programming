@@ -26,6 +26,11 @@ Audit a software requirements specification (SRS or technical spec) against a Fi
 | Requirements document | File path (`.md`, `.txt`, any readable text)          | `docs/requirements/login-screen.md`                 |
 | Figma reference       | Full URL with `node-id` **or** `fileKey` + frame name | `https://figma.com/design/abc123/App?node-id=10-25` |
 
+The Figma reference may point to:
+
+- **A single screen** — one frame or component representing one specific UI state.
+- **A flow node** — a parent frame or section that contains multiple child screens representing a user flow.
+
 If the Figma reference is a full URL, parse `fileKey` and `nodeId` from it. If the user provides only a `fileKey` and `frame name`, use `get_metadata` first to locate the node by name.
 
 ---
@@ -64,18 +69,29 @@ Before calling any tool, confirm the Figma MCP server is available. If not, info
 
 ### Step 2b — Get the design context
 
-Run both of these to get complementary views:
+First, call `get_metadata(fileKey, nodeId)` on the provided node.
+
+- **If the node is a single screen** (a leaf frame or component), proceed directly.
+- **If the node is a flow** (a parent frame whose direct children are screens), enumerate each child screen. For each child, record its `nodeId` and name — these will be referenced in every report table as the **Screen / Node** column.
+
+For each screen (or for the single screen), run:
 
 ```
-get_metadata(fileKey, nodeId)      # Structural XML of all layers
-get_design_context(fileKey, nodeId) # CSS/layout/component representation
+get_metadata(fileKey, screenNodeId)       # Structural XML of all layers
+get_design_context(fileKey, screenNodeId) # CSS/layout/component representation
 ```
 
-If `get_screenshot(fileKey, nodeId)` is available, also capture a screenshot. It can help identify visible labels, icons, or UI states that the metadata might not describe clearly.
+If `get_screenshot(fileKey, screenNodeId)` is available, capture a screenshot per screen. It can help identify visible labels, icons, or UI states that the metadata might not describe clearly.
 
 ### Step 2c — Catalog design elements
 
-From the metadata/context output, extract a **flat catalog of design elements**:
+For each screen, extract a **flat catalog of design elements** and tag each entry with the screen's name and `nodeId`. Each catalog entry should carry:
+
+- **Screen name** — the frame/page name as it appears in Figma
+- **Screen node ID** — the `nodeId` for direct linkability (e.g., `node-id=42-7`)
+- **Element** — layer name, visible text, or control type
+
+Element types to capture:
 
 - Named layers / frames / groups (especially meaningful names like `Button/Submit`, `Input/Email`, `ErrorMessage`)
 - Visible text labels (buttons, headings, placeholders, error messages, tooltips)
@@ -148,10 +164,10 @@ Produce the report in English using the template below. Be specific — referenc
 
 Items where the design clearly satisfies the requirement.
 
-| Req ID | Requirement                  | Design Evidence                                         |
-| ------ | ---------------------------- | ------------------------------------------------------- |
-| FR-1   | User must see an email input | Layer `Input/Email` with placeholder "Enter your email" |
-| ...    |                              |                                                         |
+| Req ID | Requirement                  | Design Evidence                                         | Screen / Node                   |
+| ------ | ---------------------------- | ------------------------------------------------------- | ------------------------------- |
+| FR-1   | User must see an email input | Layer `Input/Email` with placeholder "Enter your email" | `Login Screen` (`node-id=42-7`) |
+| ...    |                              |                                                         |                                 |
 
 ---
 
@@ -159,12 +175,12 @@ Items where the design clearly satisfies the requirement.
 
 Requirements that have **no clear design representation**. These represent risks — the design may be incomplete or the feature was deprioritized.
 
-For each gap, include a suggested action.
+For each gap, include a suggested action. If the requirement was partially found on a specific screen but is still incomplete, reference that screen in the **Screen / Node** column; otherwise use `—`.
 
-| Req ID | Requirement                            | Gap Description                               | Suggested Action                        |
-| ------ | -------------------------------------- | --------------------------------------------- | --------------------------------------- |
-| FR-8   | Show success message after form submit | No success state or confirmation screen found | Add a success state to the Figma screen |
-| ...    |                                        |                                               |                                         |
+| Req ID | Requirement                            | Gap Description                               | Suggested Action                        | Screen / Node |
+| ------ | -------------------------------------- | --------------------------------------------- | --------------------------------------- | ------------- |
+| FR-8   | Show success message after form submit | No success state or confirmation screen found | Add a success state to the Figma screen | —             |
+| ...    |                                        |                                               |                                         |               |
 
 ---
 
@@ -172,10 +188,10 @@ For each gap, include a suggested action.
 
 Design elements that **introduce features, content, or behavior not described in any requirement**. These may be intentional additions but should be explicitly documented or removed.
 
-| Design Element              | Description                      | Suggested Action                                |
-| --------------------------- | -------------------------------- | ----------------------------------------------- |
-| Checkbox `I agree to Terms` | Not mentioned in any requirement | Add requirement or confirm intentional addition |
-| ...                         |                                  |                                                 |
+| Design Element              | Description                      | Suggested Action                                | Screen / Node                      |
+| --------------------------- | -------------------------------- | ----------------------------------------------- | ---------------------------------- |
+| Checkbox `I agree to Terms` | Not mentioned in any requirement | Add requirement or confirm intentional addition | `Register Screen` (`node-id=55-3`) |
+| ...                         |                                  |                                                 |                                    |
 
 ---
 
@@ -183,9 +199,9 @@ Design elements that **introduce features, content, or behavior not described in
 
 Items where the match between requirements and design is ambiguous and requires human judgment.
 
-| Req ID | Requirement | Design Element | Reason for Uncertainty |
-| ------ | ----------- | -------------- | ---------------------- |
-| ...    |             |                |                        |
+| Req ID | Requirement | Design Element | Reason for Uncertainty | Screen / Node |
+| ------ | ----------- | -------------- | ---------------------- | ------------- |
+| ...    |             |                |                        |               |
 
 ---
 
