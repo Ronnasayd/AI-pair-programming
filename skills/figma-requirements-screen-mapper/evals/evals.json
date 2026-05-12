@@ -1,0 +1,23 @@
+{
+  "skill_name": "requirements-screen-mapper",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a technical requirements document at docs/specs/ecommerce-checkout.md and a Figma file at https://figma.com/design/abc123/Checkout-Flow. The file has multiple checkout screens. Can you map each requirement to the screen it belongs to and tell me which requirements don't fit any screen?",
+      "expected_output": "A structured report with: (1) a summary showing total requirements, screens, mapped, and orphaned counts; (2) a mapping table with one row per screen listing the relevant requirement IDs; (3) expanded per-screen detail blocks with ID + statement; (4) an Orphaned Requirements section for non-UI/cross-cutting requirements with a Reason column.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Here's my situation: we have a big SRS at specs/banking-app-srs.txt with about 40 requirements across functional, security, and performance categories. The Figma design has 8 screens (fileKey: xyz789). I need a traceability matrix — which requirements apply to each screen, and which ones are backend/security requirements that don't map to any specific screen.",
+      "expected_output": "A mapping table covering all 8 Figma screens, each with the relevant requirement IDs listed. The orphaned section should capture security (e.g., session expiry, encryption) and performance requirements clearly labeled as 'Backend/Performance' or 'Security constraint' in the Reason column. The IDs from the SRS should be preserved.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Meu documento de requisitos está em requisitos/modulo-cadastro.md e o Figma tem 5 telas de cadastro de usuário: https://figma.com/design/def456/CadastroApp. Quero ver quais requisitos se aplicam a cada tela e quais ficam sem tela.",
+      "expected_output": "Full report in Portuguese (matching user's language), with a mapping table showing 5 screens (or however many frames exist), per-screen requirement detail blocks, and an orphaned requirements section. The skill should detect the user's language (Portuguese) and respond accordingly.",
+      "files": []
+    }
+  ]
+}
