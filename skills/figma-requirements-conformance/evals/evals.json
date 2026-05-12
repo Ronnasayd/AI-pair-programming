@@ -1,0 +1,23 @@
+{
+  "skill_name": "figma-requirements-conformance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Please audit the login screen requirements against our Figma design. The spec is at docs/requirements/login-screen.md and the Figma screen is at https://figma.com/design/abc123/MyApp?node-id=10-25. I want to know what's covered, what's missing from the design, and if the design added anything we didn't specify.",
+      "expected_output": "A structured Conformance Report with: Summary table (counts), ✅ Conformant Items table with requirement IDs and design layer evidence, 🔴 Gaps in Design table with suggested actions, 🟡 Gaps in Requirements table identifying unspecified design elements, and ⚠️ Uncertain items if any. Output in English.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have an SRS file at requirements/checkout-flow.txt and a Figma screen (fileKey: xyz789, frame name: 'Checkout - Step 1'). Can you check if the design is aligned with the requirements? Especially worried about validation states and error messages.",
+      "expected_output": "Conformance report that specifically highlights validation and error message requirements in the 🔴 design gaps section if they are not found in the Figma metadata. The report should handle file key + frame name input (not full URL) by using get_metadata to locate the node first.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Here's a quick check I need: my requirements doc (specs/user-profile-edit.md) has about 12 requirements for the user profile edit screen. The Figma link is https://figma.com/design/def456/Portal?node-id=5-80. The design team added an avatar upload section that I don't have in the spec. Is that documented anywhere in requirements?",
+      "expected_output": "The avatar upload section should appear in 🟡 Gaps in Requirements since the user explicitly flagged it as unspecified. The report should confirm whether it's captured or not in the requirements document and suggest adding a requirement for it.",
+      "files": []
+    }
+  ]
+}
