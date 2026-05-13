@@ -89,6 +89,7 @@ semantic-commit-message
 
 # handling-large-files
 content-hash-cache-pattern
+event-storming
 # skill-creator
 # context-map
 # generate-pr-description
@@ -101,3 +102,4 @@ mcp-builder
 *opencv*
 *mermaid*
 *apk*
+
