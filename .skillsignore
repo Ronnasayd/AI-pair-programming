@@ -90,6 +90,7 @@ semantic-commit-message
 # handling-large-files
 content-hash-cache-pattern
 event-storming
+# skill-advisor
 # skill-creator
 # context-map
 # generate-pr-description
