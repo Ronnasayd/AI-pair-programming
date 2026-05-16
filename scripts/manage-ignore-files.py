@@ -368,7 +368,8 @@ class IgnoreFileManager:
 
 
 def main():
-    workspace_root = Path(__file__).parent.parent
+    # Usa o diretório de trabalho atual (CWD) em vez de tentar resolver do script
+    workspace_root = Path.cwd()
     manager = IgnoreFileManager(workspace_root)
 
     # Verifica se os arquivos existem
