@@ -1,5 +1,6 @@
 alias reloadignore="rm .skillsignore && rm .agentsignore && initai"
 alias initai="/usr/local/bin/init-ai" # Execute a command with an AI-generated context based on the current directory's files: initai
+alias mif="manage-ignore-files" # Manage .skillsignore and .agentsignore files based on the current directory's contents: manage-ignore
 alias cleanai="rm -rf .gemini \
 && rm -rf .copilot \
 && rm -rf .claude \
