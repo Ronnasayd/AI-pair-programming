@@ -63,21 +63,21 @@ class IgnoreFileManager:
                 continue
 
             # Processa linhas de comentário e padrões
-            # Em .ignore: # = comentado (não ignora) = HABILITADO
-            #            sem # = ativo (ignora) = DESABILITADO
+            # Em .ignore: sem # = ativo (HABILITADO)
+            #            # = comentado/inativo (DESABILITADO)
             if line.strip().startswith("#") and not line.strip().startswith("##"):
-                # É um comentário de padrão (não é ignorado) = HABILITADO
+                # É um comentário de padrão = DESABILITADO
                 pattern = line.lstrip("#").strip()
                 if pattern and not pattern.startswith("#"):
                     if current_section not in sections:
                         sections[current_section] = []
-                    sections[current_section].append((idx, pattern, True))
+                    sections[current_section].append((idx, pattern, False))
             elif line.strip() and not line.strip().startswith("##"):
-                # É um padrão ativo (é ignorado) = DESABILITADO
+                # É um padrão ativo = HABILITADO
                 pattern = line.strip()
                 if current_section not in sections:
                     sections[current_section] = []
-                sections[current_section].append((idx, pattern, False))
+                sections[current_section].append((idx, pattern, True))
 
         return sections
 
@@ -147,7 +147,6 @@ class IgnoreFileManager:
             stdscr.addstr(3, 0, "-" * width)
 
             # Items com checkboxes
-            current_section = None
             y = 4
             rendered_items = 0
 
@@ -158,17 +157,6 @@ class IgnoreFileManager:
 
                 if y >= height - 2:
                     break
-
-                # Mostra seção se mudou
-                if item["section"] != current_section:
-                    current_section = item["section"]
-                    section_text = f"  📂 {current_section}"
-                    if y < height - 2:
-                        stdscr.addstr(
-                            y, 0, section_text, curses.color_pair(3) | curses.A_BOLD
-                        )
-                        y += 1
-                        rendered_items += 1
 
                 # Estado do item (considerando mudanças)
                 line_idx = item["line_idx"]
@@ -293,21 +281,21 @@ class IgnoreFileManager:
         """Aplica as mudanças nas linhas do arquivo
 
         Em .ignore:
-        - True (habilitado) = comentado (não ignora) = adiciona #
-        - False (desabilitado) = descomentado (ignora) = remove #
+        - True (habilitado) = sem # = ativo
+        - False (desabilitado) = com # = comentado
         """
         for line_idx, should_be_enabled in changes.items():
             current_line = lines[line_idx]
 
             if should_be_enabled:
-                # Habilitar: comentar (não ignorar)
-                if not current_line.strip().startswith("#"):
-                    lines[line_idx] = f"# {current_line.lstrip()}"
-            else:
-                # Desabilitar: descomentar (ignorar)
+                # Habilitar: remover # (deixar ativo)
                 lines[line_idx] = current_line.lstrip("#").lstrip()
                 if not lines[line_idx].endswith("\n"):
                     lines[line_idx] += "\n"
+            else:
+                # Desabilitar: adicionar # (comentar)
+                if not current_line.strip().startswith("#"):
+                    lines[line_idx] = f"# {current_line.lstrip()}"
 
         self.write_file(file_path, lines)
 
