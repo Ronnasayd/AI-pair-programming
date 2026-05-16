@@ -1,8 +1,8 @@
 ###################### Agents & Orchestration ######################
 
-# agent-creator
+agent-creator
 agent-harness-construction
-# orchestrate-agents
+orchestrate-agents
 data-scraper-agent
 
 
@@ -15,12 +15,12 @@ data-scraper-agent
 # deep-research
 # plan-generator
 # technical-decision-maker
-# blueprint
+blueprint
 # create-task-spec
 
 ###################### Coding Standards & Style Guides ######################
 
-# coding-standards
+coding-standards
 
 
 ####################### Backend / API / DB ######################
@@ -62,7 +62,7 @@ integration-testing
 
 # execute-task
 # auto-improve
-# prompt-optimizer
+prompt-optimizer
 regex-vs-llm-structured-text
 safe-refactor
 
