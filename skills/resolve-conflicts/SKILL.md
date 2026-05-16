@@ -106,7 +106,7 @@ Based on the assessment, create a structured plan before resolving any conflicts
 If there are deleted-but-modified files (status: DU, UD, DD, UA, AU):
 
 ```bash
-.forge/skills/resolve-conflicts/scripts/handle-deleted-modified.sh
+<skills-location>/resolve-conflicts/scripts/handle-deleted-modified.sh
 ```
 
 This script will:
@@ -305,7 +305,7 @@ Read `references/patterns.md` section "Code Logic Conflicts" for detailed exampl
 After completing all resolution phases in your plan, validate that all conflicts are resolved:
 
 ```bash
-.forge/skills/resolve-conflicts/scripts/validate-conflicts.sh
+<skills-location>/resolve-conflicts/scripts/validate-conflicts.sh
 ```
 
 This script checks for:

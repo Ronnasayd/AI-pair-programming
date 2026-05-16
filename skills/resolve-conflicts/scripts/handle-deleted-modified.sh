@@ -28,7 +28,7 @@ find_deleted_modified() {
 get_modified_content() {
     local file="$1"
     local status="$2"
-    
+
     case "$status" in
         DU) # Deleted by us, modified by them
             git show ":3:$file" 2>/dev/null || echo ""
@@ -36,7 +36,7 @@ get_modified_content() {
         UD) # Deleted by them, modified by us
             git show ":2:$file" 2>/dev/null || echo ""
             ;;
-        *) 
+        *)
             echo ""
             ;;
     esac
@@ -62,31 +62,31 @@ echo ""
 while IFS= read -r line; do
     status="${line:0:2}"
     file="${line:3}"
-    
+
     echo -e "${YELLOW}Processing: $file (status: $status)${NC}"
-    
+
     # Get the modified content
     content=$(get_modified_content "$file" "$status")
-    
+
     if [[ -n "$content" ]]; then
         # Create backup with directory structure
         backup_file="$BACKUP_DIR/$file"
         backup_dir=$(dirname "$backup_file")
         mkdir -p "$backup_dir"
-        
+
         echo "$content" > "$backup_file"
         echo -e "  ${GREEN}✓${NC} Backed up to: $backup_file"
-        
+
         # Try to find similar files (potential relocation targets)
         filename=$(basename "$file")
         base_name="${filename%.*}"
         extension="${filename##*.}"
-        
+
         echo -e "  ${BLUE}Searching for potential relocation targets...${NC}"
-        
+
         # Search for files with similar names
         similar_files=$(git ls-files | grep -i "$base_name" | grep -v "^$file$" || true)
-        
+
         if [[ -n "$similar_files" ]]; then
             echo -e "  ${YELLOW}⚠ Potential relocation targets:${NC}"
             echo "$similar_files" | sed 's/^/    → /'
@@ -94,7 +94,7 @@ while IFS= read -r line; do
             echo -e "  ${YELLOW}⚠ No obvious relocation target found${NC}"
             echo -e "  ${YELLOW}⚠ Changes may need to be manually integrated${NC}"
         fi
-        
+
         # Create an analysis file
         analysis_file="$BACKUP_DIR/$file.analysis.txt"
         cat > "$analysis_file" << EOF
@@ -118,12 +118,12 @@ To view the changes:
 To compare with similar files:
 $(echo "$similar_files" | while read -r sf; do echo "  diff \"$backup_file\" \"$sf\""; done)
 EOF
-        
+
         echo -e "  ${GREEN}✓${NC} Analysis saved to: $analysis_file"
     else
         echo -e "  ${RED}✗${NC} Could not retrieve content"
     fi
-    
+
     # Resolve by removing (user must manually apply changes)
     if [[ "$status" == "DU" ]]; then
         git rm "$file" 2>/dev/null || true
@@ -132,7 +132,7 @@ EOF
         git add "$file" 2>/dev/null || git rm "$file" 2>/dev/null || true
         echo -e "  ${GREEN}✓${NC} Resolved conflict"
     fi
-    
+
     echo ""
 done <<< "$deleted_modified"
 
@@ -180,4 +180,4 @@ echo "Next steps:"
 echo "  1. Review backups: ls -la $BACKUP_DIR"
 echo "  2. Read summary: cat $summary_file"
 echo "  3. Integrate changes manually into appropriate files"
-echo "  4. Run validation: .forge/skills/resolve-conflicts/scripts/validate-conflicts.sh"
+echo "  4. Run validation: <skills-location>/resolve-conflicts/scripts/validate-conflicts.sh"
