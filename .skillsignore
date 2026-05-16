@@ -97,6 +97,7 @@ skill-advisor
 # generate-pr-description
 # document-summarizer
 mcp-builder
+prd-from-codebase
 *keycloak*
 *srs*
 *copilot-sdk*
