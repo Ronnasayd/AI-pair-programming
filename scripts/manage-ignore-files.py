@@ -327,7 +327,7 @@ class IgnoreFileManager:
             menu_items = [
                 ("1", "📋 Gerenciar Skills"),
                 ("2", "🤖 Gerenciar Agents"),
-                ("0", "❌ Sair"),
+                ("Q", "❌ Sair"),
             ]
 
             for key, text in menu_items:
@@ -345,7 +345,7 @@ class IgnoreFileManager:
                     self.interactive_checkbox_menu(stdscr, "skills")
                 elif key == ord("2"):
                     self.interactive_checkbox_menu(stdscr, "agents")
-                elif key == ord("0"):
+                elif key == ord("q") or key == ord("Q"):
                     stdscr.clear()
                     stdscr.addstr(0, 0, "👋 Até logo!", curses.color_pair(3))
                     stdscr.refresh()
