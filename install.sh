@@ -8,6 +8,7 @@ if [ -L "$SCRIPT_FILE" ]; then
 else
   if [ ! -L "/usr/local/bin/init-ai" ]; then
     sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/init-ai"
+    sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/manage-ignore-files"
   fi
 fi
 
