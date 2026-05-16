@@ -63,21 +63,21 @@ class IgnoreFileManager:
                 continue
 
             # Processa linhas de comentário e padrões
-            # Em .ignore: sem # = ativo (HABILITADO)
-            #            # = comentado/inativo (DESABILITADO)
+            # Em .ignore: sem # = DESABILITADO
+            #            # = HABILITADO
             if line.strip().startswith("#") and not line.strip().startswith("##"):
-                # É um comentário de padrão = DESABILITADO
+                # É um comentário de padrão = HABILITADO
                 pattern = line.lstrip("#").strip()
                 if pattern and not pattern.startswith("#"):
                     if current_section not in sections:
                         sections[current_section] = []
-                    sections[current_section].append((idx, pattern, False))
+                    sections[current_section].append((idx, pattern, True))
             elif line.strip() and not line.strip().startswith("##"):
-                # É um padrão ativo = HABILITADO
+                # É um padrão sem comentário = DESABILITADO
                 pattern = line.strip()
                 if current_section not in sections:
                     sections[current_section] = []
-                sections[current_section].append((idx, pattern, True))
+                sections[current_section].append((idx, pattern, False))
 
         return sections
 
@@ -281,21 +281,21 @@ class IgnoreFileManager:
         """Aplica as mudanças nas linhas do arquivo
 
         Em .ignore:
-        - True (habilitado) = sem # = ativo
-        - False (desabilitado) = com # = comentado
+        - True (habilitado) = com # = comentado (ativo)
+        - False (desabilitado) = sem # = descomentuário (inativo)
         """
         for line_idx, should_be_enabled in changes.items():
             current_line = lines[line_idx]
 
             if should_be_enabled:
-                # Habilitar: remover # (deixar ativo)
+                # Habilitar: adicionar # (comentar)
+                if not current_line.strip().startswith("#"):
+                    lines[line_idx] = f"# {current_line.lstrip()}"
+            else:
+                # Desabilitar: remover # (descomentar)
                 lines[line_idx] = current_line.lstrip("#").lstrip()
                 if not lines[line_idx].endswith("\n"):
                     lines[line_idx] += "\n"
-            else:
-                # Desabilitar: adicionar # (comentar)
-                if not current_line.strip().startswith("#"):
-                    lines[line_idx] = f"# {current_line.lstrip()}"
 
         self.write_file(file_path, lines)
 

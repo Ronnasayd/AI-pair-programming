@@ -1,106 +1,107 @@
 ###################### Agents & Orchestration ######################
 
-agent-creator
-# agent-harness-construction
-orchestrate-agents
-# data-scraper-agent
+# agent-creator
+agent-harness-construction
+# orchestrate-agents
+data-scraper-agent
 
 
 ###################### Task Management (Taskmaster) ######################
 
-# *taskmaster*
+*taskmaster*
 
 ###################### Planning, Research & Decision Making ######################
 
-deep-research
-plan-generator
-technical-decision-maker
-blueprint
-create-task-spec
+# deep-research
+# plan-generator
+# technical-decision-maker
+# blueprint
+# create-task-spec
 
 ###################### Coding Standards & Style Guides ######################
 
-coding-standards
+# coding-standards
 
 
 ####################### Backend / API / DB ######################
 
-# backend-patterns
-# api-design
-# database-migrations
+backend-patterns
+api-design
+database-migrations
 
 ####################### Frontend ######################
 
-# *frontend*
+*frontend*
 
 ####################### DevOps / Infra ######################
 
-# deployment-patterns
-# docker-patterns
+deployment-patterns
+docker-patterns
 
 ####################### Language-specific ######################
 
-# *python*
-# *golang*
-# *cpp*
-# *typescript*
+*python*
+*golang*
+*cpp*
+*typescript*
 
 ###################### Testing & Quality ######################
 
-# *tdd*
-# ai-regression-testing
-# test-coverage-review
-# integration-testing
+*tdd*
+ai-regression-testing
+test-coverage-review
+integration-testing
 
 ###################### Code Analysis & Review ######################
 
-code-review
-codebase-rules-extractor
-resolve-conflicts
+# code-review
+# codebase-rules-extractor
+# resolve-conflicts
 
 ###################### Execution & Automation ######################
 
-execute-task
-auto-improve
-prompt-optimizer
-# regex-vs-llm-structured-text
-# safe-refactor
+# execute-task
+# auto-improve
+# prompt-optimizer
+regex-vs-llm-structured-text
+safe-refactor
 
 ###################### Design & Figma Ecosystem ######################
 
-# *figma*
-# design-image-diff
+*figma*
+design-image-diff
 
 ###################### Tailwind / Styling ######################
 
-# *tailwind*
+*tailwind*
 
 ###################### Documentation & Content ######################
 
-# *generate-docs*
-# context7-documentation-lookup
+*generate-docs*
+context7-documentation-lookup
 
 ###################### Git & Workflow Practices ######################
 
-git-guide
-# semantic-commit-message
+# git-guide
+semantic-commit-message
 
 ###################### Utilities & Misc ######################
 
-handling-large-files
-# content-hash-cache-pattern
-# event-storming
-# skill-advisor
-skill-creator
-context-map
-generate-pr-description
-document-summarizer
-# mcp-builder
-# *keycloak*
-# *srs*
-# *copilot-sdk*
-# *leet-code*
-# *opencv*
-# *mermaid*
-# *apk*
+# handling-large-files
+content-hash-cache-pattern
+dynamic-programming-analysis
+event-storming
+skill-advisor
+# skill-creator
+# context-map
+# generate-pr-description
+# document-summarizer
+mcp-builder
+*keycloak*
+*srs*
+*copilot-sdk*
+*leet-code*
+*opencv*
+*mermaid*
+*apk*
 
