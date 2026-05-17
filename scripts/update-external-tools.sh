@@ -108,3 +108,27 @@ for skill in "${SKILLS[@]}"; do
     echo "${skill}" >> .skillsignore
   fi
 done
+
+# everything-claude-code
+BASE_URL="https://github.com/affaan-m/everything-claude-code/tree/main/skills"
+SKILLS=(
+  "ai-regression-testing"
+  "api-design"
+  "backend-patterns"
+  "blueprint"
+  "coding-standards"
+  "content-hash-cache-pattern"
+  "cpp-coding-standards"
+  "data-scraper-agent"
+  "database-migrations"
+  "deep-research"
+  "deployment-patterns"
+  "docker-patterns"
+  "regex-vs-llm-structured-text"
+)
+for skill in "${SKILLS[@]}"; do
+  ghget "${BASE_URL}/${skill}" "skills/everything-claude-code/${skill}"
+  if ! grep -q "${skill}" .skillsignore; then
+    echo "${skill}" >> .skillsignore
+  fi
+done
