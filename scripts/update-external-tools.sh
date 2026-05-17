@@ -83,5 +83,14 @@ for entry in json.load(sys.stdin):
   echo "Using GitHub API + curl..."
   _ghget_recurse "$DIR_PATH" "$OUTPUT_DIR" && echo "Done → $OUTPUT_DIR"
 }
-
-ghget "https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/(creation)/skill-architect" "skills/skill-architect"
+# Tech leads club
+BASE_URL="https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/(creation)"
+SKILLS=(
+  "skill-architect"
+)
+for skill in "${SKILLS[@]}"; do
+  ghget "${BASE_URL}/${skill}" "skills/${skill}"
+  if ! grep -q "${skill}" .skillsignore; then
+    echo "${skill}" >> .skillsignore
+  fi
+done
