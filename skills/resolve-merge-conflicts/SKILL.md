@@ -1,5 +1,5 @@
 ---
-name: resolve-conflicts
+name: resolve-merge-conflicts
 description: Use this skill immediately when the user mentions merge conflicts that need to be resolved. Do not attempt to resolve conflicts directly - invoke this skill first. This skill specializes in providing a structured framework for merging imports, tests, lock files (regeneration), configuration files, and handling deleted-but-modified files with backup and analysis.
 ---
 

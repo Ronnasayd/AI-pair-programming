@@ -56,7 +56,7 @@ integration-testing
 
 # code-review
 # codebase-rules-extractor
-# resolve-conflicts
+# resolve-merge-conflicts
 
 ###################### Execution & Automation ######################
 
