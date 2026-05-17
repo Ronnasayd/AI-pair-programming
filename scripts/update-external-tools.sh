@@ -99,6 +99,8 @@ done
 BASE_URL="https://github.com/anthropics/skills/tree/main/skills"
 SKILLS=(
   "skill-creator"
+  "frontend-design"
+  "mcp-builder"
 )
 for skill in "${SKILLS[@]}"; do
   ghget "${BASE_URL}/${skill}" "skills/anthropics/${skill}"
