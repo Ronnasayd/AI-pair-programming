@@ -24,7 +24,16 @@ if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skill
 rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
 fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
-ln -s "$SOURCE/skills/"* "$LOCAL/$DEFAULT_FOLDER/skills/"
+# Procurar por todos os SKILL.md e criar symlinks para seus diretórios pai
+find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
+    # Obter o diretório pai de SKILL.md (diretório da skill)
+    skill_dir=$(dirname "$skill_file")
+    # Obter apenas o nome da skill
+    skill_name=$(basename "$skill_dir")
+
+    # Criar symlink
+    ln -s "$skill_dir" "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
+done
 ########################################################################################
 if [ -L "$LOCAL/$DEFAULT_FOLDER/commands" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/commands" ]; then
 rm -rf $LOCAL/$DEFAULT_FOLDER/commands

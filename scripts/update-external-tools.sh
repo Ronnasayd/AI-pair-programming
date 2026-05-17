@@ -89,7 +89,7 @@ SKILLS=(
   "skill-architect"
 )
 for skill in "${SKILLS[@]}"; do
-  ghget "${BASE_URL}/${skill}" "skills/${skill}"
+  ghget "${BASE_URL}/${skill}" "skills/tech-leads-club/${skill}"
   if ! grep -q "${skill}" .skillsignore; then
     echo "${skill}" >> .skillsignore
   fi
