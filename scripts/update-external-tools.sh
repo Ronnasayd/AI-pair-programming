@@ -94,3 +94,15 @@ for skill in "${SKILLS[@]}"; do
     echo "${skill}" >> .skillsignore
   fi
 done
+
+# Anthropics
+BASE_URL="https://github.com/anthropics/skills/tree/main/skills"
+SKILLS=(
+  "skill-creator"
+)
+for skill in "${SKILLS[@]}"; do
+  ghget "${BASE_URL}/${skill}" "skills/anthropics/${skill}"
+  if ! grep -q "${skill}" .skillsignore; then
+    echo "${skill}" >> .skillsignore
+  fi
+done
