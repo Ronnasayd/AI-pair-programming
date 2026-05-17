@@ -1,6 +1,7 @@
 ---
 name: ai-regression-testing
 description: Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-check workflows, and patterns to catch AI blind spots where the same model writes and reviews code.
+origin: ECC
 ---
 
 # AI Regression Testing
@@ -38,7 +39,7 @@ Fix 3: Changed to SELECT *
   → Fixed production path, forgot sandbox path
   → AI reviewed and missed it AGAIN (4th occurrence)
 
-Fix 4: Test caught it instantly on first run ✅
+Fix 4: Test caught it instantly on first run PASS:
 ```
 
 The pattern: **sandbox/production path inconsistency** is the #1 AI-introduced regression.
@@ -100,11 +101,7 @@ export function createTestRequest(
     reqHeaders["x-sandbox-user-id"] = sandboxUserId;
   }
 
-  const init: {
-    method: string;
-    headers: Record<string, string>;
-    body?: string;
-  } = {
+  const init: { method: string; headers: Record<string, string>; body?: string } = {
     method,
     headers: reqHeaders,
   };
@@ -142,7 +139,7 @@ const REQUIRED_FIELDS = [
   "role",
   "created_at",
   "avatar_url",
-  "notification_settings", // ← Added after bug found it missing
+  "notification_settings",  // ← Added after bug found it missing
 ];
 
 describe("GET /api/user/profile", () => {
@@ -201,7 +198,6 @@ describe("GET /api/user/messages (conversation list)", () => {
 
 ```markdown
 <!-- .claude/commands/bug-check.md -->
-
 # Bug Check
 
 ## Step 1: Automated Tests (mandatory, cannot skip)
@@ -253,14 +249,14 @@ User: "バグチェックして" (or "/bug-check")
 **Frequency**: Most common (observed in 3 out of 4 regressions)
 
 ```typescript
-// ❌ AI adds field to production path only
+// FAIL: AI adds field to production path only
 if (isSandboxMode()) {
-  return { data: { id, email, name } }; // Missing new field
+  return { data: { id, email, name } };  // Missing new field
 }
 // Production path
 return { data: { id, email, name, notification_settings } };
 
-// ✅ Both paths must return the same shape
+// PASS: Both paths must return the same shape
 if (isSandboxMode()) {
   return { data: { id, email, name, notification_settings: null } };
 }
@@ -286,17 +282,20 @@ it("sandbox and production return same fields", async () => {
 **Frequency**: Common with Supabase/Prisma when adding new columns
 
 ```typescript
-// ❌ New column added to response but not to SELECT
+// FAIL: New column added to response but not to SELECT
 const { data } = await supabase
   .from("users")
-  .select("id, email, name") // notification_settings not here
+  .select("id, email, name")  // notification_settings not here
   .single();
 
 return { data: { ...data, notification_settings: data.notification_settings } };
 // → notification_settings is always undefined
 
-// ✅ Use SELECT * or explicitly include new columns
-const { data } = await supabase.from("users").select("*").single();
+// PASS: Use SELECT * or explicitly include new columns
+const { data } = await supabase
+  .from("users")
+  .select("*")
+  .single();
 ```
 
 ### Pattern 3: Error State Leakage
@@ -304,13 +303,13 @@ const { data } = await supabase.from("users").select("*").single();
 **Frequency**: Moderate — when adding error handling to existing components
 
 ```typescript
-// ❌ Error state set but old data not cleared
+// FAIL: Error state set but old data not cleared
 catch (err) {
   setError("Failed to load");
   // reservations still shows data from previous tab!
 }
 
-// ✅ Clear related state on error
+// PASS: Clear related state on error
 catch (err) {
   setReservations([]);  // Clear stale data
   setError("Failed to load");
@@ -320,22 +319,22 @@ catch (err) {
 ### Pattern 4: Optimistic Update Without Proper Rollback
 
 ```typescript
-// ❌ No rollback on failure
+// FAIL: No rollback on failure
 const handleRemove = async (id: string) => {
-  setItems((prev) => prev.filter((i) => i.id !== id));
+  setItems(prev => prev.filter(i => i.id !== id));
   await fetch(`/api/items/${id}`, { method: "DELETE" });
   // If API fails, item is gone from UI but still in DB
 };
 
-// ✅ Capture previous state and rollback on failure
+// PASS: Capture previous state and rollback on failure
 const handleRemove = async (id: string) => {
   const prevItems = [...items];
-  setItems((prev) => prev.filter((i) => i.id !== id));
+  setItems(prev => prev.filter(i => i.id !== id));
   try {
     const res = await fetch(`/api/items/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error("API error");
   } catch {
-    setItems(prevItems); // Rollback
+    setItems(prevItems);  // Rollback
     alert("削除に失敗しました");
   }
 };
@@ -361,18 +360,17 @@ No bug in /api/user/notifications  → Don't write test (yet)
 
 ## Quick Reference
 
-| AI Regression Pattern       | Test Strategy                              | Priority  |
-| --------------------------- | ------------------------------------------ | --------- |
-| Sandbox/production mismatch | Assert same response shape in sandbox mode | 🔴 High   |
-| SELECT clause omission      | Assert all required fields in response     | 🔴 High   |
-| Error state leakage         | Assert state cleanup on error              | 🟡 Medium |
-| Missing rollback            | Assert state restored on API failure       | 🟡 Medium |
-| Type cast masking null      | Assert field is not undefined              | 🟡 Medium |
+| AI Regression Pattern | Test Strategy | Priority |
+|---|---|---|
+| Sandbox/production mismatch | Assert same response shape in sandbox mode |  High |
+| SELECT clause omission | Assert all required fields in response |  High |
+| Error state leakage | Assert state cleanup on error |  Medium |
+| Missing rollback | Assert state restored on API failure |  Medium |
+| Type cast masking null | Assert field is not undefined |  Medium |
 
 ## DO / DON'T
 
 **DO:**
-
 - Write tests immediately after finding a bug (before fixing it if possible)
 - Test the API response shape, not the implementation
 - Run tests as the first step of every bug-check
@@ -380,7 +378,6 @@ No bug in /api/user/notifications  → Don't write test (yet)
 - Name tests after the bug they prevent (e.g., "BUG-R1 regression")
 
 **DON'T:**
-
 - Write tests for code that has never had a bug
 - Trust AI self-review as a substitute for automated tests
 - Skip sandbox path testing because "it's just mock data"
