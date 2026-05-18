@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-ghget() {
-  local URL="${1:?Usage: ghget <github-url> [output-dir]}"
+gghget() {
+  local URL="${1:?Usage: gghget <github-url> [output-dir]}"
   local OUTPUT_DIR="${2:-}"
 
   URL="${URL%/}"
@@ -49,9 +49,9 @@ ghget() {
 
   local API_BASE="https://api.github.com/repos/${OWNER}/${REPO}/contents"
   # Uncomment to avoid rate limits or access private repos:
-  # local AUTH_HEADER="Authorization: Bearer $GITHUB_TOKEN"
+  local AUTH_HEADER="Authorization: Bearer $GITHUB_PAT_TOKEN"
 
-  _ghget_recurse() {
+  _gghget_recurse() {
     local api_path="$1" local_path="$2"
     local response
 
@@ -75,23 +75,30 @@ for entry in json.load(sys.stdin):
         echo "  ↓ ${local_path}/${name}"
         curl -sf -L -o "${local_path}/${name}" "$dl_url"
       elif [[ "$type" == "dir" ]]; then
-        _ghget_recurse "${api_path}/${name}" "${local_path}/${name}"
+        _gghget_recurse "${api_path}/${name}" "${local_path}/${name}"
       fi
     done
   }
 
   echo "Using GitHub API + curl..."
-  _ghget_recurse "$DIR_PATH" "$OUTPUT_DIR" && echo "Done → $OUTPUT_DIR"
+  _gghget_recurse "$DIR_PATH" "$OUTPUT_DIR" && echo "Done → $OUTPUT_DIR"
 }
 # Tech leads club
-BASE_URL="https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills/(creation)"
+BASE_URL="https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills"
 SKILLS=(
-  "skill-architect"
+  "(creation)/skill-architect"
+  "(development)/tlc-spec-driven"
 )
 for skill in "${SKILLS[@]}"; do
-  ghget "${BASE_URL}/${skill}" "skills/tech-leads-club/${skill}"
-  if ! grep -q "${skill}" .skillsignore; then
-    echo "${skill}" >> .skillsignore
+  # Extrai a categoria (remove parênteses)
+  category=$(echo "$skill" | cut -d'/' -f1 | tr -d '()')
+
+  # Extrai o nome da skill
+  skill_name=$(echo "$skill" | cut -d'/' -f2)
+  echo "${BASE_URL}/${skill}"
+  gghget "${BASE_URL}/${skill}" "skills/tech-leads-club/${skill_name}"
+  if ! grep -q "${skill_name}" .skillsignore; then
+    echo "${skill_name}" >> .skillsignore
   fi
 done
 
@@ -103,7 +110,7 @@ SKILLS=(
   "mcp-builder"
 )
 for skill in "${SKILLS[@]}"; do
-  ghget "${BASE_URL}/${skill}" "skills/anthropics/${skill}"
+  gghget "${BASE_URL}/${skill}" "skills/anthropics/${skill}"
   if ! grep -q "${skill}" .skillsignore; then
     echo "${skill}" >> .skillsignore
   fi
@@ -127,7 +134,7 @@ SKILLS=(
   "regex-vs-llm-structured-text"
 )
 for skill in "${SKILLS[@]}"; do
-  ghget "${BASE_URL}/${skill}" "skills/everything-claude-code/${skill}"
+  gghget "${BASE_URL}/${skill}" "skills/everything-claude-code/${skill}"
   if ! grep -q "${skill}" .skillsignore; then
     echo "${skill}" >> .skillsignore
   fi
