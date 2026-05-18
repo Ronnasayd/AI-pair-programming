@@ -1,10 +1,6 @@
 {
   "mcpServers": {
-    "figma-L": {
-      "url": "https://mcp.figma.com/mcp",
-      "type": "http"
-    },
-    "figma-Q": {
+    "figma": {
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
     },
