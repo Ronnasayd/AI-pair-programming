@@ -1,114 +1,82 @@
-###################### Agents & Orchestration ######################
-
-agent-creator
-agent-harness-construction
-orchestrate-agents
-data-scraper-agent
-
-
-###################### Task Management (Taskmaster) ######################
-
-*taskmaster*
-
-###################### Planning, Research & Decision Making ######################
-
-# deep-research-web
-# plan-generator
-# technical-decision-maker
-blueprint
-# create-task-spec
-
-###################### Coding Standards & Style Guides ######################
-
-coding-standards
-
-
-####################### Backend / API / DB ######################
-
-backend-patterns
-api-design
-database-migrations
-
-####################### Frontend ######################
-
-*frontend*
-
-####################### DevOps / Infra ######################
-
-deployment-patterns
-docker-patterns
-
-####################### Language-specific ######################
-
-*python*
-*golang*
-*cpp*
-*typescript*
-
-###################### Testing & Quality ######################
-
-*tdd*
-ai-regression-testing
-test-coverage-review
-integration-testing
-
-###################### Code Analysis & Review ######################
-
+# auto-improve
 # code-review
 # codebase-rules-extractor
-# resolve-merge-conflicts
-
-###################### Execution & Automation ######################
-
+# codenavi
+# context-map
+# create-task-spec
+# deep-research-web
+# document-summarizer
 # execute-task
-# auto-improve
-prompt-optimizer
-regex-vs-llm-structured-text
-safe-refactor
-
-###################### Design & Figma Ecosystem ######################
-
-*figma*
-design-image-diff
-
-###################### Tailwind / Styling ######################
-
-*tailwind*
-
-###################### Documentation & Content ######################
-
-*generate-docs*
-context7-documentation-lookup
-
-###################### Git & Workflow Practices ######################
-
-git-guide
-semantic-commit-message
-
-###################### Utilities & Misc ######################
-
-# handling-large-files
+# generate-pr-description
+# mermaid-studio
+# plan-generator
+# resolve-merge-conflicts
+# skill-architect
+# skill-creator
+# technical-decision-maker
+# tlc-spec-driven
+agent-creator
+agent-harness-construction
+ai-regression-testing
+api-design
+apk-reverse
+backend-patterns
+blueprint
+coding-standards
 content-hash-cache-pattern
+context7-documentation-lookup
+copilot-sdk
+cpp-coding-standards
+data-scraper-agent
+database-migrations
+deep-research
+deployment-patterns
+design-image-diff
+docker-patterns
 dynamic-programming-analysis
 event-storming
-skill-advisor
-# skill-creator
-# context-map
-# generate-pr-description
-# document-summarizer
-mcp-builder
-prd-from-codebase
-*keycloak*
-*srs*
-*copilot-sdk*
-*leet-code*
-*opencv*
-*mermaid*
-*apk*
-# skill-architect
+figma-code-connect-components
+figma-design-system-to-tailwind
+figma-mcp
+figma-requirements-conformance
+figma-requirements-screen-mapper
+figma-to-code-agentic
 frontend-design
-# tlc-spec-driven
-cpp-coding-standards
+frontend-patterns
+generate-docs-init
+generate-docs-update
+git-guide
+golang-patterns
+golang-style-guide
+golang-testing
+handling-large-files
+integration-testing
+keycloak-docs-index
+leet-code-patterns
 legacy-migration-planner
-# mermaid-studio
-# codenavi
+mcp-builder
+mermaid-class-diagram
+mermaid-erd
+opencv
+prd-from-codebase
+python-patterns
+python-style-guide
+python-testing
+regex-vs-llm-structured-text
+safe-refactor
+semantic-commit-message
+skill-advisor
+srs-generator
+tailwind-config-conformance
+tailwindcss
+taskmaster-append-tasks
+taskmaster-create-task
+taskmaster-expand-task
+taskmaster-mapper
+taskmaster-overview
+taskmaster-prd-generator
+taskmaster-task-validator
+tdd
+tdd-workflow
+test-coverage-review
+typescript-style-guide
