@@ -118,6 +118,7 @@ BASE_URL="https://github.com/tech-leads-club/agent-skills/tree/main/packages/ski
 SKILLS=(
   "(creation)/skill-architect"
   "(development)/tlc-spec-driven"
+  "(architecture)/legacy-migration-planner"
 )
 for skill in "${SKILLS[@]}"; do
   skill_name=$(echo "$skill" | cut -d'/' -f2)
