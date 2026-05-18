@@ -16,11 +16,7 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/"
     },
-    "atlassian-L": {
-      "type": "http",
-      "url": "https://mcp.atlassian.com/v1/mcp"
-    },
-    "atlassian-Q": {
+    "atlassian": {
       "type": "http",
       "url": "https://mcp.atlassian.com/v1/mcp"
     },

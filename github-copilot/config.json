@@ -12,9 +12,5 @@
       "login": "Ronnasayd"
     }
   ],
-  "disabledMcpServers": [
-    "figma",
-    "atlassian",
-    "github"
-  ]
+  "disabledMcpServers": ["figma", "atlassian", "github"]
 }
