@@ -3,7 +3,10 @@ from glob import glob
 
 agents = glob("./agents/**/*", recursive=True)
 skills = glob("./skills/**/SKILL.md", recursive=True)
-def print_name_description(agents):
+
+
+def generate_descriptions(agents):
+    values = []
     for agent in agents:
         with open(agent, "r", encoding="utf-8") as f:
             content = f.read()
@@ -13,14 +16,31 @@ def print_name_description(agents):
             continue
         try:
             frontmatter = yaml.safe_load(parts[1])
-            print("name:", frontmatter.get("name"))
-            print("description:", frontmatter.get("description"))
-            print()
+            values.append(
+                dict(
+                    name=[frontmatter.get("name")],
+                    description=frontmatter.get("description"),
+                )
+            )
+            # print(f"  name: \"{frontmatter.get('name')}\"")
+            # print(f"  description: \"{frontmatter.get('description')}\"")
+            # print()
         except yaml.YAMLError as e:
             print(f"Skipping {agent}: Error parsing frontmatter: {e}")
             continue
+    return values
 
-print("## AGENTS ##\n")
-print_name_description(agents)
-print("## SKILLS ##\n")
-print_name_description(skills)
+
+skill_values = generate_descriptions(agents)
+data = {"agents": skill_values}
+yaml_string = yaml.dump(data, sort_keys=False, encoding="utf-8")
+with open("./agents/index.yaml", "w", encoding="utf-8") as f:
+    f.write(yaml_string)
+# print(yaml_string)
+
+skill_values = generate_descriptions(skills)
+data = {"skills": skill_values}
+yaml_string = yaml.dump(data, sort_keys=False, encoding="utf-8")
+with open("./skills/index.yaml", "w", encoding="utf-8") as f:
+    f.write(yaml_string)
+# print(yaml_string)
