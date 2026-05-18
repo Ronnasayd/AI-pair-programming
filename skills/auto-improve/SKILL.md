@@ -3,6 +3,9 @@ name: auto-improve
 description: >
   After completing any task, extract reusable rules from what worked and what failed. Produces output in the exact format used by agent.instructions.md (## Mandatory: Rules to Follow / ## Mandatory: Rules to Avoid). Trigger after a task finishes when the user asks for a retrospective, lessons learned, or rule extraction — or implicitly with phrases like "what did we learn", "what went wrong", "what should we avoid next time". Do NOT trigger mid-task or before execution completes.
 argument-hint: "Optional: path to a task log, plan file, or description of the completed process. If not provided, the skill will analyze the current conversation history."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Task Retrospective

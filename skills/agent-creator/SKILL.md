@@ -1,6 +1,9 @@
 ---
 name: agent-creator
 description: Create new specialist agents, modify and improve existing agents, and validate agent behavior. Use when users want to create a custom agent from scratch, edit or optimize an existing agent, test an agent against realistic prompts, or improve an agent's description and instructions. Triggers on phrases like "create an agent for X", "make a specialist agent that does Y", "build me an agent for Z", "improve this agent", "update agent instructions", "add a new agent", or whenever a new autonomous specialist role needs to be defined. Always use this skill when the work involves writing or editing .agent.md files, even if the user just says "I need something that specializes in X".
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Agent Creator

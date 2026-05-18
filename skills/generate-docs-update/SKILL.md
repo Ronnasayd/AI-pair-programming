@@ -15,6 +15,9 @@ argument-hint: >
   main...feature/my-branch`, `cat patch.diff`) or a raw diff/file whose
   output will be analyzed to determine which documentation updates are
   required.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Documentation Update Skill

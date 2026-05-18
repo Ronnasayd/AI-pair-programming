@@ -2,6 +2,9 @@
 name: create-task-spec
 description: "A skill for creating structured task specifications based on detailed analysis of the provided task description. Use this skill to generate comprehensive technical specifications that will serve as input for task-master, ensuring that all necessary context, relevant files, code snippets, and a clear action plan are included to facilitate efficient task implementation."
 argument-hint: "[task_description]: A string containing the detailed description of the task to be analyzed and transformed into a structured technical specification document. Or a file path to a markdown file containing the task description."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 MANDATORY: Use task-reviewer-specialist agent

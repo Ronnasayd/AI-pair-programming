@@ -9,6 +9,9 @@ description: >
   or any time two images are provided where one is a design reference and the other is a rendered UI.
   Always use this skill when the user uploads two images and asks what needs to change to make
   one look like the other — even if they don't mention "design" explicitly.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Design Diff Skill

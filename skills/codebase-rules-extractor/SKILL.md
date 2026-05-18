@@ -2,6 +2,9 @@
 name: codebase-rules-extractor
 description: "Extract and document coding rules, patterns, conventions, and anti-patterns from a codebase. Maps the code structure, identifies what to do and what to avoid when creating new code, and generates a comprehensive rules reference document."
 argument-hint: "[project_path]: Optional path to the project root to analyze. If not provided, analyzes the current workspace."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 MANDATORY: Use codebase-rules-extractor-specialist agent

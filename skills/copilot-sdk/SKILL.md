@@ -10,6 +10,9 @@ description: >
   workflow involving the `copilot` Python package (copilot-sdk). Use this skill
   even if the user only says "Copilot agent", "Copilot session", or "Copilot
   tool" in a Python context — they almost certainly need this.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # GitHub Copilot Python SDK

@@ -2,6 +2,9 @@
 name: generate-pr-description
 description: "A skill for generating structured Pull Request descriptions based on git diffs and commit history. It automatically detects and uses .github/pull_request_template.md if available, otherwise it uses standard sections like ## Description, ## Task, and ## Impact. It also ensures the description is generated in the user's preferred language."
 argument-hint: "[language]: (Optional) The language in which the PR description should be generated (e.g., 'English', 'Portuguese'). If not provided, the skill MUST ask the user."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 MANDATORY: Use developer-specialist or review-refactor-specialist agent.

@@ -7,6 +7,9 @@ description: >
   application analysis. Even if the request is simple like "analyze this APK" or "what does
   this app do", use this skill. Includes static analysis, metadata extraction, strings, URLs,
   permissions, Java/Kotlin classes, resources, and suspicious pattern detection.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Skill: APK Reverse Engineering

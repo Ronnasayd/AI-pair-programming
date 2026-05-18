@@ -8,6 +8,9 @@ description: >
   "create aggregates", "identify bounded contexts", "map domain policies".
   Also use this skill when the user provides business process descriptions and wants to transform them
   into structured Event Storming artifacts — even if they do not explicitly mention the term.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Event Storming Skill

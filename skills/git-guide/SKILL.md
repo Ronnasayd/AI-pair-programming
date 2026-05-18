@@ -1,6 +1,9 @@
 ---
 name: git-guide
 description: "A comprehensive guide to Git commands and workflows, based on the official Git cheat sheet. Use this skill to learn and reference common Git operations, from basic repository setup to advanced history manipulation."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 <instructions>

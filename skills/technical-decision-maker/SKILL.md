@@ -2,6 +2,9 @@
 name: technical-decision-maker
 description: Helps make informed technical decisions by presenting viable options with pros/cons analysis, context searches, and decomposition of complex problems into smaller sub-problems.
 argument-hint: Describe the technical problem or question, project context, constraints, and any relevant information about previously considered alternatives.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Technical Decision Maker

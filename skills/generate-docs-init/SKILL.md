@@ -11,6 +11,9 @@ description: >
   (SUMMARY, architecture, setup, usage, modules, contribution, ADRs, etc.)
   with Mermaid diagrams, tables, and navigable Markdown links. Do NOT use for
   code generation, debugging, or non-documentation writing tasks.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Documentation Specialist Skill
