@@ -1,15 +1,11 @@
-# auto-improve
 # code-review
-# codebase-rules-extractor
 # codenavi
 # context-map
 # create-task-spec
 # deep-research-web
-# document-summarizer
 # execute-task
 # generate-pr-description
 # mermaid-studio
-# plan-generator
 # resolve-merge-conflicts
 # skill-architect
 # skill-creator
@@ -20,8 +16,10 @@ agent-harness-construction
 ai-regression-testing
 api-design
 apk-reverse
+auto-improve
 backend-patterns
 blueprint
+codebase-rules-extractor
 coding-standards
 content-hash-cache-pattern
 context7-documentation-lookup
@@ -33,6 +31,7 @@ deep-research
 deployment-patterns
 design-image-diff
 docker-patterns
+document-summarizer
 dynamic-programming-analysis
 event-storming
 figma-code-connect-components
@@ -58,6 +57,7 @@ mcp-builder
 mermaid-class-diagram
 mermaid-erd
 opencv
+plan-generator
 prd-from-codebase
 python-patterns
 python-style-guide
