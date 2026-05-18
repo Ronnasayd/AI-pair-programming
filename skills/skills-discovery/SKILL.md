@@ -27,7 +27,7 @@ For each skill in the inventory, keep track of:
 - **description**: Full trigger and purpose statement
 - **status**: Whether it's in core skills (enabled) or only in the comprehensive list (available but disabled)
 
-Do NOT assume you know all skills. Read both files fresh each time. These files are the source of truth.
+Do NOT assume you know all skills. Read files fresh each time. These files are the source of truth.
 
 ---
 
