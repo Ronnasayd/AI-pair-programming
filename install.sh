@@ -8,6 +8,7 @@ if [ -L "$SCRIPT_FILE" ]; then
 else
   if [ ! -L "/usr/local/bin/init-ai" ]; then
     bash "$(pwd)/scripts/update-external-tools.sh"
+    python "$(pwd)/scripts/list_skills_agents.py"
     sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/init-ai"
     sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/manage-ignore-files"
   fi
@@ -117,6 +118,8 @@ fi
 if [ ! -L "$LOCAL/.skillsignore" ] && [ ! -f "$LOCAL/.skillsignore" ]; then
   cp $SOURCE/.skillsignore $LOCAL/.skillsignore
 fi
+
+
 
 ###########################################################################################
 

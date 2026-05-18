@@ -24,6 +24,7 @@ if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skill
 rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
 fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
+ln -s "$SOURCE/skills/index.yaml" "$LOCAL/$DEFAULT_FOLDER/skills/index.yaml"
 # Procurar por todos os SKILL.md e criar symlinks para seus diretórios pai
 find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     # Obter o diretório pai de SKILL.md (diretório da skill)
