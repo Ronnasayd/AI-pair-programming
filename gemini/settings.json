@@ -8,7 +8,8 @@
     "preferredEditor": "vscode",
     "vimMode": false,
     "plan": {
-      "directory": "docs/agents/plans/"
+      "directory": "docs/agents/plans/",
+      "enabled": true
     }
   },
   "security": {
@@ -115,7 +116,6 @@
   },
   "experimental": {
     "enableAgents": true,
-    "plan": true,
     "directWebFetch": true
   },
   "ui": {
@@ -214,5 +214,8 @@
     "Notification": [],
     "BeforeModel": [],
     "AfterModel": []
+  },
+  "agents": {
+    "overrides": {}
   }
 }
