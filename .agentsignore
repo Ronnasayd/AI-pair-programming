@@ -1,19 +1,19 @@
-# codebase-rules-extractor-specialist
-# cybersecurity-specialist
-# developer-planning-specialist
-# developer-specialist
-# git-specialist
-# review-refactor-specialist
-context-architect-specialist
-database-specialist
-design-pattern-specialist
-doc-usability-specialist
-english-teacher-specialist
-generative-ai-specialist
-prd-reviewer-specialist
-product-owner-specialist
-refactor-front-figma-specialist
-skill-architect
-task-orchestration-specialist
-task-reviewer-specialist
-test-coverage-specialist
+# codebase-rules-extractor-specialist.agent.md
+# cybersecurity-specialist.agent.md
+# developer-planning-specialist.agent.md
+# developer-specialist.agent.md
+# git-specialist.agent.md
+# review-refactor-specialist.agent.md
+context-architect-specialist.agent.md
+database-specialist.agent.md
+design-pattern-specialist.agent.md
+doc-usability-specialist.agent.md
+english-teacher-specialist.agent.md
+generative-ai-specialist.agent.md
+prd-reviewer-specialist.agent.md
+product-owner-specialist.agent.md
+refactor-front-figma-specialist.agent.md
+skill-architect.agent.md
+task-orchestration-specialist.agent.md
+task-reviewer-specialist.agent.md
+test-coverage-specialist.agent.md
