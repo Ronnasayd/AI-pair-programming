@@ -1,6 +1,9 @@
 ---
 name: srs-generator
 description: Generates complete Software Requirements Specification (SRS) documents, following the standard template based on ISO/IEC/IEEE 29148:2018. Use this skill whenever the user asks to create, write, generate, or document an SRS, software requirements specification, requirements document, or mentions terms such as "SRS", "software specification", "functional and non-functional requirements", "requirements document", or requests to document a software system/product in a structured way. Also use it when the user provides information about a system and asks to structure it into formal documentation. The skill accepts text descriptions OR spec files, asks targeted clarifying questions to fill information gaps, extracts key requirements, and lets the user review a preview before saving the file with timestamp format at `docs/srs/yyyy-mm-dd-<short-description>.md`
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # SRS Generator

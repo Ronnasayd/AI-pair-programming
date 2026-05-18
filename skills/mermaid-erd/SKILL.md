@@ -10,6 +10,9 @@ description: >
   SQL DDL, ORM models, or describes tables/entities and wants a diagram. Proactively use
   this skill whenever database design, relational modeling, or schema visualization is
   involved — even if the user doesn't say "ERD" or "Mermaid".
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Mermaid Entity Relationship Diagram Skill

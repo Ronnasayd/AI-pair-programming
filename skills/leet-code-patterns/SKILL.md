@@ -1,11 +1,14 @@
 ---
-name: leetcode-patterns
+name: leet-code-patterns
 description: >
   Expert guidance on solving LeetCode and coding interview problems using the 15 most important algorithmic patterns.
   Use this skill whenever the user asks about: solving a LeetCode problem, coding interview prep, algorithm patterns,
   data structure problems, competitive programming, identifying the right approach for a problem, or asks "how do I solve X type of problem".
   Also trigger when user describes a problem and wants to know which technique or pattern to apply. Trigger even
   for vague requests like "help me get better at LeetCode" or "I'm stuck on this array problem".
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # LeetCode Patterns Skill

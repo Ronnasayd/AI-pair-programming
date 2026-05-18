@@ -1,6 +1,9 @@
 ---
 name: opencv
 description: "Use this skill whenever the user asks about Python OpenCV, computer vision, or image/video processing with cv2. Triggers include reading/writing/displaying images, drawing on images, image transformations (resize, rotate, warp, crop), thresholding, edge detection, feature detection, color space conversion, smoothing/blurring, morphological operations, working with video or webcam feeds, camera calibration, and object detection with OpenCV. Apply this skill even if the user just mentions cv2, imread, imshow, or asks how to do anything visual/image-related in Python. Always use this skill before writing any OpenCV code — it contains critical syntax reminders, common parameter patterns, and usage notes."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Python OpenCV Skill

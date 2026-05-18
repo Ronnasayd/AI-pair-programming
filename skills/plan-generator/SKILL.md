@@ -2,6 +2,9 @@
 name: plan-generator
 description: Generate structured plans for tasks and projects, saved as date-stamped markdown files in docs/agents/plans/. Use whenever the user wants to plan a project, break down a task, create a roadmap, design a workflow, or organize phases and milestones — even if they just say "make a plan for X" or "how should I approach Y".
 argument-hint: Describe the task or project. Include scope, constraints, team size, and timeline if known.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 ## Overview

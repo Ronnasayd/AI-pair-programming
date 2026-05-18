@@ -2,6 +2,9 @@
 name: keycloak-docs-index
 description: |
   Keycloak Documentation Index. Use this skill whenever the user asks about Keycloak features, configuration, deployment, security, monitoring, or any other Keycloak-related topic. This skill provides a structured index of official Keycloak documentation with direct links to complete guides, allowing agents to quickly navigate and access the full documentation context needed for any Keycloak task. Always refer to this index when helping with Keycloak setup, configuration, troubleshooting, or best practices - even if the user doesn't explicitly mention "documentation" or "guide".
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Keycloak Documentation Index

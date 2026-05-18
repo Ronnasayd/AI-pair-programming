@@ -10,6 +10,9 @@ description: >
   visually. Also use when a user pastes code (Python, Java, TypeScript, etc.) and asks to
   diagram it, or when they describe a system and want a visual model. Always use this skill
   proactively when class/entity relationships are involved, even if "Mermaid" isn't mentioned.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Mermaid Class Diagram Skill

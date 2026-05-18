@@ -2,6 +2,9 @@
 name: code-review
 description: "A skill for performing structured code reviews based on git diffs and specialist instructions. Use this skill to analyze code changes, identify required adjustments, and generate detailed review reports that comply with the system's guidelines for surgical changes and security best practices."
 argument-hint: "[git_diff_command]: A string command containing the git diff output to be analyzed for code review."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 MANDATORY: Use agents [review-refactor-specialist, git-specialist,design-pattern-specialist, security-specialist]

@@ -11,6 +11,9 @@ description: >
   does not mention dynamic programming explicitly. The goal is to model the DP mindset: identify
   base cases, define sub-problems, find overlapping structure, and build toward the solution
   bottom-up.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Dynamic Programming Analysis

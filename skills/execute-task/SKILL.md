@@ -2,6 +2,9 @@
 name: execute-task
 description: "Execute a specified task by reading detailed specifications, analyzing requirements, planning the approach, and implementing step-by-step. Use this skill when: you have a task specification file or task ID that needs completion; the task is multi-step, involves architecture decisions, or requires tool orchestration; you need to track progress across subtasks and delegate work to specialist agents. Triggers on task execution requests, implementation assignments, feature builds, bug fixes, refactoring projects, or when a user provides a task spec .md file. Always use this skill for complex development work rather than tackling it directly —delegate to specialists and maintain progress visibility with task tracking."
 argument-hint: "[task_id] - TaskMaster task ID (e.g., 'T1'), OR [spec_file] - Path to task specification markdown file"
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 ## XP Principles

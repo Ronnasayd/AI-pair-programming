@@ -8,6 +8,9 @@ description: >
   "o que esse código faz", "mapear funcionalidades", "entender a base de código", "reverse PRD" ou similares.
   A skill usa as ferramentas disponíveis (bash, view, etc.) para explorar autonomamente a base de código
   antes de gerar o documento — o usuário não precisa colar código manualmente.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # PRD from Codebase
