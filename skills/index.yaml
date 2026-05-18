@@ -213,6 +213,9 @@ skills:
     with variance analysis, or optimize a skill's description for better triggering
     accuracy.
 - name:
+  - skills-discovery
+  description: Explore all available skills (enabled and disabled) by task or theme to discover which skills exist for a problem. Use when asking "which skills can help with X?", "what skills do I have for topic Y?", "explore skills related to Z", "show me all skills for [domain]", or when wanting to discover relevant skills before deciding to enable them. Different from skill-advisor: exploratory discovery across ALL skills with reasons why each matches.
+- name:
   - frontend-design
   description: Create distinctive, production-grade frontend interfaces with high
     design quality. Use this skill when the user asks to build web components, pages,
