@@ -77,18 +77,18 @@ Anything the skills don't cover, or edge cases the user should be aware of.
 
 Here is a summary of all currently public skills and their core strengths. **Always cross-check against the live `<available_skills>` block** — the user may have additional installed skills not listed here.
 
-| Skill                      | Best For                                                                                                            |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `docx`                     | Creating or editing Word documents (.docx): reports, memos, letters, templates, tables of contents, tracked changes |
-| `pdf`                      | Creating, merging, splitting, watermarking, filling, or encrypting PDFs                                             |
-| `pdf-reading`              | Extracting text, tables, images from PDFs; OCR; reading scanned docs                                                |
-| `pptx`                     | Creating or editing PowerPoint presentations (.pptx): decks, slides, speaker notes                                  |
-| `xlsx`                     | Creating or editing Excel spreadsheets (.xlsx): formulas, charts, data cleaning, financial models                   |
-| `file-reading`             | Routing: determines how to read an uploaded file of any type                                                        |
-| `frontend-design`          | Building polished web UIs: React components, HTML/CSS pages, dashboards, landing pages                              |
-| `product-self-knowledge`   | Answering questions about Claude/Anthropic products accurately                                                      |
-| `skill-creator`            | Creating, editing, testing, or optimizing skills themselves                                                         |
-| `technical-decision-maker` | Evaluating technical options with pros/cons analysis                                                                |
+| Skill                       | Best For                                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `docx`                      | Creating or editing Word documents (.docx): reports, memos, letters, templates, tables of contents, tracked changes |
+| `pdf`                       | Creating, merging, splitting, watermarking, filling, or encrypting PDFs                                             |
+| `pdf-reading`               | Extracting text, tables, images from PDFs; OCR; reading scanned docs                                                |
+| `pptx`                      | Creating or editing PowerPoint presentations (.pptx): decks, slides, speaker notes                                  |
+| `xlsx`                      | Creating or editing Excel spreadsheets (.xlsx): formulas, charts, data cleaning, financial models                   |
+| `file-reading`              | Routing: determines how to read an uploaded file of any type                                                        |
+| `frontend-design`           | Building polished web UIs: React components, HTML/CSS pages, dashboards, landing pages                              |
+| `product-self-knowledge`    | Answering questions about Claude/Anthropic products accurately                                                      |
+| `skill-creator`             | Creating, editing, testing, or optimizing skills themselves                                                         |
+| `technical-decision-helper` | Evaluating technical options with pros/cons analysis                                                                |
 
 ---
 
