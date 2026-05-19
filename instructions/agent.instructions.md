@@ -17,7 +17,7 @@ Directories to search for context:
 - `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules.md`
 - `docs/contribution.md`, `docs/faq.md`, `docs/SUMMARY.md`
 - `.taskmaster/tasks/*.md`
-- `README.md`, `GEMINI.md`, `CLAUDE.md`
+- `README.md`, `GEMINI.md`, `CLAUDE.md`, `AGENTS.md`
 
 Load only the minimal required sections for the task domain.
 
@@ -26,26 +26,11 @@ Load only the minimal required sections for the task domain.
 - Editing without verifying current content first
 - Assuming file paths without verification
 - Assuming task status without querying current state first
-- Running bulk tool operations without spot-checking 2–3 outputs first
-- Marking parent task done while subtasks remain pending
 
 ## Rules to Follow
 
-- List each requirement as a checklist and validate each item
 - Never rewrite everything — edit only specific segments
-- Always read the applicable SKILL.md before specialized work
-- Create a detailed specification before implementation
+- Always read the applicable skills before specialized work
 - Verify file existence and line numbers before making edits
-- Use agent orchestration to parallelize independent subtasks
-- Define dependencies between subtasks explicitly
-- Delegate large code artifacts (>1000 lines) to specialist agents with explicit success criteria
-- Test edge cases before marking a task complete
-- Include specific line references in all review findings
-- Use structured gap analysis matrices before bulk task operations
 - Organize task hierarchies by domain/theme, not sequential numbering
 - Prefer expanding existing tasks over creating new ones
-- Proactively offer synthesis or retrospective after complex tasks
-
-## Tasks
-
-Before execute a task verify available skills and agents to ensure the task is assigned to the most appropriate agent or skill set. If a task requires multiple skills, consider breaking it down into subtasks that can be handled by specialized agents. Always confirm the current state of the task and any dependencies before proceeding with execution.
