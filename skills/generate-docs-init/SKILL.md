@@ -158,6 +158,8 @@ through it.
 | `docs/usage.md`                 | 1000–2500    | [templates/docs-usage.md](templates/docs-usage.md)               |
 | `docs/modules/<module-name>.md` | 400–900 each | [templates/docs-modules.md](templates/docs-modules.md)           |
 | `docs/contribution.md`          | 500–1500     | [templates/docs-contribution.md](templates/docs-contribution.md) |
+| `docs/models.md`                | 600–1500     | [templates/docs-models.md](templates/docs-models.md)             |
+| `docs/endpoints.md`             | 800–2000     | [templates/docs-endpoints.md](templates/docs-endpoints.md)       |
 | `docs/adr/adr-NNN-<title>.md`   | 300–800 each | [templates/docs-adr.md](templates/docs-adr.md)                   |
 | `docs/techs/<technology>.md`    | 200–800 each | [templates/docs-techs.md](templates/docs-techs.md)               |
 | `docs/faq.md`                   | 500–1000     | [templates/docs-faq.md](templates/docs-faq.md)                   |
