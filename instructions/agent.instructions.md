@@ -10,14 +10,13 @@ applyTo: "**/*"
 
 ## Documentation
 
-Directories to search for context:
+Directories to search for context, in this sequential order:
 
-- `docs/**`, `docs/agents/**`, `docs/agents/specs/**`, `docs/agents/plans/**`, `docs/agents/reviews/**`
+- `docs/SUMMARY.md`, `README.md`, `GEMINI.md`, `CLAUDE.md`, `AGENTS.md`
+- `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules.md`, `docs/contribution.md`, `docs/faq.md`,
 - `docs/adr/**`, `docs/techs/**`, `docs/misc/**`
-- `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules.md`
-- `docs/contribution.md`, `docs/faq.md`, `docs/SUMMARY.md`
-- `.taskmaster/tasks/*.md`
-- `README.md`, `GEMINI.md`, `CLAUDE.md`, `AGENTS.md`
+
+When accessing a module, check for the existence of CONTEXT.md files. These files contain relevant information about the module.
 
 Load only the minimal required sections for the task domain.
 
