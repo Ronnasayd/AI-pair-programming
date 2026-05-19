@@ -131,193 +131,29 @@ docs/
 
 ## File Templates
 
-### `docs/SUMMARY.md` (500–1500 words)
-
-```markdown
-# <Project Name>
-
-<One-sentence description>
-
-## Overview
-
-## High-Level Architecture
-
-## Quick Installation
-
-## How to Use
-
-## Modules
-
-## Contribution
-
-## Architectural Decisions ← optional
-
-## Technologies ← optional
-
-## FAQ / Common Issues ← optional
-```
-
----
-
-### `docs/architecture.md` (1500–3500 words)
-
-```markdown
-# Architecture Overview
-
-## Objectives and Context
-
-## General Diagram
-
-## Main Components
-
-## Data Flow
-
-## Patterns and Principles
-
-## Important Decisions
-
-## External Integrations
-
-## Security / Scalability Considerations
-```
-
----
-
-### `docs/setup.md` (500–1500 words)
-
-```markdown
-# Installation and Execution
-
-## Prerequisites
-
-## Repository Cloning
-
-## Environment Configuration
-
-## Local Execution
-
-## Tests
-
-## Deploy (optional)
-
-## Common Issues
-```
-
----
-
-### `docs/usage.md` (1000–2500 words)
-
-```markdown
-# How to Use
-
-## Main Flow
-
-## Usage Examples
-
-## Expected Outputs
-
-## Advanced Use Cases
-
-## Errors and Best Practices
-```
-
----
-
-### `docs/modules.md` (1500–3000 words)
-
-```markdown
-# System Modules
-
-## Overview
-
-## Module Descriptions
-
-## Module Relationships
-
-## Possible Improvements / Technical Debt
-```
-
-Each module entry must cover:
-
-1. **Module/folder name** and location in the repository.
-2. **Objective and role** — what it does and why it exists.
-3. **Main features** — key functions, classes, or components (1–2 lines each).
-4. **Data flow and dependencies** — sources, sinks, internal and external deps.
-5. **Architectural decisions** — design patterns, justifications, unusual choices.
-6. **Interfaces and integration points** — endpoints, hooks, events, protocols.
-7. **Constraints and business rules** — validations, limits, known issues.
-8. **Usage example** — minimal pseudocode or real snippet.
-9. **History and context** — significant changes, pending tasks, technical debt.
-
----
-
-### `docs/contribution.md` (500–1500 words)
-
-```markdown
-# Contribution Guide
-
-## Getting Started
-
-## Branch and Commit Standards
-
-## Reviews and PRs
-
-## Tests and Quality
-
-## Code Conventions
-
-## Best Practices
-```
-
----
-
-### `docs/adr/adr-NNN-<title>.md` (300–800 words each)
-
-```markdown
-# ADR-NNN – <Title>
-
-## Context
-
-## Decision
-
-## Considered Alternatives
-
-## Consequences
-
-## Status <!-- Proposed | Accepted | Obsolete -->
-```
-
----
-
-### `docs/techs/<technology>.md` (200–800 words each)
-
-```markdown
-# <Technology Name>
-
-## Version and Scope
-
-## Why It Was Chosen
-
-## Main Uses in the Project
-
-## Reference Links
-```
-
----
-
-### `docs/faq.md` (500–1000 words)
-
-```markdown
-# FAQ
-
-## <Question 1>
-
-<Answer>
-
-## <Question 2>
-
-<Answer>
-```
+| Output File                   | Word Range   | Template                                                         |
+| ----------------------------- | ------------ | ---------------------------------------------------------------- |
+| `docs/SUMMARY.md`             | 500–1500     | [templates/docs-SUMMARY.md](templates/docs-SUMMARY.md)           |
+| `docs/architecture.md`        | 1500–3500    | [templates/docs-architecture.md](templates/docs-architecture.md) |
+| `docs/setup.md`               | 500–1500     | [templates/docs-setup.md](templates/docs-setup.md)               |
+| `docs/usage.md`               | 1000–2500    | [templates/docs-usage.md](templates/docs-usage.md)               |
+| `docs/modules.md`             | 1500–3000    | [templates/docs-modules.md](templates/docs-modules.md)           |
+| `docs/contribution.md`        | 500–1500     | [templates/docs-contribution.md](templates/docs-contribution.md) |
+| `docs/adr/adr-NNN-<title>.md` | 300–800 each | [templates/docs-adr.md](templates/docs-adr.md)                   |
+| `docs/techs/<technology>.md`  | 200–800 each | [templates/docs-techs.md](templates/docs-techs.md)               |
+| `docs/faq.md`                 | 500–1000     | [templates/docs-faq.md](templates/docs-faq.md)                   |
+
+> **Note for `docs/modules.md`:** each module entry must cover:
+>
+> 1. **Module/folder name** and location in the repository.
+> 2. **Objective and role** — what it does and why it exists.
+> 3. **Main features** — key functions, classes, or components (1–2 lines each).
+> 4. **Data flow and dependencies** — sources, sinks, internal and external deps.
+> 5. **Architectural decisions** — design patterns, justifications, unusual choices.
+> 6. **Interfaces and integration points** — endpoints, hooks, events, protocols.
+> 7. **Constraints and business rules** — validations, limits, known issues.
+> 8. **Usage example** — minimal pseudocode or real snippet.
+> 9. **History and context** — significant changes, pending tasks, technical debt.
 
 ---
 
