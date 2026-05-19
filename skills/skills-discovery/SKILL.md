@@ -128,7 +128,7 @@ Use this mental model to speed up matching:
 | "document this"                            | generate-docs-init, generate-docs-update, ...      |
 | "test this", "write tests"                 | tdd, tdd-workflow, test-coverage-review, ...       |
 | "refactor this", "clean up code"           | safe-refactor, code-review, ...                    |
-| "which framework/language should I use?"   | technical-decision-maker, ...                      |
+| "which framework/language should I use?"   | technical-decision-helper, ...                     |
 | "I don't know where to start"              | tlc-spec-driven, blueprint, plan-generator, ...    |
 | "make this performant", "optimize this"    | perf-web-optimization, ...                         |
 | "design this system/architecture"          | domain-analysis, modular-decomposition, ...        |
@@ -173,7 +173,7 @@ Use this mental model to speed up matching:
 
 - `domain-analysis` (Direct) — Maps domains and suggests service boundaries
 - `modular-decomposition` (Direct) — Monolith-to-modular pipeline with component sizing
-- `technical-decision-maker` (Strong) — Frameworks for evaluating architecture trade-offs
+- `technical-decision-helper` (Strong) — Frameworks for evaluating architecture trade-offs
 - `legacy-migration-planner` (Strong) — Strategy for phased extraction/modernization
 - `blueprint` (Moderate) — Multi-phase construction planning for complex refactors
 
