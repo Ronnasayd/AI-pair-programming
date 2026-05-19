@@ -17,7 +17,7 @@ argument-hint: >
   required.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Documentation Update Skill
@@ -62,18 +62,18 @@ affected** by those changes — never adding content just for the sake of it.
 
 For each changed code unit, determine which doc file(s) it affects:
 
-| Code change type                       | Likely doc files to update                            |
-| -------------------------------------- | ----------------------------------------------------- |
-| New module or folder added             | `docs/modules.md`, `docs/SUMMARY.md`                  |
-| Module removed or renamed              | `docs/modules.md`, `docs/SUMMARY.md`, `docs/usage.md` |
-| New API endpoint added                 | `docs/endpoints.md`, `docs/usage.md`                  |
-| Endpoint signature changed             | `docs/endpoints.md`, `docs/usage.md`                  |
-| New data model or schema change        | `docs/models.md`, `docs/architecture.md`              |
-| Installation/env var/config change     | `docs/setup.md`                                       |
-| Architectural pattern change           | `docs/architecture.md`, `docs/adr/`                   |
-| New external dependency added/removed  | `docs/setup.md`, `docs/techs/`                        |
-| Breaking change in public interface    | `docs/usage.md`, `docs/endpoints.md`, `docs/faq.md`   |
-| New contributor workflow (CI, scripts) | `docs/contribution.md`                                |
+| Code change type                       | Likely doc files to update                                                                        |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| New module or folder added             | `docs/modules/<module-name>.md` (new file), `docs/SUMMARY.md`, `<module-name>/CONTEXT.md` symlink |
+| Module removed or renamed              | `docs/modules/<module-name>.md`, `docs/SUMMARY.md`, `docs/usage.md`, remove stale `CONTEXT.md`    |
+| New API endpoint added                 | `docs/endpoints.md`, `docs/usage.md`                                                              |
+| Endpoint signature changed             | `docs/endpoints.md`, `docs/usage.md`                                                              |
+| New data model or schema change        | `docs/models.md`, `docs/architecture.md`                                                          |
+| Installation/env var/config change     | `docs/setup.md`                                                                                   |
+| Architectural pattern change           | `docs/architecture.md`, `docs/adr/`                                                               |
+| New external dependency added/removed  | `docs/setup.md`, `docs/techs/`                                                                    |
+| Breaking change in public interface    | `docs/usage.md`, `docs/endpoints.md`, `docs/faq.md`                                               |
+| New contributor workflow (CI, scripts) | `docs/contribution.md`                                                                            |
 
 If no existing doc covers a new topic, note that a new file may be needed
 and include it in the preview.
@@ -135,7 +135,7 @@ After all writes are complete:
 Apply these rules in order. Stop at the first match.
 
 1. **Directly referenced** — the diff modifies code that is explicitly
-   described in the doc (e.g., a function documented in `modules.md`).
+   described in the doc (e.g., a function documented in `docs/modules/<module-name>.md`).
    → **Update.**
 
 2. **Structurally affected** — the diff adds or removes a module, endpoint,
@@ -161,16 +161,17 @@ Apply these rules in order. Stop at the first match.
 
 ## Writing Standards
 
-| Aspect          | Rule                                                                  |
-| --------------- | --------------------------------------------------------------------- |
-| Links           | Always use standard Markdown: `[label](path/to/file.md)`              |
-| Lists           | Always use numbered or bulleted lists                                 |
-| Headings        | Always use `#`, `##`, `###` hierarchy                                 |
-| Code blocks     | Always use fenced blocks with syntax highlighting                     |
-| Diagrams        | Use Mermaid when architecture or flow changes require a visual update |
-| Tables          | Use Markdown tables for structured reference information              |
-| File references | Never mention files as plain text — always wrap in a Markdown link    |
-| Scope           | Only change what the diff makes necessary — no padding or filler text |
+| Aspect           | Rule                                                                            |
+| ---------------- | ------------------------------------------------------------------------------- |
+| Links            | Always use standard Markdown: `[label](path/to/file.md)`                        |
+| Lists            | Always use numbered or bulleted lists                                           |
+| Headings         | Always use `#`, `##`, `###` hierarchy                                           |
+| Code blocks      | Always use fenced blocks with syntax highlighting                               |
+| Diagrams         | Use Mermaid when architecture or flow changes require a visual update           |
+| Tables           | Use Markdown tables for structured reference information                        |
+| File references  | Never mention files as plain text — always wrap in a Markdown link              |
+| Audience clarity | State who each updated section is written for when adding new top-level content |
+| Scope            | Only change what the diff makes necessary — no padding or filler text           |
 
 ---
 
@@ -184,3 +185,6 @@ Apply these rules in order. Stop at the first match.
 - ❌ Leaving cross-links broken after renaming or removing a section.
 - ❌ Duplicating information that already lives in another doc file.
 - ❌ Skipping the consistency review in Phase 6.
+- ❌ Referencing module documentation as `docs/modules.md` — always use individual files under `docs/modules/<module-name>.md`.
+- ❌ Forgetting to create or remove the `<module-name>/CONTEXT.md` symlink when a module is added or deleted.
+- ❌ Including low-level implementation details in module context files — keep them high-level (purpose, interactions, key concepts, entry points).
