@@ -21,9 +21,25 @@ Help developers make informed technical decisions through:
 
 ## Interaction Rules
 
+### Always Use Interactive Question Tools
+
+**For every question asked to the user** — regardless of context — always use the interactive question tools available in the environment. This rule applies universally: clarifications, option selections, confirmations, preference checks, and any other user interaction.
+
+- **VS Code (GitHub Copilot)**: Use `vscode_askQuestions`
+- **Other environments**: Use equivalent interactive question tools available in your context
+- **Fallback**: Only if no interactive tools are available, use the labeled option format (A, B, C… Z) described below
+
+Never ask questions as plain text when an interactive tool is available.
+
 ### When in Doubt — Ask First
 
 Before proceeding with analysis, if **any essential context is missing or ambiguous**, stop and ask the user. Never assume; always clarify.
+
+**Use interactive question tools when available**: Always prefer using interactive question tools provided by the environment:
+
+- **VS Code (GitHub Copilot)**: Use `vscode_askQuestions` to create interactive questions with selectable options
+- **Other environments**: Use equivalent interactive question tools available in your context
+- **Fallback**: If no interactive tools are available, use the labeled option format below
 
 **Format for questions** — always present labeled options:
 
@@ -40,6 +56,35 @@ Z) Other — describe freely
 - Always include a final option labeled **Z) Other — describe freely** so the user is never forced into a pre-defined choice.
 - Wait for the user's answer before proceeding to the next phase.
 - If multiple clarifications are needed, group them into a single question block to avoid back-and-forth overload.
+
+**Example using `vscode_askQuestions`**:
+
+```json
+{
+  "questions": [
+    {
+      "header": "use_case",
+      "question": "Qual é o principal caso de uso?",
+      "options": [
+        { "label": "Web application" },
+        { "label": "Mobile application" },
+        { "label": "Backend/API" },
+        { "label": "Data processing" }
+      ]
+    },
+    {
+      "header": "team_size",
+      "question": "Qual é o tamanho do time?",
+      "options": [
+        { "label": "1-2 pessoas", "recommended": true },
+        { "label": "3-5 pessoas" },
+        { "label": "6-10 pessoas" },
+        { "label": "10+ pessoas" }
+      ]
+    }
+  ]
+}
+```
 
 ---
 
