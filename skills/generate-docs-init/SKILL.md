@@ -13,7 +13,7 @@ description: >
   code generation, debugging, or non-documentation writing tasks.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Documentation Specialist Skill
@@ -66,23 +66,25 @@ Repeat until all relevant modules are covered.
 
 ### Phase 3 — Action Plan
 
-Before writing, create a clear plan divided into specific, verifiable steps:
+Before writing, create a clear plan divided into specific, verifiable steps.
+**Module context files must be generated first** — they are the foundation for all other documents.
 
 ```
-[ ] 1. Investigate workspace root and entry points
-[ ] 2. Map module/folder structure
-[ ] 3. Generate docs/SUMMARY.md
-[ ] 4. Generate docs/architecture.md
-[ ] 5. Generate docs/setup.md
-[ ] 6. Generate docs/usage.md
-[ ] 7. Generate docs/modules.md
-[ ] 8. Generate docs/contribution.md
-[ ] 9. Generate docs/adr/ (if applicable)
-[ ] 10. Generate docs/techs/ (if applicable)
-[ ] 11. Generate docs/endpoints.md (if API exists)
-[ ] 12. Generate docs/models.md (if data models exist)
-[ ] 13. Generate docs/faq.md (if applicable)
-[ ] 14. Cross-link and consistency review
+[ ] 1.  Investigate workspace root and entry points
+[ ] 2.  Map module/folder structure and identify all top-level modules
+[ ] 3.  For each module: generate docs/modules/<module-name>.md (high-level context)
+[ ] 4.  For each module: create <module-name>/CONTEXT.md symlink → docs/modules/<module-name>.md
+[ ] 5.  Generate docs/SUMMARY.md  (using module context files as foundation)
+[ ] 6.  Generate docs/architecture.md
+[ ] 7.  Generate docs/setup.md
+[ ] 8.  Generate docs/usage.md
+[ ] 9.  Generate docs/contribution.md
+[ ] 10. Generate docs/adr/ (if applicable)
+[ ] 11. Generate docs/techs/ (if applicable)
+[ ] 12. Generate docs/endpoints.md (if API exists)
+[ ] 13. Generate docs/models.md (if data models exist)
+[ ] 14. Generate docs/faq.md (if applicable)
+[ ] 15. Cross-link and consistency review
 ```
 
 ---
@@ -95,7 +97,8 @@ docs/
  ├── architecture.md      # Architecture, diagrams, design decisions
  ├── setup.md             # Installation and execution guide
  ├── usage.md             # Application usage examples
- ├── modules.md           # Technical description of each module/folder
+ ├── modules/             # One file per module — generated FIRST, used as foundation
+ │    └── <module-name>.md
  ├── contribution.md      # Contributor guide
  ├── models.md            # Data models/entities (optional — only if models exist)
  ├── endpoints.md         # API endpoints (optional — only if API exists)
@@ -108,52 +111,71 @@ docs/
       └── *.md
 ```
 
+### Module Symlinks
+
+For every module documented under `docs/modules/<module-name>.md`, a symbolic
+link **must** be created at `<module-name>/CONTEXT.md` pointing to the
+corresponding docs file. This makes the module context immediately accessible
+from within the module's own directory.
+
+```bash
+# Pattern (run from the workspace root)
+ln -s docs/modules/<module-name>.md <module-name>/CONTEXT.md
+```
+
+The canonical source of truth is always `docs/modules/<module-name>.md`;
+`CONTEXT.md` is only a convenience symlink — never edit or duplicate content
+through it.
+
 ---
 
 ## Purpose and Scope Reference
 
-| File / Folder          | Required?                     | Target Audience               | Main Objective                            | Essential Content                                                            |
-| ---------------------- | ----------------------------- | ----------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------- |
-| `docs/SUMMARY.md`      | ✅ Always                     | Everyone                      | High-level overview and navigation        | System name, overview, modules, architecture summary, quick start, doc links |
-| `docs/architecture.md` | ✅ Always                     | Developers, architects        | Explain how the system works internally   | Mermaid diagrams, layers, components, decisions, trade-offs, ADR links       |
-| `docs/setup.md`        | ✅ Always                     | Developers                    | Explain how to install and run            | Requirements, env vars, dependencies, commands, local run, build, deploy     |
-| `docs/usage.md`        | ✅ Always                     | End users, integrators        | Demonstrate how to use the system         | Practical examples, flows, outputs, main use cases                           |
-| `docs/modules.md`      | ✅ Always                     | Developers                    | Describe internal modular architecture    | Module purpose, responsibilities, functions, dependencies, data flow         |
-| `docs/contribution.md` | ✅ Always                     | Contributors                  | Guide consistent contributions            | Clone, branch, PRs, commit standards, code conventions                       |
-| `docs/models.md`       | ⚙️ If data models exist       | Developers, analysts          | Describe data models / entities / schemas | Structure, attributes, types, validations, relationships                     |
-| `docs/endpoints.md`    | ⚙️ If API exists              | Integrators, frontend/backend | Describe exposed APIs                     | Endpoints, methods, params, responses, error codes, examples                 |
-| `docs/faq.md`          | ⚙️ Recommended                | Everyone                      | Answer common questions quickly           | FAQs about usage, setup, known errors, best practices                        |
-| `docs/adr/`            | ⚙️ Recommended for large apps | Architects, tech leads        | Record formal architectural decisions     | One decision per file: context, decision, alternatives, consequences         |
-| `docs/techs/`          | ⚙️ Optional                   | New devs, maintainers         | Explain used technologies                 | Frameworks, versions, roles, references, justifications                      |
-| `docs/misc/`           | ⚙️ Optional                   | General audience              | Store extra documentation                 | Logs, maintenance notes, style guides, performance reports                   |
+| File / Folder              | Required?                     | Target Audience               | Main Objective                                                               | Essential Content                                                            |
+| -------------------------- | ----------------------------- | ----------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `docs/SUMMARY.md`          | ✅ Always                     | Everyone                      | High-level overview and navigation                                           | System name, overview, modules, architecture summary, quick start, doc links |
+| `docs/architecture.md`     | ✅ Always                     | Developers, architects        | Explain how the system works internally                                      | Mermaid diagrams, layers, components, decisions, trade-offs, ADR links       |
+| `docs/setup.md`            | ✅ Always                     | Developers                    | Explain how to install and run                                               | Requirements, env vars, dependencies, commands, local run, build, deploy     |
+| `docs/usage.md`            | ✅ Always                     | End users, integrators        | Demonstrate how to use the system                                            | Practical examples, flows, outputs, main use cases                           |
+| `docs/modules/<module>.md` | ✅ Always (one per module)    | Developers                    | High-level module context: role, responsibilities, inter-module interactions | Overview, responsibilities, architecture fit, interactions, key concepts     |
+| `docs/contribution.md`     | ✅ Always                     | Contributors                  | Guide consistent contributions                                               | Clone, branch, PRs, commit standards, code conventions                       |
+| `docs/models.md`           | ⚙️ If data models exist       | Developers, analysts          | Describe data models / entities / schemas                                    | Structure, attributes, types, validations, relationships                     |
+| `docs/endpoints.md`        | ⚙️ If API exists              | Integrators, frontend/backend | Describe exposed APIs                                                        | Endpoints, methods, params, responses, error codes, examples                 |
+| `docs/faq.md`              | ⚙️ Recommended                | Everyone                      | Answer common questions quickly                                              | FAQs about usage, setup, known errors, best practices                        |
+| `docs/adr/`                | ⚙️ Recommended for large apps | Architects, tech leads        | Record formal architectural decisions                                        | One decision per file: context, decision, alternatives, consequences         |
+| `docs/techs/`              | ⚙️ Optional                   | New devs, maintainers         | Explain used technologies                                                    | Frameworks, versions, roles, references, justifications                      |
+| `docs/misc/`               | ⚙️ Optional                   | General audience              | Store extra documentation                                                    | Logs, maintenance notes, style guides, performance reports                   |
 
 ---
 
 ## File Templates
 
-| Output File                   | Word Range   | Template                                                         |
-| ----------------------------- | ------------ | ---------------------------------------------------------------- |
-| `docs/SUMMARY.md`             | 500–1500     | [templates/docs-SUMMARY.md](templates/docs-SUMMARY.md)           |
-| `docs/architecture.md`        | 1500–3500    | [templates/docs-architecture.md](templates/docs-architecture.md) |
-| `docs/setup.md`               | 500–1500     | [templates/docs-setup.md](templates/docs-setup.md)               |
-| `docs/usage.md`               | 1000–2500    | [templates/docs-usage.md](templates/docs-usage.md)               |
-| `docs/modules.md`             | 1500–3000    | [templates/docs-modules.md](templates/docs-modules.md)           |
-| `docs/contribution.md`        | 500–1500     | [templates/docs-contribution.md](templates/docs-contribution.md) |
-| `docs/adr/adr-NNN-<title>.md` | 300–800 each | [templates/docs-adr.md](templates/docs-adr.md)                   |
-| `docs/techs/<technology>.md`  | 200–800 each | [templates/docs-techs.md](templates/docs-techs.md)               |
-| `docs/faq.md`                 | 500–1000     | [templates/docs-faq.md](templates/docs-faq.md)                   |
+| Output File                     | Word Range   | Template                                                         |
+| ------------------------------- | ------------ | ---------------------------------------------------------------- |
+| `docs/SUMMARY.md`               | 500–1500     | [templates/docs-SUMMARY.md](templates/docs-SUMMARY.md)           |
+| `docs/architecture.md`          | 1500–3500    | [templates/docs-architecture.md](templates/docs-architecture.md) |
+| `docs/setup.md`                 | 500–1500     | [templates/docs-setup.md](templates/docs-setup.md)               |
+| `docs/usage.md`                 | 1000–2500    | [templates/docs-usage.md](templates/docs-usage.md)               |
+| `docs/modules/<module-name>.md` | 400–900 each | [templates/docs-modules.md](templates/docs-modules.md)           |
+| `docs/contribution.md`          | 500–1500     | [templates/docs-contribution.md](templates/docs-contribution.md) |
+| `docs/adr/adr-NNN-<title>.md`   | 300–800 each | [templates/docs-adr.md](templates/docs-adr.md)                   |
+| `docs/techs/<technology>.md`    | 200–800 each | [templates/docs-techs.md](templates/docs-techs.md)               |
+| `docs/faq.md`                   | 500–1000     | [templates/docs-faq.md](templates/docs-faq.md)                   |
 
-> **Note for `docs/modules.md`:** each module entry must cover:
+> **Note for `docs/modules/<module-name>.md`:** each file covers **one module** and
+> must focus on the **high-level view** — not implementation details. Content:
 >
-> 1. **Module/folder name** and location in the repository.
-> 2. **Objective and role** — what it does and why it exists.
-> 3. **Main features** — key functions, classes, or components (1–2 lines each).
-> 4. **Data flow and dependencies** — sources, sinks, internal and external deps.
-> 5. **Architectural decisions** — design patterns, justifications, unusual choices.
-> 6. **Interfaces and integration points** — endpoints, hooks, events, protocols.
-> 7. **Constraints and business rules** — validations, limits, known issues.
-> 8. **Usage example** — minimal pseudocode or real snippet.
-> 9. **History and context** — significant changes, pending tasks, technical debt.
+> 1. **Module name and location** — folder path in the repository.
+> 2. **Purpose and responsibilities** — what it does and why it exists (2–4 sentences).
+> 3. **Role in the overall architecture** — where it fits in the system layers/components.
+> 4. **Interactions with other modules** — what it consumes, what it exposes, which modules it depends on and which depend on it.
+> 5. **Key concepts and abstractions** — important domain terms, patterns, or mental models a developer needs to know.
+> 6. **Entry points** — the main files, classes, or functions a new developer should read first.
+> 7. **What this module is NOT** — explicit scope boundaries to prevent misuse.
+>
+> ⚠️ **Avoid:** low-level implementation details, exhaustive API lists, or code walkthroughs.
+> The goal is a **5-minute orientation** that lets any developer understand the module's
+> role and decide whether to dive deeper.
 
 ---
 
@@ -194,5 +216,10 @@ Before finishing, verify each item:
 - ❌ Duplicating the same information across multiple files.
 - ❌ Leaving placeholder text (`TODO`, `...`, `<fill in>`) in final output.
 - ❌ Writing in a single monolithic file instead of the prescribed structure.
+- ❌ Putting all modules in a single `modules.md` — use individual files under `docs/modules/`.
+- ❌ Including low-level implementation details in module context files — keep them high-level.
+- ❌ Forgetting to create the `<module-name>/CONTEXT.md` symlink after writing a module file.
+- ❌ Editing `CONTEXT.md` directly — it is a symlink; always edit the source at `docs/modules/<module-name>.md`.
+- ❌ Generating other documents (SUMMARY, architecture, etc.) before all module context files exist.
 - ❌ Skipping the incremental announcement step (always say which module is next).
 - ❌ Finishing before cross-linking and consistency review is complete.
