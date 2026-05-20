@@ -1,3 +1,8 @@
+---
+description: Node.js/JavaScript/TypeScript rules and guidelines.
+applyTo: "**/*"
+---
+
 Node.js/JavaScript/TypeScript
 
 - All source code must be written in TypeScript.

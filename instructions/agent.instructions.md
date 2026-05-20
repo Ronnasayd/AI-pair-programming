@@ -13,7 +13,7 @@ applyTo: "**/*"
 Directories to search for context, in this sequential order:
 
 - `docs/SUMMARY.md`, `README.md`, `GEMINI.md`, `CLAUDE.md`, `AGENTS.md`
-- `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules.md`, `docs/contribution.md`, `docs/faq.md`,
+- `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules/**`, `docs/contribution.md`, `docs/faq.md`,
 - `docs/adr/**`, `docs/techs/**`, `docs/misc/**`
 
 When accessing a module, check for the existence of CONTEXT.md files. These files contain relevant information about the module.

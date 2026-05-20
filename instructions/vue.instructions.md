@@ -1,3 +1,8 @@
+---
+description: Vue Code Standards.
+applyTo: "**/*.vue"
+---
+
 # Vue Code Standards
 
 ## All Code Must Be Written in English
