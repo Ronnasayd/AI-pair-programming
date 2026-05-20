@@ -3,13 +3,6 @@ description: Rules for code generation and modification tasks.
 applyTo: "**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx"
 ---
 
-## Context
-
-This file applies exclusively to code generation and modification tasks.
-Code review, auditing, or diff inspection are handled separately — do not perform those unless explicitly requested.
-
----
-
 # Code Standards
 
 ## Language
