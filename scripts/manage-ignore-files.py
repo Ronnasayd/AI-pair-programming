@@ -15,6 +15,7 @@ class IgnoreFileManager:
         self.workspace_root = Path(workspace_root)
         self.skillsignore_path = self.workspace_root / ".skillsignore"
         self.agentsignore_path = self.workspace_root / ".agentsignore"
+        self.rulesignore_path = self.workspace_root / ".rulesignore"
 
     def read_file(self, file_path: Path) -> List[str]:
         """Lê o arquivo mantendo as linhas originais"""
@@ -96,10 +97,14 @@ class IgnoreFileManager:
             file_path = self.skillsignore_path
             lines = self.read_file(file_path)
             title = "📋 GERENCIADOR DE SKILLS"
-        else:
+        elif file_type == "agents":
             file_path = self.agentsignore_path
             lines = self.read_file(file_path)
             title = "🤖 GERENCIADOR DE AGENTS"
+        else:
+            file_path = self.rulesignore_path
+            lines = self.read_file(file_path)
+            title = "📏 GERENCIADOR DE RULES"
 
         sections = self.parse_ignore_file(lines)
 
@@ -314,7 +319,7 @@ class IgnoreFileManager:
             height, width = stdscr.getmaxyx()
 
             # Title
-            title = "🎮 GERENCIADOR DE SKILLS E AGENTS"
+            title = "🎮 GERENCIADOR DE SKILLS, AGENTS E RULES"
             stdscr.addstr(
                 0,
                 (width - len(title)) // 2,
@@ -327,6 +332,7 @@ class IgnoreFileManager:
             menu_items = [
                 ("1", "📋 Gerenciar Skills"),
                 ("2", "🤖 Gerenciar Agents"),
+                ("3", "📏 Gerenciar Rules"),
                 ("Q", "❌ Sair"),
             ]
 
@@ -345,6 +351,8 @@ class IgnoreFileManager:
                     self.interactive_checkbox_menu(stdscr, "skills")
                 elif key == ord("2"):
                     self.interactive_checkbox_menu(stdscr, "agents")
+                elif key == ord("3"):
+                    self.interactive_checkbox_menu(stdscr, "rules")
                 elif key == ord("q") or key == ord("Q"):
                     stdscr.clear()
                     stdscr.addstr(0, 0, "👋 Até logo!", curses.color_pair(3))
@@ -367,6 +375,10 @@ def main():
 
     if not manager.agentsignore_path.exists():
         print(f"❌ Arquivo não encontrado: {manager.agentsignore_path}")
+        sys.exit(1)
+
+    if not manager.rulesignore_path.exists():
+        print(f"❌ Arquivo não encontrado: {manager.rulesignore_path}")
         sys.exit(1)
 
     try:
