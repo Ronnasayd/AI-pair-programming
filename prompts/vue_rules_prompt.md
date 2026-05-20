@@ -17,6 +17,7 @@ for this project. In this file we should:
 - Component names should prefer full words over abbreviations.
 - Elements with multiple attributes should span multiple lines, with one attribute per line.
 - Component templates should only include simple expressions, with more complex expressions refactored into computed properties or methods.
+- Complex computed properties should be split into as many simpler properties as possible.
 
 Remember to create examples for each of this
 rules and also to bind this rule (vue.instructions.md) to the AGENTS.md file
