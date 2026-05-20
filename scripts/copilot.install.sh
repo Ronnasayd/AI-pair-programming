@@ -46,24 +46,14 @@ rm -rf $LOCAL/$DEFAULT_FOLDER/agents/
 fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/agents/
 ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
-########################################################################################3
-# Função auxiliar para criar symlinks de instruções
-setup_instruction_file() {
-    local file_name="$1"
-    local source_file="$SOURCE/instructions/$file_name"
-    local local_file="$LOCAL/$DEFAULT_FOLDER/instructions/$file_name"
+########################################################################################
+########################################################################################
+if [ -L "$LOCAL/$DEFAULT_FOLDER/instructions/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/instructions/" ]; then
+rm -rf $LOCAL/$DEFAULT_FOLDER/instructions/
+fi
+mkdir -p $LOCAL/$DEFAULT_FOLDER/instructions/
+ln -s "$SOURCE/instructions/"* "$LOCAL/$DEFAULT_FOLDER/instructions/"
 
-    if [ -L "$local_file" ] || [ -f "$local_file" ]; then
-        rm -rf "$local_file"
-    fi
-
-    mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions/"
-    ln -s "$source_file" "$local_file"
-}
-
-# Configurar arquivos de instruções
-setup_instruction_file "code.instructions.md"
-setup_instruction_file "agent.instructions.md"
 ##########################################################################################
 if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
 rm $HOME/.config/Code/User/mcp.json

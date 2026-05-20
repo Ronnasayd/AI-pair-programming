@@ -22,3 +22,22 @@ if [ -L "$LOCAL/.agentsignore" ] || [ -f "$LOCAL/.agentsignore" ]; then
         done
     done < "$LOCAL/.agentsignore"
 fi
+
+
+if [ -L "$LOCAL/.rulesignore" ] || [ -f "$LOCAL/.rulesignore" ]; then
+    while IFS= read -r pattern || [ -n "$pattern" ]; do
+        [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+        for rule in "$LOCAL/$DEFAULT_FOLDER/instructions/"$pattern; do
+            if [ -L "$rule" ]; then
+                rm "$rule"
+                # echo "Removed rule($DEFAULT_FOLDER): $(basename "$rule") (matched pattern: $pattern)"
+            fi
+        done
+        for rule in "$LOCAL/$DEFAULT_FOLDER/rules/"$pattern; do
+            if [ -L "$rule" ]; then
+                rm "$rule"
+                # echo "Removed rule($DEFAULT_FOLDER): $(basename "$rule") (matched pattern: $pattern)"
+            fi
+        done
+    done < "$LOCAL/.rulesignore"
+fi
