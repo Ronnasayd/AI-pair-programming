@@ -1,3 +1,8 @@
+---
+description: Agent behavior rules —  HTTP api standards.
+applyTo: "**/*"
+---
+
 # HTTP API Standards
 
 ## Follow REST Conventions

@@ -1,3 +1,8 @@
+---
+description: Test Standards
+applyTo: "**/*.test.ts,**/*.test.js"
+---
+
 # Test Standards
 
 ## Cover Code with Tests

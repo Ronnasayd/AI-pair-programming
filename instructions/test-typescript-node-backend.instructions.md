@@ -1,6 +1,6 @@
 ---
 description: Comprehensive testing guidelines for TypeScript/Node.js backend projects
-applyTo: "**/*.test.ts"
+applyTo: "**/*.test.ts,**/*.test.js"
 ---
 
 # Testing Instructions
@@ -135,7 +135,7 @@ it("deve criar um recurso com sucesso", async () => {
     duration: 60,
     visible: true,
     user_id: 1,
-    created_by: userId,
+    created_by: userId
   };
 
   // Mock only external dependencies
@@ -144,7 +144,7 @@ it("deve criar um recurso com sucesso", async () => {
   // ACT - Execute the function
   const result = await ResourceService.create(
     data,
-    externalApiClientMock as any,
+    externalApiClientMock as any
   );
 
   // ASSERT - Verify results
@@ -182,12 +182,12 @@ describe("Team Controller - Integração com DB real", () => {
     const adminUser = await UserService.create({
       username: "admin@example.com",
       password: "password123",
-      name: "Admin User",
+      name: "Admin User"
     });
 
     const tokenResult = await AuthService.login({
       username: adminUser.username,
-      password: "password123",
+      password: "password123"
     });
     adminAccessToken = tokenResult.accessToken;
   });
@@ -302,7 +302,7 @@ describe("ResourceService - Integração com SQLite", () => {
 export const externalApiClientMock = {
   createResource: jest.fn(),
   updateResource: jest.fn(),
-  deleteResource: jest.fn(),
+  deleteResource: jest.fn()
 };
 
 // In test file
@@ -353,21 +353,21 @@ it("deve retornar erro ao criar usuário duplicado", async () => {
   await UserService.create({
     username: "duplicado@teste.com",
     password: "123456",
-    name: "João",
+    name: "João"
   });
 
   await expect(
     UserService.create({
       username: "duplicado@teste.com",
       password: "123456",
-      name: "João",
-    }),
+      name: "João"
+    })
   ).rejects.toThrow(APIError);
 });
 
 it("deve retornar erro 404 quando recurso não existe", async () => {
   await expect(ResourceService.findById("non-existent-id")).rejects.toThrow(
-    new APIError("Recurso não encontrado", 404),
+    new APIError("Recurso não encontrado", 404)
   );
 });
 ```
@@ -384,7 +384,7 @@ Create helper functions to improve test maintainability:
 function generateTestDateSequence(
   startDaysFromNow: number,
   intervalDays: number,
-  count: number,
+  count: number
 ): Date[] {
   const baseDate = new Date();
   baseDate.setDate(baseDate.getDate() + startDaysFromNow);
@@ -427,7 +427,7 @@ Resource 1,Desc 1,user,2026-02-10T10:00:00,60`;
 
     const result = await ResourceService.importFromCSV({
       filePath: "test.csv",
-      userId,
+      userId
     });
 
     expect(result.importedCount).toBe(1);
@@ -454,12 +454,12 @@ describe("Protected Routes", () => {
     const normalUser = await UserService.create({
       username: "normal@example.com",
       password: "password123",
-      name: "Normal User",
+      name: "Normal User"
     });
 
     const tokenResult = await AuthService.login({
       username: normalUser.username,
-      password: "password123",
+      password: "password123"
     });
 
     const res = await request(app)
@@ -604,14 +604,14 @@ async function createAdminUser(overrides = {}) {
     username: "admin@test.com",
     password: "password123",
     name: "Admin",
-    ...overrides,
+    ...overrides
   });
 
   const role = await RoleService.create({ name: "SYSTEM_ADMIN" });
   await AccessControlService.create({
     user_id: user.id,
     role_id: role.id,
-    team_id: null,
+    team_id: null
   });
 
   return user;

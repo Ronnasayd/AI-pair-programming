@@ -1,3 +1,8 @@
+---
+description: React Standards
+applyTo: "**/*.jsx, **/*.tsx"
+---
+
 # React Standards
 
 ## Use Functional Components
