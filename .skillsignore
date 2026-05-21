@@ -42,6 +42,7 @@ figma-mcp
 figma-requirements-conformance
 figma-requirements-screen-mapper
 figma-to-code-agentic
+# figma-capture
 frontend-design
 frontend-patterns
 generate-docs-init
