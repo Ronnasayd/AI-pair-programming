@@ -12,10 +12,13 @@ rm  $HOME/.copilot/config.json
 fi
 ln -s "$SOURCE/github-copilot/config.json" "$HOME/.copilot/config.json"
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skills/" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
-fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
+find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/skills/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/skills/index.yaml" "$LOCAL/$DEFAULT_FOLDER/skills/index.yaml"
 
 # Procurar por todos os SKILL.md e criar symlinks para seus diretórios pai
@@ -29,31 +32,41 @@ find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     ln -s "$skill_dir" "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
 done
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/prompts" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/prompts" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/prompts
-fi
-mkdir -p $LOCAL/$DEFAULT_FOLDER/prompts
+mkdir -p "$LOCAL/$DEFAULT_FOLDER/prompts"
+find "$LOCAL/$DEFAULT_FOLDER/prompts" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/commands/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/commands/"* "$LOCAL/$DEFAULT_FOLDER/prompts/"
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/hooks" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/hooks" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/hooks
-fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/hooks
+find "$LOCAL/$DEFAULT_FOLDER/hooks" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/hooks/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/hooks/"* "$LOCAL/$DEFAULT_FOLDER/hooks"
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/agents/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/agents/" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/agents/
-fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/agents/
+find "$LOCAL/$DEFAULT_FOLDER/agents" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/agents/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
 ########################################################################################
-########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/instructions/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/instructions/" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/instructions/
-fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/instructions/
+find "$LOCAL/$DEFAULT_FOLDER/instructions" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/instructions/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/instructions/"* "$LOCAL/$DEFAULT_FOLDER/instructions/"
-
 ##########################################################################################
 if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
 rm $HOME/.config/Code/User/mcp.json
