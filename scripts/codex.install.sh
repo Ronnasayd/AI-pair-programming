@@ -12,16 +12,22 @@ for agent_toml in "$HOME/.codex/agents/"*.toml; do
 done
 
 ########################################################################################
-if [ -L "$HOME/.codex/skills/" ] || [ -d "$HOME/.codex/skills/" ]; then
-    rm -rf "$HOME/.codex/skills/"
-fi
 mkdir -p "$HOME/.codex/skills/"
+find "$HOME/.codex/skills" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/skills/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/skills/"* "$HOME/.codex/skills/"
 ###########################################################################################
-if [ -L "$HOME/.codex/prompts/" ] || [ -d "$HOME/.codex/prompts/" ]; then
-    rm -rf "$HOME/.codex/prompts/"
-fi
 mkdir -p "$HOME/.codex/prompts/"
+find "$HOME/.codex/prompts" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/commands/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/commands/"* "$HOME/.codex/prompts/"
 ###########################################################################################
 ## GITIGNORE

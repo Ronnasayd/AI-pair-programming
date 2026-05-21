@@ -37,10 +37,13 @@ rm $HOME/$DEFAULT_FOLDER/mcp-server-enablement.json
 fi
 ln -s "$SOURCE/gemini/mcp-server-enablement.json" "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json"
 #######################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/skills/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/skills/" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/skills/
-fi
-mkdir -p $LOCAL/$DEFAULT_FOLDER/skills
+mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
+find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/skills/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/skills/index.yaml" "$LOCAL/$DEFAULT_FOLDER/skills/index.yaml"
 # Procurar por todos os SKILL.md e criar symlinks para seus diretórios pai
 find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
@@ -53,10 +56,13 @@ find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     ln -s "$skill_dir" "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
 done
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/agents/" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/agents/" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/agents/
-fi
-mkdir -p $LOCAL/$DEFAULT_FOLDER/agents
+mkdir -p $LOCAL/$DEFAULT_FOLDER/agents/
+find "$LOCAL/$DEFAULT_FOLDER/agents" -maxdepth 1 -type l | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/agents/"* ]]; then
+        rm "$link"
+    fi
+done
 ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
 ########################################################################################
 if [ -L "$HOME/$DEFAULT_FOLDER/hooks/scripts" ] || [ -d "$HOME/$DEFAULT_FOLDER/hooks/scripts" ]; then
