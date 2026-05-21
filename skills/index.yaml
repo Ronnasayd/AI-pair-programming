@@ -334,6 +334,9 @@ skills:
     Do NOT use for architecture decomposition analysis (use architecture skills) or
     technical design docs (use create-technical-design-doc).
 - name:
+  - figma-capture
+  description: Captures a screenshot and JSX reference code from a Figma node URL and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the user says "captura esse nó do figma", "salva a imagem e o código de [url figma]", "usa o figma mcp para salvar [url]", "capture this figma node", or any variation requesting to save a Figma design locally. Do NOT use for generating new designs, syncing components, or code-connect mapping workflows.
+- name:
   - figma-implement-design
   description: Translate Figma nodes into production-ready code with 1:1 visual fidelity
     using the Figma MCP workflow (design context, screenshots, assets, and project-convention
