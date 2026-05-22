@@ -13,6 +13,41 @@ Converts a `tasks.md` specification file into a structured `.taskmaster/tasks/ta
 
 ## Instructions
 
+### Step 0 — Resolve the output tag
+
+Before reading or processing anything, determine the **tag** that will wrap the output JSON.
+
+- If the user explicitly provided a tag (e.g. `"use tag feature/auth"`), use it verbatim.
+- Otherwise, ask the user:
+
+  > What tag should be used as the root key in `tasks.json`? (default: `master`)
+
+- If the user does not answer or confirms the default, use `"master"`.
+
+The final JSON **must** be wrapped under this tag:
+
+```json
+{
+  "<tag>": {
+    "tasks": [...],
+    "metadata": {...}
+  }
+}
+```
+
+Example with default tag:
+
+```json
+{
+  "master": {
+    "tasks": [...],
+    "metadata": {...}
+  }
+}
+```
+
+Store the resolved tag for use in Steps 6 and 7.
+
 ### Step 1 — Read the entire tasks.md before writing anything
 
 Read `tasks.md` from start to finish. You need three sections before starting conversion:
@@ -85,30 +120,50 @@ The critical path is the longest such chain, e.g.: `T01 → T02 → T05 → T06 
 | `testStrategy` | **Tests** field — describe test cases if present; `"none"` if absent                                   |
 | `subtasks`     | Always `[]`                                                                                            |
 
-### Step 6 — Build the `metadata` object
+### Step 6 — Assemble the full output structure
+
+Wrap `tasks` and `metadata` under the tag resolved in Step 0:
 
 ```json
 {
-  "metadata": {
-    "projectName": "feature-name-from-tasks-md",
-    "version": "1.0.0",
-    "createdAt": "ISO-8601 date",
-    "updatedAt": "ISO-8601 date",
-    "description": "One-line summary from tasks.md header",
-    "source": "relative/path/to/tasks.md",
-    "testCommands": {
-      "unit": "yarn jest ...",
-      "integration": "yarn jest ..."
-    },
-    "executionWaves": {
-      "wave1_serial": [1],
-      "wave2_parallel": [2, 3, 11, 26],
-      "...": []
-    },
-    "criticalPath": [1, 2, 5, 6, 8, 12, 20, 22, 23, 24],
-    "parallelizationNotes": {
-      "wave2": "T02, T03, T11, T26 all depend only on T01 — safe to run in parallel",
-      "wave6": "T12 is a sequential bottleneck: first task needing both T08 and T04"
+  "<tag>": {
+    "tasks": [
+      /* all task objects */
+    ],
+    "metadata": {
+      /* see below */
+    }
+  }
+}
+```
+
+The `metadata` object shape:
+
+```json
+{
+  "<tag>": {
+    "tasks": [],
+    "metadata": {
+      "projectName": "feature-name-from-tasks-md",
+      "version": "1.0.0",
+      "createdAt": "ISO-8601 date",
+      "updatedAt": "ISO-8601 date",
+      "description": "One-line summary from tasks.md header",
+      "source": "relative/path/to/tasks.md",
+      "testCommands": {
+        "unit": "yarn jest ...",
+        "integration": "yarn jest ..."
+      },
+      "executionWaves": {
+        "wave1_serial": [1],
+        "wave2_parallel": [2, 3, 11, 26],
+        "...": []
+      },
+      "criticalPath": [1, 2, 5, 6, 8, 12, 20, 22, 23, 24],
+      "parallelizationNotes": {
+        "wave2": "T02, T03, T11, T26 all depend only on T01 — safe to run in parallel",
+        "wave6": "T12 is a sequential bottleneck: first task needing both T08 and T04"
+      }
     }
   }
 }
@@ -137,6 +192,8 @@ Before confirming delivery, verify:
 - [ ] `testStrategy` is non-empty for tasks with tests
 - [ ] `priority: "high"` only for critical path tasks or system-blocking tasks
 - [ ] JSON is valid (`python3 -m json.tool` passes)
+- [ ] Root key matches the resolved tag (default: `"master"`)
+- [ ] `tasks` and `metadata` are nested under that tag key
 - [ ] `metadata.executionWaves` keys use format `waveN_serial` or `waveN_parallel`
 - [ ] `metadata.source` points to the original tasks.md relative path
 
@@ -146,14 +203,18 @@ Before confirming delivery, verify:
 
 **Actions:**
 
-1. Read `.specs/features/auth-keycloak/tasks.md` completely
-2. Extract the ASCII execution diagram and all task tables
-3. Build dependency graph edges (T01→[], T02→[1], T03→[1], ...)
-4. Run BFS to assign waves: wave1=[1], wave2=[2,3,11,26], ...
-5. Identify critical path by traversing graph bottom-up
-6. Map each task to JSON fields following Step 5 table
-7. Build metadata with waves, critical path, and parallelization notes
-8. Write `.taskmaster/tasks/tasks.json`
-9. Validate with `python3 -m json.tool`
+1. Ask: "What tag should be used as the root key?" → user says `"master"` (or skips → default `"master"`)
+2. Read `.specs/features/auth-keycloak/tasks.md` completely
+3. Extract the ASCII execution diagram and all task tables
+4. Build dependency graph edges (T01→[], T02→[1], T03→[1], ...)
+5. Run BFS to assign waves: wave1=[1], wave2=[2,3,11,26], ...
+6. Identify critical path by traversing graph bottom-up
+7. Map each task to JSON fields following Step 5 table
+8. Build full structure wrapped under resolved tag:
+   ```json
+   { "master": { "tasks": [...], "metadata": {...} } }
+   ```
+9. Write `.taskmaster/tasks/tasks.json`
+10. Validate with `python3 -m json.tool`
 
-**Result:** Valid `.taskmaster/tasks/tasks.json` with all tasks, correct integer dependencies, wave assignments, critical path, and parallelization notes in metadata.
+**Result:** Valid `.taskmaster/tasks/tasks.json` with all tasks wrapped under `"master"` (or user-specified tag), correct integer dependencies, wave assignments, critical path, and parallelization notes in metadata.

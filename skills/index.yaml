@@ -868,6 +868,3 @@ skills:
 - name:
   - tasks-md-to-taskmaster-json
   description: Converts a tasks.md spec file into a .taskmaster/tasks/tasks.json file with full dependency graph, BFS execution waves, critical path, and parallelization metadata. Use when the user says "converta tasks.md em tasks.json", "transforme tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md", "convert task spec to taskmaster json", or "turn this tasks file into taskmaster format". Do NOT use for creating tasks.md specs (use create-task-spec), executing tasks (use execute-task), or any other conversion.
-- name:
-  - tasks-md-to-taskmaster-json
-  description: Converts a tasks.md spec file into a .taskmaster/tasks/tasks.json file with full dependency graph, BFS execution waves, critical path, and parallelization metadata. Use when the user says "converta tasks.md em tasks.json", "transforme tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md", "convert task spec to taskmaster json", or "turn this tasks file into taskmaster format". Do NOT use for creating tasks.md specs (use create-task-spec), executing tasks (use execute-task), or any other conversion.
