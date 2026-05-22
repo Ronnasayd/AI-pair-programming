@@ -1,4 +1,3 @@
-
 import glob
 import os
 from typing import Any, Dict, List, Optional, Tuple
@@ -97,7 +96,6 @@ def _merge_tasks_with_meta(
     return tasks_json
 
 
-
 def _symbol_to_status(symbol: str) -> str:
     """
     Converts markdown checkbox symbol to status string.
@@ -117,12 +115,9 @@ def _symbol_to_status(symbol: str) -> str:
     return symbol_map.get(symbol, "pending")
 
 
-
-
 def _format_error(message: str, exc: Exception) -> Dict[str, str]:
     """Helper to format error responses consistently."""
     return {"error": f"{message}: {str(exc)}"}
-
 
 
 def _extract_meta_from_tasks(tasks_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -180,9 +175,7 @@ def _extract_meta_from_tag_data(tag_data: Dict[str, Any]) -> Dict[str, Any]:
         for subtask in task.get("subtasks", []):
             sub_id = f"{task_id}.{subtask.get('id')}"
             meta[sub_id] = {
-                k: v
-                for k, v in subtask.items()
-                if k not in ("id", "title", "status")
+                k: v for k, v in subtask.items() if k not in ("id", "title", "status")
             }
     return meta
 
@@ -232,7 +225,6 @@ def _get_status_symbol(status: str) -> str:
         "cancelled": "[-]",
     }
     return status_map.get(status.lower(), "[ ]")
-
 
 
 def _generate_markdown_for_tag(tag_name: str, tag_data: Dict[str, Any]) -> str:
@@ -315,7 +307,9 @@ def _generate_markdown_for_tag(tag_name: str, tag_data: Dict[str, Any]) -> str:
                 if subtask_description:
                     sub_desc_single = " ".join(subtask_description.splitlines()).strip()
                     if sub_desc_single and sub_desc_single != subtask_title:
-                        markdown_lines.append(f"    - **Description**: {sub_desc_single}")
+                        markdown_lines.append(
+                            f"    - **Description**: {sub_desc_single}"
+                        )
 
         markdown_lines.append("")
         markdown_lines.append("---")  # Separator between main tasks
@@ -340,7 +334,6 @@ def _generate_markdown_from_tasks(tasks_data: Dict[str, Any]) -> str:
     for tag_name, context_data in tasks_data.items():
         parts.append(_generate_markdown_for_tag(tag_name, context_data))
     return "\n".join(parts)
-
 
 
 def _parse_markdown_to_tasks(
@@ -448,7 +441,11 @@ def _parse_markdown_to_tasks(
                 current_subtask["priority"] = field_value
             elif key == "status":
                 # Allow overriding status via field
-                current_subtask["status"] = _symbol_to_status(field_value) if len(field_value) == 1 else field_value
+                current_subtask["status"] = (
+                    _symbol_to_status(field_value)
+                    if len(field_value) == 1
+                    else field_value
+                )
 
             continue
 
@@ -467,7 +464,11 @@ def _parse_markdown_to_tasks(
             elif key == "priority":
                 current_task["priority"] = field_value
             elif key == "status":
-                current_task["status"] = _symbol_to_status(field_value) if len(field_value) == 1 else field_value
+                current_task["status"] = (
+                    _symbol_to_status(field_value)
+                    if len(field_value) == 1
+                    else field_value
+                )
 
     # Don't forget the last task
     if current_task:
@@ -618,7 +619,9 @@ def convert_markdown_to_tasks() -> Dict[str, Any]:
             # Multi-tag flow: parse all discovered tag files
             tasks_json = _parse_all_tag_files(TASKS_DIR)
             if not tasks_json:
-                return {"error": "No tasks could be parsed from the discovered markdown files"}
+                return {
+                    "error": "No tasks could be parsed from the discovered markdown files"
+                }
         else:
             # Backward-compatibility: fall back to legacy tasks.md
             markdown_file_path = os.path.join(TASKS_DIR, TASKS_MD)
@@ -672,4 +675,3 @@ if __name__ == "__main__":
     else:
         print("Invalid option. Use '--to_markdown' or '--to_tasks'.")
         sys.exit(1)
-

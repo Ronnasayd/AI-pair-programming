@@ -4,7 +4,7 @@ description: Expert guide for designing and building high-quality skills from sc
 license: CC-BY-4.0
 metadata:
   author: Felipe Rodrigues - github.com/felipfr
-  version: '1.0.0'
+  version: "1.0.0"
 ---
 
 # Skill Architect
