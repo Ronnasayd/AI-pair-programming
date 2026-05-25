@@ -1,6 +1,6 @@
 ---
 description: Rules for code generation and modification tasks.
-applyTo: "**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx"
+applyTo: "**/*.ts, **/*.js, **/*.jsx, **/*.tsx"
 ---
 
 ## JSDoc Requirements
