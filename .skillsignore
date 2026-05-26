@@ -10,6 +10,7 @@
 # technical-decision-maker
 # tlc-spec-driven
 # tlc-tasks-to-taskmaster
+# orchestrate
 agent-creator
 agent-harness-construction
 ai-regression-testing
