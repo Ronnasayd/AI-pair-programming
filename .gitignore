@@ -175,24 +175,19 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 AGENTS.md
 .taskmaster/state.json
-.github/skills/
-.github/prompts/
-.github/instructions/
-.github/agents/
-.github/hooks/
 GEMINI.md
 .taskmaster/
 docs/agents/
-.sessions/
-.gemini/
-.claude/skills/
-.claude/prompts/
-.claude/instructions/
-.claude/agents/
-.claude/hooks/
+.sessions/*
+.gemini/*
+.claude/skills/*
+.claude/prompts/*
+.claude/instructions/*
+.claude/agents/*
+.claude/hooks/*
 .mcp.json
 CLAUDE.md
-.claude/commands/
+.claude/commands/*
 .agentsignore
 .skillsignore
 
@@ -218,4 +213,9 @@ node_modules/
 
 # Task files
 tasks.json
-tasks/ 
+tasks/
+.github/skills/*
+.github/prompts/*
+.github/instructions/*
+.github/agents/*
+.github/hooks/*

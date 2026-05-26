@@ -90,20 +90,20 @@ fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GITIGNORE
-if ! grep -q "$DEFAULT_FOLDER/skills/" .gitignore; then
-    echo "$DEFAULT_FOLDER/skills/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/skills/*" .gitignore; then
+    echo "$DEFAULT_FOLDER/skills/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/commands/" .gitignore; then
-    echo "$DEFAULT_FOLDER/commands/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/commands/*" .gitignore; then
+    echo "$DEFAULT_FOLDER/commands/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/instructions/" .gitignore; then
-    echo "$DEFAULT_FOLDER/instructions/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/instructions/*" .gitignore; then
+    echo "$DEFAULT_FOLDER/instructions/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/agents/" .gitignore; then
-    echo "$DEFAULT_FOLDER/agents/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/agents/*" .gitignore; then
+    echo "$DEFAULT_FOLDER/agents/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/hooks/" .gitignore; then
-    echo "$DEFAULT_FOLDER/hooks/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/hooks/*" .gitignore; then
+    echo "$DEFAULT_FOLDER/hooks/*" >> .gitignore
 fi
 ###########################################################################################
 rtk init -g
