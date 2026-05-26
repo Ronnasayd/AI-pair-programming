@@ -117,10 +117,10 @@ graph TD
 
 ```typescript
 interface ModelName {
-  id: string
-  field1: string
-  field2: number
-  createdAt: Date
+  id: string;
+  field1: string;
+  field2: number;
+  createdAt: Date;
 }
 ```
 
@@ -130,7 +130,7 @@ interface ModelName {
 
 ```typescript
 interface AnotherModel {
-  id: string
+  id: string;
   // ...
 }
 ```
