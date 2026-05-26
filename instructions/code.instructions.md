@@ -118,7 +118,7 @@ function createUser(
   name: string,
   email: string,
   role: string,
-  age: number,
+  age: number
 ): User {}
 ```
 
@@ -131,7 +131,7 @@ function createUser(
 const statusLabels: Record<OrderStatus, string> = {
   pending: "Pending",
   paid: "Paid",
-  shipped: "Shipped",
+  shipped: "Shipped"
 };
 const label = statusLabels[status];
 
@@ -298,7 +298,7 @@ function processPayment(payment: Payment): PaymentResult {
 
   // ✅ GOOD: Batch fetch
   const orders = await db.orders.findMany({
-    where: { userId: { in: userIds } },
+    where: { userId: { in: userIds } }
   });
   ```
 
