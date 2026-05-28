@@ -1,5 +1,5 @@
 ---
-name: memory-add
+name: add-memory
 description: Adds a memory entry to the appropriate project memory file. Supports optional file association or auto-detection of available memory files.
 argument-hint: "<memory_description> A clear description of the memory to store, including relevant context. [file_path] (optional) Path to a specific file to associate this memory with."
 ---
