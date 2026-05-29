@@ -1,7 +1,7 @@
 import yaml
 from glob import glob
 
-agents = glob("./agents/**/*", recursive=True)
+agents = glob("./agents/**/*.agent.md", recursive=True)
 skills = glob("./skills/**/SKILL.md", recursive=True)
 
 
@@ -33,14 +33,14 @@ def generate_descriptions(agents):
 
 skill_values = generate_descriptions(agents)
 data = {"agents": skill_values}
-yaml_string = yaml.dump(data, sort_keys=False, encoding="utf-8")
+yaml_string = yaml.dump(data, sort_keys=False)
 with open("./agents/index.yaml", "w", encoding="utf-8") as f:
     f.write(yaml_string)
 # print(yaml_string)
 
 skill_values = generate_descriptions(skills)
 data = {"skills": skill_values}
-yaml_string = yaml.dump(data, sort_keys=False, encoding="utf-8")
+yaml_string = yaml.dump(data, sort_keys=False)
 with open("./skills/index.yaml", "w", encoding="utf-8") as f:
     f.write(yaml_string)
 # print(yaml_string)

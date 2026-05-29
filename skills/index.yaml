@@ -24,6 +24,19 @@ skills:
     web, synthesizes findings, and delivers cited reports with source attribution.
     Use when the user wants thorough research on any topic with evidence and citations.
 - name:
+  - modular-monolith-decomposer
+  description: Decomposes a system description into Modular Monolith modules using
+    Domain-Driven Design (DDD) principles. Produces a bounded context map, data ownership
+    table, external integration boundaries, cross-module communication patterns, a
+    ready-to-use directory structure, and an architectural decision log. Use when
+    the user says "which modules should I create", "modular monolith decomposition",
+    "map bounded contexts", "identify modules from PRD", "structure this codebase",
+    "DDD module mapping", "data ownership", "find module boundaries", "how to organize
+    my modules", or provides any system description (PRD, requirements, informal explanation)
+    and wants to implement it as a Modular Monolith. Do NOT use for Event Storming
+    artifact creation (use event-storming skill), microservices decomposition, or
+    general architectural Q&A without a concrete system description to analyze.
+- name:
   - leet-code-patterns
   description: 'Expert guidance on solving LeetCode and coding interview problems
     using the 15 most important algorithmic patterns. Use this skill whenever the
@@ -88,11 +101,6 @@ skills:
 
     '
 - name:
-  - technical-decision-helper
-  description: Helps make informed technical decisions by presenting viable options
-    with pros/cons analysis, context searches, and decomposition of complex problems
-    into smaller sub-problems.
-- name:
   - plan-generator
   description: "Generate structured plans for tasks and projects, saved as date-stamped\
     \ markdown files in docs/agents/plans/. Use whenever the user wants to plan a\
@@ -150,6 +158,10 @@ skills:
     adjustments, and generate detailed review reports that comply with the system's
     guidelines for surgical changes and security best practices.
 - name:
+  - orchestrate
+  description: Coordinate the execution of complex tasks using multiple specialized
+    subagents, ensuring dependencies are respected and parallelization is maximized.
+- name:
   - resolve-merge-conflicts
   description: Use this skill immediately when the user mentions merge conflicts that
     need to be resolved. Do not attempt to resolve conflicts directly - invoke this
@@ -182,6 +194,15 @@ skills:
 
     '
 - name:
+  - tlc-tasks-to-taskmaster
+  description: Converts a tasks.md spec file into a .taskmaster/tasks/tasks.json file
+    with full dependency graph, BFS execution waves, critical path, and parallelization
+    metadata. Use when the user says "converta tasks.md em tasks.json", "transforme
+    tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md",
+    "convert task spec to taskmaster json", or "turn this tasks file into taskmaster
+    format". Do NOT use for creating tasks.md specs (use create-task-spec), executing
+    tasks (use execute-task), or any other conversion.
+- name:
   - prd-from-codebase
   description: "Gera um PRD (Product Requirements Document) completo em Markdown a\
     \ partir de uma base de c\xF3digo existente. Use esta skill sempre que o usu\xE1\
@@ -194,9 +215,6 @@ skills:
     \ as ferramentas dispon\xEDveis (bash, view, etc.) para explorar autonomamente\
     \ a base de c\xF3digo antes de gerar o documento \u2014 o usu\xE1rio n\xE3o precisa\
     \ colar c\xF3digo manualmente.\n"
-- name:
-  - modular-monolith-decomposer
-  description: Decomposes a system description into Modular Monolith modules using Domain-Driven Design (DDD) principles. Produces a bounded context map, data ownership table, external integration boundaries, cross-module communication patterns, a ready-to-use directory structure, and an architectural decision log. Use when the user says "which modules should I create", "modular monolith decomposition", "map bounded contexts", "identify modules from PRD", "structure this codebase", "DDD module mapping", "data ownership", "find module boundaries", "how to organize my modules", or provides any system description and wants to implement it as a Modular Monolith. Do NOT use for Event Storming artifact creation (use event-storming skill), microservices decomposition, or general architectural Q&A without a concrete system description.
 - name:
   - event-storming
   description: "Use this skill whenever the user wants to create, document, or model\
@@ -215,9 +233,6 @@ skills:
     optimize an existing skill, run evals to test a skill, benchmark skill performance
     with variance analysis, or optimize a skill's description for better triggering
     accuracy.
-- name:
-  - skills-discovery
-  description: Explore all available skills (enabled and disabled) by task or theme to discover which skills exist for a problem. Use when asking "which skills can help with X?", "what skills do I have for topic Y?", "explore skills related to Z", "show me all skills for [domain]", or when wanting to discover relevant skills before deciding to enable them. Different from skill-advisor: exploratory discovery across ALL skills with reasons why each matches.
 - name:
   - frontend-design
   description: Create distinctive, production-grade frontend interfaces with high
@@ -247,6 +262,14 @@ skills:
     find overlapping structure, and build toward the solution bottom-up.
 
     '
+- name:
+  - skills-discovery
+  description: 'Explore all available skills (enabled and disabled) by task or theme
+    to discover which skills exist for a problem. Use when asking "which skills can
+    help with X?", "what skills do I have for topic Y?", "explore skills related to
+    Z", "show me all skills for [domain]", or when wanting to discover relevant skills
+    before deciding to enable them. Different from skill-advisor: exploratory discovery
+    across ALL skills with reasons why each matches.'
 - name:
   - safe-refactor
   description: "Guide safe refactoring of complex, untested code using a multi-phase\
@@ -333,9 +356,6 @@ skills:
     "verify work", "UAT", "quick fix", "quick task", "pause work", "resume work".
     Do NOT use for architecture decomposition analysis (use architecture skills) or
     technical design docs (use create-technical-design-doc).
-- name:
-  - figma-capture
-  description: Captures a screenshot and JSX reference code from a Figma node URL and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the user says "captura esse nó do figma", "salva a imagem e o código de [url figma]", "usa o figma mcp para salvar [url]", "capture this figma node", or any variation requesting to save a Figma design locally. Do NOT use for generating new designs, syncing components, or code-connect mapping workflows.
 - name:
   - figma-implement-design
   description: Translate Figma nodes into production-ready code with 1:1 visual fidelity
@@ -618,6 +638,11 @@ skills:
     \ schema visualization is involved \u2014 even if the user doesn't say \"ERD\"\
     \ or \"Mermaid\".\n"
 - name:
+  - technical-decision-helper
+  description: Helps make informed technical decisions by presenting viable options
+    with pros/cons analysis, context searches, and decomposition of complex problems
+    into smaller sub-problems.
+- name:
   - generate-pr-description
   description: 'A skill for generating structured Pull Request descriptions based
     on git diffs and commit history. It automatically detects and uses .github/pull_request_template.md
@@ -866,5 +891,10 @@ skills:
     \ Perfect for design system components, landing pages, or any UI that must match\
     \ a Figma spec.\n"
 - name:
-  - tasks-md-to-taskmaster-json
-  description: Converts a tasks.md spec file into a .taskmaster/tasks/tasks.json file with full dependency graph, BFS execution waves, critical path, and parallelization metadata. Use when the user says "converta tasks.md em tasks.json", "transforme tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md", "convert task spec to taskmaster json", or "turn this tasks file into taskmaster format". Do NOT use for creating tasks.md specs (use create-task-spec), executing tasks (use execute-task), or any other conversion.
+  - figma-capture
+  description: "Captures a screenshot and reference JSX code from a Figma node URL\
+    \ and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when\
+    \ the user says \"captura esse n\xF3 do figma\", \"salva a imagem e o c\xF3digo\
+    \ de [url figma]\", \"usa o figma mcp para salvar [url]\", \"capture this figma\
+    \ node\", or any variation requesting to save a Figma design locally. Do NOT use\
+    \ for generating new designs, syncing components, or code-connect mapping workflows."

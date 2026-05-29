@@ -54,6 +54,7 @@ generate-docs-init
 generate-docs-update
 gh-address-comments
 gh-fix-ci
+git-diff-analyzer
 git-guide
 golang-patterns
 golang-style-guide

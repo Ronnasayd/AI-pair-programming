@@ -1,6 +1,6 @@
 ---
 name: skills-discovery
-description: Explore all available skills (enabled and disabled) by task or theme to discover which skills exist for a problem. Use when asking "which skills can help with X?", "what skills do I have for topic Y?", "explore skills related to Z", "show me all skills for [domain]", or when wanting to discover relevant skills before deciding to enable them. Different from skill-advisor: exploratory discovery across ALL skills with reasons why each matches.
+description: 'Explore all available skills (enabled and disabled) by task or theme to discover which skills exist for a problem. Use when asking "which skills can help with X?", "what skills do I have for topic Y?", "explore skills related to Z", "show me all skills for [domain]", or when wanting to discover relevant skills before deciding to enable them. Different from skill-advisor: exploratory discovery across ALL skills with reasons why each matches.'
 license: CC-BY-4.0
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
