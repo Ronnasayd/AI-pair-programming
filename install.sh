@@ -143,17 +143,23 @@ for backend in "${BACKENDS[@]}"; do
 done
 
 # Copy configuration files
-if [ ! -L "$LOCAL/.agentsignore" ] && [ ! -f "$LOCAL/.agentsignore" ]; then
-  cp $SOURCE/.agentsignore $LOCAL/.agentsignore
-fi
+cat $SOURCE/.agentsignore | while read agent; do
+    if ! grep -q "$agent" $LOCAL/.agentsignore; then
+      echo "$agent" >> $LOCAL/.agentsignore
+    fi
+done
 
-if [ ! -L "$LOCAL/.skillsignore" ] && [ ! -f "$LOCAL/.skillsignore" ]; then
-  cp $SOURCE/.skillsignore $LOCAL/.skillsignore
-fi
+cat $SOURCE/.skillsignore | while read skill; do
+    if ! grep -q "$skill" $LOCAL/.skillsignore; then
+      echo "$skill" >> $LOCAL/.skillsignore
+    fi
+done
 
-if [ ! -L "$LOCAL/.rulesignore" ] && [ ! -f "$LOCAL/.rulesignore" ]; then
-  cp $SOURCE/.rulesignore $LOCAL/.rulesignore
-fi
+cat $SOURCE/.rulesignore | while read rule; do
+    if ! grep -q "$rule" $LOCAL/.rulesignore; then
+      echo "$rule" >> $LOCAL/.rulesignore
+    fi
+done
 
 
 
