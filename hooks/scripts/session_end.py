@@ -395,6 +395,7 @@ def build_session_header(
     current_time: str,
     metadata: dict,
     existing_content: str = "",
+    transcript_path: str | None = None,
 ) -> str:
     heading_match = re.search(r"^#\s+.+$", existing_content, re.MULTILINE)
     heading = heading_match.group(0) if heading_match else f"# Session: {today}"
@@ -409,6 +410,11 @@ def build_session_header(
         f"**Project:** {metadata['project']}",
         f"**Branch:** {metadata['branch']}",
         f"**Worktree:** {metadata['worktree']}",
+        (
+            f"**Transcript:** {transcript_path}"
+            if transcript_path
+            else "**Transcript:** N/A"
+        ),
         "",
     ]
     return "\n".join(lines)
@@ -419,6 +425,7 @@ def merge_session_header(
     today: str,
     current_time: str,
     metadata: dict,
+    transcript_path: str | None = None,
 ) -> str | None:
     separator_index = content.find(SESSION_SEPARATOR)
     if separator_index == -1:
@@ -426,7 +433,9 @@ def merge_session_header(
 
     existing_header = content[:separator_index]
     body = content[separator_index + len(SESSION_SEPARATOR) :]
-    next_header = build_session_header(today, current_time, metadata, existing_header)
+    next_header = build_session_header(
+        today, current_time, metadata, existing_header, transcript_path
+    )
     return f"{next_header}{SESSION_SEPARATOR}{body}"
 
 
@@ -493,13 +502,16 @@ def _update_existing_session(
     current_time: str,
     metadata: dict,
     summary: dict | None,
+    transcript_path: str | None = None,
 ) -> None:
     """Update an already-existing session file in place."""
     existing = read_file(session_file)
     updated_content = existing or ""
 
     if existing:
-        merged = merge_session_header(existing, today, current_time, metadata)
+        merged = merge_session_header(
+            existing, today, current_time, metadata, transcript_path
+        )
         if merged:
             updated_content = merged
         else:
@@ -520,6 +532,7 @@ def _create_new_session(
     current_time: str,
     metadata: dict,
     summary: dict | None,
+    transcript_path: str | None = None,
 ) -> None:
     """Create a brand-new session file."""
     if summary:
@@ -532,7 +545,9 @@ def _create_new_session(
             "### In Progress\n- [ ]\n\n"
         )
 
-    header = build_session_header(today, current_time, metadata)
+    header = build_session_header(
+        today, current_time, metadata, transcript_path=transcript_path
+    )
     template = f"{header}{SESSION_SEPARATOR}{summary_section}\n"
     write_file(session_file, template)
     logger.debug("[SessionEnd] Created session file: %s", session_file)
@@ -577,19 +592,32 @@ def main() -> None:
 
     # Try to extract summary from transcript
     summary: dict | None = None
+    transcript_path_str: str | None = None
     if transcript_path and transcript_path.exists():
+        transcript_path_str = str(transcript_path)
         extractor = _select_summary_extractor(transcript_path)
         summary = extractor(transcript_path)
     elif transcript_path:
+        transcript_path_str = str(transcript_path)
         logger.debug("[SessionEnd] Transcript not found: %s", transcript_path)
 
     if session_file.exists():
         _update_existing_session(
-            session_file, today, current_time, session_metadata, summary
+            session_file,
+            today,
+            current_time,
+            session_metadata,
+            summary,
+            transcript_path_str,
         )
     else:
         _create_new_session(
-            session_file, today, current_time, session_metadata, summary
+            session_file,
+            today,
+            current_time,
+            session_metadata,
+            summary,
+            transcript_path_str,
         )
 
     sys.exit(0)
