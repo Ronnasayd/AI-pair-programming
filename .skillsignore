@@ -1,14 +1,14 @@
-# codenavi
-# context-map
-# deep-research-web
-# generate-pr-description
-# mermaid-studio
+codenavi
+context-map
+deep-research-web
+generate-pr-description
+mermaid-studio
 # orchestrate
-# skill-architect
-# skill-creator
+skill-architect
+skill-creator
 # technical-decision-maker
 # tlc-spec-driven
-# tlc-tasks-to-taskmaster
+tlc-tasks-to-taskmaster
 agent-creator
 agent-harness-construction
 ai-regression-testing
