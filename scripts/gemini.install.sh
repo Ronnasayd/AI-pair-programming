@@ -70,6 +70,20 @@ rm -rf $HOME/$DEFAULT_FOLDER/hooks/scripts
 fi
 mkdir -p $HOME/$DEFAULT_FOLDER/hooks/scripts
 cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks"
+
+########################################################################################
+if  [ ! -f "$LOCAL/skills-lock.json" ]; then
+  curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --only gemini
+  if ! grep -q "*caveman*" .gitignore; then
+      echo "*caveman*" >> .gitignore
+  fi
+  if ! grep -q "*cavecrew*" .gitignore; then
+      echo "*cavecrew*" >> .gitignore
+  fi
+  if ! grep -q "skills-lock.json" .gitignore; then
+      echo "skills-lock.json" >> .gitignore
+  fi
+fi
 ########################################################################################
 ## GITIGNORE
 if ! grep -q "GEMINI.md" .gitignore; then
