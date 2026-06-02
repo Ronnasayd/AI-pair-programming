@@ -90,6 +90,17 @@ if ! grep -q "$DEFAULT_FOLDER/hooks/*" .gitignore; then
     echo "$DEFAULT_FOLDER/hooks/*" >> .gitignore
 fi
 ###########################################################################################
+curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --only copilot
+if ! grep -q "*caveman*" .gitignore; then
+    echo "*caveman*" >> .gitignore
+fi
+if ! grep -q "*cavecrew*" .gitignore; then
+    echo "*cavecrew*" >> .gitignore
+fi
+if ! grep -q "skills-lock.json" .gitignore; then
+    echo "skills-lock.json" >> .gitignore
+fi
+###########################################################################################
 rtk init -g --copilot
 rm .github/instructions/rtk.instructions.md
 touch .github/instructions/rtk.instructions.md
