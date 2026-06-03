@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+export ASDF_NODEJS_VERSION=23.11.1
 SCRIPT_FILE="${BASH_SOURCE[0]}"
 echo "Running install script: $SCRIPT_FILE"
 
