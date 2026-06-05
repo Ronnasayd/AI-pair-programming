@@ -2,13 +2,60 @@
 DEFAULT_FOLDER=".claude"
 
 ############################################################################################
-if ! grep -q "@.claude/instructions/code.instructions.md" $LOCAL/CLAUDE.md; then
-    echo -e "\n@.claude/instructions/code.instructions.md" >> $LOCAL/CLAUDE.md
-fi
-############################################################################################
-if ! grep -q "@.claude/instructions/agent.instructions.md" $LOCAL/CLAUDE.md; then
-    echo -e "\n@.claude/instructions/agent.instructions.md" >> $LOCAL/CLAUDE.md
-fi
+replace_between() {
+    local inicio="$1"
+    local fim="$2"
+    local conteudo="$3"
+    local arquivo="$4"
+
+    if grep -Fq "$inicio" "$arquivo"; then
+        awk -v ini="$inicio" \
+            -v end="$fim" \
+            -v content="$conteudo" '
+        $0 == ini {
+            print
+            print content
+            inside = 1
+            next
+        }
+
+        inside && $0 == end {
+            inside = 0
+            print
+            next
+        }
+
+        !inside {
+            print
+        }
+        ' "$arquivo" > "${arquivo}.tmp" &&
+        mv "${arquivo}.tmp" "$arquivo"
+    else
+        {
+            cat "$arquivo"
+            printf "\n%s\n%s\n%s\n" "$inicio" "$conteudo" "$fim"
+        } > "${arquivo}.tmp" &&
+        mv "${arquivo}.tmp" "$arquivo"
+    fi
+}
+
+instructions=""
+while read -r rule; do
+    if [[ $rule == \#* ]]; then
+        rule="${rule#\#}"
+        rule="${rule#"${rule%%[![:space:]]*}"}"
+        rule="${rule%"${rule##*[![:space:]]}"}"
+
+        instructions+=$'\n'"$(<"$SOURCE/instructions/$rule")"
+    fi
+done < "$LOCAL/.rulesignore"
+
+replace_between \
+  "<!-- INIT AUTO-CONTEXT -->" \
+  "<!-- END AUTO-CONTEXT -->" \
+  "$instructions" \
+  "$LOCAL/CLAUDE.md"
+
 ########################################################################################
 if [ -L "$LOCAL/.mcp.json" ] || [ -d "$LOCAL/.mcp.json" ]; then
 rm -rf $LOCAL/.mcp.json
