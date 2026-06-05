@@ -4,13 +4,60 @@ yes | rtk init -g --gemini
 python3 $SOURCE/scripts/md2toml.py $SOURCE/commands/  $LOCAL/$DEFAULT_FOLDER/commands/
 
 ############################################################################################
-if ! grep -q "@.github/instructions/code.instructions.md" $LOCAL/GEMINI.md; then
-    echo -e "\n@.github/instructions/code.instructions.md" >> $LOCAL/GEMINI.md
-fi
-############################################################################################
-if ! grep -q "@.github/instructions/agent.instructions.md" $LOCAL/GEMINI.md; then
-    echo -e "\n@.github/instructions/agent.instructions.md" >> $LOCAL/GEMINI.md
-fi
+replace_between() {
+    local inicio="$1"
+    local fim="$2"
+    local conteudo="$3"
+    local arquivo="$4"
+
+    if grep -Fq "$inicio" "$arquivo"; then
+        awk -v ini="$inicio" \
+            -v end="$fim" \
+            -v content="$conteudo" '
+        $0 == ini {
+            print
+            print content
+            inside = 1
+            next
+        }
+
+        inside && $0 == end {
+            inside = 0
+            print
+            next
+        }
+
+        !inside {
+            print
+        }
+        ' "$arquivo" > "${arquivo}.tmp" &&
+        mv "${arquivo}.tmp" "$arquivo"
+    else
+        {
+            cat "$arquivo"
+            printf "\n%s\n%s\n%s\n" "$inicio" "$conteudo" "$fim"
+        } > "${arquivo}.tmp" &&
+        mv "${arquivo}.tmp" "$arquivo"
+    fi
+}
+
+instructions=""
+while read -r rule; do
+    if [[ $rule == \#* ]]; then
+        rule="${rule#\#}"
+        rule="${rule#"${rule%%[![:space:]]*}"}"
+        rule="${rule%"${rule##*[![:space:]]}"}"
+
+        instructions+=$'\n'"$(<"$SOURCE/instructions/$rule")"
+    fi
+done < "$LOCAL/.rulesignore"
+
+replace_between \
+  "<!-- INIT AUTO-CONTEXT -->" \
+  "<!-- END AUTO-CONTEXT -->" \
+  "$instructions" \
+  "$LOCAL/GEMINI.md"
+
 #######################################################################################
 if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/settings.json" ]; then
 rm $HOME/$DEFAULT_FOLDER/settings.json
