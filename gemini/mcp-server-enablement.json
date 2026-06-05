@@ -7,5 +7,23 @@
   },
   "atlassian": {
     "enabled": false
+  },
+  "github-l": {
+    "enabled": false
+  },
+  "github-q": {
+    "enabled": false
+  },
+  "postgresql": {
+    "enabled": false
+  },
+  "mysql": {
+    "enabled": false
+  },
+  "mongodb": {
+    "enabled": false
+  },
+  "sqlite": {
+    "enabled": false
   }
 }
