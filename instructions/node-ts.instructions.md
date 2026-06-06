@@ -5,24 +5,24 @@ applyTo: "**/*"
 
 Node.js/JavaScript/TypeScript
 
-- All source code must be written in TypeScript.
+- All source code in TypeScript.
 
-- Use npm as the default tool for managing dependencies and running scripts. Never use different tools for this purpose.
+- Use `npm` for deps + scripts. Do not use other tools.
 
 ```bash
 npm install axios
 npm run build
 ```
 
-- If necessary, install the types for libraries. For example: jest and @types/jest.
+- If needed, install library types. Example: `jest` + `@types/jest`.
 
 ```bash
 npm install jest @types/jest --save-dev
 ```
 
-- Before finishing a task, always validate that the typing is correct.
+- Before done, always validate typing.
 
-- Use const instead of let wherever possible.
+- Prefer `const` over `let`.
 
 ```ts
 // Good
@@ -31,9 +31,9 @@ const maxRetries = 3;
 let currentAttempt = 0;
 ```
 
-- Never use var to declare a variable.
+- Never use `var`.
 
-- Always declare class properties as private or readonly, avoiding the use of public.
+- Class props must be `private` or `readonly`. Avoid `public`.
 
 ```ts
 class User {
@@ -42,7 +42,7 @@ class User {
 }
 ```
 
-- Prefer the use of find, filter, map, and reduce instead of for and while.
+- Prefer `find`/`filter`/`map`/`reduce` over `for`/`while`.
 
 ```ts
 // Good
@@ -56,13 +56,13 @@ for (let i = 0; i < users.length; i++) {
 }
 ```
 
-- Prefer the use of arrow functions wherever possible.
+- Prefer arrow functions when possible.
 
 ```ts
 const sum = (a: number, b: number): number => a + b;
 ```
 
-- Always use async/await to handle promises. Avoid the use of callbacks.
+- Use `async`/`await` for promises. Avoid callbacks.
 
 ```ts
 // Good
@@ -72,7 +72,7 @@ const data = await fetchData();
 fetchData().then(data => { ... });
 ```
 
-- Never use any. Always use existing types or create types for everything that is implemented.
+- Never use `any`. Use existing types or create types for all implemented code.
 
 ```ts
 // Good
@@ -83,7 +83,7 @@ function createUser(input: UserInput): User { ... }
 function createUser(input: any): any { ... }
 ```
 
-- Never use require to import modules. Always use import.
+- Never use `require`. Always use `import`.
 
 ```ts
 // Good
@@ -93,7 +93,7 @@ import express from "express";
 const express = require("express");
 ```
 
-- Never use module.exports to export modules. Always use export.
+- Never use `module.exports`. Always use `export`.
 
 ```ts
 // Good
@@ -104,7 +104,7 @@ export { calculateTotal };
 module.exports = User;
 ```
 
-- If the file has only one thing being exported, use default. Otherwise, use named exports.
+- If file exports one thing, use `default`. If many, use named exports.
 
 ```ts
 // Single export — default

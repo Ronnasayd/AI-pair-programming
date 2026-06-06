@@ -41,3 +41,14 @@ if [ -L "$LOCAL/.rulesignore" ] || [ -f "$LOCAL/.rulesignore" ]; then
         done
     done < "$LOCAL/.rulesignore"
 fi
+
+
+if ! grep -q ".rulesignore" .gitignore; then
+      echo ".rulesignore" >> .gitignore
+fi
+if ! grep -q ".skillsignore" .gitignore; then
+      echo ".skillsignore" >> .gitignore
+fi
+if ! grep -q ".agentsignore" .gitignore; then
+      echo ".agentsignore" >> .gitignore
+fi

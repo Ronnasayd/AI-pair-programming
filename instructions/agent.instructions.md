@@ -5,28 +5,30 @@ applyTo: "**/*"
 
 ## Environments
 
-- Prefer `yarn` over `npm` for JavaScript/TypeScript projects unless the project explicitly uses `npm`.
-- For Python projects, prefer `pip` and `venv`.
-- Use `asdf` for managing multiple language versions when applicable.
+- JS/TS: use `yarn`, not `npm`, unless project says `npm`.
+- Python: use `pip` + `venv`.
+- Multi-language versions: use `asdf` when fit.
 
 ## Documentation
 
-Directories to search for context, in this sequential order:
+Search context in this order:
 
 - `docs/SUMMARY.md`, `README.md`, `GEMINI.md`, `CLAUDE.md`, `AGENTS.md`
-- `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules/**`, `docs/contribution.md`, `docs/faq.md`,
+- `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules/**`, `docs/contribution.md`, `docs/faq.md`
 - `docs/adr/**`, `docs/techs/**`, `docs/misc/**`
 
-When accessing a module, check for the existence of CONTEXT.md files inside the module directory. These files contain relevant information about only the module.
+When entering module, check for `CONTEXT.md` inside module dir. File holds module-only context.
 
-Load only the minimal required sections for the task domain.
+Load only minimum sections needed for task domain.
 
 ## Always Use Interactive Question Tools
 
-**For every question asked to the user** — regardless of context — always use the interactive question tools available in the environment. This rule applies universally: clarifications, option selections, confirmations, preference checks, and any other user interaction.
+For every user question, use interactive question tool. No exceptions for context, type, or intent.
+
+Use this for clarifications, options, confirmations, preference checks, all user interactions.
 
 - **VS Code (GitHub Copilot)**: Use `vscode_askQuestions`
 - **Other environments**: Use equivalent interactive question tools available in your context
-- **Fallback**: Only if no interactive tools are available, use the labeled option format (A, B, C… Z) described below
+- **Fallback**: if no interactive tools exist, use labeled options (A, B, C... Z)
 
-Never ask questions as plain text when an interactive tool is available.
+If interactive tool exists, never ask plain-text question.
