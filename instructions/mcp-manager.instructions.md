@@ -1,48 +1,48 @@
 ---
-description: How to use mcp-manager tool
+description: How to use the mcp-manager tool
 applyTo: "**/*"
 ---
 
-O **mcp-manager** é um gerenciador de Model Context Protocol (MCP) que permite acessar ferramentas de diferentes servidores. Aqui está o guia prático:
+The **mcp-manager** is a Model Context Protocol (MCP) manager that allows access to tools from different servers. Here is the practical guide:
 
-## 1️⃣ **Descobrir Ferramentas Disponíveis**
+## 1️⃣ **Discover Available Tools**
 
 ```bash
-# Listar todos os servidores MCP
+# List all MCP servers
 mcp_mcp-manager_list_servers
 
-# Buscar ferramentas por palavra-chave
+# Search for tools by keyword
 mcp_mcp-manager_search_tools
-  query: "seu termo de busca"
+  query: "your search term"
   max_results: 10
 
-# Obter ferramentas de um servidor específico
+# Get tools from a specific server
 mcp_mcp-manager_get_tools_by_server
-  server: "taskmaster-ai"  # ou: exa, csv-editor, burp, etc.
+  server: "taskmaster-ai"  # or: exa, csv-editor, burp, etc.
 ```
 
-## 2️⃣ **Entender Estrutura de Uma Tool**
+## 2️⃣ **Understand a Tool's Structure**
 
 ```bash
-# Ver o schema completo (parâmetros, tipos, etc)
+# View the complete schema (parameters, types, etc.)
 mcp_mcp-manager_get_tool_schema
   server: "taskmaster-ai"
   tool_name: "get_tasks"
 ```
 
-## 3️⃣ **Executar uma Ferramenta**
+## 3️⃣ **Execute a Tool**
 
 ```bash
-# Sintaxe geral
+# General syntax
 mcp_mcp-manager_call_tool
-  server: "nome-do-servidor"
-  tool_name: "nome-da-ferramenta"
-  arguments: { /* parâmetros da tool */ }
+  server: "server-name"
+  tool_name: "tool-name"
+  arguments: { /* tool parameters */ }
 ```
 
-### Exemplos Práticos:
+### Practical Examples:
 
-**Exemplo 1: Obter tarefas do TaskMaster**
+**Example 1: Get tasks from TaskMaster**
 
 ```bash
 mcp_mcp-manager_call_tool
@@ -51,7 +51,7 @@ mcp_mcp-manager_call_tool
   arguments: { "status": "not-started" }
 ```
 
-**Exemplo 2: Buscar na web (Exa)**
+**Example 2: Search the web (Exa)**
 
 ```bash
 mcp_mcp-manager_call_tool
@@ -60,7 +60,7 @@ mcp_mcp-manager_call_tool
   arguments: { "query": "TypeScript best practices" }
 ```
 
-**Exemplo 3: Definir status de tarefa**
+**Example 3: Update task status**
 
 ```bash
 mcp_mcp-manager_call_tool
@@ -72,13 +72,13 @@ mcp_mcp-manager_call_tool
   }
 ```
 
-## 💡 **Fluxo Típico**
+## 💡 **Typical Workflow**
 
-1. **Descobrir** → `list_servers` → `get_tools_by_server`
-2. **Entender** → `get_tool_schema`
-3. **Executar** → `call_tool` com argumentos corretos
-4. **Interpretar resultado** → usar output da ferramenta
+1. **Discover** → `list_servers` → `get_tools_by_server`
+2. **Understand** → `get_tool_schema`
+3. **Execute** → `call_tool` with the correct arguments
+4. **Interpret results** → use the tool output
 
 ---
 
-**Quer executar algo específico?** Diga qual servidor/ferramenta e eu chamo para você! 🚀
+**Want to execute something specific?** Tell me which server/tool you want to use, and I'll call it for you! 🚀
