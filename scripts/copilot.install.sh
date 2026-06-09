@@ -2,12 +2,12 @@
 DEFAULT_FOLDER=".github"
 
 ########################################################################################
-if [ -L "$HOME/.copilot/mcp-config.json" ] || [ -d "$HOME/.copilot/mcp-config.json" ]; then
+if [ -L "$HOME/.copilot/mcp-config.json" ] || [ -f "$HOME/.copilot/mcp-config.json" ]; then
 rm  $HOME/.copilot/mcp-config.json
 fi
 ln -s "$SOURCE/github-copilot/mcp-config.json" "$HOME/.copilot/mcp-config.json"
 ########################################################################################
-if [ -L "$HOME/.copilot/config.json" ] || [ -d "$HOME/.copilot/config.json" ]; then
+if [ -L "$HOME/.copilot/config.json" ] || [ -f "$HOME/.copilot/config.json" ]; then
 rm  $HOME/.copilot/config.json
 fi
 ln -s "$SOURCE/github-copilot/config.json" "$HOME/.copilot/config.json"
