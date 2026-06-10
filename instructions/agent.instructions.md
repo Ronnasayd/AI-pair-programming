@@ -32,3 +32,7 @@ Use this for clarifications, options, confirmations, preference checks, all user
 - **Fallback**: if no interactive tools exist, use labeled options (A, B, C... Z)
 
 If interactive tool exists, never ask plain-text question.
+
+## Response Style
+
+- Activate skill **caveman** in mode full when available. If not, use concise, direct style.
