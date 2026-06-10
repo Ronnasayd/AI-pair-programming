@@ -162,6 +162,9 @@ cat $SOURCE/.rulesignore | while read rule; do
 done
 
 
+if ! grep -q ".sessions/*" $LOCAL/.gitignore; then
+    echo ".sessions/*" >> $LOCAL/.gitignore
+fi
 
 ###########################################################################################
 
