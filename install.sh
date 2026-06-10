@@ -75,12 +75,12 @@ CLEAN_MODE=false
 
 if [ $# -eq 0 ]; then
   # No arguments provided, run all by default
-  BACKENDS=("copilot" "claude" "gemini" "codex" "taskmaster" "gitignore")
+  BACKENDS=("copilot" "claude" "gemini" "codex" "antigravity" "taskmaster" "gitignore")
 else
   while [[ $# -gt 0 ]]; do
     case $1 in
       --all)
-        BACKENDS=("copilot" "claude" "gemini" "codex" "taskmaster" "gitignore")
+        BACKENDS=("copilot" "claude" "gemini" "codex" "antigravity" "taskmaster" "gitignore")
         shift
         ;;
       --copilot)
@@ -97,6 +97,10 @@ else
         ;;
       --codex)
         BACKENDS+=("codex")
+        shift
+        ;;
+      --antigravity)
+        BACKENDS+=("antigravity")
         shift
         ;;
       --taskmaster)
@@ -126,7 +130,7 @@ fi
 
 # If clean mode and no backends specified, clean all
 if [ "$CLEAN_MODE" = true ] && [ ${#BACKENDS[@]} -eq 0 ]; then
-  BACKENDS=("copilot" "claude" "gemini" "codex")
+  BACKENDS=("copilot" "claude" "gemini" "codex" "antigravity" "taskmaster" "gitignore")
 fi
 
 # Execute clean scripts if clean mode is active
