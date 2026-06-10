@@ -79,10 +79,10 @@ replace_between \
 # fi
 # ln -s "$SOURCE/gemini/policies"* "$HOME/$DEFAULT_FOLDER/policies"
 #######################################################################################
-# if [ -L "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json" ]; then
-# rm $HOME/$DEFAULT_FOLDER/mcp-server-enablement.json
-# fi
-# ln -s "$SOURCE/gemini/mcp-server-enablement.json" "$HOME/$DEFAULT_FOLDER/mcp-server-enablement.json"
+if [ -L "$LOCAL/$DEFAULT_FOLDER/mcp_config.json" ] || [ -f "$LOCAL/$DEFAULT_FOLDER/mcp_config.json" ]; then
+rm $LOCAL/$DEFAULT_FOLDER/mcp_config.json
+fi
+ln -s "$SOURCE/antigravity/mcp_config.json" "$LOCAL/$DEFAULT_FOLDER/mcp_config.json"
 #######################################################################################
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do
@@ -150,6 +150,9 @@ if ! grep -q "$DEFAULT_FOLDER/rules/*" .gitignore; then
 fi
 if ! grep -q "$DEFAULT_FOLDER/skills/*" .gitignore; then
     echo "$DEFAULT_FOLDER/skills/*" >> .gitignore
+fi
+if ! grep -q "$DEFAULT_FOLDER/mcp_config.json" .gitignore; then
+    echo "$DEFAULT_FOLDER/mcp_config.json" >> .gitignore
 fi
 ###########################################################################################
 
