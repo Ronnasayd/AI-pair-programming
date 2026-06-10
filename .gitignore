@@ -225,3 +225,4 @@ skills-lock.json
 .rulesignore
 .agents/rules/*
 .agents/skills/*
+.agents/mcp_config.json
