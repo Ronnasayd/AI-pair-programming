@@ -159,7 +159,7 @@ source $SOURCE/scripts/ignores.sh
 
 ###########################################################################################
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
-  curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --only claude
+  npx -y skills add JuliusBrussee/caveman -a claude-code --yes
   if ! grep -q ".agents/skills/*" .gitignore; then
       echo ".agents/skills/*" >> .gitignore
   fi
