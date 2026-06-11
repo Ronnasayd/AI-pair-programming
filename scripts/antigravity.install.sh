@@ -129,7 +129,7 @@ ln -s "$SOURCE/instructions/"* "$LOCAL/$DEFAULT_FOLDER/rules/"
 
 ########################################################################################
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
-  curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --only gemini
+  npx -y skills add JuliusBrussee/caveman -a antigravity --yes
   if ! grep -q ".agents/skills/*" .gitignore; then
       echo ".agents/skills/*" >> .gitignore
   fi

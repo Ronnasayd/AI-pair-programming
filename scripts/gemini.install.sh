@@ -120,7 +120,7 @@ cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks"
 
 ########################################################################################
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
-  curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --only gemini
+  npx -y skills add JuliusBrussee/caveman -a gemini-cli --yes
   if ! grep -q ".agents/skills/*" .gitignore; then
       echo ".agents/skills/*" >> .gitignore
   fi
