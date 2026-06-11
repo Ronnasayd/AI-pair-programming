@@ -135,6 +135,7 @@ fi
 
 # Execute clean scripts if clean mode is active
 if [ "$CLEAN_MODE" = true ]; then
+  rm -rf $LOCAL/skills-lock.json
   for backend in "${BACKENDS[@]}"; do
     run_clean "$backend"
   done
