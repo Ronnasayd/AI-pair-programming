@@ -93,11 +93,8 @@ fi
 
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
   curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash -s -- --only copilot
-  if ! grep -q "*caveman*" .gitignore; then
-      echo "*caveman*" >> .gitignore
-  fi
-  if ! grep -q "*cavecrew*" .gitignore; then
-      echo "*cavecrew*" >> .gitignore
+  if ! grep -q ".agents/skills/*" .gitignore; then
+      echo ".agents/skills/*" >> .gitignore
   fi
   if ! grep -q "skills-lock.json" .gitignore; then
       echo "skills-lock.json" >> .gitignore

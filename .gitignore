@@ -219,8 +219,6 @@ tasks/
 .github/instructions/*
 .github/agents/*
 .github/hooks/*
-*caveman*
-*cavecrew*
 skills-lock.json
 .rulesignore
 .agents/rules/*
