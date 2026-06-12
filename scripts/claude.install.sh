@@ -62,10 +62,10 @@ rm -rf $LOCAL/.mcp.json
 fi
 ln -s "$SOURCE/claude/.mcp.json" "$LOCAL/.mcp.json"
 ########################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/settings.local.json" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/settings.local.json" ]; then
-rm -rf $LOCAL/$DEFAULT_FOLDER/settings.local.json
+if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -d "$HOME/$DEFAULT_FOLDER/settings.json" ]; then
+rm -rf $HOME/$DEFAULT_FOLDER/settings.json
 fi
-ln -s "$SOURCE/claude/settings.local.json" "$LOCAL/$DEFAULT_FOLDER/settings.local.json"
+ln -s "$SOURCE/claude/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
 ########################################################################################
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do
@@ -113,23 +113,6 @@ find "$LOCAL/$DEFAULT_FOLDER/agents" -maxdepth 1 -type l | while read -r link; d
 done
 ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
 ########################################################################################3
-# Função auxiliar para criar symlinks de instruções
-setup_instruction_file() {
-    local file_name="$1"
-    local source_file="$SOURCE/instructions/$file_name"
-    local local_file="$LOCAL/$DEFAULT_FOLDER/instructions/$file_name"
-
-    if [ -L "$local_file" ] || [ -f "$local_file" ]; then
-        rm -rf "$local_file"
-    fi
-
-    mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions/"
-    ln -s "$source_file" "$local_file"
-}
-
-# Configurar arquivos de instruções
-setup_instruction_file "code.instructions.md"
-setup_instruction_file "agent.instructions.md"
 ##########################################################################################
 if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
 rm $HOME/.config/Code/User/mcp.json
