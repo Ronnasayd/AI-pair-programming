@@ -66,19 +66,6 @@
         ]
       },
       {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/scripts/session_start.py"
-          },
-          {
-            "type": "command",
-            "command": ".claude/hooks/scripts/memory.py"
-          }
-        ]
-      },
-      {
         "matcher": "",
         "hooks": [
           {
@@ -89,15 +76,6 @@
       }
     ],
     "Stop": [
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/scripts/session_end.py"
-          }
-        ]
-      },
       {
         "matcher": "",
         "hooks": [
