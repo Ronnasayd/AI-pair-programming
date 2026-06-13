@@ -23,6 +23,15 @@
             "command": ".claude/hooks/scripts/protect_files.py"
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -32,6 +41,15 @@
           {
             "type": "command",
             "command": ".claude/hooks/scripts/quality_gate.py"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh"
           }
         ]
       }
@@ -59,6 +77,15 @@
             "command": ".claude/hooks/scripts/memory.py"
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -68,6 +95,15 @@
           {
             "type": "command",
             "command": ".claude/hooks/scripts/session_end.py"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh"
           }
         ]
       }
@@ -82,11 +118,41 @@
             "statusMessage": "Tracking caveman mode..."
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh"
+          }
+        ]
       }
     ],
-    "PreCompact": [],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh"
+          }
+        ]
+      }
+    ],
     "SubagentStart": [],
-    "SubagentStop": []
+    "SubagentStop": [],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh"
+          }
+        ]
+      }
+    ]
   },
   "statusLine": {
     "type": "command",
