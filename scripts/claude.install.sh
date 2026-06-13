@@ -62,7 +62,7 @@ rm -rf $LOCAL/.mcp.json
 fi
 ln -s "$SOURCE/claude/.mcp.json" "$LOCAL/.mcp.json"
 ########################################################################################
-if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -d "$HOME/$DEFAULT_FOLDER/settings.json" ]; then
+if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/settings.json" ]; then
 rm -rf $HOME/$DEFAULT_FOLDER/settings.json
 fi
 ln -s "$SOURCE/claude/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
