@@ -90,7 +90,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash \"/home/ronnas/.claude/hooks/caveman-statusline.sh\""
+    "command": "bash \"/home/ronnas/develop/personal/AI-pair-programming/.claude/hooks/scripts/statusline-command.sh\""
   },
   "enabledPlugins": {
     "caveman@caveman": true
