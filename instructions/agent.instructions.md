@@ -1,5 +1,5 @@
 ---
-description: Agent behavior rules.
+description: Establish agent behavior and development conventions including environment tooling, documentation hierarchy, interactive question requirements, and response style. Use when updating agent instructions, configuring agent behavior, setting environment preferences, defining documentation hierarchy, or establishing response standards.
 applyTo: "**/*"
 ---
 
@@ -13,11 +13,18 @@ applyTo: "**/*"
 
 Search context in this order:
 
-- `docs/SUMMARY.md`, `README.md`, `GEMINI.md`, `CLAUDE.md`, `AGENTS.md`
-- `docs/architecture.md`, `docs/setup.md`, `docs/usage.md`, `docs/modules/**`, `docs/contribution.md`, `docs/faq.md`
-- `docs/adr/**`, `docs/techs/**`, `docs/misc/**`
+- `@docs/SUMMARY.md`
+- `@docs/architecture.md`
+- `@docs/setup.md`
+- `@docs/usage.md`
+- `@docs/modules/**/*.md`
+- `@docs/contribution.md`
+- `@docs/faq.md`
+- `@docs/adr/**/*.md`
+- `@docs/techs/**/*.md`
+- `@docs/misc/**/*.md`
 
-When entering module, check for `CONTEXT.md` inside module dir. File holds module-only context.
+When entering module, check for `CONTEXT.md` inside module directory. File holds module-only context.
 
 Load only minimum sections needed for task domain.
 

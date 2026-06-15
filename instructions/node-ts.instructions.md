@@ -1,6 +1,6 @@
 ---
 description: Node.js/JavaScript/TypeScript rules and guidelines.
-applyTo: "**/*"
+applyTo: "**/*.ts, **/*.js,**/*.vue, **/*.jsx, **/*.tsx"
 ---
 
 Node.js/JavaScript/TypeScript
