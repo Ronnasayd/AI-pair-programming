@@ -56,8 +56,8 @@ references=""
 
 if [ -L "$LOCAL/$DEFAULT_FOLDER/instructions" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/instructions" ]; then
   rm -rf $LOCAL/$DEFAULT_FOLDER/instructions
-  mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions"
 fi
+mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions"
 while read -r rule; do
     if [[ $rule == \#* ]]; then
         rule="${rule#\#}"
