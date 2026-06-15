@@ -39,16 +39,44 @@ replace_between() {
     fi
 }
 
+extract_applyto() {
+    local file="$1"
+    sed -n '/^---$/,/^---$/p' "$file" | grep "^applyTo:" | sed 's/applyTo: *"//' | sed 's/"$//'
+}
+
+extract_body() {
+    local file="$1"
+    awk '/^---$/{s++; next} s==2' "$file"
+}
+
 instructions=""
+references=""
+
+if [ -L "$LOCAL/$DEFAULT_FOLDER/instructions" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/instructions" ]; then
+  rm -rf $LOCAL/$DEFAULT_FOLDER/instructions
+  mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions"
+fi
 while read -r rule; do
     if [[ $rule == \#* ]]; then
         rule="${rule#\#}"
         rule="${rule#"${rule%%[![:space:]]*}"}"
         rule="${rule%"${rule##*[![:space:]]}"}"
 
-        instructions+=$'\n'"$(<"$SOURCE/instructions/$rule")"
+        rule_file="$SOURCE/instructions/$rule"
+        applyto=$(extract_applyto "$rule_file")
+
+        if [[ "$applyto" == "**/*" ]]; then
+            instructions+=$'\n'"$(extract_body "$rule_file")"
+        else
+            ln -s "$SOURCE/instructions/$rule" "$LOCAL/$DEFAULT_FOLDER/instructions/$rule"
+            references+=$'\n'"- [$(basename "$rule_file" .md)]($DEFAULT_FOLDER/instructions/$(basename "$rule_file")) — applies to: \`$applyto\`"
+        fi
     fi
 done < "$LOCAL/.rulesignore"
+
+if [[ -n "$references" ]]; then
+    instructions+=$'\n\n## Context-Specific Rules\n\nThe following rules apply to specific file types:'"$references"
+fi
 
 replace_between \
   "<!-- INIT AUTO-CONTEXT -->" \
