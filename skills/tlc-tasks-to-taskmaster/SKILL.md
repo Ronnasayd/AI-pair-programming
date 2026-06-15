@@ -1,15 +1,20 @@
 ---
 name: tlc-tasks-to-taskmaster
-description: Converts a tasks.md spec file into a .taskmaster/tasks/tasks.json file with full dependency graph, BFS execution waves, critical path, and parallelization metadata. Use when the user says "converta tasks.md em tasks.json", "transforme tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md", "convert task spec to taskmaster json", or "turn this tasks file into taskmaster format". Do NOT use for creating tasks.md specs (use create-task-spec), executing tasks (use execute-task), or any other conversion.
+description: Converts a tasks.md spec file into TaskMaster-compatible structure with two outputs — .taskmaster/tasks/tasks.json (task list with task-level metadata) and .taskmaster/execution/metadata.json (global execution strategy). Use when user says "converta tasks.md em tasks.json", "transforme tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md", "convert task spec to taskmaster json", or "turn this tasks file into taskmaster format". Do NOT use for creating tasks.md specs (use create-task-spec), executing tasks (use execute-task), or any other conversion.
 license: CC-BY-4.0
 metadata:
-  author: ecossistema_backend
+  author: Ronnasayd Machado - github.com/Ronnasayd
   version: 1.0.0
 ---
 
 # tasks-md-to-taskmaster-json
 
-Converts a `tasks.md` specification file into a structured `.taskmaster/tasks/tasks.json` file with dependency graph, BFS execution waves, critical path identification, and parallelization metadata.
+Converts a `tasks.md` specification file into a TaskMaster-compatible structure:
+
+1. **`.taskmaster/tasks/tasks.json`** — task list with task-level metadata (wave, onCriticalPath)
+2. **`.taskmaster/execution/metadata.json`** — global execution strategy (waves, critical path, parallelization notes)
+
+This two-file approach keeps `tasks.json` TaskMaster-compatible while providing execution context for agents.
 
 ## Instructions
 
@@ -24,13 +29,12 @@ Before reading or processing anything, determine the **tag** that will wrap the 
 
 - If the user does not answer or confirms the default, use `"master"`.
 
-The final JSON **must** be wrapped under this tag:
+The tag will be the root key in `.taskmaster/tasks/tasks.json`:
 
 ```json
 {
   "<tag>": {
-    "tasks": [...],
-    "metadata": {...}
+    "tasks": [...]
   }
 }
 ```
@@ -40,11 +44,12 @@ Example with default tag:
 ```json
 {
   "master": {
-    "tasks": [...],
-    "metadata": {...}
+    "tasks": [...]
   }
 }
 ```
+
+(Global metadata goes in separate file `.taskmaster/execution/metadata.json` — see Step 6.)
 
 Store the resolved tag for use in Steps 6 and 7.
 
@@ -116,86 +121,116 @@ The critical path is the longest such chain, e.g.: `T01 → T02 → T05 → T06 
 | `status`       | Always `"pending"`                                                                                     |
 | `priority`     | `"high"` if on critical path or system-blocking; `"medium"` otherwise; `"low"` for optional/peripheral |
 | `dependencies` | **Depends on** field converted to array of ints                                                        |
-| `details`      | Combine: **Where** + **Done when** + **Gate** + **Cmd** + execution wave number                        |
+| `details`      | Combine: **Where** + **Done when** + **Gate** + **Cmd**                                                |
 | `testStrategy` | **Tests** field — describe test cases if present; `"none"` if absent                                   |
 | `subtasks`     | Always `[]`                                                                                            |
+| `metadata`     | Object with `wave` (number) and `onCriticalPath` (boolean)                                             |
 
 ### Step 6 — Assemble the full output structure
 
-Wrap `tasks` and `metadata` under the tag resolved in Step 0:
+Generate **two files** with complementary data:
+
+#### File 1: `.taskmaster/tasks/tasks.json` (TaskMaster-compatible)
+
+Wrap `tasks` under the tag resolved in Step 0. **No global metadata**:
 
 ```json
 {
   "<tag>": {
     "tasks": [
-      /* all task objects */
-    ],
-    "metadata": {
-      /* see below */
-    }
+      {
+        "id": 1,
+        "title": "...",
+        "description": "...",
+        "status": "pending",
+        "priority": "high",
+        "dependencies": [],
+        "details": "...",
+        "testStrategy": "...",
+        "subtasks": [],
+        "metadata": {
+          "wave": 1,
+          "onCriticalPath": true
+        }
+      }
+    ]
   }
 }
 ```
 
-The `metadata` object shape:
+#### File 2: `.taskmaster/execution/metadata.json` (Execution metadata)
+
+Global aggregated execution data:
 
 ```json
 {
-  "<tag>": {
-    "tasks": [],
-    "metadata": {
-      "projectName": "feature-name-from-tasks-md",
-      "version": "1.0.0",
-      "createdAt": "ISO-8601 date",
-      "updatedAt": "ISO-8601 date",
-      "description": "One-line summary from tasks.md header",
-      "source": "relative/path/to/tasks.md",
-      "testCommands": {
-        "unit": "yarn jest ...",
-        "integration": "yarn jest ..."
-      },
-      "executionWaves": {
-        "wave1_serial": [1],
-        "wave2_parallel": [2, 3, 11, 26],
-        "...": []
-      },
-      "criticalPath": [1, 2, 5, 6, 8, 12, 20, 22, 23, 24],
-      "parallelizationNotes": {
-        "wave2": "T02, T03, T11, T26 all depend only on T01 — safe to run in parallel",
-        "wave6": "T12 is a sequential bottleneck: first task needing both T08 and T04"
-      }
-    }
+  "projectName": "feature-name-from-tasks-md",
+  "version": "1.0.0",
+  "createdAt": "ISO-8601 date",
+  "updatedAt": "ISO-8601 date",
+  "description": "One-line summary from tasks.md header",
+  "source": "relative/path/to/tasks.md",
+  "testCommands": {
+    "unit": "yarn jest ...",
+    "integration": "yarn jest ..."
+  },
+  "executionWaves": {
+    "wave1_serial": [1],
+    "wave2_parallel": [2, 3, 11, 26],
+    "...": []
+  },
+  "criticalPath": [1, 2, 5, 6, 8, 12, 20, 22, 23, 24],
+  "parallelizationNotes": {
+    "wave2": "T02, T03, T11, T26 all depend only on T01 — safe to run in parallel",
+    "wave6": "T12 is a sequential bottleneck: first task needing both T08 and T04"
   }
 }
 ```
 
-The `metadata` object is the reasoning memory — it allows an executor agent to parallelize work without recalculating the graph.
+**Purpose**: Global metadata is the reasoning memory — executor agent reads this for parallelization strategy without recalculating the graph. Task-level metadata keeps tasks.json TaskMaster-compatible.
 
-### Step 7 — Create the file and validate
+### Step 7 — Create files and validate
 
 ```bash
-mkdir -p .taskmaster/tasks
-# write tasks.json
+mkdir -p .taskmaster/tasks .taskmaster/execution
+
+# Write tasks.json (TaskMaster-compatible)
+# Validate JSON syntax
 cat .taskmaster/tasks/tasks.json | python3 -m json.tool > /dev/null
+
+# Write metadata.json (execution data)
+# Validate JSON syntax
+cat .taskmaster/execution/metadata.json | python3 -m json.tool > /dev/null
 ```
 
-If the JSON validation fails, fix syntax errors and re-validate before presenting the result.
+If JSON validation fails, fix syntax errors and re-validate before presenting the result. Both files must be valid.
 
 ## Final Checklist
 
 Before confirming delivery, verify:
 
-- [ ] All tasks from tasks.md have an entry in the JSON (count must match)
+### `.taskmaster/tasks/tasks.json`
+
+- [ ] All tasks from tasks.md have an entry (count must match)
 - [ ] `dependencies` for each task are **integer ids** (not strings like "T01")
 - [ ] Tasks in the same wave have zero dependencies between each other
-- [ ] Critical path matches the longest chain in the ASCII diagram
 - [ ] `testStrategy` is non-empty for tasks with tests
 - [ ] `priority: "high"` only for critical path tasks or system-blocking tasks
+- [ ] **Each task has `metadata: { wave: N, onCriticalPath: boolean }`**
 - [ ] JSON is valid (`python3 -m json.tool` passes)
 - [ ] Root key matches the resolved tag (default: `"master"`)
-- [ ] `tasks` and `metadata` are nested under that tag key
-- [ ] `metadata.executionWaves` keys use format `waveN_serial` or `waveN_parallel`
-- [ ] `metadata.source` points to the original tasks.md relative path
+- [ ] `tasks` nested under tag key — **no global metadata**
+
+### `.taskmaster/execution/metadata.json`
+
+- [ ] Critical path matches the longest chain in ASCII diagram
+- [ ] `executionWaves` keys use format `waveN_serial` or `waveN_parallel`
+- [ ] All task IDs in waves match tasks in tasks.json
+- [ ] `criticalPath` is array of integers
+- [ ] `parallelizationNotes` explains each wave bottleneck
+- [ ] `source` points to original tasks.md relative path
+- [ ] JSON is valid (`python3 -m json.tool` passes)
+- [ ] File exists at `.taskmaster/execution/metadata.json`
 
 ## Example
 
@@ -209,12 +244,13 @@ Before confirming delivery, verify:
 4. Build dependency graph edges (T01→[], T02→[1], T03→[1], ...)
 5. Run BFS to assign waves: wave1=[1], wave2=[2,3,11,26], ...
 6. Identify critical path by traversing graph bottom-up
-7. Map each task to JSON fields following Step 5 table
-8. Build full structure wrapped under resolved tag:
-   ```json
-   { "master": { "tasks": [...], "metadata": {...} } }
-   ```
-9. Write `.taskmaster/tasks/tasks.json`
-10. Validate with `python3 -m json.tool`
+7. Map each task to JSON fields following Step 5 table (include `metadata: { wave, onCriticalPath }`)
+8. Build two files:
+   - **`.taskmaster/tasks/tasks.json`** — TaskMaster structure (no global metadata)
+   - **`.taskmaster/execution/metadata.json`** — execution summary (waves, critical path, parallelization notes)
+9. Write both files and validate with `python3 -m json.tool`
 
-**Result:** Valid `.taskmaster/tasks/tasks.json` with all tasks wrapped under `"master"` (or user-specified tag), correct integer dependencies, wave assignments, critical path, and parallelization notes in metadata.
+**Result:**
+
+- `.taskmaster/tasks/tasks.json` — TaskMaster-compatible with task-level metadata
+- `.taskmaster/execution/metadata.json` — executor can read global execution strategy without parsing individual tasks
