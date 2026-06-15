@@ -1,11 +1,7 @@
 # codenavi
-context-map
-deep-research-web
 # generate-pr-description
-mermaid-studio
 # orchestrate
 # skill-architect
-skill-creator
 # technical-decision-maker
 # tlc-spec-driven
 # tlc-tasks-to-taskmaster
@@ -21,6 +17,7 @@ code-review
 codebase-rules-extractor
 coding-standards
 content-hash-cache-pattern
+context-map
 context7-documentation-lookup
 copilot-sdk
 coupling-analysis
@@ -31,6 +28,7 @@ create-task-spec
 data-scraper-agent
 database-migrations
 deep-research
+deep-research-web
 deployment-patterns
 design-image-diff
 docker-patterns
@@ -70,12 +68,14 @@ legacy-migration-planner
 mcp-builder
 mermaid-class-diagram
 mermaid-erd
+mermaid-studio
 modular-decomposition
 modular-monolith-decomposer
 opencv
 perf-web-optimization
 plan-generator
 prd-from-codebase
+prd-generator
 python-patterns
 python-style-guide
 python-testing
@@ -88,6 +88,7 @@ security-best-practices
 semantic-commit-message
 seo
 skill-advisor
+skill-creator
 skills-discovery
 srs-generator
 subagent-creator
@@ -104,4 +105,3 @@ tdd
 tdd-workflow
 test-coverage-review
 typescript-style-guide
-prd-generator
