@@ -65,6 +65,20 @@ if [ -n "$effort_level" ]; then
     effort_info=" | 🧠 ${effort_color}${effort_level}${RESET}"
 fi
 
+# Caveman mode status
+caveman_info=""
+CAVEMAN_FLAG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.caveman-active"
+if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
+    CAVEMAN_MODE=$(head -c 64 "$CAVEMAN_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
+    if [ -n "$CAVEMAN_MODE" ] && [ "$CAVEMAN_MODE" != "off" ]; then
+        if [ "$CAVEMAN_MODE" = "full" ]; then
+            caveman_info=" | 🦴 caveman"
+        else
+            caveman_info=" | 🦴 caveman($CAVEMAN_MODE)"
+        fi
+    fi
+fi
+
 # AI Memory server status
 memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
@@ -140,4 +154,4 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
-echo -e "📁 $folder${lang_info} | 🌿 $branch | 🤖 $model${effort_info} | 📚 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${rate_info}"
+echo -e "📁 $folder${lang_info} | 🌿 $branch | 🤖 $model${effort_info} | 📚 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${caveman_info}${rate_info}"
