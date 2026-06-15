@@ -1,4 +1,4 @@
-# codenavi
+codenavi
 # generate-pr-description
 # orchestrate
 # skill-architect
@@ -89,7 +89,7 @@ semantic-commit-message
 seo
 skill-advisor
 skill-creator
-skill-description-generator
+# skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator
