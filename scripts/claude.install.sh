@@ -53,9 +53,9 @@ instructions=""
 references=""
 
 if [ -L "$LOCAL/$DEFAULT_FOLDER/instructions" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/instructions" ]; then
-  rm -rf $LOCAL/$DEFAULT_FOLDER/instructions
-  mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions"
+  rm -rf "$LOCAL/$DEFAULT_FOLDER/instructions"
 fi
+mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions"
 while read -r rule; do
     if [[ $rule == \#* ]]; then
         rule="${rule#\#}"
@@ -68,7 +68,7 @@ while read -r rule; do
         if [[ "$applyto" == "**/*" ]]; then
             instructions+=$'\n'"$(extract_body "$rule_file")"
         else
-            ln -s "$SOURCE/instructions/$rule" "$LOCAL/$DEFAULT_FOLDER/instructions/$rule"
+            ln -s "$SOURCE/instructions/$rule" "$DEFAULT_FOLDER/instructions/$rule"
             references+=$'\n'"- [$(basename "$rule_file" .md)]($DEFAULT_FOLDER/instructions/$(basename "$rule_file")) — applies to: \`$applyto\`"
         fi
     fi
