@@ -1,7 +1,6 @@
 ---
 name: tlc-tasks-to-taskmaster
-description: Converts a tasks.md spec file into TaskMaster-compatible structure with two outputs — .taskmaster/tasks/tasks.json (task list with task-level metadata) and .taskmaster/execution/metadata.json (global execution strategy). Use when user says "converta tasks.md em tasks.json", "transforme tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md", "convert task spec to taskmaster json", or "turn this tasks file into taskmaster format". Do NOT use for creating tasks.md specs (use create-task-spec), executing tasks (use execute-task), or any other conversion.
-license: CC-BY-4.0
+description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json for task list, .taskmaster/execution/metadata.json for strategy). Use when user says "convert tasks.md to taskmaster json", "transform tasks.md to .taskmaster format", "converta tasks.md em tasks.json", or wants to generate TaskMaster JSON from a tasks file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster conversions.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: 1.0.0

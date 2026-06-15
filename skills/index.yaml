@@ -195,13 +195,12 @@ skills:
     '
 - name:
   - tlc-tasks-to-taskmaster
-  description: Converts a tasks.md spec file into a .taskmaster/tasks/tasks.json file
-    with full dependency graph, BFS execution waves, critical path, and parallelization
-    metadata. Use when the user says "converta tasks.md em tasks.json", "transforme
-    tasks.md em .taskmaster/tasks/tasks.json", "gere o tasks.json a partir do tasks.md",
-    "convert task spec to taskmaster json", or "turn this tasks file into taskmaster
-    format". Do NOT use for creating tasks.md specs (use create-task-spec), executing
-    tasks (use execute-task), or any other conversion.
+  description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json
+    for task list, .taskmaster/execution/metadata.json for strategy). Use when user
+    says "convert tasks.md to taskmaster json", "transform tasks.md to .taskmaster
+    format", "converta tasks.md em tasks.json", or wants to generate TaskMaster JSON
+    from a tasks file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster
+    conversions.
 - name:
   - prd-from-codebase
   description: "Gera um PRD (Product Requirements Document) completo em Markdown a\
@@ -575,6 +574,12 @@ skills:
     in Node.js or browser TypeScript projects. Emphasizes strong typing, clear naming
     conventions, strict equality usage, minimal visibility exposure, avoiding dangerous
     JavaScript features, and consistent formatting. Reference: https://google.github.io/styleguide/tsguide.html'
+- name:
+  - skill-description-generator
+  description: Generate skill description fields that trigger correctly with specific
+    phrases and clear negatives. Use when creating new skills and need description
+    copy following trigger rules. Do NOT use for entire SKILL.md files, architecture
+    docs, or non-description content.
 - name:
   - generate-docs-init
   description: 'Use this skill to generate, refactor, or maintain comprehensive project
