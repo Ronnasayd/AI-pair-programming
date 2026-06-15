@@ -3,9 +3,11 @@ description: How to use the mcp-manager tool
 applyTo: "**/*"
 ---
 
+## Description
+
 The **mcp-manager** is a Model Context Protocol (MCP) manager that allows access to tools from different servers. Here is the practical guide:
 
-## 1️⃣ **Discover Available Tools**
+## **Discover Available Tools**
 
 ```bash
 # List all MCP servers
@@ -21,7 +23,7 @@ mcp_mcp-manager_get_tools_by_server
   server: "taskmaster-ai"  # or: exa, csv-editor, burp, etc.
 ```
 
-## 2️⃣ **Understand a Tool's Structure**
+## **Understand a Tool's Structure**
 
 ```bash
 # View the complete schema (parameters, types, etc.)
@@ -30,7 +32,7 @@ mcp_mcp-manager_get_tool_schema
   tool_name: "get_tasks"
 ```
 
-## 3️⃣ **Execute a Tool**
+## **Execute a Tool**
 
 ```bash
 # General syntax
@@ -40,37 +42,23 @@ mcp_mcp-manager_call_tool
   arguments: { /* tool parameters */ }
 ```
 
-### Practical Examples:
+## Available servers
 
-**Example 1: Get tasks from TaskMaster**
-
-```bash
-mcp_mcp-manager_call_tool
-  server: "taskmaster-ai"
-  tool_name: "get_tasks"
-  arguments: { "status": "not-started" }
-```
-
-**Example 2: Search the web (Exa)**
-
-```bash
-mcp_mcp-manager_call_tool
-  server: "exa"
-  tool_name: "web_search_exa"
-  arguments: { "query": "TypeScript best practices" }
-```
-
-**Example 3: Update task status**
-
-```bash
-mcp_mcp-manager_call_tool
-  server: "taskmaster-ai"
-  tool_name: "set_task_status"
-  arguments: {
-    "task_id": "task-123",
-    "status": "completed"
-  }
-```
+- sequentialthinking
+- taskmaster-ai
+- my-mcp-server
+- context7
+- chrome-devtools
+- exa
+- next-devtools
+- a11y
+- playwright
+- csv-editor
+- html-to-markdown
+- json-mcp-filter
+- large-file
+- burp
+- gcloud
 
 ## 💡 **Typical Workflow**
 
@@ -80,5 +68,3 @@ mcp_mcp-manager_call_tool
 4. **Interpret results** → use the tool output
 
 ---
-
-**Want to execute something specific?** Tell me which server/tool you want to use, and I'll call it for you! 🚀
