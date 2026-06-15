@@ -134,7 +134,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash \"/home/ronnas/develop/personal/AI-pair-programming/.claude/hooks/scripts/statusline-command.sh\""
+    "command": "bash \"/home/ronnas/develop/personal/AI-pair-programming/scripts/statusline-command.sh\""
   },
   "enabledPlugins": {
     "caveman@caveman": true
