@@ -148,5 +148,6 @@
     }
   },
   "effortLevel": "low",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "plansDirectory": "./docs/plans/"
 }
