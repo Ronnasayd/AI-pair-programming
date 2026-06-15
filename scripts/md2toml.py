@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 import yaml
+import json
+
 
 def convert_file(input_file: Path, output_dir: Path):
     with open(input_file, "r", encoding="utf-8") as f:
@@ -18,15 +20,33 @@ def convert_file(input_file: Path, output_dir: Path):
         print(f"Skipping {input_file}: Error parsing frontmatter: {e}")
         return
 
-    name = frontmatter.get("name", "").replace('"', '\\"')
-    description = frontmatter.get("description", "").replace('"', '\\"')
     prompt = parts[2].strip()
-
-    # Escape triple quotes in prompt if they exist
     escaped_instructions = prompt.replace('"""', '\\"\\"\\"')
 
-    toml_content = f"""name = "{name}"
-description = "{description}"
+    metadata_lines = []
+    for key, value in frontmatter.items():
+        if isinstance(value, str):
+            escaped_val = value.replace('"', '\\"')
+            metadata_lines.append(f'{key} = "{escaped_val}"')
+        elif isinstance(value, bool):
+            metadata_lines.append(f"{key} = {str(value).lower()}")
+        elif isinstance(value, (int, float)):
+            metadata_lines.append(f"{key} = {value}")
+        elif isinstance(value, list):
+            json_list = json.dumps(value)
+            metadata_lines.append(f"{key} = {json_list}")
+        elif value is None:
+            metadata_lines.append(f'{key} = ""')
+        else:
+            json_val = json.dumps(value)
+            metadata_lines.append(f"{key} = {json_val}")
+
+    metadata_section = "\n".join(metadata_lines) if metadata_lines else ""
+
+    toml_content = f"""[metadata]
+{metadata_section}
+
+[content]
 prompt = \"\"\"{escaped_instructions}
 \"\"\"
 """
