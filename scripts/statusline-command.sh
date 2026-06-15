@@ -65,6 +65,14 @@ if [ -n "$effort_level" ]; then
     effort_info=" | 🧠 ${effort_color}${effort_level}${RESET}"
 fi
 
+# AI Memory server status
+memory_status=""
+if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
+    memory_status=" | 💾 ai-memory(on)"
+else
+    memory_status=" | 💾 ai-memory(off)"
+fi
+
 # Rate limit usage (session = 5-hour window, week = 7-day window)
 five_h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 seven_d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
@@ -132,4 +140,4 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
-echo -e "📁 $folder${lang_info} | 🌿 $branch | 🤖 $model${effort_info} | 📚 ctx ${ctx_color}${ctx_pct_int}%${RESET}${rate_info}"
+echo -e "📁 $folder${lang_info} | 🌿 $branch | 🤖 $model${effort_info} | 📚 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${rate_info}"
