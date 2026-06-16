@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "model": "haiku",
   "hooks": {
     "PreToolUse": [
@@ -148,12 +152,8 @@
     }
   },
   "effortLevel": "low",
-  "skipDangerousModePermissionPrompt": true,
   "plansDirectory": "./docs/plans/",
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
+  "skipDangerousModePermissionPrompt": true,
   "deny": [
     "Bash(git commit*)",
     "Bash(git push*)",
