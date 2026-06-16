@@ -129,9 +129,9 @@ The critical path is the longest such chain, e.g.: `T01 → T02 → T05 → T06 
 
 Generate **two files** with complementary data:
 
-#### File 1: `.taskmaster/tasks/tasks.json` (TaskMaster-compatible)
+#### File 1: `.taskmaster/tasks/tasks.json` (TaskMaster-compatible, merge-safe)
 
-Wrap `tasks` under the tag resolved in Step 0. **No global metadata**:
+Wrap `tasks` under the tag resolved in Step 0. **No global metadata**. Build the JSON structure:
 
 ```json
 {
@@ -156,6 +156,8 @@ Wrap `tasks` under the tag resolved in Step 0. **No global metadata**:
   }
 }
 ```
+
+**IMPORTANT**: Do NOT overwrite this file directly. Use `scripts/merge-tasks.py` in Step 7 to preserve existing tags.
 
 #### File 2: `.taskmaster/execution/metadata.json` (Execution metadata)
 
@@ -193,16 +195,26 @@ Global aggregated execution data:
 ```bash
 mkdir -p .taskmaster/tasks .taskmaster/execution
 
-# Write tasks.json (TaskMaster-compatible)
-# Validate JSON syntax
-cat .taskmaster/tasks/tasks.json | python3 -m json.tool > /dev/null
+# Merge new tasks into tasks.json (preserves existing tags)
+python3 <skill-path>/scripts/merge-tasks.py \
+  .taskmaster/tasks/tasks.json \
+  "<tag>" \
+  '<tasks_json_string>'
 
-# Write metadata.json (execution data)
-# Validate JSON syntax
-cat .taskmaster/execution/metadata.json | python3 -m json.tool > /dev/null
+# Write metadata.json (execution data) directly
+# (metadata.json is not merged — overwrite is safe since it's execution-wide)
+
+# Validate both files using skill scripts
+python3 <skill-path>/scripts/validate-tasks.py tasks .taskmaster/tasks/tasks.json
+python3 <skill-path>/scripts/validate-tasks.py metadata .taskmaster/execution/metadata.json
 ```
 
-If JSON validation fails, fix syntax errors and re-validate before presenting the result. Both files must be valid.
+**Important**:
+
+- `merge-tasks.py`: Preserves all existing tags while adding/updating the new tag
+- `validate-tasks.py`: Checks structure and required fields for both file types
+- If validation fails, fix syntax errors and re-validate before presenting the result
+- Both files must be valid before confirming delivery
 
 ## Final Checklist
 
@@ -216,9 +228,11 @@ Before confirming delivery, verify:
 - [ ] `testStrategy` is non-empty for tasks with tests
 - [ ] `priority: "high"` only for critical path tasks or system-blocking tasks
 - [ ] **Each task has `metadata: { wave: N, onCriticalPath: boolean }`**
-- [ ] JSON is valid (`python3 -m json.tool` passes)
+- [ ] JSON is valid (`validate-tasks.py tasks` passes)
+- [ ] New tag was merged without overwriting existing tags (use `merge-tasks.py`)
 - [ ] Root key matches the resolved tag (default: `"master"`)
 - [ ] `tasks` nested under tag key — **no global metadata**
+- [ ] All tags in file are preserved from prior conversions
 
 ### `.taskmaster/execution/metadata.json`
 
@@ -228,8 +242,9 @@ Before confirming delivery, verify:
 - [ ] `criticalPath` is array of integers
 - [ ] `parallelizationNotes` explains each wave bottleneck
 - [ ] `source` points to original tasks.md relative path
-- [ ] JSON is valid (`python3 -m json.tool` passes)
+- [ ] JSON is valid (`validate-tasks.py metadata` passes)
 - [ ] File exists at `.taskmaster/execution/metadata.json`
+- [ ] `createdAt` and `updatedAt` are ISO-8601 timestamps
 
 ## Example
 
@@ -247,9 +262,11 @@ Before confirming delivery, verify:
 8. Build two files:
    - **`.taskmaster/tasks/tasks.json`** — TaskMaster structure (no global metadata)
    - **`.taskmaster/execution/metadata.json`** — execution summary (waves, critical path, parallelization notes)
-9. Write both files and validate with `python3 -m json.tool`
+9. Merge tasks.json using `scripts/merge-tasks.py` (preserves existing tags)
+10. Validate both files using `scripts/validate-tasks.py`
 
 **Result:**
 
-- `.taskmaster/tasks/tasks.json` — TaskMaster-compatible with task-level metadata
+- `.taskmaster/tasks/tasks.json` — TaskMaster-compatible with task-level metadata, all prior tags preserved
 - `.taskmaster/execution/metadata.json` — executor can read global execution strategy without parsing individual tasks
+- **No data loss**: Multiple calls with different tags accumulate in tasks.json instead of overwriting
