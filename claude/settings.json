@@ -149,5 +149,9 @@
   },
   "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true,
-  "plansDirectory": "./docs/plans/"
+  "plansDirectory": "./docs/plans/",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  }
 }
