@@ -8,4 +8,6 @@ alias ai-memory-server="docker run -d --name ai-memory \
     -v ai-memory-data:/data \
     akitaonrails/ai-memory:latest"
 alias claude-yolo="claude --dangerously-skip-permissions" # Start a Claude session with code execution capabilities: claude-yolo
-
+alias active-skills="cat .skillsignore | grep '#' | sed s/'#'/✅/g"
+alias active-rules="cat .rulesignore | grep '#' | sed s/'#'/✅/g"
+alias active-agents="cat .agentsignore | grep '#' | sed s/'#'/✅/g"

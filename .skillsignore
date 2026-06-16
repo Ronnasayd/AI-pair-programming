@@ -1,7 +1,5 @@
-# generate-pr-description
 # orchestrate
 # skill-architect
-# skill-description-generator
 # technical-decision-maker
 # tlc-spec-driven
 # tlc-tasks-to-taskmaster
@@ -51,6 +49,7 @@ frontend-design
 frontend-patterns
 generate-docs-init
 generate-docs-update
+generate-pr-description
 gh-address-comments
 gh-fix-ci
 git-diff-analyzer
@@ -90,6 +89,7 @@ semantic-commit-message
 seo
 skill-advisor
 skill-creator
+skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator
