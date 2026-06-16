@@ -13,16 +13,16 @@ applyTo: "**/*"
 
 Search context in this order:
 
-- `@docs/SUMMARY.md`
-- `@docs/architecture.md`
-- `@docs/setup.md`
-- `@docs/usage.md`
-- `@docs/modules/**/*.md`
-- `@docs/contribution.md`
-- `@docs/faq.md`
-- `@docs/adr/**/*.md`
-- `@docs/techs/**/*.md`
-- `@docs/misc/**/*.md`
+- `@docs/SUMMARY.md` — executive summary, module table, quick start, full doc index
+- `@docs/architecture.md` — Mermaid diagrams, components, data flow, patterns, ADR links
+- `@docs/setup.md` — requirements, env vars, yarn commands, local setup guide
+- `@docs/usage.md` — core flows with end-to-end HTTP examples (assign, deactivate, bulk, amendment)
+- `@docs/contribution.md` — branch/commit conventions, layer rules, naming, test locations
+- `@docs/models.md` — full data model for all entities with fields and invariants
+- `@docs/endpoints.md` — all REST endpoints grouped by module with request/response examples
+- `@docs/faq.md` — Q&A covering setup, auth, licensing, billing, and architecture
+- `@docs/modules/<module>.md` — high-level context for each bounded context (generated first; linked via `CONTEXT.md` symlinks inside each module folder)
+- `@docs/adr/` — Architectural Decision Records (ADR-001 to ADR-005)
 
 When entering module, check for `CONTEXT.md` inside module directory. File holds module-only context.
 
