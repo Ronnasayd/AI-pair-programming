@@ -93,7 +93,7 @@ fi
 cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
 cost_info=""
 if [ -n "$cost" ]; then
-    cost=$(printf "%.3f" "$cost")
+    cost=$(LC_NUMERIC=C printf "%.3f" "$cost")
     cost_info=" | 💰 \$$cost"
 fi
 
