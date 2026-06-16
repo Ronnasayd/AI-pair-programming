@@ -92,6 +92,7 @@ class IgnoreFileManager:
         curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Normal
         curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)  # Header
         curses.init_pair(4, curses.COLOR_CYAN, curses.COLOR_BLACK)  # Instrução
+        curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)  # Filtro
 
         if file_type == "skills":
             file_path = self.skillsignore_path
@@ -130,13 +131,32 @@ class IgnoreFileManager:
         cursor_pos = 0
         scroll_offset = 0
         changes: Dict[int, bool] = {}  # line_idx -> novo estado
+        search_term = ""  # Termo de busca
+        search_active = False  # Modo de busca ativo
+        filtered_items_indices = list(
+            range(len(all_items))
+        )  # Índices dos items filtrados
 
         while True:
             stdscr.clear()
             height, width = stdscr.getmaxyx()
 
+            # Filtra items baseado no termo de busca
+            if search_term:
+                filtered_items_indices = [
+                    idx
+                    for idx in range(len(all_items))
+                    if search_term.lower() in all_items[idx]["pattern"].lower()
+                ]
+            else:
+                filtered_items_indices = list(range(len(all_items)))
+
+            # Ajusta cursor se necessário
+            if cursor_pos >= len(filtered_items_indices):
+                cursor_pos = max(0, len(filtered_items_indices) - 1)
+
             # Garante que o cursor está visível na tela
-            visible_items = height - 6  # espaço para header + footer
+            visible_items = height - 7  # espaço para header + footer + search
             if cursor_pos < scroll_offset:
                 scroll_offset = cursor_pos
             elif cursor_pos >= scroll_offset + visible_items:
@@ -146,22 +166,42 @@ class IgnoreFileManager:
             stdscr.addstr(0, 0, title, curses.color_pair(3) | curses.A_BOLD)
             stdscr.addstr(1, 0, "=" * width, curses.color_pair(3))
 
+            # Search bar
+            if search_active:
+                search_display = f"🔍 Filtro (ATIVO): {search_term}_"
+            elif search_term:
+                search_display = f"🔍 Filtro: {search_term}"
+            else:
+                search_display = "🔍 Filtro (pressione / para buscar)"
+            stdscr.addstr(
+                2, 0, search_display[:width], curses.color_pair(5) | curses.A_BOLD
+            )
+
             # Instruções
-            instr = "↑/↓: navegar | PgUp/PgDn: scroll | ESPAÇO: alternar | S: salvar | Q: sair"
-            stdscr.addstr(2, 0, instr[:width], curses.color_pair(4))
-            stdscr.addstr(3, 0, "-" * width)
+            if search_active:
+                instr = (
+                    "Modo FILTRO: digite para buscar | Backspace: deletar | ESC: sair"
+                )
+            else:
+                instr = (
+                    "↑/↓: navegar | /: filtrar | ESPAÇO: alternar | S: salvar | Q: sair"
+                )
+            stdscr.addstr(3, 0, instr[:width], curses.color_pair(4))
+            stdscr.addstr(4, 0, "-" * width)
 
             # Items com checkboxes
-            y = 4
+            y = 5
             rendered_items = 0
 
-            for idx, item in enumerate(all_items):
+            for pos, idx in enumerate(filtered_items_indices):
                 # Pula items acima do scroll offset
-                if idx < scroll_offset:
+                if pos < scroll_offset:
                     continue
 
                 if y >= height - 2:
                     break
+
+                item = all_items[idx]
 
                 # Estado do item (considerando mudanças)
                 line_idx = item["line_idx"]
@@ -171,7 +211,7 @@ class IgnoreFileManager:
                     is_enabled = item["is_enabled"]
 
                 # Checkbox
-                if idx == cursor_pos:
+                if pos == cursor_pos:
                     checkbox = "☑️ " if is_enabled else "☐ "
                     prefix = "➜ "
                     color = curses.color_pair(1) | curses.A_BOLD
@@ -208,11 +248,15 @@ class IgnoreFileManager:
             total_changes = len(changes)
 
             # Mostra posição no scroll
-            scroll_info = f"[{cursor_pos + 1}/{len(all_items)}]"
+            if filtered_items_indices:
+                scroll_info = f"[{cursor_pos + 1}/{len(filtered_items_indices)}]"
+            else:
+                scroll_info = "[0/0]"
+
             if total_changes > 0:
                 summary = f"📊 Mudanças: {total_changes} | ✅ {enabled_changes} | ❌ {disabled_changes} {scroll_info}"
             else:
-                summary = f"Items: {len(all_items)} {scroll_info}"
+                summary = f"Items: {len(filtered_items_indices)}/{len(all_items)} {scroll_info}"
 
             stdscr.addstr(height - 1, 0, summary[:width], curses.color_pair(3))
 
@@ -228,57 +272,77 @@ class IgnoreFileManager:
             if key == -1:
                 continue
 
-            if key == curses.KEY_UP:
-                cursor_pos = max(0, cursor_pos - 1)
-            elif key == curses.KEY_DOWN:
-                cursor_pos = min(len(all_items) - 1, cursor_pos + 1)
-            elif key == curses.KEY_PPAGE:  # Page Up
-                # Pula 5 items para cima
-                cursor_pos = max(0, cursor_pos - 5)
-            elif key == curses.KEY_NPAGE:  # Page Down
-                # Pula 5 items para baixo
-                cursor_pos = min(len(all_items) - 1, cursor_pos + 5)
-            elif key == ord(" "):  # Espaço para alternar
-                item = all_items[cursor_pos]
-                line_idx = item["line_idx"]
+            # Modo de busca ativo
+            if search_active:
+                if key == 27:  # ESC - sair do modo de busca
+                    search_active = False
+                elif key == curses.KEY_BACKSPACE or key == 8 or key == 127:  # Backspace
+                    search_term = search_term[:-1]
+                    cursor_pos = 0
+                    scroll_offset = 0
+                elif 32 <= key <= 126:  # Caracteres imprimíveis
+                    search_term += chr(key)
+                    cursor_pos = 0
+                    scroll_offset = 0
+            # Modo normal (sem busca)
+            else:
+                if key == ord("/"):  # Ativar modo de busca
+                    search_active = True
+                    search_term = ""
+                    cursor_pos = 0
+                    scroll_offset = 0
+                elif key == curses.KEY_UP:
+                    cursor_pos = max(0, cursor_pos - 1)
+                elif key == curses.KEY_DOWN:
+                    cursor_pos = min(len(filtered_items_indices) - 1, cursor_pos + 1)
+                elif key == curses.KEY_PPAGE:  # Page Up
+                    cursor_pos = max(0, cursor_pos - 5)
+                elif key == curses.KEY_NPAGE:  # Page Down
+                    cursor_pos = min(len(filtered_items_indices) - 1, cursor_pos + 5)
+                elif key == ord(" "):  # Espaço para alternar
+                    if filtered_items_indices:
+                        actual_idx = filtered_items_indices[cursor_pos]
+                        item = all_items[actual_idx]
+                        line_idx = item["line_idx"]
 
-                if line_idx in changes:
-                    # Volta ao estado original
-                    del changes[line_idx]
-                else:
-                    # Alterna estado
-                    changes[line_idx] = not item["is_enabled"]
-            elif key == ord("s") or key == ord("S"):
-                # Salvar
-                if changes:
-                    self._apply_changes(file_path, lines, changes)
-                    stdscr.clear()
-                    stdscr.addstr(
-                        0,
-                        0,
-                        f"✅ Arquivo salvo com {len(changes)} mudança(s)!",
-                        curses.color_pair(1),
-                    )
-                    stdscr.refresh()
-                    stdscr.getch()
-                    return
-                else:
-                    stdscr.clear()
-                    stdscr.addstr(
-                        0, 0, "ℹ️  Nenhuma mudança para salvar", curses.color_pair(3)
-                    )
-                    stdscr.refresh()
-                    stdscr.getch()
-            elif key == ord("q") or key == ord("Q"):
-                if changes:
-                    stdscr.clear()
-                    confirm = "⚠️  Há mudanças não salvas. Descartar? (s/n): "
-                    stdscr.addstr(0, 0, confirm, curses.color_pair(3))
-                    stdscr.refresh()
-                    if stdscr.getch() == ord("s"):
+                        if line_idx in changes:
+                            del changes[line_idx]
+                        else:
+                            changes[line_idx] = not item["is_enabled"]
+                elif key == ord("s") or key == ord("S"):
+                    # Salvar
+                    if changes:
+                        self._apply_changes(file_path, lines, changes)
+                        stdscr.clear()
+                        stdscr.addstr(
+                            0,
+                            0,
+                            f"✅ Arquivo salvo com {len(changes)} mudança(s)!",
+                            curses.color_pair(1),
+                        )
+                        stdscr.refresh()
+                        stdscr.getch()
                         return
-                else:
-                    return
+                    else:
+                        stdscr.clear()
+                        stdscr.addstr(
+                            0,
+                            0,
+                            "ℹ️  Nenhuma mudança para salvar",
+                            curses.color_pair(3),
+                        )
+                        stdscr.refresh()
+                        stdscr.getch()
+                elif key == ord("q") or key == ord("Q"):
+                    if changes:
+                        stdscr.clear()
+                        confirm = "⚠️  Há mudanças não salvas. Descartar? (s/n): "
+                        stdscr.addstr(0, 0, confirm, curses.color_pair(3))
+                        stdscr.refresh()
+                        if stdscr.getch() == ord("s"):
+                            return
+                    else:
+                        return
 
     def _apply_changes(
         self, file_path: Path, lines: List[str], changes: Dict[int, bool]
