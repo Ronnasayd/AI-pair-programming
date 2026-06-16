@@ -1,7 +1,7 @@
-codenavi
 # generate-pr-description
 # orchestrate
 # skill-architect
+# skill-description-generator
 # technical-decision-maker
 # tlc-spec-driven
 # tlc-tasks-to-taskmaster
@@ -15,6 +15,7 @@ backend-patterns
 blueprint
 code-review
 codebase-rules-extractor
+codenavi
 coding-standards
 content-hash-cache-pattern
 context-map
@@ -89,7 +90,6 @@ semantic-commit-message
 seo
 skill-advisor
 skill-creator
-# skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator

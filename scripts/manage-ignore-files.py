@@ -347,26 +347,85 @@ class IgnoreFileManager:
     def _apply_changes(
         self, file_path: Path, lines: List[str], changes: Dict[int, bool]
     ):
-        """Aplica as mudanças nas linhas do arquivo
+        """Aplica as mudanças e reordena o arquivo
 
         Em .ignore:
         - True (habilitado) = com # = comentado (ativo)
         - False (desabilitado) = sem # = descomentuário (inativo)
+
+        Ordena: ativos primeiro (alfabético), depois inativos (alfabético)
         """
+        # Aplica as mudanças
         for line_idx, should_be_enabled in changes.items():
             current_line = lines[line_idx]
 
             if should_be_enabled:
-                # Habilitar: adicionar # (comentar)
                 if not current_line.strip().startswith("#"):
                     lines[line_idx] = f"# {current_line.lstrip()}"
             else:
-                # Desabilitar: remover # (descomentar)
                 lines[line_idx] = current_line.lstrip("#").lstrip()
                 if not lines[line_idx].endswith("\n"):
                     lines[line_idx] += "\n"
 
-        self.write_file(file_path, lines)
+        # Separa seções, comments e padrões
+        sections = {}
+        current_section = "Geral"
+        active_items = []
+        inactive_items = []
+
+        for line in lines:
+            # Detecta seções
+            if "####" in line:
+                current_section = line.replace("#", "").strip()
+                if not current_section:
+                    current_section = "Geral"
+                if current_section not in sections:
+                    sections[current_section] = line
+                continue
+
+            # Ignora linhas vazias e comments de seção
+            if (
+                not line.strip()
+                or line.strip().startswith("#")
+                and len(line.strip()) > 1
+                and line.strip()[1] == "#"
+            ):
+                continue
+
+            # Processa padrões
+            if line.strip().startswith("#") and not line.strip().startswith("##"):
+                pattern = line.lstrip("#").strip()
+                if pattern:
+                    active_items.append(pattern)
+            elif line.strip() and not line.strip().startswith("##"):
+                pattern = line.strip()
+                inactive_items.append(pattern)
+
+        # Ordena alfabeticamente
+        active_items.sort()
+        inactive_items.sort()
+
+        # Reconstrói o arquivo
+        new_lines = []
+
+        # Adiciona seção principal se houver
+        if "Geral" in sections:
+            new_lines.append(sections["Geral"])
+
+        # Adiciona ativos primeiro
+        for pattern in active_items:
+            new_lines.append(f"# {pattern}\n")
+
+        # Depois inativos
+        for pattern in inactive_items:
+            new_lines.append(f"{pattern}\n")
+
+        # Adiciona outras seções
+        for section, section_line in sections.items():
+            if section != "Geral":
+                new_lines.append(section_line)
+
+        self.write_file(file_path, new_lines)
 
     def main_menu(self, stdscr):
         """Menu principal"""
