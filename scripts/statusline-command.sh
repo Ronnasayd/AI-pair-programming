@@ -10,6 +10,8 @@
 # Read JSON input from stdin
 input=$(cat)
 
+echo $input > /tmp/claude_status_debug.json
+
 # Extract basic information
 folder=$(basename "$(echo "$input" | jq -r '.workspace.current_dir')")
 model=$(echo "$input" | jq -r '.model.display_name')
@@ -87,6 +89,13 @@ else
     memory_status=" | 💾 ai-memory(off)"
 fi
 
+# Session cost
+cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
+cost_info=""
+if [ -n "$cost" ]; then
+    cost_info=" | 💰 \$$cost"
+fi
+
 # Rate limit usage (session = 5-hour window, week = 7-day window)
 five_h=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 seven_d=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
@@ -154,4 +163,4 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
-echo -e "📁 $folder${lang_info} | 🌿 $branch | 🤖 $model${effort_info} | 📚 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${caveman_info}${rate_info}"
+echo -e "📁 $folder${lang_info} | 🌿 $branch | 🤖 $model${effort_info} | 📚 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${caveman_info}${cost_info}${rate_info}"
