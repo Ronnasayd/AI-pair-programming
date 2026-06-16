@@ -185,7 +185,6 @@ docs/agents/
 .claude/instructions/*
 .claude/agents/*
 .claude/hooks/*
-.mcp.json
 CLAUDE.md
 .claude/commands/*
 .agentsignore
