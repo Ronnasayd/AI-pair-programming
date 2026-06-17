@@ -4,9 +4,12 @@
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
     },
-    "github": {
+    "github-L": {
       "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PAT_TOKEN_L:-github_pat_token_not_set}"
+      }
     },
     "atlassian": {
       "type": "http",
