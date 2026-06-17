@@ -180,10 +180,10 @@ if  [ ! -f "$LOCAL/skills-lock.json" ]; then
 fi
 ########################################################################################
 ## GITIGNORE
-if ! grep -q "CLAUDE.md" .gitignore; then
-    echo "CLAUDE.md" >> .gitignore
-fi
-if ! grep -q ".mcp.json" .gitignore; then
-    echo ".mcp.json" >> .gitignore
-fi
+# if ! grep -q "CLAUDE.md" .gitignore; then
+#     echo "CLAUDE.md" >> .gitignore
+# fi
+# if ! grep -q ".mcp.json" .gitignore; then
+#     echo ".mcp.json" >> .gitignore
+# fi
 ###########################################################################################
