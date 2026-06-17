@@ -36,7 +36,7 @@ Call taskmaster MCP:
   "server": "taskmaster-ai",
   "tool_name": "get_tasks",
   "arguments": {
-    "projectRoot": "/home/ronnas/develop/lingopass/lingospace-backend",
+    "projectRoot": "{PROJECT_ROOT}",
     "tag": "{TAG}"
   }
 }
@@ -88,20 +88,24 @@ Expected: tlc-spec-driven performs the implementation for this task.
 
 ### Step 5: Update Taskmaster Status
 
-If the task succeeds:
+If the task succeeds, call set_task_status with tag parameter (required):
 
 ```json
 {
   "server": "taskmaster-ai",
-  "tool_name": "update_task_status",
+  "tool_name": "set_task_status",
   "arguments": {
-    "projectRoot": "/home/ronnas/develop/lingopass/lingospace-backend",
-    "taskId": "{TASK_ID}",
-    "status": "completed",
-    "timestamp": "{ISO-8601}"
+    "projectRoot": "{PROJECT_ROOT}",
+    "id": "{TASK_ID}",
+    "status": "done",
+    "tag": "{TAG}"
   }
 }
 ```
+
+**Critical**: Without `tag` parameter, call returns success but makes no actual change. With `tag`, updates both MCP backend AND `.taskmaster/tasks/tasks.json` file.
+
+Status values: `"pending"`, `"in-progress"`, `"done"`, `"deferred"`, `"cancelled"`, `"blocked"`, `"review"`
 
 If the task fails:
 
@@ -111,7 +115,7 @@ If the task fails:
 Actions:
 
 - Retry: loop back to Step 4b
-- Skip: mark as `"skipped"` and continue to the next task
+- Skip: mark as `"skipped"` via set_task_status with status `"cancelled"` or `"deferred"`, then continue to next task
 - Abort: stop execution and return a partial summary
 
 ### Step 6: Compile & Return Summary
@@ -199,14 +203,15 @@ Feature partially executed. {N} tasks pending. Run again to continue.
 
 ---
 
-### Error: "Taskmaster MCP update_task_status failed"
+### Error: "Taskmaster MCP set_task_status failed"
 
-**Cause:** MCP connection issue or invalid task ID.
+**Cause:** MCP connection issue, invalid task ID, or missing `tag` parameter.
 
-**Solution:** Log the error and continue execution (do not block on status updates). Report it in the summary:
+**Solution:** Log the error and continue execution (do not block on status updates). Ensure `tag` parameter is always passed to set_task_status. Report it in the summary:
 
 ```text
 Note: some status updates may not have synchronized with taskmaster. Please verify manually.
+Verify via: taskmaster list --tag={TAG}
 ```
 
 ---
@@ -216,5 +221,6 @@ Note: some status updates may not have synchronized with taskmaster. Please veri
 - Task execution order respects `metadata.wave` from metadata.json plus the dependency graph
 - tlc-spec-driven is invoked with the full context (spec files + task object)
 - The user controls failure behavior (retry/skip/abort)
+- Status updates use `set_task_status` MCP call with **`tag` parameter required** — without it, the call succeeds but makes no actual change
 - Only the `status` field is updated in taskmaster, not logs or output
 - The summary shows what was completed; next actions remain user-directed
