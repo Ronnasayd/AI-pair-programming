@@ -32,7 +32,7 @@
       "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql_mcp.py",
       "args": [],
       "env": {
-        "POSTGRES_URL": "${POSTGRES_URL:-localhost:5432}"
+        "POSTGRES_URL": "${MCP_POSTGRES_URL:-add-value-to-env-vars}"
       }
     },
     "mysql": {
@@ -40,7 +40,7 @@
       "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mysql_mcp.py",
       "args": [],
       "env": {
-        "MYSQL_URL": "${MYSQL_URL:-localhost:3306}"
+        "MYSQL_URL": "${MCP_MYSQL_URL:-add-value-to-env-vars}"
       }
     },
     "mongodb": {
@@ -48,8 +48,8 @@
       "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mongodb_mcp.py",
       "args": [],
       "env": {
-        "MONGODB_URL": "${MONGODB_URL:-mongodb://localhost:27017}",
-        "MONGODB_DATABASE": "${MONGODB_DATABASE:-testdb}"
+        "MONGODB_URL": "${MCP_MONGODB_URL:-add-value-to-env-vars}",
+        "MONGODB_DATABASE": "${MCP_MONGODB_DATABASE:-add-value-to-env-vars}"
       }
     },
     "sqlite": {
@@ -57,7 +57,7 @@
       "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/sqlite_mcp.py",
       "args": [],
       "env": {
-        "SQLITEDB_PATH": "${SQLITEDB_PATH:-./test.db}"
+        "SQLITEDB_PATH": "${MCP_SQLITEDB_PATH:-add-value-to-env-vars}"
       }
     }
   }
