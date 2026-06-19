@@ -1,13 +1,9 @@
-alias clign="rm .skillsignore && rm .agentsignore && rm .rulesignore" # Clean up all ignore files in the current directory: cleanignore
+alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean up all ignore files in the current directory: cleanignore
 alias iai="/usr/local/bin/init-ai" # Execute a command with an AI-generated context based on the current directory's files: initai
 alias mif="manage-ignore-files" # Manage .skillsignore and .agentsignore files based on the current directory's contents: manage-ignore
-alias aims="docker run -d --name ai-memory \
-    --restart unless-stopped \
-    -p 127.0.0.1:49374:49374 \
-    -v ai-memory-data:/data \
-    akitaonrails/ai-memory:latest"
-alias aimw="open http://localhost:49374/web" # Open the AI Memory web interface in the default browser: ai-memory-web
+alias aims="docker run -d --name ai-memory --rm --restart unless-stopped -p 127.0.0.1:49374:49374 -v ai-memory-data:/data akitaonrails/ai-memory:latest 2>/dev/null || docker start ai-memory 2>/dev/null || echo 'Failed to start ai-memory container'"
+alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open the AI Memory web interface in the default browser: ai-memory-web
 alias claude-yolo="claude --dangerously-skip-permissions" # Start a Claude session with code execution capabilities: claude-yolo
-alias ats="cat .skillsignore | grep '#' | sed s/'#'/✅/g"
-alias atr="cat .rulesignore | grep '#' | sed s/'#'/✅/g"
-alias ata="cat .agentsignore | grep '#' | sed s/'#'/✅/g"
+alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'"
+alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesignore not found'"
+alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'"
