@@ -826,6 +826,13 @@ skills:
   description: "Cache expensive file processing results using SHA-256 content hashes\
     \ \u2014 path-independent, auto-invalidating, with service layer separation."
 - name:
+  - pr-review
+  description: Systematic PR review using GitHub MCP tools. Produces structured report
+    with summary of changes, critical bugs, minor issues, code examples, and external
+    references. Use when asked to "review PR", "analyze PR", "check PR", "give feedback
+    on PR", or given a GitHub PR URL to evaluate. Works for any language or framework.
+    Do NOT use for creating PRs or making code changes.
+- name:
   - figma-design-system-to-tailwind
   description: Extract and convert a Figma Design System to Tailwind CSS v4 configuration
     with semantic component mapping. Use when migrating design tokens, colors, typography,
