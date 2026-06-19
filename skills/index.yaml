@@ -655,6 +655,10 @@ skills:
     and ## Impact. It also ensures the description is generated in the user''s preferred
     language.'
 - name:
+  - prd-get-implicit-requirements
+  description: Skill for extracting implicit requirements from a PRD, identifying
+    gaps, and formulating clarification questions.
+- name:
   - frontend-patterns
   description: Frontend development patterns for React, Next.js, state management,
     performance optimization, and UI best practices.

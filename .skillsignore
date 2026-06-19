@@ -1,10 +1,11 @@
 # orchestrate
+# pr-review
 # skill-architect
+# skill-description-generator
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
 # tlc-tasks-to-taskmaster
-# pr-review
 agent-creator
 agent-harness-construction
 ai-regression-testing
@@ -78,6 +79,7 @@ perf-web-optimization
 plan-generator
 prd-from-codebase
 prd-generator
+prd-get-implicit-requirements
 python-patterns
 python-style-guide
 python-testing
@@ -91,7 +93,6 @@ semantic-commit-message
 seo
 skill-advisor
 skill-creator
-skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator
