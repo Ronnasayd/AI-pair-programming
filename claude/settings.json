@@ -132,8 +132,28 @@
         ]
       }
     ],
-    "SubagentStart": [],
-    "SubagentStop": [],
+    "SubagentStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/scripts/log_hooks.py"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/scripts/log_hooks.py"
+          }
+        ]
+      }
+    ],
     "SessionEnd": [
       {
         "matcher": "",
@@ -167,13 +187,5 @@
   },
   "effortLevel": "low",
   "plansDirectory": "./docs/plans/",
-  "skipDangerousModePermissionPrompt": true,
-  "deny": [
-    "Bash(git commit*)",
-    "Bash(git push*)",
-    "Bash(git add*)",
-    "Bash(git merge*)",
-    "Bash(git rebase*)",
-    "Bash(git reset*)"
-  ]
+  "skipDangerousModePermissionPrompt": true
 }
