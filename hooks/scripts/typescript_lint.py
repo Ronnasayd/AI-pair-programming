@@ -106,7 +106,7 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    result = _exec("npx eslint", [str(resolved)], cwd=project_root)
+    result = _exec("npx eslint --quiet", [str(resolved)], cwd=project_root)
     logger.debug("[TypeScriptLint] eslint result for %s: %s", resolved, result)
     if not result["success"]:
         logger.debug(
@@ -179,11 +179,14 @@ def main() -> None:
 
         # Add lint results to output data if present
         if lint_results.get("typescript") or lint_results.get("eslint"):
-            data["hookSpecificOutput"] = {
-                "hookEventName": "PostToolUse",
-                "additionalContext": json.dumps(lint_results),
-            }
-            output_data = json.dumps(data)
+            output_data = json.dumps(
+                {
+                    "hookSpecificOutput": {
+                        "hookEventName": "PostToolUse",
+                        "additionalContext": json.dumps(lint_results),
+                    }
+                }
+            )
     except (json.JSONDecodeError, AttributeError):
         # Ignore parse errors — pass through silently
         pass
