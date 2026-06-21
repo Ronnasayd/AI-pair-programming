@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/typescript_lint.py"
+            "command": ".claude/hooks/scripts/typescript_lint.py > ~/Desktop/lint_output.txt"
           },
           {
             "type": "command",
