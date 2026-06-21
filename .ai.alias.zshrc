@@ -1,10 +1,17 @@
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 alias iai="/usr/local/bin/init-ai" # AI context generator: initai
 alias mif="manage-ignore-files" # Manage ignore files: manage-ignore
-alias aims="docker run -d --name ai-memory --rm --restart unless-stopped -p 127.0.0.1:49374:49374 -v ai-memory-data:/data akitaonrails/ai-memory:latest 2>/dev/null || docker start ai-memory 2>/dev/null || echo 'Failed to start ai-memory container'" # Start AI Memory container: ai-memory-start
+alias aims="docker run -d --name ai-memory \
+    --restart unless-stopped \
+    -p 127.0.0.1:49374:49374 \
+    -v ai-memory-data:/data \
+    akitaonrails/ai-memory:latest" # Start AI Memory container: ai-memory-start
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias claude-yolo="claude --dangerously-skip-permissions" # Claude with no permission prompts: yolo
 alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills
 alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesignore not found'" # Show rules: show-rules
 alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'" # Show agents: show-agents
 alias clc="claude --model haiku -p 'Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made.'" # Commit message generator: commit-create
+
+
+

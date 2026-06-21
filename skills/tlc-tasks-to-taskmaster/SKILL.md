@@ -142,7 +142,7 @@ Wrap `tasks` under the tag resolved in Step 0. **No global metadata**. Build the
         "title": "...",
         "description": "...",
         "status": "pending",
-        "priority": "high",
+        "priority": "...",
         "dependencies": [],
         "details": "...",
         "testStrategy": "...",
