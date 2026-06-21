@@ -65,14 +65,8 @@ def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
 
 def _check_tool_installed(tool: str, project_root: str) -> bool:
     """Check if tool is installed locally via npm."""
-    # Try node_modules/.bin first
     local_bin = Path(project_root) / "node_modules" / ".bin" / tool
-    if local_bin.exists():
-        return True
-
-    # Try global via npx
-    result = run_command(f"npx {tool} --version", cwd=project_root)
-    return result["success"]
+    return local_bin.exists()
 
 
 def _run_typescript(resolved: Path, project_root: str) -> dict:
@@ -84,7 +78,14 @@ def _run_typescript(resolved: Path, project_root: str) -> dict:
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    result = _exec("npx tsc", ["--noEmit", str(resolved)], cwd=project_root)
+    tsc_bin = Path(project_root) / "node_modules" / ".bin" / "tsc"
+    logger.debug(
+        "[TypeScriptLint] Running: %s --noEmit %s (cwd=%s)",
+        tsc_bin,
+        resolved,
+        project_root,
+    )
+    result = _exec(str(tsc_bin), ["--noEmit", str(resolved)], cwd=project_root)
     logger.debug("[TypeScriptLint] tsc result for %s: %s", resolved, result)
     if not result["success"]:
         logger.debug(
@@ -106,7 +107,14 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    result = _exec("npx eslint --quiet", [str(resolved)], cwd=project_root)
+    eslint_bin = Path(project_root) / "node_modules" / ".bin" / "eslint"
+    logger.debug(
+        "[TypeScriptLint] Running: %s --quiet %s (cwd=%s)",
+        eslint_bin,
+        resolved,
+        project_root,
+    )
+    result = _exec(str(eslint_bin), ["--quiet", str(resolved)], cwd=project_root)
     logger.debug("[TypeScriptLint] eslint result for %s: %s", resolved, result)
     if not result["success"]:
         logger.debug(
