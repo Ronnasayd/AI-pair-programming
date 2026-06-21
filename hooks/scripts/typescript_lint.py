@@ -34,7 +34,7 @@ logger = get_hooks_logger("TypeScriptLint")
 # ---------------------------------------------------------------------------
 
 MAX_STDIN = 1024 * 1024  # 1 MB
-_TS_JS_EXTS = {".ts", ".tsx", ".js", ".jsx"}
+_TS_JS_EXTS = {".ts", ".tsx"}
 
 
 def run_command(cmd: str, cwd: str | None = None) -> dict:
