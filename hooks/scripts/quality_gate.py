@@ -82,7 +82,6 @@ def _run_biome(
     ext: str,
     project_root: str,
     fix: bool,
-    strict: bool,
 ) -> None:
     """Run Biome checks for .json/.md files (JS/TS handled by post-edit-format)."""
     if ext in _JS_TS_EXTS:
@@ -106,15 +105,12 @@ def _run_biome(
 
     result = _exec(fmt_bin["bin"], args, cwd=project_root)
     logger.debug("[QualityGate] Biome result for %s: %s", resolved, result)
-    if not result["success"] and strict:
-        logger.debug("[QualityGate] Biome check failed for %s", resolved)
 
 
 def _run_prettier(
     resolved: Path,
     project_root: str,
     fix: bool,
-    strict: bool,
 ) -> None:
     """Run Prettier checks for supported file types."""
     fmt_bin = resolve_formatter_bin(project_root, "prettier", logger)
@@ -129,15 +125,12 @@ def _run_prettier(
     args = [*fmt_bin["prefix"], flag, str(resolved)]
     result = _exec(fmt_bin["bin"], args, cwd=project_root)
     logger.debug("[QualityGate] Prettier result for %s: %s", resolved, result)
-    if not result["success"] and strict:
-        logger.debug("[QualityGate] Prettier check failed for %s", resolved)
 
 
 def _run_js_ts_json_md(
     resolved: Path,
     ext: str,
     fix: bool,
-    strict: bool,
 ) -> None:
     """Dispatch JS/TS/JSON/MD files to the configured formatter."""
     project_root = find_project_root(str(resolved.parent))
@@ -148,35 +141,29 @@ def _run_js_ts_json_md(
     )
 
     if formatter == "biome":
-        _run_biome(resolved, ext, project_root, fix, strict)
+        _run_biome(resolved, ext, project_root, fix)
     elif formatter == "prettier":
-        _run_prettier(resolved, project_root, fix, strict)
+        _run_prettier(resolved, project_root, fix)
     else:
         logger.debug(
             "[QualityGate] No formatter configured for %s, skipping.", resolved
         )
 
 
-def _run_go(resolved: Path, fix: bool, strict: bool) -> None:
+def _run_go(resolved: Path, fix: bool) -> None:
     """Run gofmt on a Go file."""
     if fix:
         result = _exec("gofmt", ["-w", str(resolved)])
-        if not result["success"] and strict:
-            logger.debug("[QualityGate] gofmt failed for %s", resolved)
+        logger.debug("[QualityGate] gofmt result for %s: %s", resolved, result)
         return
 
-    if strict:
-        result = _exec("gofmt", ["-l", str(resolved)])
-        logger.debug("[QualityGate] gofmt result for %s: %s", resolved, result)
-        if not result["success"]:
-            logger.debug("[QualityGate] gofmt failed for %s", resolved)
-        elif result.get("output", "").strip():
-            logger.debug(
-                "[QualityGate] gofmt check found unformatted code in %s", resolved
-            )
+    result = _exec("gofmt", ["-l", str(resolved)])
+    logger.debug("[QualityGate] gofmt result for %s: %s", resolved, result)
+    if result.get("output", "").strip():
+        logger.debug("[QualityGate] gofmt check found unformatted code in %s", resolved)
 
 
-def _run_python(resolved: Path, fix: bool, strict: bool) -> None:
+def _run_python(resolved: Path, fix: bool) -> None:
     """Run Ruff on a Python file."""
     args = ["format"]
     if not fix:
@@ -186,8 +173,6 @@ def _run_python(resolved: Path, fix: bool, strict: bool) -> None:
 
     result = _exec("ruff", args)
     logger.debug("[QualityGate] Ruff result for %s: %s", resolved, result)
-    if not result["success"] and strict:
-        logger.debug("[QualityGate] Ruff check failed for %s", resolved)
 
 
 # ---------------------------------------------------------------------------
@@ -216,14 +201,13 @@ def maybe_run_quality_gate(file_path: str) -> None:
 
     ext = resolved.suffix.lower()
     fix = True
-    strict = False
 
     if ext in _BIOME_EXTS:
-        _run_js_ts_json_md(resolved, ext, fix, strict)
+        _run_js_ts_json_md(resolved, ext, fix)
     elif ext == ".go":
-        _run_go(resolved, fix, strict)
+        _run_go(resolved, fix)
     elif ext == ".py":
-        _run_python(resolved, fix, strict)
+        _run_python(resolved, fix)
 
 
 # ---------------------------------------------------------------------------

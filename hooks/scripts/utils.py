@@ -13,9 +13,9 @@ from typing import Any, Mapping, Optional
 # Utility helpers
 # ---------------------------------------------------------------------------
 
+
 def log(msg: str) -> None:
     print(msg, file=sys.stderr)
-
 
 
 def strip_ansi(text: str) -> str:
@@ -26,8 +26,8 @@ def strip_ansi(text: str) -> str:
 
 def get_sessions_dir() -> Path:
     """Return the directory where session files are stored."""
-    base =  Path.cwd()
-    return Path(base) / ".sessions" 
+    base = Path.cwd()
+    return Path(base) / ".sessions"
 
 
 def get_date_string() -> str:
@@ -36,9 +36,9 @@ def get_date_string() -> str:
 
 def get_time_string() -> str:
     return datetime.now().strftime("%H:%M:%S")
-    
 
-def get_session_id_short(session_id:str) -> str:
+
+def get_session_id_short(session_id: str) -> str:
     """Return a short session identifier from env var or a timestamp fallback."""
     return session_id[:8] if session_id else datetime.now().strftime("%H%M%S")
 
@@ -84,7 +84,8 @@ def run_command(cmd: str) -> dict:
 def escape_regexp(value: str) -> str:
     return re.escape(value)
 
-def get_hooks_logger(name:str="Hooks") -> logging.Logger:
+
+def get_hooks_logger(name: str = "Hooks") -> logging.Logger:
     LOG_FILE = "/tmp/hooks.log"
     Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
 
@@ -93,11 +94,11 @@ def get_hooks_logger(name:str="Hooks") -> logging.Logger:
 
     file_handler = logging.FileHandler(LOG_FILE)
     file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s]-[%(name)s]: %(message)s"))
+    file_handler.setFormatter(
+        logging.Formatter("%(asctime)s [%(levelname)s]-[%(name)s]: %(message)s")
+    )
     logger.addHandler(file_handler)
     return logger
-
-
 
 
 def normalize_key(key: str) -> str:
@@ -129,6 +130,7 @@ def get_by_key(data: Mapping[str, Any], target_key: str) -> Optional[Any]:
 
     return None
 
+
 # ---------------------------------------------------------------------------
 # Inlined resolver helpers (ported from resolve_formatter.js)
 # ---------------------------------------------------------------------------
@@ -153,15 +155,16 @@ _PRETTIER_CONFIGS = [
 ]
 _PROJECT_ROOT_MARKERS = ["package.json", *_BIOME_CONFIGS, *_PRETTIER_CONFIGS]
 _WIN_CMD_SHIMS = {
-    "npx":  "npx.cmd",
+    "npx": "npx.cmd",
     "pnpm": "pnpm.cmd",
     "yarn": "yarn.cmd",
     "bunx": "bunx.cmd",
 }
 _FORMATTER_PACKAGES = {
-    "biome":    {"bin_name": "biome",    "pkg_name": "@biomejs/biome"},
+    "biome": {"bin_name": "biome", "pkg_name": "@biomejs/biome"},
     "prettier": {"bin_name": "prettier", "pkg_name": "prettier"},
 }
+
 
 def find_project_root(start_dir: str) -> str:
     """
@@ -194,17 +197,23 @@ def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
     Returns 'biome', 'prettier', or None.
     """
     if project_root in _formatter_cache:
-        logger.debug(f"[detect_formatter] Cache hit for {project_root}: {_formatter_cache[project_root]}")
+        logger.debug(
+            f"[detect_formatter] Cache hit for {project_root}: {_formatter_cache[project_root]}"
+        )
         return _formatter_cache[project_root]
 
     root = Path(project_root)
-    logger.debug(f"[detect_formatter] Detecting formatter for {project_root} with root {root}")
+    logger.debug(
+        f"[detect_formatter] Detecting formatter for {project_root} with root {root}"
+    )
 
     # Biome config files take top priority
     for cfg in _BIOME_CONFIGS:
         if (root / cfg).exists():
             _formatter_cache[project_root] = "biome"
-            logger.debug(f"[detect_formatter] Detected Biome config for {project_root}: {cfg}")
+            logger.debug(
+                f"[detect_formatter] Detected Biome config for {project_root}: {cfg}"
+            )
             return "biome"
 
     # package.json "prettier" key before standalone config files
@@ -215,7 +224,9 @@ def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
             pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
             if "prettier" in pkg:
                 _formatter_cache[project_root] = "prettier"
-                logger.debug(f"[detect_formatter] Detected Prettier config in package.json for {project_root}")
+                logger.debug(
+                    f"[detect_formatter] Detected Prettier config in package.json for {project_root}"
+                )
                 return "prettier"
         except (json.JSONDecodeError, OSError):
             pass  # Malformed package.json — continue to file-based detection
@@ -223,7 +234,9 @@ def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
     for cfg in _PRETTIER_CONFIGS:
         if (root / cfg).exists():
             _formatter_cache[project_root] = "prettier"
-            logger.debug(f"[detect_formatter] Detected Prettier config file for {project_root}: {cfg}")
+            logger.debug(
+                f"[detect_formatter] Detected Prettier config file for {project_root}: {cfg}"
+            )
             return "prettier"
 
     _formatter_cache[project_root] = None
@@ -248,7 +261,11 @@ def _get_runner_from_package_manager(project_root: str) -> dict:
                 pm_field = pkg.get("packageManager", "")  # e.g. "pnpm@9.0.0"
                 if pm_field:
                     pm_name = pm_field.split("@")[0].strip()
-                    exec_cmd = {"pnpm": "pnpm dlx", "yarn": "yarn dlx", "bun": "bunx"}.get(pm_name, "npx")
+                    exec_cmd = {
+                        "pnpm": "pnpm dlx",
+                        "yarn": "yarn dlx",
+                        "bun": "bunx",
+                    }.get(pm_name, "npx")
             except (json.JSONDecodeError, OSError):
                 pass
 
@@ -263,7 +280,9 @@ def _get_runner_from_package_manager(project_root: str) -> dict:
     return {"bin": bin_, "prefix": prefix}
 
 
-def resolve_formatter_bin(project_root: str, formatter: str, logger: logging.Logger) -> dict | None:
+def resolve_formatter_bin(
+    project_root: str, formatter: str, logger: logging.Logger
+) -> dict | None:
     """
     Resolve the formatter binary, preferring the local node_modules/.bin
     installation over the package-manager exec command.
@@ -272,12 +291,16 @@ def resolve_formatter_bin(project_root: str, formatter: str, logger: logging.Log
     """
     cache_key = f"{project_root}:{formatter}"
     if cache_key in _bin_cache:
-        logger.debug(f"[resolve_formatter_bin] Cache hit for {cache_key}: {_bin_cache[cache_key]}")
+        logger.debug(
+            f"[resolve_formatter_bin] Cache hit for {cache_key}: {_bin_cache[cache_key]}"
+        )
         return _bin_cache[cache_key]
 
     pkg = _FORMATTER_PACKAGES.get(formatter)
     if not pkg:
-        logger.debug(f"[resolve_formatter_bin] No package info for formatter '{formatter}'")
+        logger.debug(
+            f"[resolve_formatter_bin] No package info for formatter '{formatter}'"
+        )
         _bin_cache[cache_key] = None
         return None
 
@@ -288,13 +311,17 @@ def resolve_formatter_bin(project_root: str, formatter: str, logger: logging.Log
     if local_bin.exists():
         result = {"bin": str(local_bin), "prefix": []}
         _bin_cache[cache_key] = result
-        logger.debug(f"[resolve_formatter_bin] Found local binary for {formatter} at {local_bin}")
+        logger.debug(
+            f"[resolve_formatter_bin] Found local binary for {formatter} at {local_bin}"
+        )
         return result
 
     runner = _get_runner_from_package_manager(project_root)
     result = {"bin": runner["bin"], "prefix": [*runner["prefix"], pkg["pkg_name"]]}
     _bin_cache[cache_key] = result
-    logger.debug(f"[resolve_formatter_bin] Using package manager runner for {formatter}: {result}")
+    logger.debug(
+        f"[resolve_formatter_bin] Using package manager runner for {formatter}: {result}"
+    )
     return result
 
 
