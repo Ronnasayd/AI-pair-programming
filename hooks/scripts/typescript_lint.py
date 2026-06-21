@@ -75,14 +75,14 @@ def _check_tool_installed(tool: str, project_root: str) -> bool:
     return result["success"]
 
 
-def _run_typescript(resolved: Path, project_root: str) -> None:
-    """Run TypeScript type checking."""
+def _run_typescript(resolved: Path, project_root: str) -> dict:
+    """Run TypeScript type checking. Returns {success, output, error}."""
     if not _check_tool_installed("tsc", project_root):
         logger.debug(
             "[TypeScriptLint] TypeScript not installed, skipping type check for %s",
             resolved,
         )
-        return
+        return {"success": True, "output": "", "error": "", "installed": False}
 
     result = _exec("npx tsc", ["--noEmit", str(resolved)], cwd=project_root)
     logger.debug("[TypeScriptLint] tsc result for %s: %s", resolved, result)
@@ -90,15 +90,21 @@ def _run_typescript(resolved: Path, project_root: str) -> None:
         logger.debug(
             "[TypeScriptLint] Type errors in %s:\n%s", resolved, result.get("error", "")
         )
+    return {
+        "success": result["success"],
+        "output": result.get("output", ""),
+        "error": result.get("error", ""),
+        "installed": True,
+    }
 
 
-def _run_eslint(resolved: Path, project_root: str) -> None:
-    """Run ESLint checks."""
+def _run_eslint(resolved: Path, project_root: str) -> dict:
+    """Run ESLint checks. Returns {success, output, error}."""
     if not _check_tool_installed("eslint", project_root):
         logger.debug(
             "[TypeScriptLint] ESLint not installed, skipping lint for %s", resolved
         )
-        return
+        return {"success": True, "output": "", "error": "", "installed": False}
 
     result = _exec("npx eslint", [str(resolved)], cwd=project_root)
     logger.debug("[TypeScriptLint] eslint result for %s: %s", resolved, result)
@@ -108,36 +114,48 @@ def _run_eslint(resolved: Path, project_root: str) -> None:
             resolved,
             result.get("output", ""),
         )
+    return {
+        "success": result["success"],
+        "output": result.get("output", ""),
+        "error": result.get("error", ""),
+        "installed": True,
+    }
 
 
-def maybe_run_typescript_lint(file_path: str) -> None:
+def maybe_run_typescript_lint(file_path: str) -> dict:
     """
     Run TypeScript and ESLint checks for JS/TS files.
 
     Args:
         file_path: Path to the edited file.
+
+    Returns:
+        Dict with typescript and eslint results.
     """
+    result = {"typescript": None, "eslint": None}
+
     if not file_path:
         logger.debug("[TypeScriptLint] No file_path provided, skipping.")
-        return
+        return result
 
     resolved = Path(file_path).resolve()
     if not resolved.exists():
         logger.debug("[TypeScriptLint] File %s does not exist, skipping.", resolved)
-        return
+        return result
 
     ext = resolved.suffix.lower()
     if ext not in _TS_JS_EXTS:
         logger.debug(
             "[TypeScriptLint] File %s not JS/TS, skipping (%s).", resolved, ext
         )
-        return
+        return result
 
     project_root = find_project_root(str(resolved.parent))
     logger.debug("[TypeScriptLint] Project root for %s: %s", resolved, project_root)
 
-    _run_typescript(resolved, project_root)
-    _run_eslint(resolved, project_root)
+    result["typescript"] = _run_typescript(resolved, project_root)
+    result["eslint"] = _run_eslint(resolved, project_root)
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -152,17 +170,26 @@ def main() -> None:
     except OSError:
         pass
 
+    output_data = stdin_data
     try:
         data = json.loads(stdin_data)
         file_path = get_by_key(get_by_key(data, "tool_input"), "file_path")
         logger.debug("[TypeScriptLint] Received file_path: %s", file_path)
-        maybe_run_typescript_lint(file_path)
+        lint_results = maybe_run_typescript_lint(file_path)
+
+        # Add lint results to output data if present
+        if lint_results.get("typescript") or lint_results.get("eslint"):
+            data["hookSpecificOutput"] = {
+                "hookEventName": "PostToolUse",
+                "additionalContext": json.dumps(lint_results),
+            }
+            output_data = json.dumps(data)
     except (json.JSONDecodeError, AttributeError):
         # Ignore parse errors — pass through silently
         pass
 
-    # Always pass stdin through to stdout (hook convention)
-    sys.stdout.write(stdin_data)
+    # Always pass (possibly augmented) data through to stdout (hook convention)
+    sys.stdout.write(output_data)
     sys.exit(0)
 
 
