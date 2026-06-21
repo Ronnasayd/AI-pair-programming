@@ -23,6 +23,10 @@ logger = get_hooks_logger("ProtectFiles")
 
 PROJECT_ROOT = os.getcwd()
 
+ALLOWED_PATTERNS = [
+    ".claude/**",
+]
+
 PROTECTED_PATTERNS = [
     ".env",
     ".env.*",
@@ -90,6 +94,15 @@ def normalize(path: str) -> str:
 
 def is_within_project(path: str) -> bool:
     return normalize(path).startswith(PROJECT_ROOT)
+
+
+def is_allowed(path: str) -> bool:
+    """Check if path is in allowed patterns (safe to access)."""
+    p = Path(path)
+    for pattern in ALLOWED_PATTERNS:
+        if fnmatch.fnmatch(path, pattern) or p.match(pattern):
+            return True
+    return False
 
 
 def matches_pattern(path: str) -> tuple[bool, str]:
@@ -180,15 +193,18 @@ def main():
     if file_path:
         norm = normalize(file_path)
 
-        # optional: enforce project boundary
-        if not is_within_project(norm):
-            deny(file_path, "outside_project", "path_escape")
+        if is_allowed(norm):
+            logger.debug(f"Allowed file access (whitelisted): {file_path}")
+        else:
+            # optional: enforce project boundary
+            if not is_within_project(norm):
+                deny(file_path, "outside_project", "path_escape")
 
-        blocked, pattern = matches_pattern(norm)
-        if blocked:
-            deny(file_path, pattern, "file_path")
+            blocked, pattern = matches_pattern(norm)
+            if blocked:
+                deny(file_path, pattern, "file_path")
 
-        logger.debug(f"Allowed file access: {file_path}")
+            logger.debug(f"Allowed file access: {file_path}")
 
     # ── 2. Shell command inspection
     command = get_by_key(tool_input, "command")
@@ -200,16 +216,17 @@ def main():
         for target in targets:
             norm = normalize(target)
 
-            # block traversal outside project
-            if not is_within_project(norm):
-                deny(target, "outside_project", "command_path_escape")
+            if not is_allowed(norm):
+                # block traversal outside project
+                if not is_within_project(norm):
+                    deny(target, "outside_project", "command_path_escape")
 
-            blocked, pattern = matches_pattern(norm)
-            if blocked:
-                deny(target, pattern, "command_read")
+                blocked, pattern = matches_pattern(norm)
+                if blocked:
+                    deny(target, pattern, "command_read")
 
             logger.debug(f"Allowed command: {command} access: {target}")
-            
+
     sys.exit(0)
 
 
