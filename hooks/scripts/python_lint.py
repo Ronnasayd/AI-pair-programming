@@ -20,7 +20,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import (
+from utils import (  # noqa: E402
     find_project_root,
     get_by_key,
     get_hooks_logger,
@@ -87,17 +87,20 @@ def _run_mypy(resolved: Path, project_root: str) -> dict:
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    logger.debug(
-        "[PythonLint] Running: mypy %s (cwd=%s)",
-        resolved,
-        project_root,
-    )
+    cmd = f"mypy {str(resolved)}"
+    logger.info("[PythonLint] Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("mypy", [str(resolved)], cwd=project_root)
-    logger.debug("[PythonLint] mypy result for %s: %s", resolved, result)
-    if not result["success"]:
-        logger.debug(
-            "[PythonLint] Type errors in %s:\n%s", resolved, result.get("output", "")
+    logger.debug("[PythonLint] mypy result: success=%s", result["success"])
+    if result["success"]:
+        logger.info("[PythonLint] mypy passed for %s", resolved)
+    else:
+        logger.warning(
+            "[PythonLint] mypy found type errors in %s:\n%s",
+            resolved,
+            result.get("output", ""),
         )
+    if result.get("error"):
+        logger.warning("[PythonLint] mypy stderr: %s", result.get("error", ""))
     return {
         "success": result["success"],
         "output": result.get("output", ""),
@@ -112,19 +115,20 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
         logger.debug("[PythonLint] ruff not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    logger.debug(
-        "[PythonLint] Running: ruff check %s (cwd=%s)",
-        resolved,
-        project_root,
-    )
+    cmd = f"ruff check {str(resolved)}"
+    logger.info("[PythonLint] Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("ruff", ["check", str(resolved)], cwd=project_root)
-    logger.debug("[PythonLint] ruff result for %s: %s", resolved, result)
-    if not result["success"]:
-        logger.debug(
-            "[PythonLint] Lint issues in %s:\n%s",
+    logger.debug("[PythonLint] ruff result: success=%s", result["success"])
+    if result["success"]:
+        logger.info("[PythonLint] ruff passed for %s", resolved)
+    else:
+        logger.warning(
+            "[PythonLint] ruff found issues in %s:\n%s",
             resolved,
             result.get("output", ""),
         )
+    if result.get("error"):
+        logger.warning("[PythonLint] ruff stderr: %s", result.get("error", ""))
     return {
         "success": result["success"],
         "output": result.get("output", ""),
