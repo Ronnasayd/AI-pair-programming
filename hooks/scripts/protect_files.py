@@ -25,6 +25,7 @@ PROJECT_ROOT = os.getcwd()
 
 ALLOWED_PATTERNS = [
     ".claude/**",
+    "/tmp/**",
 ]
 
 PROTECTED_PATTERNS = [
