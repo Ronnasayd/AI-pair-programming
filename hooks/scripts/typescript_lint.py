@@ -20,11 +20,10 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import (
+from utils import (  # noqa: E402
     find_project_root,
     get_by_key,
     get_hooks_logger,
-    resolve_formatter_bin,
 )
 
 logger = get_hooks_logger("TypeScriptLint")
@@ -132,7 +131,7 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
     }
 
 
-def maybe_run_typescript_lint(file_path: str) -> dict:
+def maybe_run_typescript_lint(file_path: str | None) -> dict:
     """
     Run TypeScript and ESLint checks for JS/TS files.
 
@@ -142,7 +141,7 @@ def maybe_run_typescript_lint(file_path: str) -> dict:
     Returns:
         Dict with typescript and eslint results.
     """
-    result = {"typescript": None, "eslint": None}
+    result: dict[str, dict | None] = {"typescript": None, "eslint": None}
 
     if not file_path:
         logger.debug("[TypeScriptLint] No file_path provided, skipping.")
@@ -183,7 +182,10 @@ def main() -> None:
     output_data = stdin_data
     try:
         data = json.loads(stdin_data)
-        file_path = get_by_key(get_by_key(data, "tool_input"), "file_path")
+        tool_input = get_by_key(data, "tool_input")
+        file_path = (
+            get_by_key(tool_input, "file_path") if tool_input is not None else None
+        )
         logger.debug("[TypeScriptLint] Received file_path: %s", file_path)
         lint_results = maybe_run_typescript_lint(file_path)
 

@@ -15,6 +15,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -137,7 +138,7 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
     }
 
 
-def maybe_run_python_lint(file_path: str) -> dict:
+def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | None]:
     """
     Run mypy and ruff checks for Python files.
 
@@ -147,7 +148,7 @@ def maybe_run_python_lint(file_path: str) -> dict:
     Returns:
         Dict with mypy and ruff results.
     """
-    result = {"mypy": None, "ruff": None}
+    result: dict[str, dict[str, Any] | None] = {"mypy": None, "ruff": None}
 
     if not file_path:
         logger.debug("[PythonLint] No file_path provided, skipping.")
@@ -186,7 +187,8 @@ def main() -> None:
     output_data = stdin_data
     try:
         data = json.loads(stdin_data)
-        file_path = get_by_key(get_by_key(data, "tool_input"), "file_path")
+        tool_input = get_by_key(data, "tool_input")
+        file_path = get_by_key(tool_input, "file_path") if tool_input else None
         logger.debug("[PythonLint] Received file_path: %s", file_path)
         lint_results = maybe_run_python_lint(file_path)
 
