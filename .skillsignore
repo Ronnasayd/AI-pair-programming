@@ -1,4 +1,5 @@
 # orchestrate
+# pr-review
 # skill-architect
 # technical-decision-maker
 # tlc-execute-tasks
@@ -75,7 +76,6 @@ modular-monolith-decomposer
 opencv
 perf-web-optimization
 plan-generator
-pr-review
 prd-from-codebase
 prd-generator
 prd-get-implicit-requirements
