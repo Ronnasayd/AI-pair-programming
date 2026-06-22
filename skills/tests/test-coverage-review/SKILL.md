@@ -4,7 +4,6 @@ description: "A skill for performing a deep analysis of test coverage for either
 argument-hint: "[target]: A string containing the task specification, a file path to a task spec, or a description of the implemented changes/tests to be analyzed."
 ---
 
-MANDATORY: Use test-coverage-specialist agent
 MANDATORY: execute the {target} argument as the target for coverage analysis and follow the specialist's instructions.
 
 Your objective is to provide a critical evaluation of the testing strategy or implemented tests, ensuring no behavioral gaps exist.
@@ -20,6 +19,9 @@ PHASE 1 — CONTEXT GATHERING
    - Locate the modified source files and their corresponding test files in the @workspace.
    - Analyze the implementation logic to map out all `if/else`, `switch`, and `try/catch` blocks.
    - Read the existing tests to see which scenarios are actually covered.
+3. If the target is a **Complete Test Suite**:
+   - Verify that all test cases are executed and cover the intended scenarios.
+   - Check for any missing edge cases or error paths.
 
 ====================
 PHASE 2 — COVERAGE ANALYSIS
