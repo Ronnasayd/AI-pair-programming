@@ -39,6 +39,7 @@ _TS_JS_EXTS = {".ts", ".tsx"}
 
 def run_command(cmd: str, cwd: str | None = None) -> dict:
     """Run a shell command and return {success, output}."""
+    logger.debug("[TypeScriptLint] Executing: %s (cwd=%s)", cmd, cwd or os.getcwd())
     try:
         result = subprocess.run(
             cmd,
@@ -54,6 +55,7 @@ def run_command(cmd: str, cwd: str | None = None) -> dict:
             "error": result.stderr.strip(),
         }
     except Exception as exc:
+        logger.debug("[TypeScriptLint] Command failed: %s", exc)
         return {"success": False, "output": "", "error": str(exc)}
 
 
@@ -71,22 +73,22 @@ def _check_tool_installed(tool: str, project_root: str) -> bool:
 
 def _run_typescript(resolved: Path, project_root: str) -> dict:
     """Run TypeScript type checking. Returns {success, output, error}."""
-    if not _check_tool_installed("tsc", project_root):
+    if not _check_tool_installed("tsc-files", project_root):
         logger.debug(
-            "[TypeScriptLint] TypeScript not installed, skipping type check for %s",
+            "[TypeScriptLint] tsc-files not installed, skipping type check for %s",
             resolved,
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    tsc_bin = Path(project_root) / "node_modules" / ".bin" / "tsc"
+    tsc_files_bin = Path(project_root) / "node_modules" / ".bin" / "tsc-files"
     logger.debug(
         "[TypeScriptLint] Running: %s --noEmit %s (cwd=%s)",
-        tsc_bin,
+        tsc_files_bin,
         resolved,
         project_root,
     )
-    result = _exec(str(tsc_bin), ["--noEmit", str(resolved)], cwd=project_root)
-    logger.debug("[TypeScriptLint] tsc result for %s: %s", resolved, result)
+    result = _exec(str(tsc_files_bin), ["--noEmit", str(resolved)], cwd=project_root)
+    logger.debug("[TypeScriptLint] tsc-files result for %s: %s", resolved, result)
     if not result["success"]:
         logger.debug(
             "[TypeScriptLint] Type errors in %s:\n%s", resolved, result.get("error", "")
