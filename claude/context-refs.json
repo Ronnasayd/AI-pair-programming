@@ -1,0 +1,9 @@
+{
+  "refresh_after": 3,
+  "rules": [
+    {
+      "glob": "claude/settings.json",
+      "refs": []
+    }
+  ]
+}

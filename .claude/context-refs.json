@@ -1,0 +1,11 @@
+{
+  "refresh_after": 3,
+  "rules": [
+    {
+      "glob": "*.py",
+      "refs": [
+        "/home/ronnas/develop/personal/AI-pair-programming/skills/python/python-patterns/SKILL.md"
+      ]
+    }
+  ]
+}
