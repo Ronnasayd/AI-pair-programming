@@ -1,7 +1,4 @@
-# orchestrate
-# pr-review
 # skill-architect
-# skill-description-generator
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
@@ -69,14 +66,17 @@ keycloak-docs-index
 leet-code-patterns
 legacy-migration-planner
 mcp-builder
+mcp-manager-instructions
 mermaid-class-diagram
 mermaid-erd
 mermaid-studio
 modular-decomposition
 modular-monolith-decomposer
 opencv
+orchestrate
 perf-web-optimization
 plan-generator
+pr-review
 prd-from-codebase
 prd-generator
 prd-get-implicit-requirements
@@ -93,6 +93,7 @@ semantic-commit-message
 seo
 skill-advisor
 skill-creator
+skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator
@@ -109,4 +110,3 @@ tdd
 tdd-workflow
 test-coverage-review
 typescript-style-guide
-mcp-manager-instructions
