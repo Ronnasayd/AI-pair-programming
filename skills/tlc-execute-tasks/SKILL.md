@@ -1,6 +1,6 @@
 ---
 name: tlc-execute-tasks
-description: Executes feature tasks by tag, integrating spec files with tlc-spec-driven. Filters pending tasks from taskmaster, executes them in order, and updates status via MCP when each task finishes. The user decides what to do on failures. Use: "execute feature <tag>" or "run tasks for <tag>". Do not use for direct task management (taskmaster skill) or spec creation (tlc-spec-driven).
+description: 'Executes feature tasks by tag, integrating spec files with tlc-spec-driven. Filters pending tasks from taskmaster, executes them in order, and updates status via MCP when each task finishes. The user decides what to do on failures. Use: "execute feature <tag>" or "run tasks for <tag>". Do not use for direct task management (taskmaster skill) or spec creation (tlc-spec-driven).'
 ---
 
 # Execute Feature Tasks

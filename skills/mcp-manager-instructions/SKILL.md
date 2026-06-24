@@ -1,6 +1,6 @@
 ---
-description: How to use the mcp-manager tool
-applyTo: "**/*"
+name: mcp-manager-instructions
+description: Provide practical guidance for discovering available MCP tools, understanding their schemas, and executing them using mcp-manager. Use when user says "how do I use mcp-manager", "what MCP tools are available", "explain mcp-manager workflow", "how do I discover tools", or needs help with MCP tool discovery and execution. Do NOT use for actual tool execution (call the MCP manager tool directly), implementing new MCP servers, or discovering non-MCP tools.
 ---
 
 ## Description

@@ -1,6 +1,7 @@
 # orchestrate
 # pr-review
 # skill-architect
+# skill-description-generator
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
@@ -92,7 +93,6 @@ semantic-commit-message
 seo
 skill-advisor
 skill-creator
-skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator
@@ -109,3 +109,4 @@ tdd
 tdd-workflow
 test-coverage-review
 typescript-style-guide
+mcp-manager-instructions
