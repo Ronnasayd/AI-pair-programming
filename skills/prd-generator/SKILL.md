@@ -1,6 +1,6 @@
 ---
 name: prd-generator
-description: Generate complete PRD in 15-20min for ANY project using 5-battery question framework. Detects briefing (from context or user input), runs structured Q&A, outputs PRD.md with vision+scope+tech+timeline+KPIs+risks. Use when: "create PRD", "generate PRD for", "build PRD", "need PRD". NOT for: tech spec, design docs, task breakdown.
+description: 'Generate complete PRD in 15-20min for ANY project using 5-battery question framework. Detects briefing (from context or user input), runs structured Q&A, outputs PRD.md with vision+scope+tech+timeline+KPIs+risks. Use when: "create PRD", "generate PRD for", "build PRD", "need PRD". NOT for: tech spec, design docs, task breakdown.'
 license: CC-BY-4.0
 metadata:
   author: user

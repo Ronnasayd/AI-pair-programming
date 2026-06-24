@@ -625,6 +625,14 @@ skills:
 
     '
 - name:
+  - mcp-manager-instructions
+  description: Provide practical guidance for discovering available MCP tools, understanding
+    their schemas, and executing them using mcp-manager. Use when user says "how do
+    I use mcp-manager", "what MCP tools are available", "explain mcp-manager workflow",
+    "how do I discover tools", or needs help with MCP tool discovery and execution.
+    Do NOT use for actual tool execution (call the MCP manager tool directly), implementing
+    new MCP servers, or discovering non-MCP tools.
+- name:
   - codebase-rules-extractor
   description: Extract and document coding rules, patterns, conventions, and anti-patterns
     from a codebase. Maps the code structure, identifies what to do and what to avoid
@@ -656,8 +664,16 @@ skills:
     language.'
 - name:
   - prd-get-implicit-requirements
-  description: Skill for extracting implicit requirements from a PRD, identifying
-    gaps, and formulating clarification questions.
+  description: 'Extract implicit requirements from product requirement documents (PRDs),
+    identify coverage gaps across 14 universal categories, and generate clarification
+    questions for stakeholders. Use when user says "analyze PRD for gaps", "extract
+    implicit requirements", "find missing requirements", "what''s not defined in our
+    spec", "identify PRD holes", or "get clarification questions from PRD". Systematically
+    covers: interface states, error handling, navigation, data persistence, network
+    behavior, security, performance, platform behavior, content fallbacks, localization,
+    accessibility, legal compliance, deployment, and observability. Do NOT use for
+    creating PRDs (use tlc-spec-driven), technical design documents, architectural
+    decisions, or test planning.'
 - name:
   - frontend-patterns
   description: Frontend development patterns for React, Next.js, state management,
@@ -732,6 +748,13 @@ skills:
     Commits, or wants a commit based on staged changes, even if they just say 'write
     my commit message' or 'help with commit title'.
 - name:
+  - prd-generator
+  description: 'Generate complete PRD in 15-20min for ANY project using 5-battery
+    question framework. Detects briefing (from context or user input), runs structured
+    Q&A, outputs PRD.md with vision+scope+tech+timeline+KPIs+risks. Use when: "create
+    PRD", "generate PRD for", "build PRD", "need PRD". NOT for: tech spec, design
+    docs, task breakdown.'
+- name:
   - srs-generator
   description: Generates complete Software Requirements Specification (SRS) documents,
     following the standard template based on ISO/IEC/IEEE 29148:2018. Use this skill
@@ -756,6 +779,13 @@ skills:
     \ other is a rendered UI. Always use this skill when the user uploads two images\
     \ and asks what needs to change to make one look like the other \u2014 even if\
     \ they don't mention \"design\" explicitly.\n"
+- name:
+  - tlc-execute-tasks
+  description: 'Executes feature tasks by tag, integrating spec files with tlc-spec-driven.
+    Filters pending tasks from taskmaster, executes them in order, and updates status
+    via MCP when each task finishes. The user decides what to do on failures. Use:
+    "execute feature <tag>" or "run tasks for <tag>". Do not use for direct task management
+    (taskmaster skill) or spec creation (tlc-spec-driven).'
 - name:
   - database-migrations
   description: Database migration best practices for schema changes, data migrations,
