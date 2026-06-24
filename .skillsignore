@@ -1,4 +1,5 @@
 # skill-architect
+# skill-description-generator
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
@@ -6,6 +7,7 @@
 agent-creator
 agent-harness-construction
 ai-regression-testing
+analyze-comfyui-workflow-json
 api-design
 apk-reverse
 auto-improve
@@ -93,7 +95,6 @@ semantic-commit-message
 seo
 skill-advisor
 skill-creator
-skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator
