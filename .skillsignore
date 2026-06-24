@@ -13,6 +13,7 @@ auto-improve
 backend-patterns
 blueprint
 code-review
+codebase-linguistic-analysis-to-csv-export
 codebase-rules-extractor
 codenavi
 coding-standards
@@ -31,12 +32,12 @@ deep-research
 deep-research-web
 deployment-patterns
 design-image-diff
+diagnosing-bugs
 docker-patterns
 document-summarizer
 domain-analysis
-dynamic-programming-analysis
-diagnosing-bugs
 domain-modeling
+dynamic-programming-analysis
 event-storming
 execute-task
 figma-capture

@@ -1,6 +1,6 @@
 ---
 description: Test Standards
-applyTo: "**/*.test.ts,**/*.test.js"
+applyTo: "**/*.test.ts,**/*.test.js,**/*.spec.ts,**/*.spec.js"
 ---
 
 # Test Standards

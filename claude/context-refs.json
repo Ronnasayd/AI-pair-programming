@@ -26,9 +26,15 @@
       ]
     },
     {
-      "glob": "*.test.ts,*.test.js",
+      "glob": "*.test.ts,*.test.js,*.spec.ts,*.spec.js",
       "refs": [
         "/home/ronnas/develop/personal/AI-pair-programming/instructions/test.instructions.md"
+      ]
+    },
+    {
+      "glob": "*.vue",
+      "refs": [
+        "/home/ronnas/develop/personal/AI-pair-programming/instructions/vue.instructions.md"
       ]
     }
   ]
