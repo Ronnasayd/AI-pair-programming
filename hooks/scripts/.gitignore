@@ -1,8 +1,0 @@
-.claude/skills/*
-.claude/commands/*
-.claude/instructions/*
-.claude/agents/*
-.claude/hooks/*
-.rulesignore
-.skillsignore
-.agentsignore

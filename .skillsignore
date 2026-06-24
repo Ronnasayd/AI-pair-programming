@@ -1,5 +1,4 @@
-# skill-architect
-# skill-description-generator
+# grilling
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
@@ -36,6 +35,8 @@ docker-patterns
 document-summarizer
 domain-analysis
 dynamic-programming-analysis
+diagnosing-bugs
+domain-modeling
 event-storming
 execute-task
 figma-capture
@@ -94,7 +95,9 @@ security-best-practices
 semantic-commit-message
 seo
 skill-advisor
+skill-architect
 skill-creator
+skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator
@@ -111,6 +114,3 @@ tdd
 tdd-workflow
 test-coverage-review
 typescript-style-guide
-productivity/grilling
-engineering/diagnosing-bugs
-engineering/domain-modeling
