@@ -4,6 +4,7 @@
 
 # Calcula o git blob SHA1 de um arquivo local
 # Formato: sha1("blob <tamanho>\0<conteudo>")
+# Precisa GITHUB_PAT_TOKEN
 _git_blob_sha1() {
   local file="$1"
   [[ -f "$file" ]] || return 1
