@@ -142,6 +142,20 @@ skills:
     clear docstrings, safe exception handling, small focused functions, and static
     typing for writing maintainable production-quality Python code.
 - name:
+  - domain-modeling
+  description: Build and sharpen a project's domain model. Use when the user wants
+    to pin down domain terminology or a ubiquitous language, record an architectural
+    decision, or when another skill needs to maintain the domain model.
+- name:
+  - diagnosing-bugs
+  description: Diagnosis loop for hard bugs and performance regressions. Use when
+    the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
+- name:
+  - grilling
+  description: Interview the user relentlessly about a plan or design. Use when the
+    user wants to stress-test a plan before building, or uses any 'grill' trigger
+    phrases.
+- name:
   - document-summarizer
   description: "Extract and condense key information from any document or text while\
     \ preserving critical details. Use when you need to summarize PRDs, specifications,\
@@ -157,6 +171,11 @@ skills:
     specialist instructions. Use this skill to analyze code changes, identify required
     adjustments, and generate detailed review reports that comply with the system's
     guidelines for surgical changes and security best practices.
+- name:
+  - codebase-linguistic-analysis-to-csv-export
+  description: Identify all non-English text in a codebase (specifically Portuguese
+    characters) and export findings to a structured CSV for translation/remediation
+    workflows.
 - name:
   - orchestrate
   description: Coordinate the execution of complex tasks using multiple specialized
@@ -234,12 +253,9 @@ skills:
     accuracy.
 - name:
   - frontend-design
-  description: Create distinctive, production-grade frontend interfaces with high
-    design quality. Use this skill when the user asks to build web components, pages,
-    artifacts, posters, or applications (examples include websites, landing pages,
-    dashboards, React components, HTML/CSS layouts, or when styling/beautifying any
-    web UI). Generates creative, polished code and UI design that avoids generic AI
-    aesthetics.
+  description: Guidance for distinctive, intentional visual design when building new
+    UI or reshaping an existing one. Helps with aesthetic direction, typography, and
+    making choices that don't read as templated defaults.
 - name:
   - mcp-builder
   description: Guide for creating high-quality MCP (Model Context Protocol) servers
