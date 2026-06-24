@@ -192,6 +192,8 @@ done
 BASE_URL="https://github.com/mattpocock/skills/tree/main/skills"
 SKILLS=(
   "productivity/grilling"
+  "engineering/diagnosing-bugs"
+  "engineering/domain-modeling"
 )
 for skill in "${SKILLS[@]}"; do
   echo "━━━ ${skill} ━━━"

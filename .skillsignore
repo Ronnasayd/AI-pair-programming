@@ -112,3 +112,5 @@ tdd-workflow
 test-coverage-review
 typescript-style-guide
 productivity/grilling
+engineering/diagnosing-bugs
+engineering/domain-modeling
