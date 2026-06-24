@@ -185,3 +185,16 @@ for skill in "${SKILLS[@]}"; do
   grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
   echo ""
 done
+
+
+# Mattpocock
+BASE_URL="https://github.com/mattpocock/skills/tree/main/skills"
+SKILLS=(
+  "productivity/grilling"
+)
+for skill in "${SKILLS[@]}"; do
+  echo "━━━ ${skill} ━━━"
+  gghget "${BASE_URL}/${skill}" "skills/mattpocock/${skill}"
+  grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
+  echo ""
+done
