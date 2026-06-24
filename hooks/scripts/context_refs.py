@@ -49,8 +49,11 @@ def _glob_match(file_path: str, glob: str) -> bool:
     import fnmatch
 
     p = PurePosixPath(file_path.replace("\\", "/"))
-    g = glob.replace("\\", "/")
-    return fnmatch.fnmatch(str(p), g)
+    for g in glob.split(","):
+        g = g.strip().replace("\\", "/")
+        if fnmatch.fnmatch(str(p), g):
+            return True
+    return False
 
 
 def _normalize_path(path: str) -> str:
