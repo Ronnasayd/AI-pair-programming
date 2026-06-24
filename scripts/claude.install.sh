@@ -168,7 +168,7 @@ fi
 if ! grep -q "$DEFAULT_FOLDER/hooks/*" .gitignore; then
     echo "$DEFAULT_FOLDER/hooks/*" >> .gitignore
 fi
-if ! grep -q "$LOCAL/$DEFAULT_FOLDER/context-refs.json" .gitignore; then
+if ! grep -q "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
     echo "$DEFAULT_FOLDER/context-refs.json" >> .gitignore
 fi
 ###########################################################################################
