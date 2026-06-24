@@ -45,12 +45,11 @@ def _save_cache(cache_path: Path, cache: dict) -> None:
 
 
 def _glob_match(file_path: str, glob: str) -> bool:
+    """Match file_path against glob pattern using fnmatch."""
     import fnmatch
 
     p = PurePosixPath(file_path.replace("\\", "/"))
     g = glob.replace("\\", "/")
-    if sys.version_info >= (3, 12):
-        return p.full_match(g)  # type: ignore[attr-defined]
     return fnmatch.fnmatch(str(p), g)
 
 
