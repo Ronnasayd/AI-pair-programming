@@ -2,8 +2,10 @@
   "refresh_after": 3,
   "rules": [
     {
-      "glob": "claude/settings.json",
-      "refs": []
+      "glob": "*.ts,*.js,*.py,*.java,*.go,*.css,*.cpp,*.c,*.vue,*.jsx,*.tsx",
+      "refs": [
+        "/home/ronnas/develop/personal/AI-pair-programming/instructions/code.instructions.md"
+      ]
     }
   ]
 }
