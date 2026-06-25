@@ -99,6 +99,9 @@ ln -s "$SOURCE/claude/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
 if ! [ -e "$LOCAL/$DEFAULT_FOLDER/context-refs.json" ]; then
 ln -s "$SOURCE/claude/context-refs.json" "$LOCAL/$DEFAULT_FOLDER/context-refs.json"
 fi
+if ! [ -e "$LOCAL/$DEFAULT_FOLDER/skill-rules.json" ]; then
+ln -s "$SOURCE/claude/skill-rules.json" "$LOCAL/$DEFAULT_FOLDER/skill-rules.json"
+fi
 ########################################################################################
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do
@@ -170,6 +173,9 @@ if ! grep -q "$DEFAULT_FOLDER/hooks/*" .gitignore; then
 fi
 if ! grep -q "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
     echo "$DEFAULT_FOLDER/context-refs.json" >> .gitignore
+fi
+if ! grep -q "$DEFAULT_FOLDER/skill-rules.json" .gitignore; then
+    echo "$DEFAULT_FOLDER/skill-rules.json" >> .gitignore
 fi
 ###########################################################################################
 rtk init -g

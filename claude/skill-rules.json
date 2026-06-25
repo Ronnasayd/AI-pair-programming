@@ -1,39 +1,234 @@
 {
   "rules": [
     {
-      "skill": "create-commit",
+      "skill": "semantic-commit-message",
       "priority": "high",
-      "hint": "for creating conventional commits",
-      "keywords": ["commit", "git commit"],
-      "intentPatterns": ["(create|make|write).*commit", "stage.*changes"]
+      "hint": "for generating conventional commits",
+      "keywords": ["commit", "git commit", "commit message"],
+      "intentPatterns": [
+        "(create|write|generate).*commit",
+        "stage.*changes",
+        "semantic.*commit"
+      ]
     },
     {
       "skill": "code-review",
       "priority": "high",
       "hint": "for reviewing diffs and PRs",
-      "keywords": ["review", "pull request", "pr review"],
-      "intentPatterns": ["(review|audit|check).*code", "look at.*diff"]
+      "keywords": ["review", "pull request", "pr review", "code review"],
+      "intentPatterns": [
+        "(review|audit|check).*code",
+        "look at.*diff",
+        "review.*PR"
+      ]
     },
     {
       "skill": "tlc-spec-driven",
-      "priority": "medium",
-      "hint": "for speccing and planning features",
-      "keywords": ["specify feature", "plan feature", "design feature"],
-      "intentPatterns": ["(plan|spec|design|implement).*feature"]
+      "priority": "high",
+      "hint": "for project planning, feature spec, task breakdown",
+      "keywords": ["plan", "spec", "design", "feature", "roadmap"],
+      "intentPatterns": [
+        "(plan|spec|design|implement).*feature",
+        "initialize.*project",
+        "map.*codebase"
+      ]
+    },
+    {
+      "skill": "diagnosing-bugs",
+      "priority": "high",
+      "hint": "for debugging hard bugs and regressions",
+      "keywords": ["diagnose", "debug", "broken", "failing", "slow"],
+      "intentPatterns": [
+        "(diagnose|debug|fix).*this",
+        "something.*broken",
+        "why.*failing"
+      ]
+    },
+    {
+      "skill": "skill-advisor",
+      "priority": "high",
+      "hint": "for routing tasks to appropriate skills",
+      "keywords": [
+        "which skill",
+        "what skill",
+        "do I have",
+        "help pick",
+        "recommend"
+      ],
+      "intentPatterns": [
+        "which.*skill.*use",
+        "what.*skill.*for",
+        "help.*pick.*skill"
+      ]
     },
     {
       "skill": "update-config",
       "priority": "medium",
       "hint": "for modifying Claude Code settings/hooks",
       "keywords": ["settings.json", "hook", "permission", "from now on"],
-      "intentPatterns": ["(add|configure|update).*hook", "whenever.*claude"]
+      "intentPatterns": [
+        "(add|configure|update).*hook",
+        "whenever.*claude",
+        "(allow|configure).*permission"
+      ]
     },
     {
       "skill": "verify",
       "priority": "medium",
-      "hint": "for testing changes in the running app",
+      "hint": "for testing changes in running app",
       "keywords": ["verify", "test", "run the app", "does it work"],
       "intentPatterns": ["(verify|test|check).*work", "(run|start).*app"]
+    },
+    {
+      "skill": "document-summarizer",
+      "priority": "medium",
+      "hint": "for condensing documents and text",
+      "keywords": ["summarize", "condense", "summary", "overview", "extract"],
+      "intentPatterns": ["summarize.*", "condense.*", "extract.*key.*points"]
+    },
+    {
+      "skill": "python-patterns",
+      "priority": "medium",
+      "hint": "for Python idioms and best practices",
+      "keywords": ["python", "pythonic", "PEP 8", "type hints"],
+      "intentPatterns": ["python.*code", "pythonic.*pattern", "improve.*python"]
+    },
+    {
+      "skill": "python-testing",
+      "priority": "medium",
+      "hint": "for Python test strategies with pytest",
+      "keywords": ["pytest", "python test", "test fixture", "mock"],
+      "intentPatterns": ["test.*python", "pytest.*", "write.*test"]
+    },
+    {
+      "skill": "golang-patterns",
+      "priority": "medium",
+      "hint": "for Go idioms and best practices",
+      "keywords": ["go", "golang", "idiomatic", "go code"],
+      "intentPatterns": ["go.*code", "golang.*pattern", "improve.*go"]
+    },
+    {
+      "skill": "golang-testing",
+      "priority": "medium",
+      "hint": "for Go test patterns and TDD",
+      "keywords": ["go test", "golang test", "table-driven"],
+      "intentPatterns": ["test.*go", "golang.*test", "table.*driven"]
+    },
+    {
+      "skill": "tdd",
+      "priority": "medium",
+      "hint": "for test-driven development workflow",
+      "keywords": ["tdd", "test first", "write test", "red green"],
+      "intentPatterns": ["write.*test.*first", "test.*driven", "tdd.*"]
+    },
+    {
+      "skill": "mermaid-studio",
+      "priority": "medium",
+      "hint": "for diagram creation and rendering",
+      "keywords": ["diagram", "mermaid", "flowchart", "architecture", "ERD"],
+      "intentPatterns": [
+        "(create|draw|generate).*diagram",
+        "mermaid.*",
+        "(flowchart|architecture|ERD).*"
+      ]
+    },
+    {
+      "skill": "mermaid-class-diagram",
+      "priority": "low",
+      "hint": "for UML class diagrams",
+      "keywords": ["class diagram", "UML", "entity relationship"],
+      "intentPatterns": ["(class|UML).*diagram", "diagram.*class"]
+    },
+    {
+      "skill": "domain-analysis",
+      "priority": "medium",
+      "hint": "for DDD analysis and service boundaries",
+      "keywords": ["domain", "bounded context", "DDD", "service boundary"],
+      "intentPatterns": [
+        "analyze.*domain",
+        "identify.*bounded.*context",
+        "DDD.*analysis"
+      ]
+    },
+    {
+      "skill": "event-storming",
+      "priority": "medium",
+      "hint": "for Event Storming and domain modeling",
+      "keywords": ["event storming", "DDD", "command", "aggregate"],
+      "intentPatterns": [
+        "(event|storming|domain).*flow",
+        "model.*domain",
+        "DDD.*"
+      ]
+    },
+    {
+      "skill": "safe-refactor",
+      "priority": "medium",
+      "hint": "for safe refactoring of untested code",
+      "keywords": ["refactor", "cleanup", "rewrite", "modernize"],
+      "intentPatterns": ["(refactor|cleanup|rewrite).*code", "modernize.*"]
+    },
+    {
+      "skill": "frontend-blueprint",
+      "priority": "medium",
+      "hint": "for building and designing UI",
+      "keywords": ["UI", "frontend", "design", "component", "interface"],
+      "intentPatterns": [
+        "(build|design|create).*UI",
+        "frontend.*",
+        "(redesign|improve).*layout"
+      ]
+    },
+    {
+      "skill": "react-composition-patterns",
+      "priority": "medium",
+      "hint": "for React component architecture",
+      "keywords": ["react", "component", "composition", "props"],
+      "intentPatterns": [
+        "react.*pattern",
+        "component.*architecture",
+        "compound.*component"
+      ]
+    },
+    {
+      "skill": "security-best-practices",
+      "priority": "medium",
+      "hint": "for security review and secure coding",
+      "keywords": ["security", "secure", "vulnerability", "auth"],
+      "intentPatterns": ["security.*review", "secure.*code", "vulnerability.*"]
+    },
+    {
+      "skill": "codenavi",
+      "priority": "medium",
+      "hint": "for navigating unknown codebases",
+      "keywords": ["fix", "implement", "how does", "investigate"],
+      "intentPatterns": [
+        "fix.*this",
+        "implement.*this",
+        "how.*this.*work",
+        "investigate.*"
+      ]
+    },
+    {
+      "skill": "create-rfc",
+      "priority": "low",
+      "hint": "for proposing significant changes",
+      "keywords": ["RFC", "proposal", "RFD", "decision"],
+      "intentPatterns": ["write.*RFC", "propose.*change", "document.*decision"]
+    },
+    {
+      "skill": "prd-generator",
+      "priority": "low",
+      "hint": "for generating product requirements",
+      "keywords": ["PRD", "requirements", "product spec"],
+      "intentPatterns": ["generate.*PRD", "create.*PRD", "write.*requirements"]
+    },
+    {
+      "skill": "grilling",
+      "priority": "low",
+      "hint": "for stress-testing plans and designs",
+      "keywords": ["grill", "stress test", "interview", "challenge"],
+      "intentPatterns": ["grill.*", "stress.*test.*plan", "challenge.*design"]
     }
   ]
 }
