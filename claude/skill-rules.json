@@ -1,0 +1,39 @@
+{
+  "rules": [
+    {
+      "skill": "create-commit",
+      "priority": "high",
+      "hint": "for creating conventional commits",
+      "keywords": ["commit", "git commit"],
+      "intentPatterns": ["(create|make|write).*commit", "stage.*changes"]
+    },
+    {
+      "skill": "code-review",
+      "priority": "high",
+      "hint": "for reviewing diffs and PRs",
+      "keywords": ["review", "pull request", "pr review"],
+      "intentPatterns": ["(review|audit|check).*code", "look at.*diff"]
+    },
+    {
+      "skill": "tlc-spec-driven",
+      "priority": "medium",
+      "hint": "for speccing and planning features",
+      "keywords": ["specify feature", "plan feature", "design feature"],
+      "intentPatterns": ["(plan|spec|design|implement).*feature"]
+    },
+    {
+      "skill": "update-config",
+      "priority": "medium",
+      "hint": "for modifying Claude Code settings/hooks",
+      "keywords": ["settings.json", "hook", "permission", "from now on"],
+      "intentPatterns": ["(add|configure|update).*hook", "whenever.*claude"]
+    },
+    {
+      "skill": "verify",
+      "priority": "medium",
+      "hint": "for testing changes in the running app",
+      "keywords": ["verify", "test", "run the app", "does it work"],
+      "intentPatterns": ["(verify|test|check).*work", "(run|start).*app"]
+    }
+  ]
+}
