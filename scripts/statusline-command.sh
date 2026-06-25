@@ -33,21 +33,21 @@ lang_info=""
 
 # Check for Python project (venv exists or Python files present)
 if [ -n "$VIRTUAL_ENV" ]; then
-    venv_raw=$(echo "${VIRTUAL_ENV##*/}" | sed 's/-[0-9].*//')
-    if [ "$venv_raw" = ".venv" ] || [ "$venv_raw" = "venv" ]; then
-        venv="($folder)"
-    else
-        venv="($venv_raw)"
-    fi
+    # venv_raw=$(echo "${VIRTUAL_ENV##*/}" | sed 's/-[0-9].*//')
+    # if [ "$venv_raw" = ".venv" ] || [ "$venv_raw" = "venv" ]; then
+    #     venv="($folder)"
+    # else
+    #     venv="($venv_raw)"
+    # fi
     pyver=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo 'N/A')
-    lang_info=" | 💼 $venv | 🐍 $pyver"
+    lang_info=" |  $pyver(venv)"
 elif [ -f "requirements.txt" ] || [ -f "setup.py" ] || [ -f "pyproject.toml" ] || [ -f "Pipfile" ]; then
     pyver=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo 'N/A')
-    lang_info=" | 🐍 $pyver"
+    lang_info=" |  $pyver"
 elif [ -f "go.mod" ] || [ -f "go.sum" ] || ls *.go >/dev/null 2>&1; then
     gover=$(go version 2>/dev/null | grep -oE 'go[0-9]+\.[0-9]+(\.[0-9]+)?' | sed 's/go//' || echo 'N/A')
     if [ "$gover" != "N/A" ]; then
-        lang_info=" | 🦫 $gover"
+        lang_info=" |  $gover"
     fi
 fi
 
@@ -64,7 +64,7 @@ if [ -n "$effort_level" ]; then
         high|xhigh|max) effort_color="\033[31m" ;;
         *)      effort_color="" ;;
     esac
-    effort_info=" | 🧠 ${effort_color}${effort_level}${RESET}"
+    effort_info=" |  ${effort_color}${effort_level}${RESET}"
 fi
 
 # Caveman mode status
@@ -74,9 +74,9 @@ if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
     CAVEMAN_MODE=$(head -c 64 "$CAVEMAN_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
     if [ -n "$CAVEMAN_MODE" ] && [ "$CAVEMAN_MODE" != "off" ]; then
         if [ "$CAVEMAN_MODE" = "full" ]; then
-            caveman_info=" | 🦴 caveman"
+            caveman_info=" |  cav"
         else
-            caveman_info=" | 🦴 caveman($CAVEMAN_MODE)"
+            caveman_info=" |  cav($CAVEMAN_MODE)"
         fi
     fi
 fi
@@ -84,9 +84,9 @@ fi
 # AI Memory server status
 memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
-    memory_status=" | 💾 ai-memory(on)"
+    memory_status=" |  ai-mem(🟢)"
 else
-    memory_status=" | 💾 ai-memory(off)"
+    memory_status=" |  ai-mem(🔴)"
 fi
 
 # Session cost
@@ -94,7 +94,7 @@ cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
 cost_info=""
 if [ -n "$cost" ]; then
     cost=$(LC_NUMERIC=C printf "%.3f" "$cost")
-    cost_info=" | 💰 \$$cost"
+    cost_info=" | 󰳴 \$$cost"
 fi
 
 # Rate limit usage (session = 5-hour window, week = 7-day window)
@@ -160,8 +160,8 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
     esac
     reset_label="${reset_date}${reset_suffix}"
 
-    rate_info=" | ⏱ 5h ${five_color}${five_int}%${RESET} (${time_left} left) | 📅 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
+    rate_info=" | ⏱ 5h ${five_color}${five_int}%${RESET} (${time_left} left) | 󰃭 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
 fi
 
 # Output the complete status line
-echo -e "📁 $folder${lang_info} | 🌿 $branch | 🤖 $model${effort_info} | 📚 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${caveman_info}${cost_info}${rate_info}"
+echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info} | 󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${caveman_info}${cost_info}${rate_info}"
