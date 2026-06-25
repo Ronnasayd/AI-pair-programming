@@ -13,11 +13,30 @@ import argparse
 from pathlib import Path
 
 
-def extract_trigger_phrases(desc, name):
-    """Extract specific trigger phrases from description"""
+def extract_trigger_phrases(desc, name, skill_name):
+    """Extract specific trigger phrases, prioritize by skill type"""
     desc_lower = desc.lower()
+    name_lower = skill_name.lower()
     phrases = []
 
+    # Primary triggers match skill name first (most specific)
+    skill_triggers = {
+        "test": [r"(write|implement).*test", r"(test|verify|spec)"],
+        "testing": [r"(write|implement).*test", r"(test|verify|spec)"],
+        "tdd": [r"(write|implement).*test", r"(test|verify|spec)"],
+        "review": [r"(review|audit|check).*code", r"(review|audit).*PR"],
+        "commit": [r"(commit|git commit).*message", r"(semantic|conventional).*commit"],
+        "refactor": [r"(refactor|cleanup|rewrite).*code", r"(safe|improve).*refactor"],
+        "design": [r"(design|diagram|visualiz).*", r"(architecture|ERD|flowchart)"],
+    }
+
+    # Check skill name for exact match first
+    for key, pats in skill_triggers.items():
+        if key in name_lower:
+            phrases.extend(pats)
+            return list(dict.fromkeys(phrases))[:3]
+
+    # Secondary: extract from description
     triggers = {
         "review": [r"(review|audit|check).*code", r"(review|audit).*PR"],
         "commit": [r"(commit|git commit).*message", r"(semantic|conventional).*commit"],
@@ -37,7 +56,71 @@ def extract_trigger_phrases(desc, name):
         if trigger_type in desc_lower:
             phrases.extend(patterns)
 
-    return list(dict.fromkeys(phrases))[:4]
+    return list(dict.fromkeys(phrases))[:3]
+
+
+def extract_keywords_smart(desc, name):
+    """Extract keywords prioritized by relevance and specificity"""
+    keywords = []
+
+    # Tier 1: skill name parts (highest priority)
+    keywords.append(name)
+    keywords.extend(name.split("-"))
+
+    # Tier 2: first sentence/phrase (most important)
+    first_sent = desc.split(".")[0] if "." in desc else desc[:100]
+    words = re.findall(r"\b[a-z]+(?:-[a-z]+)?\b", first_sent.lower())
+    # Filter: 4+ chars, exclude common words
+    common = {"this", "that", "when", "with", "from", "into", "using"}
+    tier2 = [w for w in words if len(w) > 3 and w not in common]
+    keywords.extend(tier2)
+
+    # Tier 3: secondary sentences (lower priority)
+    sentences = desc.split(".")
+    if len(sentences) > 1:
+        for sent in sentences[1:2]:
+            words = re.findall(r"\b[a-z]{5,}\b", sent.lower())
+            keywords.extend(words[:2])
+
+    # Deduplicate while preserving order, prioritize specificity (longer = more specific)
+    seen = set()
+    dedup = []
+    for kw in keywords:
+        if kw not in seen:
+            seen.add(kw)
+            dedup.append(kw)
+
+    # Sort: name/parts first, then by length (specific), then alphabetical
+    def sort_key(kw):
+        if kw == name:
+            return (0, 0, kw)
+        if kw in name.split("-"):
+            return (1, -len(kw), kw)
+        return (2, -len(kw), kw)
+
+    sorted_kw = sorted(dedup, key=sort_key)
+    return sorted_kw[:10]
+
+
+def format_hint(desc):
+    """Format hint: complete first sentence or smart truncation"""
+    if not desc:
+        return ""
+
+    # Try to get complete first sentence
+    sentences = desc.split(". ")
+    first = sentences[0] + ("." if not sentences[0].endswith(".") else "")
+
+    if len(first) <= 80:
+        return first
+
+    # Smart truncation: break at word boundary
+    truncated = desc[:75]
+    last_space = truncated.rfind(" ")
+    if last_space > 50:
+        return desc[:last_space] + "..."
+
+    return truncated + "..."
 
 
 def generate_rules(yaml_path):
@@ -63,13 +146,15 @@ def generate_rules(yaml_path):
         "pattern": "medium",
         "best-practice": "medium",
         "style-guide": "medium",
+        "create": "high",
+        "generate": "high",
     }
 
     for skill in skills:
         name = skill["name"][0] if isinstance(skill["name"], list) else skill["name"]
         desc = skill.get("description", "")
 
-        # Priority
+        # Priority: smart detection
         priority = "medium"
         desc_name = (desc + " " + name).lower()
         for key, val in priority_map.items():
@@ -77,30 +162,23 @@ def generate_rules(yaml_path):
                 priority = val
                 break
 
-        # Keywords
-        keywords = []
-        keywords.append(name)
-        name_parts = name.split("-")
-        keywords.extend(name_parts)
+        # Keywords: use smart extraction (prioritized, relevant)
+        keywords = extract_keywords_smart(desc, name)
 
-        first_sent = desc.split(".")[0] if "." in desc else desc[:120]
-        words = re.findall(r"\b[a-z]+(?:-[a-z]+)?\b", first_sent.lower())
-        keywords.extend([w for w in words if len(w) > 3])
-
-        keywords = sorted(list(dict.fromkeys(keywords)))[:8]
-
-        # Patterns
-        patterns = []
+        # Patterns: skill-specific triggers, less generic duplicates
         main_term = name.split("-")[0]
-        patterns.append(f".*{main_term}.*")
-        triggers = extract_trigger_phrases(desc, name)
+        patterns = [f".*{main_term}.*"]
+        triggers = extract_trigger_phrases(desc, name, name)
         patterns.extend(triggers)
-        patterns = list(dict.fromkeys(patterns))[:5]
+        patterns = list(dict.fromkeys(patterns))[:4]
+
+        # Hint: smart formatting (complete sentences)
+        hint = format_hint(desc)
 
         rule = {
             "skill": name,
             "priority": priority,
-            "hint": (desc[:70] + "...") if len(desc) > 70 else desc,
+            "hint": hint,
             "keywords": keywords,
             "intentPatterns": patterns,
         }
