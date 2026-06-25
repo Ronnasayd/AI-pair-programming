@@ -1,234 +1,2409 @@
 {
   "rules": [
     {
-      "skill": "semantic-commit-message",
-      "priority": "high",
-      "hint": "for generating conventional commits",
-      "keywords": ["commit", "git commit", "commit message"],
+      "skill": "git-guide",
+      "priority": "medium",
+      "hint": "A comprehensive guide to Git commands and workflows, based on the offi...",
+      "keywords": [
+        "based",
+        "cheat",
+        "commands",
+        "comprehensive",
+        "git",
+        "git-guide",
+        "guide",
+        "official"
+      ],
       "intentPatterns": [
-        "(create|write|generate).*commit",
-        "stage.*changes",
-        "semantic.*commit"
-      ]
-    },
-    {
-      "skill": "code-review",
-      "priority": "high",
-      "hint": "for reviewing diffs and PRs",
-      "keywords": ["review", "pull request", "pr review", "code review"],
-      "intentPatterns": [
-        "(review|audit|check).*code",
-        "look at.*diff",
-        "review.*PR"
-      ]
-    },
-    {
-      "skill": "tlc-spec-driven",
-      "priority": "high",
-      "hint": "for project planning, feature spec, task breakdown",
-      "keywords": ["plan", "spec", "design", "feature", "roadmap"],
-      "intentPatterns": [
-        "(plan|spec|design|implement).*feature",
-        "initialize.*project",
-        "map.*codebase"
-      ]
-    },
-    {
-      "skill": "diagnosing-bugs",
-      "priority": "high",
-      "hint": "for debugging hard bugs and regressions",
-      "keywords": ["diagnose", "debug", "broken", "failing", "slow"],
-      "intentPatterns": [
-        "(diagnose|debug|fix).*this",
-        "something.*broken",
-        "why.*failing"
+        ".*git.*"
       ]
     },
     {
       "skill": "skill-advisor",
       "priority": "high",
-      "hint": "for routing tasks to appropriate skills",
+      "hint": "Analyzes a task or problem and recommends which available skill(s) are...",
       "keywords": [
-        "which skill",
-        "what skill",
-        "do I have",
-        "help pick",
-        "recommend"
+        "advisor",
+        "analyzes",
+        "available",
+        "best",
+        "combine",
+        "including",
+        "multiple",
+        "problem"
       ],
       "intentPatterns": [
-        "which.*skill.*use",
-        "what.*skill.*for",
-        "help.*pick.*skill"
+        ".*skill.*",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
       ]
     },
     {
-      "skill": "update-config",
+      "skill": "context-map",
       "priority": "medium",
-      "hint": "for modifying Claude Code settings/hooks",
-      "keywords": ["settings.json", "hook", "permission", "from now on"],
+      "hint": "Generate a map of all files relevant to a task before making changes",
+      "keywords": [
+        "before",
+        "changes",
+        "context",
+        "context-map",
+        "files",
+        "generate",
+        "making",
+        "map"
+      ],
       "intentPatterns": [
-        "(add|configure|update).*hook",
-        "whenever.*claude",
-        "(allow|configure).*permission"
+        ".*context.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
       ]
     },
     {
-      "skill": "verify",
+      "skill": "deep-research-web",
       "priority": "medium",
-      "hint": "for testing changes in running app",
-      "keywords": ["verify", "test", "run the app", "does it work"],
-      "intentPatterns": ["(verify|test|check).*work", "(run|start).*app"]
+      "hint": "Multi-source deep research using firecrawl and exa MCPs. Searches the ...",
+      "keywords": [
+        "deep",
+        "deep-research-web",
+        "firecrawl",
+        "mcps",
+        "multi-source",
+        "research",
+        "using",
+        "web"
+      ],
+      "intentPatterns": [
+        ".*deep.*",
+        "(research|search|lookup).*",
+        "(deep|thorough).*research"
+      ]
     },
     {
-      "skill": "document-summarizer",
+      "skill": "modular-monolith-decomposer",
       "priority": "medium",
-      "hint": "for condensing documents and text",
-      "keywords": ["summarize", "condense", "summary", "overview", "extract"],
-      "intentPatterns": ["summarize.*", "condense.*", "extract.*key.*points"]
+      "hint": "Decomposes a system description into Modular Monolith modules using Do...",
+      "keywords": [
+        "decomposer",
+        "decomposes",
+        "description",
+        "design",
+        "domain-driven",
+        "into",
+        "modular",
+        "modular-monolith-decomposer"
+      ],
+      "intentPatterns": [
+        ".*modular.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
     },
     {
-      "skill": "python-patterns",
+      "skill": "leet-code-patterns",
       "priority": "medium",
-      "hint": "for Python idioms and best practices",
-      "keywords": ["python", "pythonic", "PEP 8", "type hints"],
-      "intentPatterns": ["python.*code", "pythonic.*pattern", "improve.*python"]
+      "hint": "Expert guidance on solving LeetCode and coding interview problems usin...",
+      "keywords": [
+        "algorithmic",
+        "code",
+        "coding",
+        "expert",
+        "guidance",
+        "important",
+        "interview",
+        "leet"
+      ],
+      "intentPatterns": [
+        ".*leet.*"
+      ]
     },
     {
-      "skill": "python-testing",
-      "priority": "medium",
-      "hint": "for Python test strategies with pytest",
-      "keywords": ["pytest", "python test", "test fixture", "mock"],
-      "intentPatterns": ["test.*python", "pytest.*", "write.*test"]
-    },
-    {
-      "skill": "golang-patterns",
-      "priority": "medium",
-      "hint": "for Go idioms and best practices",
-      "keywords": ["go", "golang", "idiomatic", "go code"],
-      "intentPatterns": ["go.*code", "golang.*pattern", "improve.*go"]
-    },
-    {
-      "skill": "golang-testing",
-      "priority": "medium",
-      "hint": "for Go test patterns and TDD",
-      "keywords": ["go test", "golang test", "table-driven"],
-      "intentPatterns": ["test.*go", "golang.*test", "table.*driven"]
+      "skill": "tdd-workflow",
+      "priority": "high",
+      "hint": "Use this skill when writing new features, fixing bugs, or refactoring ...",
+      "keywords": [
+        "bugs",
+        "code",
+        "features",
+        "fixing",
+        "refactoring",
+        "skill",
+        "tdd",
+        "tdd-workflow"
+      ],
+      "intentPatterns": [
+        ".*tdd.*",
+        "(write|implement).*test",
+        "(test|verify|spec)",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor"
+      ]
     },
     {
       "skill": "tdd",
-      "priority": "medium",
-      "hint": "for test-driven development workflow",
-      "keywords": ["tdd", "test first", "write test", "red green"],
-      "intentPatterns": ["write.*test.*first", "test.*driven", "tdd.*"]
+      "priority": "high",
+      "hint": "Use when implementing any feature or bugfix, before writing implementa...",
+      "keywords": [
+        "before",
+        "bugfix",
+        "code",
+        "fail",
+        "feature",
+        "first",
+        "implementation",
+        "implementing"
+      ],
+      "intentPatterns": [
+        ".*tdd.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
     },
     {
-      "skill": "mermaid-studio",
-      "priority": "medium",
-      "hint": "for diagram creation and rendering",
-      "keywords": ["diagram", "mermaid", "flowchart", "architecture", "ERD"],
+      "skill": "test-coverage-review",
+      "priority": "high",
+      "hint": "A skill for performing a deep analysis of test coverage for either a t...",
+      "keywords": [
+        "analysis",
+        "completed",
+        "coverage",
+        "deep",
+        "either",
+        "performing",
+        "post-implementation",
+        "pre-implementation"
+      ],
       "intentPatterns": [
-        "(create|draw|generate).*diagram",
-        "mermaid.*",
-        "(flowchart|architecture|ERD).*"
+        ".*test.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "opencv",
+      "priority": "medium",
+      "hint": "Use this skill whenever the user asks about Python OpenCV, computer vi...",
+      "keywords": [
+        "about",
+        "asks",
+        "computer",
+        "image",
+        "opencv",
+        "processing",
+        "python",
+        "skill"
+      ],
+      "intentPatterns": [
+        ".*opencv.*"
       ]
     },
     {
       "skill": "mermaid-class-diagram",
-      "priority": "low",
-      "hint": "for UML class diagrams",
-      "keywords": ["class diagram", "UML", "entity relationship"],
-      "intentPatterns": ["(class|UML).*diagram", "diagram.*class"]
+      "priority": "medium",
+      "hint": "Generate, render, and explain Mermaid class diagrams (UML). Use this s...",
+      "keywords": [
+        "class",
+        "diagram",
+        "diagrams",
+        "explain",
+        "generate",
+        "mermaid",
+        "mermaid-class-diagram",
+        "render"
+      ],
+      "intentPatterns": [
+        ".*mermaid.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
     },
     {
-      "skill": "domain-analysis",
+      "skill": "apk-reverse",
       "priority": "medium",
-      "hint": "for DDD analysis and service boundaries",
-      "keywords": ["domain", "bounded context", "DDD", "service boundary"],
+      "hint": "Reverse engineering of Android APK files. Use this skill ALWAYS whenev...",
+      "keywords": [
+        "android",
+        "apk",
+        "apk-reverse",
+        "engineering",
+        "files",
+        "reverse"
+      ],
       "intentPatterns": [
-        "analyze.*domain",
-        "identify.*bounded.*context",
-        "DDD.*analysis"
+        ".*apk.*",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
+    },
+    {
+      "skill": "plan-generator",
+      "priority": "medium",
+      "hint": "Generate structured plans for tasks and projects, saved as date-stampe...",
+      "keywords": [
+        "agents",
+        "date-stamped",
+        "docs",
+        "files",
+        "generate",
+        "generator",
+        "markdown",
+        "plan"
+      ],
+      "intentPatterns": [
+        ".*plan.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "auto-improve",
+      "priority": "medium",
+      "hint": "After completing any task, extract reusable rules from what worked and...",
+      "keywords": [
+        "after",
+        "auto",
+        "auto-improve",
+        "completing",
+        "extract",
+        "failed",
+        "from",
+        "improve"
+      ],
+      "intentPatterns": [
+        ".*auto.*"
+      ]
+    },
+    {
+      "skill": "context7-documentation-lookup",
+      "priority": "medium",
+      "hint": "Use up-to-date library and framework docs via Context7 MCP instead of ...",
+      "keywords": [
+        "context7",
+        "context7-documentation-lookup",
+        "data",
+        "date",
+        "docs",
+        "documentation",
+        "framework",
+        "instead"
+      ],
+      "intentPatterns": [
+        ".*context7.*"
+      ]
+    },
+    {
+      "skill": "tailwindcss",
+      "priority": "medium",
+      "hint": "Tailwind CSS v4 utility-first styling patterns including responsive de...",
+      "keywords": [
+        "configuration",
+        "custom",
+        "dark",
+        "design",
+        "including",
+        "mode",
+        "patterns",
+        "responsive"
+      ],
+      "intentPatterns": [
+        ".*tailwindcss.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "python-patterns",
+      "priority": "medium",
+      "hint": "Pythonic idioms, PEP 8 standards, type hints, and best practices for b...",
+      "keywords": [
+        "applications",
+        "best",
+        "building",
+        "efficient",
+        "hints",
+        "idioms",
+        "maintainable",
+        "patterns"
+      ],
+      "intentPatterns": [
+        ".*python.*"
+      ]
+    },
+    {
+      "skill": "python-testing",
+      "priority": "high",
+      "hint": "Python testing strategies using pytest, TDD methodology, fixtures, moc...",
+      "keywords": [
+        "coverage",
+        "fixtures",
+        "methodology",
+        "mocking",
+        "parametrization",
+        "pytest",
+        "python",
+        "python-testing"
+      ],
+      "intentPatterns": [
+        ".*python.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "python-style-guide",
+      "priority": "medium",
+      "hint": "Coding conventions and best practices for Python based on the Google P...",
+      "keywords": [
+        "based",
+        "best",
+        "clear",
+        "code",
+        "coding",
+        "consistent",
+        "conventions",
+        "docstrings"
+      ],
+      "intentPatterns": [
+        ".*python.*"
+      ]
+    },
+    {
+      "skill": "domain-modeling",
+      "priority": "medium",
+      "hint": "Build and sharpen a project's domain model. Use when the user wants to...",
+      "keywords": [
+        "build",
+        "domain",
+        "domain-modeling",
+        "model",
+        "modeling",
+        "project",
+        "sharpen"
+      ],
+      "intentPatterns": [
+        ".*domain.*"
+      ]
+    },
+    {
+      "skill": "diagnosing-bugs",
+      "priority": "high",
+      "hint": "Diagnosis loop for hard bugs and performance regressions. Use when the...",
+      "keywords": [
+        "bugs",
+        "diagnosing",
+        "diagnosing-bugs",
+        "diagnosis",
+        "hard",
+        "loop",
+        "performance",
+        "regressions"
+      ],
+      "intentPatterns": [
+        ".*diagnosing.*"
+      ]
+    },
+    {
+      "skill": "grilling",
+      "priority": "high",
+      "hint": "Interview the user relentlessly about a plan or design. Use when the u...",
+      "keywords": [
+        "about",
+        "design",
+        "grilling",
+        "interview",
+        "plan",
+        "relentlessly",
+        "user"
+      ],
+      "intentPatterns": [
+        ".*grilling.*",
+        "(write|implement).*test",
+        "(test|verify|spec)",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "document-summarizer",
+      "priority": "medium",
+      "hint": "Extract and condense key information from any document or text while p...",
+      "keywords": [
+        "condense",
+        "critical",
+        "details",
+        "document",
+        "document-summarizer",
+        "extract",
+        "from",
+        "information"
+      ],
+      "intentPatterns": [
+        ".*document.*"
+      ]
+    },
+    {
+      "skill": "code-review",
+      "priority": "high",
+      "hint": "A skill for performing structured code reviews based on git diffs and ...",
+      "keywords": [
+        "based",
+        "code",
+        "code-review",
+        "diffs",
+        "instructions",
+        "performing",
+        "review",
+        "reviews"
+      ],
+      "intentPatterns": [
+        ".*code.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "codebase-linguistic-analysis-to-csv-export",
+      "priority": "medium",
+      "hint": "Identify all non-English text in a codebase (specifically Portuguese c...",
+      "keywords": [
+        "analysis",
+        "characters",
+        "codebase",
+        "codebase-linguistic-analysis-to-csv-export",
+        "csv",
+        "export",
+        "findings",
+        "identify"
+      ],
+      "intentPatterns": [
+        ".*codebase.*"
+      ]
+    },
+    {
+      "skill": "orchestrate",
+      "priority": "medium",
+      "hint": "Coordinate the execution of complex tasks using multiple specialized s...",
+      "keywords": [
+        "complex",
+        "coordinate",
+        "dependencies",
+        "ensuring",
+        "execution",
+        "maximized",
+        "multiple",
+        "orchestrate"
+      ],
+      "intentPatterns": [
+        ".*orchestrate.*"
+      ]
+    },
+    {
+      "skill": "resolve-merge-conflicts",
+      "priority": "high",
+      "hint": "Use this skill immediately when the user mentions merge conflicts that...",
+      "keywords": [
+        "conflicts",
+        "immediately",
+        "mentions",
+        "merge",
+        "need",
+        "resolve",
+        "resolve-merge-conflicts",
+        "resolved"
+      ],
+      "intentPatterns": [
+        ".*resolve.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "copilot-sdk",
+      "priority": "medium",
+      "hint": "Use this skill whenever the user wants to build Python applications or...",
+      "keywords": [
+        "applications",
+        "build",
+        "copilot",
+        "copilot-sdk",
+        "github",
+        "python",
+        "scripts",
+        "sdk"
+      ],
+      "intentPatterns": [
+        ".*copilot.*"
+      ]
+    },
+    {
+      "skill": "integration-testing",
+      "priority": "high",
+      "hint": "Expert guidance on Integration Testing in software engineering. Use th...",
+      "keywords": [
+        "engineering",
+        "expert",
+        "guidance",
+        "integration",
+        "integration-testing",
+        "software",
+        "testing"
+      ],
+      "intentPatterns": [
+        ".*integration.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "tlc-tasks-to-taskmaster",
+      "priority": "medium",
+      "hint": "Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/t...",
+      "keywords": [
+        "convert",
+        "taskmaster",
+        "tasks",
+        "tlc",
+        "tlc-tasks-to-taskmaster",
+        "to"
+      ],
+      "intentPatterns": [
+        ".*tlc.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "prd-from-codebase",
+      "priority": "medium",
+      "hint": "Gera um PRD (Product Requirements Document) completo em Markdown a par...",
+      "keywords": [
+        "base",
+        "codebase",
+        "completo",
+        "document",
+        "existente",
+        "from",
+        "gera",
+        "markdown"
+      ],
+      "intentPatterns": [
+        ".*prd.*"
       ]
     },
     {
       "skill": "event-storming",
       "priority": "medium",
-      "hint": "for Event Storming and domain modeling",
-      "keywords": ["event storming", "DDD", "command", "aggregate"],
+      "hint": "Use this skill whenever the user wants to create, document, or model a...",
+      "keywords": [
+        "create",
+        "document",
+        "event",
+        "event-storming",
+        "model",
+        "skill",
+        "storming",
+        "this"
+      ],
       "intentPatterns": [
-        "(event|storming|domain).*flow",
-        "model.*domain",
-        "DDD.*"
+        ".*event.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "skill-creator",
+      "priority": "high",
+      "hint": "Create new skills, modify and improve existing skills, and measure ski...",
+      "keywords": [
+        "create",
+        "creator",
+        "existing",
+        "improve",
+        "measure",
+        "modify",
+        "performance",
+        "skill"
+      ],
+      "intentPatterns": [
+        ".*skill.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "frontend-design",
+      "priority": "medium",
+      "hint": "Guidance for distinctive, intentional visual design when building new ...",
+      "keywords": [
+        "building",
+        "design",
+        "distinctive",
+        "existing",
+        "frontend",
+        "frontend-design",
+        "guidance",
+        "intentional"
+      ],
+      "intentPatterns": [
+        ".*frontend.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "mcp-builder",
+      "priority": "medium",
+      "hint": "Guide for creating high-quality MCP (Model Context Protocol) servers t...",
+      "keywords": [
+        "builder",
+        "context",
+        "creating",
+        "enable",
+        "external",
+        "guide",
+        "high-quality",
+        "interact"
+      ],
+      "intentPatterns": [
+        ".*mcp.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "dynamic-programming-analysis",
+      "priority": "medium",
+      "hint": "Use this skill whenever the user presents a problem, challenge, decisi...",
+      "keywords": [
+        "analysis",
+        "broken",
+        "challenge",
+        "complex",
+        "computer",
+        "decision",
+        "down",
+        "dynamic"
+      ],
+      "intentPatterns": [
+        ".*dynamic.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(research|search|lookup).*",
+        "(deep|thorough).*research"
+      ]
+    },
+    {
+      "skill": "skills-discovery",
+      "priority": "high",
+      "hint": "Explore all available skills (enabled and disabled) by task or theme t...",
+      "keywords": [
+        "available",
+        "disabled",
+        "discover",
+        "discovery",
+        "enabled",
+        "exist",
+        "explore",
+        "problem"
+      ],
+      "intentPatterns": [
+        ".*skills.*"
       ]
     },
     {
       "skill": "safe-refactor",
-      "priority": "medium",
-      "hint": "for safe refactoring of untested code",
-      "keywords": ["refactor", "cleanup", "rewrite", "modernize"],
-      "intentPatterns": ["(refactor|cleanup|rewrite).*code", "modernize.*"]
+      "priority": "high",
+      "hint": "Guide safe refactoring of complex, untested code using a multi-phase h...",
+      "keywords": [
+        "agent-assisted",
+        "approach",
+        "characterization",
+        "code",
+        "complex",
+        "guide",
+        "hybrid",
+        "integration"
+      ],
+      "intentPatterns": [
+        ".*safe.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
     },
     {
-      "skill": "frontend-blueprint",
+      "skill": "execute-task",
       "priority": "medium",
-      "hint": "for building and designing UI",
-      "keywords": ["UI", "frontend", "design", "component", "interface"],
+      "hint": "Execute a specified task by reading detailed specifications, analyzing...",
+      "keywords": [
+        "analyzing",
+        "approach",
+        "detailed",
+        "execute",
+        "execute-task",
+        "implementing",
+        "planning",
+        "reading"
+      ],
       "intentPatterns": [
-        "(build|design|create).*UI",
-        "frontend.*",
-        "(redesign|improve).*layout"
+        ".*execute.*",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor"
+      ]
+    },
+    {
+      "skill": "golang-style-guide",
+      "priority": "medium",
+      "hint": "Conventions and best practices for writing readable, maintainable Go c...",
+      "keywords": [
+        "based",
+        "best",
+        "code",
+        "conventions",
+        "golang",
+        "golang-style-guide",
+        "google",
+        "guide"
+      ],
+      "intentPatterns": [
+        ".*golang.*",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "golang-testing",
+      "priority": "high",
+      "hint": "Go testing patterns including table-driven tests, subtests, benchmarks...",
+      "keywords": [
+        "benchmarks",
+        "coverage",
+        "fuzzing",
+        "golang",
+        "golang-testing",
+        "including",
+        "patterns",
+        "subtests"
+      ],
+      "intentPatterns": [
+        ".*golang.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "golang-patterns",
+      "priority": "medium",
+      "hint": "Idiomatic Go patterns, best practices, and conventions for building ro...",
+      "keywords": [
+        "applications",
+        "best",
+        "building",
+        "conventions",
+        "efficient",
+        "golang",
+        "golang-patterns",
+        "idiomatic"
+      ],
+      "intentPatterns": [
+        ".*golang.*"
       ]
     },
     {
       "skill": "react-composition-patterns",
       "priority": "medium",
-      "hint": "for React component architecture",
-      "keywords": ["react", "component", "composition", "props"],
+      "hint": "React composition patterns that scale. Use when refactoring components...",
+      "keywords": [
+        "composition",
+        "patterns",
+        "react",
+        "react-composition-patterns",
+        "scale",
+        "that"
+      ],
       "intentPatterns": [
-        "react.*pattern",
-        "component.*architecture",
-        "compound.*component"
+        ".*react.*",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
       ]
-    },
-    {
-      "skill": "security-best-practices",
-      "priority": "medium",
-      "hint": "for security review and secure coding",
-      "keywords": ["security", "secure", "vulnerability", "auth"],
-      "intentPatterns": ["security.*review", "secure.*code", "vulnerability.*"]
     },
     {
       "skill": "codenavi",
       "priority": "medium",
-      "hint": "for navigating unknown codebases",
-      "keywords": ["fix", "implement", "how does", "investigate"],
+      "hint": "Your pathfinder for navigating unknown codebases. Investigates with pr...",
+      "keywords": [
+        "codebases",
+        "codenavi",
+        "navigating",
+        "pathfinder",
+        "unknown",
+        "your"
+      ],
       "intentPatterns": [
-        "fix.*this",
-        "implement.*this",
-        "how.*this.*work",
-        "investigate.*"
+        ".*codenavi.*",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor"
+      ]
+    },
+    {
+      "skill": "frontend-blueprint",
+      "priority": "medium",
+      "hint": "AI frontend specialist and design consultant that guides users through...",
+      "keywords": [
+        "before",
+        "blueprint",
+        "code",
+        "consultant",
+        "design",
+        "discovery",
+        "frontend",
+        "frontend-blueprint"
+      ],
+      "intentPatterns": [
+        ".*frontend.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "tlc-spec-driven",
+      "priority": "high",
+      "hint": "Project and feature planning with 4 adaptive phases - Specify, Design,...",
+      "keywords": [
+        "adaptive",
+        "design",
+        "driven",
+        "execute",
+        "feature",
+        "phases",
+        "planning",
+        "project"
+      ],
+      "intentPatterns": [
+        ".*tlc.*",
+        "(commit|git commit).*message",
+        "(semantic|conventional).*commit",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "figma-implement-design",
+      "priority": "medium",
+      "hint": "Translate Figma nodes into production-ready code with 1:1 visual fidel...",
+      "keywords": [
+        "assets",
+        "code",
+        "context",
+        "design",
+        "fidelity",
+        "figma",
+        "figma-implement-design",
+        "implement"
+      ],
+      "intentPatterns": [
+        ".*figma.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
       ]
     },
     {
       "skill": "create-rfc",
-      "priority": "low",
-      "hint": "for proposing significant changes",
-      "keywords": ["RFC", "proposal", "RFD", "decision"],
-      "intentPatterns": ["write.*RFC", "propose.*change", "document.*decision"]
+      "priority": "high",
+      "hint": "Creates structured Request for Comments (RFC) documents for proposing ...",
+      "keywords": [
+        "changes",
+        "comments",
+        "create",
+        "create-rfc",
+        "creates",
+        "deciding",
+        "documents",
+        "proposing"
+      ],
+      "intentPatterns": [
+        ".*create.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "subagent-creator",
+      "priority": "high",
+      "hint": "Guide for creating AI subagents with isolated context for complex mult...",
+      "keywords": [
+        "complex",
+        "context",
+        "creating",
+        "creator",
+        "guide",
+        "isolated",
+        "multi-step",
+        "subagent"
+      ],
+      "intentPatterns": [
+        ".*subagent.*"
+      ]
+    },
+    {
+      "skill": "domain-analysis",
+      "priority": "medium",
+      "hint": "Maps business domains and suggests service boundaries in any codebase ...",
+      "keywords": [
+        "analysis",
+        "boundaries",
+        "business",
+        "codebase",
+        "design",
+        "domain",
+        "domain-analysis",
+        "domains"
+      ],
+      "intentPatterns": [
+        ".*domain.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "gh-address-comments",
+      "priority": "high",
+      "hint": "Address review and issue comments on the open GitHub PR for the curren...",
+      "keywords": [
+        "address",
+        "branch",
+        "comments",
+        "current",
+        "gh",
+        "gh-address-comments",
+        "github",
+        "issue"
+      ],
+      "intentPatterns": [
+        ".*gh.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR"
+      ]
+    },
+    {
+      "skill": "perf-web-optimization",
+      "priority": "medium",
+      "hint": "Optimize web performance: bundle size, images, caching, lazy loading, ...",
+      "keywords": [
+        "bundle",
+        "caching",
+        "images",
+        "lazy",
+        "loading",
+        "optimization",
+        "optimize",
+        "overall"
+      ],
+      "intentPatterns": [
+        ".*perf.*"
+      ]
+    },
+    {
+      "skill": "mermaid-studio",
+      "priority": "medium",
+      "hint": "Expert Mermaid diagram creation, validation, and rendering with dual-e...",
+      "keywords": [
+        "ascii",
+        "creation",
+        "diagram",
+        "dual-engine",
+        "expert",
+        "mermaid",
+        "mermaid-studio",
+        "output"
+      ],
+      "intentPatterns": [
+        ".*mermaid.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
+    },
+    {
+      "skill": "modular-decomposition",
+      "priority": "medium",
+      "hint": "Runs a sequenced monolith-to-modular pipeline that sizes and inventori...",
+      "keywords": [
+        "addresses",
+        "analysis",
+        "analyzes",
+        "bounded",
+        "candidate",
+        "components",
+        "contexts",
+        "coupling"
+      ],
+      "intentPatterns": [
+        ".*modular.*",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
+    },
+    {
+      "skill": "jira-assistant",
+      "priority": "medium",
+      "hint": "Manage Jira issues via Atlassian MCP \u2014 search, create, update, transit...",
+      "keywords": [
+        "assistant",
+        "atlassian",
+        "create",
+        "handle",
+        "issues",
+        "jira",
+        "jira-assistant",
+        "manage"
+      ],
+      "intentPatterns": [
+        ".*jira.*"
+      ]
+    },
+    {
+      "skill": "coupling-analysis",
+      "priority": "medium",
+      "hint": "Analyzes coupling between modules using the three-dimensional model (s...",
+      "keywords": [
+        "analysis",
+        "analyzes",
+        "balancing",
+        "between",
+        "coupling",
+        "coupling-analysis",
+        "design",
+        "distance"
+      ],
+      "intentPatterns": [
+        ".*coupling.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
+    },
+    {
+      "skill": "security-best-practices",
+      "priority": "high",
+      "hint": "Perform language and framework specific security best-practice reviews...",
+      "keywords": [
+        "best",
+        "best-practice",
+        "framework",
+        "improvements",
+        "language",
+        "perform",
+        "practices",
+        "reviews"
+      ],
+      "intentPatterns": [
+        ".*security.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR"
+      ]
+    },
+    {
+      "skill": "gh-fix-ci",
+      "priority": "high",
+      "hint": "Use when a user asks to debug or fix failing GitHub PR checks that run...",
+      "keywords": [
+        "actions",
+        "asks",
+        "checks",
+        "ci",
+        "debug",
+        "failing",
+        "fix",
+        "gh"
+      ],
+      "intentPatterns": [
+        ".*gh.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR"
+      ]
+    },
+    {
+      "skill": "seo",
+      "priority": "medium",
+      "hint": "Optimize for search engine visibility and ranking. Use when asked to \"...",
+      "keywords": [
+        "engine",
+        "optimize",
+        "ranking",
+        "search",
+        "seo",
+        "visibility"
+      ],
+      "intentPatterns": [
+        ".*seo.*"
+      ]
+    },
+    {
+      "skill": "legacy-migration-planner",
+      "priority": "medium",
+      "hint": "Use when planning legacy system migrations, codebase modernization, mo...",
+      "keywords": [
+        "codebase",
+        "consolidation",
+        "cross-language",
+        "decomposition",
+        "framework",
+        "legacy",
+        "legacy-migration-planner",
+        "microservices"
+      ],
+      "intentPatterns": [
+        ".*legacy.*",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor"
+      ]
+    },
+    {
+      "skill": "gtm-engineering",
+      "priority": "high",
+      "hint": "When the user wants to build GTM automation with code, design workflow...",
+      "keywords": [
+        "agents",
+        "architecture",
+        "architectures",
+        "automation",
+        "build",
+        "code",
+        "design",
+        "engineering"
+      ],
+      "intentPatterns": [
+        ".*gtm.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "create-adr",
+      "priority": "medium",
+      "hint": "Creates Architecture Decision Records (ADRs) to document significant a...",
+      "keywords": [
+        "adr",
+        "adrs",
+        "architectural",
+        "architecture",
+        "choices",
+        "create",
+        "create-adr",
+        "creates"
+      ],
+      "intentPatterns": [
+        ".*create.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "react-best-practices",
+      "priority": "high",
+      "hint": "React and Next.js performance optimization guidelines from Vercel Engi...",
+      "keywords": [
+        "best",
+        "next",
+        "practices",
+        "react",
+        "react-best-practices"
+      ],
+      "intentPatterns": [
+        ".*react.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor"
+      ]
+    },
+    {
+      "skill": "gtm-metrics",
+      "priority": "high",
+      "hint": "When the user wants to define GTM metrics, build a metrics dashboard, ...",
+      "keywords": [
+        "build",
+        "dashboard",
+        "define",
+        "efficiency",
+        "gtm",
+        "gtm-metrics",
+        "measure",
+        "metrics"
+      ],
+      "intentPatterns": [
+        ".*gtm.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "skill-architect",
+      "priority": "medium",
+      "hint": "Expert guide for designing and building high-quality skills from scrat...",
+      "keywords": [
+        "architect",
+        "building",
+        "conversation",
+        "designing",
+        "expert",
+        "from",
+        "guide",
+        "high-quality"
+      ],
+      "intentPatterns": [
+        ".*skill.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "create-task-spec",
+      "priority": "medium",
+      "hint": "A skill for creating structured task specifications based on detailed ...",
+      "keywords": [
+        "analysis",
+        "based",
+        "create",
+        "create-task-spec",
+        "creating",
+        "description",
+        "detailed",
+        "provided"
+      ],
+      "intentPatterns": [
+        ".*create.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "keycloak-docs-index",
+      "priority": "medium",
+      "hint": "Keycloak Documentation Index. Use this skill whenever the user asks ab...",
+      "keywords": [
+        "docs",
+        "documentation",
+        "index",
+        "keycloak",
+        "keycloak-docs-index"
+      ],
+      "intentPatterns": [
+        ".*keycloak.*"
+      ]
+    },
+    {
+      "skill": "analyze-comfyui-workflow-json",
+      "priority": "medium",
+      "hint": "Analyze a ComfyUI workflow JSON and produce a structured map of nodes,...",
+      "keywords": [
+        "analyze",
+        "analyze-comfyui-workflow-json",
+        "before",
+        "changes",
+        "comfyui",
+        "data",
+        "flow",
+        "json"
+      ],
+      "intentPatterns": [
+        ".*analyze.*",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
+    },
+    {
+      "skill": "tailwind-config-conformance",
+      "priority": "high",
+      "hint": "Validate and refactor Tailwind CSS classes to conform with project's t...",
+      "keywords": [
+        "classes",
+        "config",
+        "conform",
+        "conformance",
+        "project",
+        "refactor",
+        "tailwind",
+        "tailwind-config-conformance"
+      ],
+      "intentPatterns": [
+        ".*tailwind.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor"
+      ]
+    },
+    {
+      "skill": "typescript-style-guide",
+      "priority": "medium",
+      "hint": "Conventions and best practices for writing maintainable TypeScript cod...",
+      "keywords": [
+        "based",
+        "best",
+        "code",
+        "conventions",
+        "google",
+        "guide",
+        "maintainable",
+        "practices"
+      ],
+      "intentPatterns": [
+        ".*typescript.*",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "skill-description-generator",
+      "priority": "medium",
+      "hint": "Generate skill description fields that trigger correctly with specific...",
+      "keywords": [
+        "clear",
+        "correctly",
+        "description",
+        "fields",
+        "generate",
+        "generator",
+        "negatives",
+        "phrases"
+      ],
+      "intentPatterns": [
+        ".*skill.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "generate-docs-init",
+      "priority": "high",
+      "hint": "Use this skill to generate, refactor, or maintain comprehensive projec...",
+      "keywords": [
+        "code",
+        "comprehensive",
+        "docs",
+        "documentation",
+        "from",
+        "generate",
+        "generate-docs-init",
+        "init"
+      ],
+      "intentPatterns": [
+        ".*generate.*",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "agent-creator",
+      "priority": "high",
+      "hint": "Create new specialist agents, modify and improve existing agents, and ...",
+      "keywords": [
+        "agent",
+        "agent-creator",
+        "agents",
+        "behavior",
+        "create",
+        "creator",
+        "existing",
+        "improve"
+      ],
+      "intentPatterns": [
+        ".*agent.*",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "handling-large-files",
+      "priority": "medium",
+      "hint": "Strategies for reading, chunking, and processing files that exceed pra...",
+      "keywords": [
+        "chunking",
+        "exceed",
+        "files",
+        "handling",
+        "handling-large-files",
+        "large",
+        "limits",
+        "practical"
+      ],
+      "intentPatterns": [
+        ".*handling.*"
+      ]
+    },
+    {
+      "skill": "generate-docs-update",
+      "priority": "high",
+      "hint": "Use this skill to update existing project documentation based on code ...",
+      "keywords": [
+        "based",
+        "changes",
+        "code",
+        "docs",
+        "documentation",
+        "existing",
+        "generate",
+        "generate-docs-update"
+      ],
+      "intentPatterns": [
+        ".*generate.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "mcp-manager-instructions",
+      "priority": "medium",
+      "hint": "Provide practical guidance for discovering available MCP tools, unders...",
+      "keywords": [
+        "available",
+        "discovering",
+        "executing",
+        "guidance",
+        "instructions",
+        "manager",
+        "mcp",
+        "mcp-manager"
+      ],
+      "intentPatterns": [
+        ".*mcp.*"
+      ]
+    },
+    {
+      "skill": "codebase-rules-extractor",
+      "priority": "medium",
+      "hint": "Extract and document coding rules, patterns, conventions, and anti-pat...",
+      "keywords": [
+        "anti-patterns",
+        "codebase",
+        "codebase-rules-extractor",
+        "coding",
+        "conventions",
+        "document",
+        "extract",
+        "extractor"
+      ],
+      "intentPatterns": [
+        ".*codebase.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "mermaid-erd",
+      "priority": "medium",
+      "hint": "Generate, render, and explain Mermaid Entity Relationship Diagrams (ER...",
+      "keywords": [
+        "diagrams",
+        "entity",
+        "erd",
+        "erdiagram",
+        "explain",
+        "generate",
+        "mermaid",
+        "mermaid-erd"
+      ],
+      "intentPatterns": [
+        ".*mermaid.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "technical-decision-helper",
+      "priority": "medium",
+      "hint": "Helps make informed technical decisions by presenting viable options w...",
+      "keywords": [
+        "analysis",
+        "complex",
+        "cons",
+        "context",
+        "decision",
+        "decisions",
+        "decomposition",
+        "helper"
+      ],
+      "intentPatterns": [
+        ".*technical.*"
+      ]
+    },
+    {
+      "skill": "generate-pr-description",
+      "priority": "high",
+      "hint": "A skill for generating structured Pull Request descriptions based on g...",
+      "keywords": [
+        "based",
+        "commit",
+        "description",
+        "descriptions",
+        "diffs",
+        "generate",
+        "generate-pr-description",
+        "generating"
+      ],
+      "intentPatterns": [
+        ".*generate.*",
+        "(commit|git commit).*message",
+        "(semantic|conventional).*commit",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "prd-get-implicit-requirements",
+      "priority": "high",
+      "hint": "Extract implicit requirements from product requirement documents (PRDs...",
+      "keywords": [
+        "across",
+        "categories",
+        "clarification",
+        "coverage",
+        "documents",
+        "extract",
+        "from",
+        "gaps"
+      ],
+      "intentPatterns": [
+        ".*prd.*",
+        "(write|implement).*test",
+        "(test|verify|spec)",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "frontend-patterns",
+      "priority": "medium",
+      "hint": "Frontend development patterns for React, Next.js, state management, pe...",
+      "keywords": [
+        "development",
+        "frontend",
+        "frontend-patterns",
+        "next",
+        "patterns",
+        "react"
+      ],
+      "intentPatterns": [
+        ".*frontend.*"
+      ]
+    },
+    {
+      "skill": "taskmaster-overview",
+      "priority": "medium",
+      "hint": "AI-driven task management and project tracking using Task Master. Use ...",
+      "keywords": [
+        "ai-driven",
+        "management",
+        "master",
+        "overview",
+        "project",
+        "task",
+        "taskmaster",
+        "taskmaster-overview"
+      ],
+      "intentPatterns": [
+        ".*taskmaster.*",
+        "(research|search|lookup).*",
+        "(deep|thorough).*research"
+      ]
+    },
+    {
+      "skill": "taskmaster-mapper",
+      "priority": "medium",
+      "hint": "Analyzes task lists (.taskmaster/tasks.json or any task/subtask struct...",
+      "keywords": [
+        "analyzes",
+        "lists",
+        "mapper",
+        "task",
+        "taskmaster",
+        "taskmaster-mapper"
+      ],
+      "intentPatterns": [
+        ".*taskmaster.*",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
+    },
+    {
+      "skill": "taskmaster-task-validator",
+      "priority": "high",
+      "hint": "Validate taskmaster tasks against requirements and ensure 100% coverag...",
+      "keywords": [
+        "against",
+        "coverage",
+        "ensure",
+        "requirements",
+        "requisites",
+        "task",
+        "taskmaster",
+        "taskmaster-task-validator"
+      ],
+      "intentPatterns": [
+        ".*taskmaster.*",
+        "(write|implement).*test",
+        "(test|verify|spec)",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "taskmaster-create-task",
+      "priority": "medium",
+      "hint": "A skill for creating structured task specifications based on detailed ...",
+      "keywords": [
+        "analysis",
+        "based",
+        "create",
+        "creating",
+        "description",
+        "detailed",
+        "provided",
+        "skill"
+      ],
+      "intentPatterns": [
+        ".*taskmaster.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "taskmaster-expand-task",
+      "priority": "medium",
+      "hint": "A skill for expanding existing task specifications with additional det...",
+      "keywords": [
+        "additional",
+        "context",
+        "details",
+        "existing",
+        "expand",
+        "expanding",
+        "skill",
+        "specifications"
+      ],
+      "intentPatterns": [
+        ".*taskmaster.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "taskmaster-prd-generator",
+      "priority": "medium",
+      "hint": "Generate structured Product Requirements Documents (PRDs) for developm...",
+      "keywords": [
+        "development",
+        "documents",
+        "generate",
+        "generator",
+        "prd",
+        "prds",
+        "product",
+        "projects"
+      ],
+      "intentPatterns": [
+        ".*taskmaster.*",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "taskmaster-append-tasks",
+      "priority": "medium",
+      "hint": "A skill for appending new tasks to an existing task specification in t...",
+      "keywords": [
+        "append",
+        "appending",
+        "existing",
+        "skill",
+        "specification",
+        "task",
+        "task-master",
+        "taskmaster"
+      ],
+      "intentPatterns": [
+        ".*taskmaster.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "semantic-commit-message",
+      "priority": "high",
+      "hint": "Generate Conventional Commit messages in English based on staged git d...",
+      "keywords": [
+        "based",
+        "commit",
+        "conventional",
+        "diffs",
+        "english",
+        "generate",
+        "message",
+        "messages"
+      ],
+      "intentPatterns": [
+        ".*semantic.*",
+        "(commit|git commit).*message",
+        "(semantic|conventional).*commit",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
     },
     {
       "skill": "prd-generator",
-      "priority": "low",
-      "hint": "for generating product requirements",
-      "keywords": ["PRD", "requirements", "product spec"],
-      "intentPatterns": ["generate.*PRD", "create.*PRD", "write.*requirements"]
+      "priority": "medium",
+      "hint": "Generate complete PRD in 15-20min for ANY project using 5-battery ques...",
+      "keywords": [
+        "battery",
+        "complete",
+        "framework",
+        "generate",
+        "generator",
+        "prd",
+        "prd-generator",
+        "project"
+      ],
+      "intentPatterns": [
+        ".*prd.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
     },
     {
-      "skill": "grilling",
-      "priority": "low",
-      "hint": "for stress-testing plans and designs",
-      "keywords": ["grill", "stress test", "interview", "challenge"],
-      "intentPatterns": ["grill.*", "stress.*test.*plan", "challenge.*design"]
+      "skill": "srs-generator",
+      "priority": "high",
+      "hint": "Generates complete Software Requirements Specification (SRS) documents...",
+      "keywords": [
+        "based",
+        "complete",
+        "documents",
+        "following",
+        "generates",
+        "generator",
+        "ieee",
+        "requirements"
+      ],
+      "intentPatterns": [
+        ".*srs.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "design-image-diff",
+      "priority": "high",
+      "hint": "Use this skill whenever the user wants to compare a design mockup/wire...",
+      "keywords": [
+        "changes",
+        "compare",
+        "design",
+        "design-image-diff",
+        "diff",
+        "differences",
+        "figma",
+        "frontend"
+      ],
+      "intentPatterns": [
+        ".*design.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "tlc-execute-tasks",
+      "priority": "medium",
+      "hint": "Executes feature tasks by tag, integrating spec files with tlc-spec-dr...",
+      "keywords": [
+        "driven",
+        "execute",
+        "executes",
+        "feature",
+        "files",
+        "integrating",
+        "spec",
+        "tasks"
+      ],
+      "intentPatterns": [
+        ".*tlc.*"
+      ]
+    },
+    {
+      "skill": "database-migrations",
+      "priority": "medium",
+      "hint": "Database migration best practices for schema changes, data migrations,...",
+      "keywords": [
+        "across",
+        "best",
+        "changes",
+        "common",
+        "data",
+        "database",
+        "database-migrations",
+        "deployments"
+      ],
+      "intentPatterns": [
+        ".*database.*",
+        "(migrate|upgrade|transition).*"
+      ]
+    },
+    {
+      "skill": "backend-patterns",
+      "priority": "medium",
+      "hint": "Backend architecture patterns, API design, database optimization, and ...",
+      "keywords": [
+        "architecture",
+        "backend",
+        "backend-patterns",
+        "best",
+        "database",
+        "design",
+        "node",
+        "optimization"
+      ],
+      "intentPatterns": [
+        ".*backend.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "deployment-patterns",
+      "priority": "medium",
+      "hint": "Deployment workflows, CI/CD pipeline patterns, Docker containerization...",
+      "keywords": [
+        "applications",
+        "checklists",
+        "checks",
+        "containerization",
+        "deployment",
+        "deployment-patterns",
+        "docker",
+        "health"
+      ],
+      "intentPatterns": [
+        ".*deployment.*"
+      ]
+    },
+    {
+      "skill": "docker-patterns",
+      "priority": "medium",
+      "hint": "Docker and Docker Compose patterns for local development, container se...",
+      "keywords": [
+        "compose",
+        "container",
+        "development",
+        "docker",
+        "docker-patterns",
+        "local",
+        "multi-service",
+        "networking"
+      ],
+      "intentPatterns": [
+        ".*docker.*"
+      ]
+    },
+    {
+      "skill": "api-design",
+      "priority": "medium",
+      "hint": "REST API design patterns including resource naming, status codes, pagi...",
+      "keywords": [
+        "api",
+        "api-design",
+        "apis",
+        "codes",
+        "design",
+        "error",
+        "filtering",
+        "including"
+      ],
+      "intentPatterns": [
+        ".*api.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "agent-harness-construction",
+      "priority": "medium",
+      "hint": "Design and optimize AI agent action spaces, tool definitions, and obse...",
+      "keywords": [
+        "action",
+        "agent",
+        "agent-harness-construction",
+        "completion",
+        "construction",
+        "definitions",
+        "design",
+        "formatting"
+      ],
+      "intentPatterns": [
+        ".*agent.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "deep-research",
+      "priority": "medium",
+      "hint": "Multi-source deep research using firecrawl and exa MCPs. Searches the ...",
+      "keywords": [
+        "deep",
+        "deep-research",
+        "firecrawl",
+        "mcps",
+        "multi-source",
+        "research",
+        "using"
+      ],
+      "intentPatterns": [
+        ".*deep.*",
+        "(research|search|lookup).*",
+        "(deep|thorough).*research"
+      ]
+    },
+    {
+      "skill": "cpp-coding-standards",
+      "priority": "high",
+      "hint": "C++ coding standards based on the C++ Core Guidelines (isocpp.github.i...",
+      "keywords": [
+        "based",
+        "coding",
+        "core",
+        "cpp",
+        "cpp-coding-standards",
+        "guidelines",
+        "isocpp",
+        "standards"
+      ],
+      "intentPatterns": [
+        ".*cpp.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(refactor|cleanup|rewrite).*code",
+        "(safe|improve).*refactor"
+      ]
+    },
+    {
+      "skill": "data-scraper-agent",
+      "priority": "medium",
+      "hint": "Build a fully automated AI-powered data collection agent for any publi...",
+      "keywords": [
+        "agent",
+        "ai-powered",
+        "anything",
+        "automated",
+        "boards",
+        "build",
+        "collection",
+        "data"
+      ],
+      "intentPatterns": [
+        ".*data.*"
+      ]
+    },
+    {
+      "skill": "blueprint",
+      "priority": "high",
+      "hint": "Turn a one-line objective into a step-by-step construction plan for mu...",
+      "keywords": [
+        "blueprint",
+        "construction",
+        "engineering",
+        "into",
+        "multi-agent",
+        "multi-session",
+        "objective",
+        "one-line"
+      ],
+      "intentPatterns": [
+        ".*blueprint.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR"
+      ]
+    },
+    {
+      "skill": "regex-vs-llm-structured-text",
+      "priority": "medium",
+      "hint": "Decision framework for choosing between regex and LLM when parsing str...",
+      "keywords": [
+        "between",
+        "cases",
+        "choosing",
+        "decision",
+        "edge",
+        "framework",
+        "llm",
+        "low-confidence"
+      ],
+      "intentPatterns": [
+        ".*regex.*"
+      ]
+    },
+    {
+      "skill": "coding-standards",
+      "priority": "high",
+      "hint": "Baseline cross-project coding conventions for naming, readability, imm...",
+      "keywords": [
+        "baseline",
+        "code-quality",
+        "coding",
+        "coding-standards",
+        "conventions",
+        "cross-project",
+        "immutability",
+        "naming"
+      ],
+      "intentPatterns": [
+        ".*coding.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR"
+      ]
+    },
+    {
+      "skill": "ai-regression-testing",
+      "priority": "high",
+      "hint": "Regression testing strategies for AI-assisted development. Sandbox-mod...",
+      "keywords": [
+        "ai",
+        "ai-assisted",
+        "ai-regression-testing",
+        "development",
+        "regression",
+        "strategies",
+        "testing"
+      ],
+      "intentPatterns": [
+        ".*ai.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(write|implement).*test",
+        "(test|verify|spec)"
+      ]
+    },
+    {
+      "skill": "content-hash-cache-pattern",
+      "priority": "medium",
+      "hint": "Cache expensive file processing results using SHA-256 content hashes \u2014...",
+      "keywords": [
+        "auto-invalidating",
+        "cache",
+        "content",
+        "content-hash-cache-pattern",
+        "expensive",
+        "file",
+        "hash",
+        "hashes"
+      ],
+      "intentPatterns": [
+        ".*content.*"
+      ]
+    },
+    {
+      "skill": "pr-review",
+      "priority": "high",
+      "hint": "Systematic PR review using GitHub MCP tools. Produces structured repor...",
+      "keywords": [
+        "github",
+        "pr",
+        "pr-review",
+        "review",
+        "systematic",
+        "tools",
+        "using"
+      ],
+      "intentPatterns": [
+        ".*pr.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR",
+        "(analyze|audit|check).*",
+        "(diagnose|debug|investigate)"
+      ]
+    },
+    {
+      "skill": "figma-design-system-to-tailwind",
+      "priority": "medium",
+      "hint": "Extract and convert a Figma Design System to Tailwind CSS v4 configura...",
+      "keywords": [
+        "component",
+        "configuration",
+        "convert",
+        "design",
+        "extract",
+        "figma",
+        "figma-design-system-to-tailwind",
+        "mapping"
+      ],
+      "intentPatterns": [
+        ".*figma.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "figma-mcp",
+      "priority": "medium",
+      "hint": "Provides instructions and workflows for using the Figma MCP (Model-Con...",
+      "keywords": [
+        "figjam",
+        "figma",
+        "figma-mcp",
+        "instructions",
+        "interact",
+        "mcp",
+        "model-context",
+        "protocol"
+      ],
+      "intentPatterns": [
+        ".*figma.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "figma-requirements-screen-mapper",
+      "priority": "medium",
+      "hint": "Map software requirements to Figma screens, producing a table that sho...",
+      "keywords": [
+        "belong",
+        "each",
+        "figma",
+        "figma-requirements-screen-mapper",
+        "mapper",
+        "producing",
+        "requirements",
+        "screen"
+      ],
+      "intentPatterns": [
+        ".*figma.*"
+      ]
+    },
+    {
+      "skill": "figma-requirements-conformance",
+      "priority": "medium",
+      "hint": "Verify conformance between a software requirements specification (SRS)...",
+      "keywords": [
+        "between",
+        "conformance",
+        "design",
+        "document",
+        "figma",
+        "figma-requirements-conformance",
+        "requirements",
+        "screen"
+      ],
+      "intentPatterns": [
+        ".*figma.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "figma-code-connect-components",
+      "priority": "medium",
+      "hint": "Connects Figma design components to code components using Code Connect...",
+      "keywords": [
+        "code",
+        "components",
+        "connect",
+        "connects",
+        "design",
+        "figma",
+        "figma-code-connect-components",
+        "using"
+      ],
+      "intentPatterns": [
+        ".*figma.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "figma-to-code-agentic",
+      "priority": "medium",
+      "hint": "Convert Figma designs into production-ready component code using an ag...",
+      "keywords": [
+        "against",
+        "agentic",
+        "code",
+        "component",
+        "convert",
+        "design",
+        "designs",
+        "figma"
+      ],
+      "intentPatterns": [
+        ".*figma.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
+    },
+    {
+      "skill": "figma-capture",
+      "priority": "medium",
+      "hint": "Captures a screenshot and reference JSX code from a Figma node URL and...",
+      "keywords": [
+        "both",
+        "capture",
+        "captures",
+        "code",
+        "figma",
+        "figma-capture",
+        "from",
+        "node"
+      ],
+      "intentPatterns": [
+        ".*figma.*",
+        "(design|diagram|visualiz).*",
+        "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "caveman-review",
+      "priority": "high",
+      "hint": "Ultra-compressed code review comments. Cuts noise from PR feedback whi...",
+      "keywords": [
+        "caveman",
+        "caveman-review",
+        "code",
+        "comments",
+        "review",
+        "ultra-compressed"
+      ],
+      "intentPatterns": [
+        ".*caveman.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR"
+      ]
+    },
+    {
+      "skill": "caveman-compress",
+      "priority": "medium",
+      "hint": "Compress natural language memory files (CLAUDE.md, todos, preferences)...",
+      "keywords": [
+        "caveman",
+        "caveman-compress",
+        "claude",
+        "compress",
+        "files",
+        "language",
+        "memory",
+        "natural"
+      ],
+      "intentPatterns": [
+        ".*caveman.*"
+      ]
+    },
+    {
+      "skill": "caveman-stats",
+      "priority": "medium",
+      "hint": "Show real token usage and estimated savings for the current session. R...",
+      "keywords": [
+        "caveman",
+        "caveman-stats",
+        "current",
+        "estimated",
+        "real",
+        "savings",
+        "session",
+        "show"
+      ],
+      "intentPatterns": [
+        ".*caveman.*"
+      ]
+    },
+    {
+      "skill": "caveman-help",
+      "priority": "medium",
+      "hint": "Quick-reference card for all caveman modes, skills, and commands. One-...",
+      "keywords": [
+        "card",
+        "caveman",
+        "caveman-help",
+        "commands",
+        "help",
+        "modes",
+        "quick-reference",
+        "skills"
+      ],
+      "intentPatterns": [
+        ".*caveman.*"
+      ]
+    },
+    {
+      "skill": "cavecrew",
+      "priority": "high",
+      "hint": "Decision guide for delegating to caveman-style subagents. Tells the ma...",
+      "keywords": [
+        "cavecrew",
+        "caveman-style",
+        "decision",
+        "delegating",
+        "guide",
+        "subagents"
+      ],
+      "intentPatterns": [
+        ".*cavecrew.*",
+        "(review|audit|check).*code",
+        "(review|audit).*PR"
+      ]
+    },
+    {
+      "skill": "caveman-commit",
+      "priority": "high",
+      "hint": "Ultra-compressed commit message generator. Cuts noise from commit mess...",
+      "keywords": [
+        "caveman",
+        "caveman-commit",
+        "commit",
+        "generator",
+        "message",
+        "ultra-compressed"
+      ],
+      "intentPatterns": [
+        ".*caveman.*",
+        "(commit|git commit).*message",
+        "(semantic|conventional).*commit",
+        "(generate|create|write|produce).*",
+        "(generate|make|build).*PRD"
+      ]
     }
   ]
 }
