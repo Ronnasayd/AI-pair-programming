@@ -156,6 +156,7 @@ def main():
             suggestions = "; ".join(f"`/{m[0]}` — {m[1]}" for m in matches)
             context = f"**Skill suggestions:** {suggestions}"
             output = {"hookSpecificOutput": {"additionalContext": context}}
+            LOG.debug(f"Output: {output}")
             print(json.dumps(output))
         else:
             LOG.debug("No skill matches found")
