@@ -94,7 +94,9 @@ cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
 cost_info=""
 if [ -n "$cost" ]; then
     cost=$(LC_NUMERIC=C printf "%.3f" "$cost")
-    cost_info=" | 󰳴 \$$cost"
+    cost_color="\033[32m"
+    cost_info=" | 󰳴 ${cost_color}\$$cost${RESET}"
+    
 fi
 
 # Rate limit usage (session = 5-hour window, week = 7-day window)
@@ -142,8 +144,8 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
     # Calculate next weekly reset day from resets_at timestamp
     seven_resets_at=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
     if [ -n "$seven_resets_at" ]; then
-        reset_date=$(date -r "$seven_resets_at" "+%b %-d")
-        reset_day=$(date -r "$seven_resets_at" "+%-d")
+        reset_date=$(date -d "@$seven_resets_at" "+%b %-d")
+        reset_day=$(date -d "@$seven_resets_at" "+%-d")
     else
         # Fallback: next Sunday
         dow=$(date +%u)
@@ -160,7 +162,7 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
     esac
     reset_label="${reset_date}${reset_suffix}"
 
-    rate_info=" | ⏱ 5h ${five_color}${five_int}%${RESET} (${time_left} left) | 󰃭 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
+    rate_info=" | ⏱ 5h ${five_color}${five_int}%${RESET} (-${time_left}) | 󰃭 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
 fi
 
 # Output the complete status line
