@@ -77,21 +77,21 @@ def main() -> None:
         tool_name = data.get("tool_name", "")
         tool_input = data.get("tool_input", {})
     except (json.JSONDecodeError, AttributeError):
-        logger.debug("[ContextRefs] Failed to parse stdin JSON, exiting.")
+        logger.debug("Failed to parse stdin JSON, exiting.")
         sys.exit(0)
 
-    logger.debug("[ContextRefs] tool_name=%s", tool_name)
+    logger.debug("tool_name=%s", tool_name)
 
     if tool_name not in ("Edit", "Write"):
-        logger.debug("[ContextRefs] Tool %s not in scope, skipping.", tool_name)
+        logger.debug("Tool %s not in scope, skipping.", tool_name)
         sys.exit(0)
 
     file_path = tool_input.get("file_path", "")
     if not file_path:
-        logger.debug("[ContextRefs] No file_path in tool_input, skipping.")
+        logger.debug("No file_path in tool_input, skipping.")
         sys.exit(0)
 
-    logger.debug("[ContextRefs] file_path=%s", file_path)
+    logger.debug("file_path=%s", file_path)
 
     # Normalize to relative path for glob matching
     try:
@@ -99,26 +99,22 @@ def main() -> None:
     except ValueError:
         rel_path = file_path
     rel_path = rel_path.replace("\\", "/")
-    logger.debug("[ContextRefs] rel_path=%s", rel_path)
+    logger.debug("rel_path=%s", rel_path)
 
     config_path = Path(CONFIG_FILE)
     if not config_path.exists():
-        logger.debug(
-            "[ContextRefs] Config %s not found, exiting silently.", CONFIG_FILE
-        )
+        logger.debug("Config %s not found, exiting silently.", CONFIG_FILE)
         sys.exit(0)
 
     try:
         config = json.loads(config_path.read_text())
     except (json.JSONDecodeError, OSError):
-        logger.debug("[ContextRefs] Failed to parse config %s, exiting.", CONFIG_FILE)
+        logger.debug("Failed to parse config %s, exiting.", CONFIG_FILE)
         sys.exit(0)
 
     refresh_after = config.get("refresh_after", DEFAULT_REFRESH_AFTER)
     rules = config.get("rules", [])
-    logger.debug(
-        "[ContextRefs] refresh_after=%d, rules_count=%d", refresh_after, len(rules)
-    )
+    logger.debug("refresh_after=%d, rules_count=%d", refresh_after, len(rules))
 
     # Build ordered deduplicated union of matching refs
     seen: set[str] = set()
@@ -128,7 +124,7 @@ def main() -> None:
         if not glob:
             continue
         matched = _glob_match(rel_path, glob)
-        logger.debug("[ContextRefs] glob=%s matched=%s", glob, matched)
+        logger.debug("glob=%s matched=%s", glob, matched)
         if not matched:
             continue
         for ref in rule.get("refs", []):
@@ -136,15 +132,15 @@ def main() -> None:
                 seen.add(ref)
                 matched_refs.append(ref)
 
-    logger.debug("[ContextRefs] matched_refs=%s", matched_refs)
+    logger.debug("matched_refs=%s", matched_refs)
 
     if not matched_refs:
-        logger.debug("[ContextRefs] No refs matched for %s, exiting.", rel_path)
+        logger.debug("No refs matched for %s, exiting.", rel_path)
         sys.exit(0)
 
     session_id = get_session_id_short(get_by_key(data, "session_id") or "")
     cache_path = _cache_path(session_id)
-    logger.debug("[ContextRefs] session_id=%s cache_path=%s", session_id, cache_path)
+    logger.debug("session_id=%s cache_path=%s", session_id, cache_path)
     cache = _load_cache(cache_path)
 
     output_lines: list[str] = []
@@ -152,7 +148,7 @@ def main() -> None:
         ref_key = _normalize_path(ref)
         skip_count = cache.get(ref_key)
         logger.debug(
-            "[ContextRefs] ref=%s skip_count=%s refresh_after=%d",
+            "ref=%s skip_count=%s refresh_after=%d",
             ref,
             skip_count,
             refresh_after,
@@ -169,7 +165,7 @@ def main() -> None:
             cache[ref_key] = 0
 
         logger.debug(
-            "[ContextRefs] ref=%s inject=%s new_skip_count=%s",
+            "ref=%s inject=%s new_skip_count=%s",
             ref,
             inject,
             cache[ref_key],
@@ -180,37 +176,37 @@ def main() -> None:
 
         ref_path = Path(ref)
         if not ref_path.exists():
-            logger.debug("[ContextRefs] ref not found: %s", ref)
+            logger.debug("ref not found: %s", ref)
             output_lines.append(f"# WARNING: ref not found: {ref}")
             continue
 
         try:
             contents = ref_path.read_text()
         except OSError:
-            logger.debug("[ContextRefs] Could not read ref: %s", ref)
+            logger.debug("Could not read ref: %s", ref)
             output_lines.append(f"# WARNING: could not read ref: {ref}")
             continue
 
-        logger.debug("[ContextRefs] Injecting ref=%s (%d chars)", ref, len(contents))
+        logger.debug("Injecting ref=%s (%d chars)", ref, len(contents))
         output_lines.append(f"=== {ref} ===")
         output_lines.append(contents)
         output_lines.append("")
 
     _save_cache(cache_path, cache)
-    logger.debug("[ContextRefs] Cache saved. injected=%d lines.", len(output_lines))
+    logger.debug("Cache saved. injected=%d lines.", len(output_lines))
 
     if output_lines:
         result = "\n".join(output_lines)
-        sys.stdout.write(
-            json.dumps(
-                {
-                    "hookSpecificOutput": {
-                        "hookEventName": "PreToolUse",
-                        "additionalContext": result,
-                    }
+        output = json.dumps(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "PreToolUse",
+                    "additionalContext": result,
                 }
-            )
+            }
         )
+        logger.debug("Output: %s", output)
+        sys.stdout.write(output)
 
     sys.exit(0)
 
