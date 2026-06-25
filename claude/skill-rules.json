@@ -3,7 +3,7 @@
     {
       "skill": "git-guide",
       "priority": "medium",
-      "hint": "A comprehensive guide to Git commands and workflows, based on the official...",
+      "hint": "A comprehensive guide to Git commands and workflows, based on the official Git cheat sheet.",
       "keywords": [
         "git-guide",
         "guide",
@@ -23,7 +23,7 @@
     {
       "skill": "skill-advisor",
       "priority": "high",
-      "hint": "Analyzes a task or problem and recommends which available skill(s) are the...",
+      "hint": "Analyzes a task or problem and recommends which available skill(s) are the best fit \u2014 including whether to combine multiple skills together.",
       "keywords": [
         "skill-advisor",
         "advisor",
@@ -88,7 +88,7 @@
     {
       "skill": "modular-monolith-decomposer",
       "priority": "medium",
-      "hint": "Decomposes a system description into Modular Monolith modules using...",
+      "hint": "Decomposes a system description into Modular Monolith modules using Domain-Driven Design (DDD) principles.",
       "keywords": [
         "modular-monolith-decomposer",
         "decomposer",
@@ -111,7 +111,7 @@
     {
       "skill": "leet-code-patterns",
       "priority": "medium",
-      "hint": "Expert guidance on solving LeetCode and coding interview problems using...",
+      "hint": "Expert guidance on solving LeetCode and coding interview problems using the 15 most important algorithmic patterns.",
       "keywords": [
         "leet-code-patterns",
         "patterns",
@@ -153,7 +153,7 @@
     {
       "skill": "tdd",
       "priority": "high",
-      "hint": "Use when implementing any feature or bugfix, before writing implementation...",
+      "hint": "Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first.",
       "keywords": [
         "tdd",
         "implementation",
@@ -175,7 +175,7 @@
     {
       "skill": "test-coverage-review",
       "priority": "high",
-      "hint": "A skill for performing a deep analysis of test coverage for either a task...",
+      "hint": "A skill for performing a deep analysis of test coverage for either a task specification (pre-implementation) or a completed task (post-implementation).",
       "keywords": [
         "test-coverage-review",
         "coverage",
@@ -197,7 +197,7 @@
     {
       "skill": "opencv",
       "priority": "medium",
-      "hint": "Use this skill whenever the user asks about Python OpenCV, computer...",
+      "hint": "Use this skill whenever the user asks about Python OpenCV, computer vision, or image/video processing with cv2.",
       "keywords": [
         "opencv",
         "processing",
@@ -260,7 +260,7 @@
     {
       "skill": "plan-generator",
       "priority": "high",
-      "hint": "Generate structured plans for tasks and projects, saved as date-stamped...",
+      "hint": "Generate structured plans for tasks and projects, saved as date-stamped markdown files in docs/agents/plans/.",
       "keywords": [
         "plan-generator",
         "generator",
@@ -283,7 +283,7 @@
     {
       "skill": "auto-improve",
       "priority": "medium",
-      "hint": "After completing any task, extract reusable rules from what worked and...",
+      "hint": "After completing any task, extract reusable rules from what worked and what failed.",
       "keywords": [
         "auto-improve",
         "improve",
@@ -303,7 +303,7 @@
     {
       "skill": "context7-documentation-lookup",
       "priority": "medium",
-      "hint": "Use up-to-date library and framework docs via Context7 MCP instead of...",
+      "hint": "Use up-to-date library and framework docs via Context7 MCP instead of training data.",
       "keywords": [
         "context7-documentation-lookup",
         "documentation",
@@ -323,7 +323,7 @@
     {
       "skill": "tailwindcss",
       "priority": "medium",
-      "hint": "Tailwind CSS v4 utility-first styling patterns including responsive...",
+      "hint": "Tailwind CSS v4 utility-first styling patterns including responsive design, dark mode, and custom configuration.",
       "keywords": [
         "tailwindcss",
         "configuration",
@@ -345,7 +345,7 @@
     {
       "skill": "python-patterns",
       "priority": "medium",
-      "hint": "Pythonic idioms, PEP 8 standards, type hints, and best practices for...",
+      "hint": "Pythonic idioms, PEP 8 standards, type hints, and best practices for building robust, efficient, and maintainable Python applications.",
       "keywords": [
         "python-patterns",
         "patterns",
@@ -365,7 +365,7 @@
     {
       "skill": "python-testing",
       "priority": "high",
-      "hint": "Python testing strategies using pytest, TDD methodology, fixtures,...",
+      "hint": "Python testing strategies using pytest, TDD methodology, fixtures, mocking, parametrization, and coverage requirements.",
       "keywords": [
         "python-testing",
         "testing",
@@ -387,7 +387,7 @@
     {
       "skill": "python-style-guide",
       "priority": "medium",
-      "hint": "Coding conventions and best practices for Python based on the Google...",
+      "hint": "Coding conventions and best practices for Python based on the Google Python Style Guide, emphasizing readability, explicitness, consistent naming, clear docstrings, safe exception handling, small focused functions, and static typing for writing maintainable production-quality Python code.",
       "keywords": [
         "python-style-guide",
         "python",
@@ -467,7 +467,7 @@
     {
       "skill": "document-summarizer",
       "priority": "high",
-      "hint": "Extract and condense key information from any document or text while...",
+      "hint": "Extract and condense key information from any document or text while preserving critical details.",
       "keywords": [
         "document-summarizer",
         "summarizer",
@@ -487,7 +487,7 @@
     {
       "skill": "code-review",
       "priority": "high",
-      "hint": "A skill for performing structured code reviews based on git diffs and...",
+      "hint": "A skill for performing structured code reviews based on git diffs and specialist instructions.",
       "keywords": [
         "code-review",
         "review",
@@ -509,7 +509,7 @@
     {
       "skill": "codebase-linguistic-analysis-to-csv-export",
       "priority": "medium",
-      "hint": "Identify all non-English text in a codebase (specifically Portuguese...",
+      "hint": "Identify all non-English text in a codebase (specifically Portuguese characters) and export findings to a structured CSV for translation/remediation workflows.",
       "keywords": [
         "codebase-linguistic-analysis-to-csv-export",
         "linguistic",
@@ -529,7 +529,7 @@
     {
       "skill": "orchestrate",
       "priority": "medium",
-      "hint": "Coordinate the execution of complex tasks using multiple specialized...",
+      "hint": "Coordinate the execution of complex tasks using multiple specialized subagents, ensuring dependencies are respected and parallelization is maximized.",
       "keywords": [
         "orchestrate",
         "parallelization",
@@ -549,7 +549,7 @@
     {
       "skill": "resolve-merge-conflicts",
       "priority": "high",
-      "hint": "Use this skill immediately when the user mentions merge conflicts that...",
+      "hint": "Use this skill immediately when the user mentions merge conflicts that need to be resolved.",
       "keywords": [
         "resolve-merge-conflicts",
         "conflicts",
@@ -571,7 +571,7 @@
     {
       "skill": "copilot-sdk",
       "priority": "medium",
-      "hint": "Use this skill whenever the user wants to build Python applications or...",
+      "hint": "Use this skill whenever the user wants to build Python applications or scripts using the GitHub Copilot SDK.",
       "keywords": [
         "copilot-sdk",
         "copilot",
@@ -612,7 +612,7 @@
     {
       "skill": "tlc-tasks-to-taskmaster",
       "priority": "high",
-      "hint": "Convert tasks.md spec files into TaskMaster JSON format...",
+      "hint": "Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json for task list, .taskmaster/execution/metadata.json for strategy).",
       "keywords": [
         "tlc-tasks-to-taskmaster",
         "taskmaster",
@@ -631,7 +631,7 @@
     {
       "skill": "prd-from-codebase",
       "priority": "medium",
-      "hint": "Gera um PRD (Product Requirements Document) completo em Markdown a partir...",
+      "hint": "Gera um PRD (Product Requirements Document) completo em Markdown a partir de uma base de c\u00f3digo existente.",
       "keywords": [
         "prd-from-codebase",
         "codebase",
@@ -651,7 +651,7 @@
     {
       "skill": "event-storming",
       "priority": "high",
-      "hint": "Use this skill whenever the user wants to create, document, or model an...",
+      "hint": "Use this skill whenever the user wants to create, document, or model an Event Storming.",
       "keywords": [
         "event-storming",
         "storming",
@@ -673,7 +673,7 @@
     {
       "skill": "skill-creator",
       "priority": "high",
-      "hint": "Create new skills, modify and improve existing skills, and measure skill...",
+      "hint": "Create new skills, modify and improve existing skills, and measure skill performance.",
       "keywords": [
         "skill-creator",
         "creator",
@@ -695,7 +695,7 @@
     {
       "skill": "frontend-design",
       "priority": "medium",
-      "hint": "Guidance for distinctive, intentional visual design when building new UI...",
+      "hint": "Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one.",
       "keywords": [
         "frontend-design",
         "frontend",
@@ -717,7 +717,7 @@
     {
       "skill": "mcp-builder",
       "priority": "medium",
-      "hint": "Guide for creating high-quality MCP (Model Context Protocol) servers that...",
+      "hint": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools.",
       "keywords": [
         "mcp-builder",
         "builder",
@@ -739,7 +739,7 @@
     {
       "skill": "dynamic-programming-analysis",
       "priority": "medium",
-      "hint": "Use this skill whenever the user presents a problem, challenge, decision,...",
+      "hint": "Use this skill whenever the user presents a problem, challenge, decision, or complex question that needs to be broken down into smaller, manageable sub-problems, just like dynamic programming in computer science.",
       "keywords": [
         "dynamic-programming-analysis",
         "programming",
@@ -762,7 +762,7 @@
     {
       "skill": "skills-discovery",
       "priority": "high",
-      "hint": "Explore all available skills (enabled and disabled) by task or theme to...",
+      "hint": "Explore all available skills (enabled and disabled) by task or theme to discover which skills exist for a problem.",
       "keywords": [
         "skills-discovery",
         "discovery",
@@ -782,7 +782,7 @@
     {
       "skill": "safe-refactor",
       "priority": "high",
-      "hint": "Guide safe refactoring of complex, untested code using a multi-phase...",
+      "hint": "Guide safe refactoring of complex, untested code using a multi-phase hybrid approach: characterization tests \u2192 agent-assisted refactoring \u2192 manual review \u2192 integration testing \u2192 staged rollout.",
       "keywords": [
         "safe-refactor",
         "refactor",
@@ -804,7 +804,7 @@
     {
       "skill": "execute-task",
       "priority": "medium",
-      "hint": "Execute a specified task by reading detailed specifications, analyzing...",
+      "hint": "Execute a specified task by reading detailed specifications, analyzing requirements, planning the approach, and implementing step-by-step.",
       "keywords": [
         "execute-task",
         "execute",
@@ -826,7 +826,7 @@
     {
       "skill": "golang-style-guide",
       "priority": "medium",
-      "hint": "Conventions and best practices for writing readable, maintainable Go code...",
+      "hint": "Conventions and best practices for writing readable, maintainable Go code based on the Google Go Style Guide.",
       "keywords": [
         "golang-style-guide",
         "golang",
@@ -849,7 +849,7 @@
     {
       "skill": "golang-testing",
       "priority": "high",
-      "hint": "Go testing patterns including table-driven tests, subtests, benchmarks,...",
+      "hint": "Go testing patterns including table-driven tests, subtests, benchmarks, fuzzing, and test coverage.",
       "keywords": [
         "golang-testing",
         "testing",
@@ -871,7 +871,7 @@
     {
       "skill": "golang-patterns",
       "priority": "medium",
-      "hint": "Idiomatic Go patterns, best practices, and conventions for building...",
+      "hint": "Idiomatic Go patterns, best practices, and conventions for building robust, efficient, and maintainable Go applications.",
       "keywords": [
         "golang-patterns",
         "patterns",
@@ -931,7 +931,7 @@
     {
       "skill": "frontend-blueprint",
       "priority": "high",
-      "hint": "AI frontend specialist and design consultant that guides users through a...",
+      "hint": "AI frontend specialist and design consultant that guides users through a structured discovery process before generating any code.",
       "keywords": [
         "frontend-blueprint",
         "blueprint",
@@ -953,7 +953,7 @@
     {
       "skill": "tlc-spec-driven",
       "priority": "high",
-      "hint": "Project and feature planning with 4 adaptive phases - Specify, Design,...",
+      "hint": "Project and feature planning with 4 adaptive phases - Specify, Design, Tasks, Execute.",
       "keywords": [
         "tlc-spec-driven",
         "driven",
@@ -976,7 +976,7 @@
     {
       "skill": "figma-implement-design",
       "priority": "medium",
-      "hint": "Translate Figma nodes into production-ready code with 1:1 visual fidelity...",
+      "hint": "Translate Figma nodes into production-ready code with 1:1 visual fidelity using the Figma MCP workflow (design context, screenshots, assets, and project-convention translation).",
       "keywords": [
         "figma-implement-design",
         "implement",
@@ -998,7 +998,7 @@
     {
       "skill": "create-rfc",
       "priority": "high",
-      "hint": "Creates structured Request for Comments (RFC) documents for proposing and...",
+      "hint": "Creates structured Request for Comments (RFC) documents for proposing and deciding on significant changes.",
       "keywords": [
         "create-rfc",
         "create",
@@ -1020,7 +1020,7 @@
     {
       "skill": "subagent-creator",
       "priority": "high",
-      "hint": "Guide for creating AI subagents with isolated context for complex...",
+      "hint": "Guide for creating AI subagents with isolated context for complex multi-step workflows.",
       "keywords": [
         "subagent-creator",
         "subagent",
@@ -1040,7 +1040,7 @@
     {
       "skill": "domain-analysis",
       "priority": "medium",
-      "hint": "Maps business domains and suggests service boundaries in any codebase...",
+      "hint": "Maps business domains and suggests service boundaries in any codebase using DDD Strategic Design.",
       "keywords": [
         "domain-analysis",
         "analysis",
@@ -1062,7 +1062,7 @@
     {
       "skill": "gh-address-comments",
       "priority": "high",
-      "hint": "Address review and issue comments on the open GitHub PR for the current...",
+      "hint": "Address review and issue comments on the open GitHub PR for the current branch using gh CLI.",
       "keywords": [
         "gh-address-comments",
         "comments",
@@ -1084,7 +1084,7 @@
     {
       "skill": "perf-web-optimization",
       "priority": "medium",
-      "hint": "Optimize web performance: bundle size, images, caching, lazy loading, and...",
+      "hint": "Optimize web performance: bundle size, images, caching, lazy loading, and overall page speed.",
       "keywords": [
         "perf-web-optimization",
         "optimization",
@@ -1104,7 +1104,7 @@
     {
       "skill": "mermaid-studio",
       "priority": "high",
-      "hint": "Expert Mermaid diagram creation, validation, and rendering with...",
+      "hint": "Expert Mermaid diagram creation, validation, and rendering with dual-engine output (SVG/PNG/ASCII).",
       "keywords": [
         "mermaid-studio",
         "mermaid",
@@ -1127,7 +1127,7 @@
     {
       "skill": "modular-decomposition",
       "priority": "medium",
-      "hint": "Runs a sequenced monolith-to-modular pipeline that sizes and inventories...",
+      "hint": "Runs a sequenced monolith-to-modular pipeline that sizes and inventories components, finds shared domain duplication, addresses flattening and hierarchy issues, analyzes coupling, then groups components into candidate domain-aligned units, with optional embedded DDD strategic analysis for bounded contexts.",
       "keywords": [
         "modular-decomposition",
         "decomposition",
@@ -1149,7 +1149,7 @@
     {
       "skill": "jira-assistant",
       "priority": "high",
-      "hint": "Manage Jira issues via Atlassian MCP \u2014 search, create, update, transition...",
+      "hint": "Manage Jira issues via Atlassian MCP \u2014 search, create, update, transition status, and handle sprint tasks.",
       "keywords": [
         "jira-assistant",
         "assistant",
@@ -1169,7 +1169,7 @@
     {
       "skill": "coupling-analysis",
       "priority": "medium",
-      "hint": "Analyzes coupling between modules using the three-dimensional model...",
+      "hint": "Analyzes coupling between modules using the three-dimensional model (strength, distance, volatility) from \"Balancing Coupling in Software Design\".",
       "keywords": [
         "coupling-analysis",
         "analysis",
@@ -1192,7 +1192,7 @@
     {
       "skill": "security-best-practices",
       "priority": "high",
-      "hint": "Perform language and framework specific security best-practice reviews and...",
+      "hint": "Perform language and framework specific security best-practice reviews and suggest improvements.",
       "keywords": [
         "security-best-practices",
         "practices",
@@ -1214,7 +1214,7 @@
     {
       "skill": "gh-fix-ci",
       "priority": "high",
-      "hint": "Use when a user asks to debug or fix failing GitHub PR checks that run in...",
+      "hint": "Use when a user asks to debug or fix failing GitHub PR checks that run in GitHub Actions.",
       "keywords": [
         "gh-fix-ci",
         "fix",
@@ -1254,7 +1254,7 @@
     {
       "skill": "legacy-migration-planner",
       "priority": "medium",
-      "hint": "Use when planning legacy system migrations, codebase modernization,...",
+      "hint": "Use when planning legacy system migrations, codebase modernization, monolith decomposition, microservices consolidation, cross-language rewrites, or framework upgrades.",
       "keywords": [
         "legacy-migration-planner",
         "migration",
@@ -1276,7 +1276,7 @@
     {
       "skill": "gtm-engineering",
       "priority": "high",
-      "hint": "When the user wants to build GTM automation with code, design workflow...",
+      "hint": "When the user wants to build GTM automation with code, design workflow architectures, use AI agents for GTM tasks, or implement the 'architecture over tools' principle.",
       "keywords": [
         "gtm-engineering",
         "engineering",
@@ -1299,7 +1299,7 @@
     {
       "skill": "create-adr",
       "priority": "high",
-      "hint": "Creates Architecture Decision Records (ADRs) to document significant...",
+      "hint": "Creates Architecture Decision Records (ADRs) to document significant architectural choices and their rationale for future team members.",
       "keywords": [
         "create-adr",
         "create",
@@ -1341,7 +1341,7 @@
     {
       "skill": "gtm-metrics",
       "priority": "high",
-      "hint": "When the user wants to define GTM metrics, build a metrics dashboard,...",
+      "hint": "When the user wants to define GTM metrics, build a metrics dashboard, measure pipeline efficiency, or track AI product performance.",
       "keywords": [
         "gtm-metrics",
         "metrics",
@@ -1364,7 +1364,7 @@
     {
       "skill": "skill-architect",
       "priority": "high",
-      "hint": "Expert guide for designing and building high-quality skills from scratch...",
+      "hint": "Expert guide for designing and building high-quality skills from scratch through structured conversation.",
       "keywords": [
         "skill-architect",
         "architect",
@@ -1386,7 +1386,7 @@
     {
       "skill": "create-task-spec",
       "priority": "high",
-      "hint": "A skill for creating structured task specifications based on detailed...",
+      "hint": "A skill for creating structured task specifications based on detailed analysis of the provided task description.",
       "keywords": [
         "create-task-spec",
         "create",
@@ -1425,7 +1425,7 @@
     {
       "skill": "analyze-comfyui-workflow-json",
       "priority": "medium",
-      "hint": "Analyze a ComfyUI workflow JSON and produce a structured map of nodes,...",
+      "hint": "Analyze a ComfyUI workflow JSON and produce a structured map of nodes, links, subgraphs, and data flow before making changes.",
       "keywords": [
         "analyze-comfyui-workflow-json",
         "workflow",
@@ -1447,7 +1447,7 @@
     {
       "skill": "tailwind-config-conformance",
       "priority": "high",
-      "hint": "Validate and refactor Tailwind CSS classes to conform with project's...",
+      "hint": "Validate and refactor Tailwind CSS classes to conform with project's tailwind.config definitions.\nUse this skill whenever: agents or developers generate Tailwind classes without checking the config file;\nyou need to enforce consistency with custom theme extensions;\nyou want to replace arbitrary or ad-hoc classes with officially configured alternatives;\nyou're reviewing code and need to ensure all utility classes match the tailwind.config (colors, spacing, typography, etc.);\nyou want to migrate code to use only valid config-defined classes instead of free-form utilities.\nWorks with React, Vue, HTML, Svelte, and any code containing Tailwind classes.",
       "keywords": [
         "tailwind-config-conformance",
         "conformance",
@@ -1470,7 +1470,7 @@
     {
       "skill": "typescript-style-guide",
       "priority": "medium",
-      "hint": "Conventions and best practices for writing maintainable TypeScript code...",
+      "hint": "Conventions and best practices for writing maintainable TypeScript code based on the Google TypeScript Style Guide.",
       "keywords": [
         "typescript-style-guide",
         "typescript",
@@ -1493,7 +1493,7 @@
     {
       "skill": "skill-description-generator",
       "priority": "high",
-      "hint": "Generate skill description fields that trigger correctly with specific...",
+      "hint": "Generate skill description fields that trigger correctly with specific phrases and clear negatives.",
       "keywords": [
         "skill-description-generator",
         "description",
@@ -1515,7 +1515,7 @@
     {
       "skill": "generate-docs-init",
       "priority": "high",
-      "hint": "Use this skill to generate, refactor, or maintain comprehensive project...",
+      "hint": "Use this skill to generate, refactor, or maintain comprehensive project documentation from source code.",
       "keywords": [
         "generate-docs-init",
         "generate",
@@ -1538,7 +1538,7 @@
     {
       "skill": "agent-creator",
       "priority": "high",
-      "hint": "Create new specialist agents, modify and improve existing agents, and...",
+      "hint": "Create new specialist agents, modify and improve existing agents, and validate agent behavior.",
       "keywords": [
         "agent-creator",
         "creator",
@@ -1560,7 +1560,7 @@
     {
       "skill": "handling-large-files",
       "priority": "medium",
-      "hint": "Strategies for reading, chunking, and processing files that exceed...",
+      "hint": "Strategies for reading, chunking, and processing files that exceed practical token limits.",
       "keywords": [
         "handling-large-files",
         "handling",
@@ -1603,7 +1603,7 @@
     {
       "skill": "mcp-manager-instructions",
       "priority": "medium",
-      "hint": "Provide practical guidance for discovering available MCP tools,...",
+      "hint": "Provide practical guidance for discovering available MCP tools, understanding their schemas, and executing them using mcp-manager.",
       "keywords": [
         "mcp-manager-instructions",
         "instructions",
@@ -1623,7 +1623,7 @@
     {
       "skill": "codebase-rules-extractor",
       "priority": "medium",
-      "hint": "Extract and document coding rules, patterns, conventions, and...",
+      "hint": "Extract and document coding rules, patterns, conventions, and anti-patterns from a codebase.",
       "keywords": [
         "codebase-rules-extractor",
         "extractor",
@@ -1645,7 +1645,7 @@
     {
       "skill": "mermaid-erd",
       "priority": "high",
-      "hint": "Generate, render, and explain Mermaid Entity Relationship Diagrams (ERD)...",
+      "hint": "Generate, render, and explain Mermaid Entity Relationship Diagrams (ERD) using erDiagram syntax.",
       "keywords": [
         "mermaid-erd",
         "mermaid",
@@ -1668,7 +1668,7 @@
     {
       "skill": "technical-decision-helper",
       "priority": "medium",
-      "hint": "Helps make informed technical decisions by presenting viable options with...",
+      "hint": "Helps make informed technical decisions by presenting viable options with pros/cons analysis, context searches, and decomposition of complex problems into smaller sub-problems.",
       "keywords": [
         "technical-decision-helper",
         "technical",
@@ -1688,7 +1688,7 @@
     {
       "skill": "generate-pr-description",
       "priority": "high",
-      "hint": "A skill for generating structured Pull Request descriptions based on git...",
+      "hint": "A skill for generating structured Pull Request descriptions based on git diffs and commit history.",
       "keywords": [
         "generate-pr-description",
         "description",
@@ -1711,7 +1711,7 @@
     {
       "skill": "prd-get-implicit-requirements",
       "priority": "high",
-      "hint": "Extract implicit requirements from product requirement documents (PRDs),...",
+      "hint": "Extract implicit requirements from product requirement documents (PRDs), identify coverage gaps across 14 universal categories, and generate clarification questions for stakeholders.",
       "keywords": [
         "prd-get-implicit-requirements",
         "requirements",
@@ -1734,7 +1734,7 @@
     {
       "skill": "frontend-patterns",
       "priority": "medium",
-      "hint": "Frontend development patterns for React, Next.js, state management,...",
+      "hint": "Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices.",
       "keywords": [
         "frontend-patterns",
         "frontend",
@@ -1774,7 +1774,7 @@
     {
       "skill": "taskmaster-mapper",
       "priority": "medium",
-      "hint": "Analyzes task lists (.taskmaster/tasks.json or any task/subtask structure)...",
+      "hint": "Analyzes task lists (.taskmaster/tasks.json or any task/subtask structure) and, for each task and subtask, identifies which skills and agents are most relevant based on the task context, then adds them to the `details` section.",
       "keywords": [
         "taskmaster-mapper",
         "taskmaster",
@@ -1793,7 +1793,7 @@
     {
       "skill": "taskmaster-task-validator",
       "priority": "high",
-      "hint": "Validate taskmaster tasks against requirements and ensure 100% coverage of...",
+      "hint": "Validate taskmaster tasks against requirements and ensure 100% coverage of all requisites.",
       "keywords": [
         "taskmaster-task-validator",
         "taskmaster",
@@ -1816,7 +1816,7 @@
     {
       "skill": "taskmaster-create-task",
       "priority": "high",
-      "hint": "A skill for creating structured task specifications based on detailed...",
+      "hint": "A skill for creating structured task specifications based on detailed analysis of the provided task description.",
       "keywords": [
         "taskmaster-create-task",
         "taskmaster",
@@ -1838,7 +1838,7 @@
     {
       "skill": "taskmaster-expand-task",
       "priority": "high",
-      "hint": "A skill for expanding existing task specifications with additional details...",
+      "hint": "A skill for expanding existing task specifications with additional details and context.",
       "keywords": [
         "taskmaster-expand-task",
         "taskmaster",
@@ -1860,7 +1860,7 @@
     {
       "skill": "taskmaster-prd-generator",
       "priority": "high",
-      "hint": "Generate structured Product Requirements Documents (PRDs) for development...",
+      "hint": "Generate structured Product Requirements Documents (PRDs) for development projects in the `.taskmaster/prds/` directory.",
       "keywords": [
         "taskmaster-prd-generator",
         "taskmaster",
@@ -1882,7 +1882,7 @@
     {
       "skill": "taskmaster-append-tasks",
       "priority": "medium",
-      "hint": "A skill for appending new tasks to an existing task specification in...",
+      "hint": "A skill for appending new tasks to an existing task specification in task-master.",
       "keywords": [
         "taskmaster-append-tasks",
         "taskmaster",
@@ -1926,7 +1926,7 @@
     {
       "skill": "prd-generator",
       "priority": "high",
-      "hint": "Generate complete PRD in 15-20min for ANY project using 5-battery question...",
+      "hint": "Generate complete PRD in 15-20min for ANY project using 5-battery question framework.",
       "keywords": [
         "prd-generator",
         "generator",
@@ -1949,7 +1949,7 @@
     {
       "skill": "srs-generator",
       "priority": "high",
-      "hint": "Generates complete Software Requirements Specification (SRS) documents,...",
+      "hint": "Generates complete Software Requirements Specification (SRS) documents, following the standard template based on ISO/IEC/IEEE 29148:2018.",
       "keywords": [
         "srs-generator",
         "generator",
@@ -1972,7 +1972,7 @@
     {
       "skill": "design-image-diff",
       "priority": "high",
-      "hint": "Use this skill whenever the user wants to compare a design...",
+      "hint": "Use this skill whenever the user wants to compare a design mockup/wireframe/Figma screenshot with a frontend implementation screenshot to identify visual differences and generate a list of changes needed.",
       "keywords": [
         "design-image-diff",
         "design",
@@ -2014,7 +2014,7 @@
     {
       "skill": "database-migrations",
       "priority": "medium",
-      "hint": "Database migration best practices for schema changes, data migrations,...",
+      "hint": "Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Kysely, Django, TypeORM, golang-migrate).",
       "keywords": [
         "database-migrations",
         "migrations",
@@ -2035,7 +2035,7 @@
     {
       "skill": "backend-patterns",
       "priority": "medium",
-      "hint": "Backend architecture patterns, API design, database optimization, and...",
+      "hint": "Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.js API routes.",
       "keywords": [
         "backend-patterns",
         "patterns",
@@ -2057,7 +2057,7 @@
     {
       "skill": "deployment-patterns",
       "priority": "medium",
-      "hint": "Deployment workflows, CI/CD pipeline patterns, Docker containerization,...",
+      "hint": "Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications.",
       "keywords": [
         "deployment-patterns",
         "deployment",
@@ -2077,7 +2077,7 @@
     {
       "skill": "docker-patterns",
       "priority": "medium",
-      "hint": "Docker and Docker Compose patterns for local development, container...",
+      "hint": "Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration.",
       "keywords": [
         "docker-patterns",
         "patterns",
@@ -2097,7 +2097,7 @@
     {
       "skill": "api-design",
       "priority": "medium",
-      "hint": "REST API design patterns including resource naming, status codes,...",
+      "hint": "REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs.",
       "keywords": [
         "api-design",
         "design",
@@ -2119,7 +2119,7 @@
     {
       "skill": "agent-harness-construction",
       "priority": "medium",
-      "hint": "Design and optimize AI agent action spaces, tool definitions, and...",
+      "hint": "Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates.",
       "keywords": [
         "agent-harness-construction",
         "construction",
@@ -2183,7 +2183,7 @@
     {
       "skill": "data-scraper-agent",
       "priority": "medium",
-      "hint": "Build a fully automated AI-powered data collection agent for any public...",
+      "hint": "Build a fully automated AI-powered data collection agent for any public source \u2014 job boards, prices, news, GitHub, sports, anything.",
       "keywords": [
         "data-scraper-agent",
         "scraper",
@@ -2203,7 +2203,7 @@
     {
       "skill": "blueprint",
       "priority": "high",
-      "hint": "Turn a one-line objective into a step-by-step construction plan for...",
+      "hint": "Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects.",
       "keywords": [
         "blueprint",
         "multi-session",
@@ -2225,7 +2225,7 @@
     {
       "skill": "regex-vs-llm-structured-text",
       "priority": "medium",
-      "hint": "Decision framework for choosing between regex and LLM when parsing...",
+      "hint": "Decision framework for choosing between regex and LLM when parsing structured text \u2014 start with regex, add LLM only for low-confidence edge cases.",
       "keywords": [
         "regex-vs-llm-structured-text",
         "structured",
@@ -2245,7 +2245,7 @@
     {
       "skill": "coding-standards",
       "priority": "high",
-      "hint": "Baseline cross-project coding conventions for naming, readability,...",
+      "hint": "Baseline cross-project coding conventions for naming, readability, immutability, and code-quality review.",
       "keywords": [
         "coding-standards",
         "standards",
@@ -2287,7 +2287,7 @@
     {
       "skill": "content-hash-cache-pattern",
       "priority": "medium",
-      "hint": "Cache expensive file processing results using SHA-256 content hashes \u2014...",
+      "hint": "Cache expensive file processing results using SHA-256 content hashes \u2014 path-independent, auto-invalidating, with service layer separation.",
       "keywords": [
         "content-hash-cache-pattern",
         "content",
@@ -2327,7 +2327,7 @@
     {
       "skill": "figma-design-system-to-tailwind",
       "priority": "medium",
-      "hint": "Extract and convert a Figma Design System to Tailwind CSS v4 configuration...",
+      "hint": "Extract and convert a Figma Design System to Tailwind CSS v4 configuration with semantic component mapping.",
       "keywords": [
         "figma-design-system-to-tailwind",
         "tailwind",
@@ -2349,7 +2349,7 @@
     {
       "skill": "figma-mcp",
       "priority": "high",
-      "hint": "Provides instructions and workflows for using the Figma MCP...",
+      "hint": "Provides instructions and workflows for using the Figma MCP (Model-Context-Protocol) server to interact with Figma and FigJam.",
       "keywords": [
         "figma-mcp",
         "figma",
@@ -2372,7 +2372,7 @@
     {
       "skill": "figma-requirements-screen-mapper",
       "priority": "high",
-      "hint": "Map software requirements to Figma screens, producing a table that shows...",
+      "hint": "Map software requirements to Figma screens, producing a table that shows which requirements belong to each screen, and which requirements don't belong to any screen.",
       "keywords": [
         "figma-requirements-screen-mapper",
         "requirements",
@@ -2392,7 +2392,7 @@
     {
       "skill": "figma-requirements-conformance",
       "priority": "medium",
-      "hint": "Verify conformance between a software requirements specification (SRS)...",
+      "hint": "Verify conformance between a software requirements specification (SRS) document and a Figma screen design.",
       "keywords": [
         "figma-requirements-conformance",
         "requirements",
@@ -2433,7 +2433,7 @@
     {
       "skill": "figma-to-code-agentic",
       "priority": "high",
-      "hint": "Convert Figma designs into production-ready component code using an...",
+      "hint": "Convert Figma designs into production-ready component code using an agentic loop that validates implementation against the design.\n\nUse this skill whenever: a Figma link or file is provided and the user wants code generated from it; the user says \"generate this Figma design as React/Vue/HTML\", \"convert this Figma to code\", \"build a component from this design\", \"make it look exactly like Figma\", or \"match the design\"; the user needs pixel-perfect design-to-development handoff; the user mentions needing to validate UI against a Figma spec.\n\nThe skill reads design specs via Figma MCP, auto-detects the framework, generates code, renders a screenshot via browser automation, compares using SSIM (Structural Similarity Index), and iterates up to 10 times until reaching \u22650.9 visual similarity.",
       "keywords": [
         "figma-to-code-agentic",
         "agentic",
@@ -2456,7 +2456,7 @@
     {
       "skill": "figma-capture",
       "priority": "medium",
-      "hint": "Captures a screenshot and reference JSX code from a Figma node URL and...",
+      "hint": "Captures a screenshot and reference JSX code from a Figma node URL and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`.",
       "keywords": [
         "figma-capture",
         "capture",
@@ -2498,7 +2498,7 @@
     {
       "skill": "caveman-compress",
       "priority": "medium",
-      "hint": "Compress natural language memory files (CLAUDE.md, todos, preferences)...",
+      "hint": "Compress natural language memory files (CLAUDE.md, todos, preferences) into caveman format to save input tokens.",
       "keywords": [
         "caveman-compress",
         "compress",
