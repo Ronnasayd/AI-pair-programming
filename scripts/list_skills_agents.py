@@ -2,7 +2,7 @@ import yaml
 from glob import glob
 
 agents = glob("./agents/**/*.agent.md", recursive=True)
-skills = glob("./skills/**/SKILL.md", recursive=True)
+skills = glob("./skills/**/SKILL.md", recursive=True) + glob("./.agents/skills/**/SKILL.md", recursive=True)
 
 
 def generate_descriptions(agents):
