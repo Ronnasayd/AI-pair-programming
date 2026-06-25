@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-import sys
 import json
 import re
-from pathlib import Path
+import sys
 from datetime import datetime, timedelta
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
     get_by_key,
     get_hooks_logger,
+    get_session_id_short,
     read_file,
     write_file,
-    get_session_id_short,
 )
 
 LOG = get_hooks_logger("SkillActivation")
@@ -81,6 +81,63 @@ def should_suggest(skill_name, rec_log):
     return False
 
 
+MAX_SUGGESTIONS = 5
+MIN_SCORE = 5
+
+# Generic action/filler words - low value for skill relevance
+GENERIC_WORDS = {
+    "create",
+    "generate",
+    "write",
+    "make",
+    "build",
+    "add",
+    "get",
+    "use",
+    "whenever",
+    "include",
+    "about",
+    "skill",
+    "using",
+    "based",
+    "always",
+}
+
+
+def score_rule(prompt, rule):
+    """Score match relevance. Higher = more specific/relevant."""
+    prompt_lower = prompt.lower()
+    prompt_words = set(re.findall(r"\b\w+\b", prompt_lower))
+    skill_name = rule.get("skill", "")
+    skill_parts = set(skill_name.lower().split("-"))
+
+    score = 0
+
+    # Skill name parts overlap with prompt words (most specific signal)
+    name_overlap = prompt_words & skill_parts
+    for word in name_overlap:
+        score += 2 if word in GENERIC_WORDS else 5
+
+    # Keyword matches: domain-specific score higher than generic action words
+    for keyword in rule.get("keywords", []):
+        kw_lower = keyword.lower()
+        if kw_lower in prompt_lower:
+            if kw_lower in GENERIC_WORDS:
+                score += 1
+            else:
+                score += len(kw_lower.split()) * 3
+
+    # Pattern matches: low score (catch-all patterns)
+    for pattern in rule.get("intentPatterns", []):
+        try:
+            if re.search(pattern, prompt, re.IGNORECASE):
+                score += 1
+        except re.error:
+            pass
+
+    return score
+
+
 def match_rule(prompt, rule):
     keywords = rule.get("keywords", [])
     intent_patterns = rule.get("intentPatterns", [])
@@ -139,23 +196,36 @@ def main():
         sorted_rules = sort_rules_by_priority(rules)
         LOG.debug(f"Processing {len(sorted_rules)} rules (prioritized)")
 
-        matches = []
+        scored_matches = []
         for rule in sorted_rules:
             skill_name = rule.get("skill")
             if not skill_name:
                 continue
 
             if match_rule(prompt, rule) and should_suggest(skill_name, rec_log):
-                hint = rule.get("hint", "")
-                matches.append((skill_name, hint))
-                rec_log[skill_name] = datetime.now().isoformat()
+                score = score_rule(prompt, rule)
+                LOG.debug(f"Skill '{skill_name}' score: {score}")
+                if score >= MIN_SCORE:
+                    hint = rule.get("hint", "")
+                    scored_matches.append((score, skill_name, hint))
+
+        scored_matches.sort(key=lambda x: x[0], reverse=True)
+        matches = [(name, hint) for _, name, hint in scored_matches[:MAX_SUGGESTIONS]]
+
+        for name, _ in matches:
+            rec_log[name] = datetime.now().isoformat()
 
         if matches:
             LOG.debug(f"Found {len(matches)} skill matches: {[m[0] for m in matches]}")
             save_rec_log(rec_log_path, rec_log)
             suggestions = "; ".join(f"`/{m[0]}` — {m[1]}" for m in matches)
             context = f"**Skill suggestions:** {suggestions}"
-            output = {"hookSpecificOutput": {"additionalContext": context}}
+            output = {
+                "hookSpecificOutput": {
+                    "hookEventName": "UserPromptSubmit",
+                    "additionalContext": context,
+                }
+            }
             LOG.debug(f"Output: {output}")
             print(json.dumps(output))
         else:
