@@ -61,7 +61,6 @@ def save_rec_log(rec_log_path: Path, rec_log):
 
 def should_suggest(skill_name, rec_log):
     if skill_name not in rec_log:
-        LOG.debug(f"Skill '{skill_name}' not in rec log, will suggest")
         return True
     last_iso = rec_log[skill_name]
     try:

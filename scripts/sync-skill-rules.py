@@ -103,24 +103,15 @@ def extract_keywords_smart(desc, name):
 
 
 def format_hint(desc):
-    """Format hint: complete first sentence or smart truncation"""
+    """Format hint: complete first sentence, no truncation"""
     if not desc:
         return ""
 
-    # Try to get complete first sentence
     sentences = desc.split(". ")
-    first = sentences[0] + ("." if not sentences[0].endswith(".") else "")
-
-    if len(first) <= 80:
-        return first
-
-    # Smart truncation: break at word boundary
-    truncated = desc[:75]
-    last_space = truncated.rfind(" ")
-    if last_space > 50:
-        return desc[:last_space] + "..."
-
-    return truncated + "..."
+    first = sentences[0]
+    if not first.endswith("."):
+        first += "."
+    return first
 
 
 def generate_rules(yaml_path):
