@@ -96,7 +96,7 @@ fi
 ln -s "$SOURCE/claude/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
 ########################################################################################
 ########################################################################################
-if ! [ -L "$LOCAL/$DEFAULT_FOLDER/context-refs.json" ]; then
+if ! [ -e "$LOCAL/$DEFAULT_FOLDER/context-refs.json" ]; then
 ln -s "$SOURCE/claude/context-refs.json" "$LOCAL/$DEFAULT_FOLDER/context-refs.json"
 fi
 ########################################################################################
