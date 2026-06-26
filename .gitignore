@@ -228,3 +228,4 @@ skills-lock.json
 .specs/*
 docs/plans/*
 skills.db
+.claude/skills/skills.db
