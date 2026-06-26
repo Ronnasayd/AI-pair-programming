@@ -85,7 +85,7 @@
       "Bash(docker stop:*)"
     ]
   },
-  "model": "sonnet",
+  "model": "haiku",
   "hooks": {
     "PreToolUse": [
       {
@@ -302,5 +302,10 @@
   },
   "effortLevel": "low",
   "plansDirectory": "./docs/plans/",
-  "skipDangerousModePermissionPrompt": true
+  "voice": {
+    "enabled": false,
+    "mode": "hold"
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "voiceEnabled": false
 }
