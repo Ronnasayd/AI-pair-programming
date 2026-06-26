@@ -168,6 +168,11 @@
           {
             "type": "command",
             "command": ".claude/hooks/scripts/log_hooks.py"
+          },
+          {
+            "type": "command",
+            "command": "hooks/scripts/session_start.py",
+            "timeout": 5
           }
         ]
       },
