@@ -10,7 +10,7 @@ import sys
 import time
 from pathlib import Path
 
-MODEL_NAME = "all-MiniLM-L6-v2"
+MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 INACTIVITY_TIMEOUT = 30 * 60  # 30 min
 
 

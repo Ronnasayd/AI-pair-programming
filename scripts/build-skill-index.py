@@ -42,7 +42,7 @@ def main():
     from sentence_transformers import SentenceTransformer
 
     print("Loading model...")
-    model = SentenceTransformer("all-MiniLM-L6-v2")
+    model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
     with open(index_path) as f:
         data = yaml.safe_load(f)
