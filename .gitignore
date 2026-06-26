@@ -225,3 +225,6 @@ skills-lock.json
 .agents/mcp_config.json
 .claude/context-refs.json
 .claude/skill-rules.json
+.specs/*
+docs/plans/*
+skills.db

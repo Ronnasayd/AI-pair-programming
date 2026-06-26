@@ -1,3 +1,4 @@
+sentence-transformers>=3.0.0
 aiohappyeyeballs==2.6.1
 aiohttp==3.12.15
 aioquic==1.2.0

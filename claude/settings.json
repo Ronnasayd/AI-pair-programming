@@ -85,7 +85,7 @@
       "Bash(docker stop:*)"
     ]
   },
-  "model": "haiku",
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": [
       {
@@ -201,15 +201,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\"",
-            "timeout": 5,
-            "statusMessage": "Tracking caveman mode..."
+            "command": ".claude/hooks/scripts/skill_activation.py",
+            "timeout": 10,
+            "statusMessage": "Finding relevant skills..."
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/skill_activation.py",
+            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\"",
             "timeout": 5,
-            "statusMessage": "Checking skill triggers..."
+            "statusMessage": "Tracking caveman mode..."
           },
           {
             "type": "command",
