@@ -23,7 +23,7 @@ from utils import (
 LOG = get_hooks_logger("SkillActivation")
 
 DB_PATH = Path(".claude/skills/skills.db")
-MODEL_NAME = "all-MiniLM-L6-v2"
+MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 MIN_SIMILARITY = 0.45
 MAX_SUGGESTIONS = 5
 DEDUP_HOURS = 24
