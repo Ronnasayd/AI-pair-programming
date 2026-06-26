@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 import json
+import socket
 import sqlite3
+import subprocess
 import sys
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -11,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
     get_by_key,
     get_hooks_logger,
+    get_project_name,
     get_session_id_short,
     read_file,
     write_file,
@@ -23,6 +27,70 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 MIN_SIMILARITY = 0.45
 MAX_SUGGESTIONS = 5
 DEDUP_HOURS = 24
+DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
+DAEMON_START_TIMEOUT = 10
+
+
+def getDaemonSocketPath() -> str:
+    return f"/tmp/embedding-daemon-{get_project_name()}.sock"
+
+
+def isDaemonRunning(sock_path: str) -> bool:
+    try:
+        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        conn.connect(sock_path)
+        conn.close()
+        return True
+    except (ConnectionRefusedError, FileNotFoundError, OSError):
+        return False
+
+
+def startDaemon(sock_path: str) -> None:
+    subprocess.Popen(
+        [sys.executable, str(DAEMON_SCRIPT)],
+        start_new_session=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    LOG.debug(f"Daemon started — socket={sock_path}")
+
+
+def waitForDaemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if isDaemonRunning(sock_path):
+            return True
+        time.sleep(0.2)
+    return False
+
+
+def encodeViaDaemon(text: str) -> np.ndarray | None:
+    sock_path = getDaemonSocketPath()
+    if not isDaemonRunning(sock_path):
+        LOG.debug("Daemon not running — starting")
+        startDaemon(sock_path)
+        if not waitForDaemon(sock_path):
+            LOG.warning("Daemon failed to start within timeout")
+            return None
+    try:
+        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        conn.connect(sock_path)
+        conn.sendall((json.dumps({"text": text}) + "\n").encode())
+        data = b""
+        while not data.endswith(b"\n"):
+            chunk = conn.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+        conn.close()
+        response = json.loads(data.decode())
+        if "error" in response:
+            LOG.warning(f"Daemon error: {response['error']}")
+            return None
+        return np.array(response["vector"], dtype=np.float32)
+    except Exception as e:
+        LOG.warning(f"Daemon communication failed: {e}")
+        return None
 
 
 def loadRecLog(rec_log_path: Path):
@@ -88,10 +156,13 @@ def main():
         sys.exit(0)
 
     try:
-        from sentence_transformers import SentenceTransformer
-    except ImportError:
-        LOG.warning("sentence-transformers not installed")
-        sys.exit(0)
+        import importlib.util
+
+        if importlib.util.find_spec("sentence_transformers") is None:
+            LOG.warning("sentence-transformers not installed")
+            sys.exit(0)
+    except Exception:
+        pass
 
     try:
         payload = json.load(sys.stdin)
@@ -114,9 +185,11 @@ def main():
         rec_log = loadRecLog(rec_log_path)
         LOG.debug(f"Rec log has {len(rec_log)} entries: {list(rec_log.keys())}")
 
-        LOG.debug(f"Loading model: {MODEL_NAME}")
-        model = SentenceTransformer(MODEL_NAME)
-        query_vector = model.encode(prompt).astype(np.float32)
+        LOG.debug("Requesting embedding from daemon")
+        query_vector = encodeViaDaemon(prompt)
+        if query_vector is None:
+            LOG.warning("Failed to get embedding — skipping")
+            sys.exit(0)
         LOG.debug(f"Query vector shape: {query_vector.shape}")
 
         skills_raw = loadDbSkills(DB_PATH)
@@ -152,7 +225,7 @@ def main():
                     "additionalContext": f"**Skill suggestions:** {suggestions}",
                 }
             }
-            LOG.debug(f"Output JSON size: {len(json.dumps(output))} bytes")
+            LOG.debug(f"Output JSON: {json.dumps(output)}")
             print(json.dumps(output))
         else:
             LOG.debug("No skill matches after dedup filter")

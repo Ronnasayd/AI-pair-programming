@@ -1,13 +1,13 @@
 ---
 name: prd-from-codebase
 description: >
-  Gera um PRD (Product Requirements Document) completo em Markdown a partir de uma base de código existente.
-  Use esta skill sempre que o usuário quiser documentar um software sem documentação, entender o que um projeto faz,
-  gerar um documento de produto a partir de código, mapear funcionalidades de uma aplicação, identificar agentes/papéis
-  de um sistema, ou quando mencionar termos como "PRD", "documentar o projeto", "gerar documentação do produto",
-  "o que esse código faz", "mapear funcionalidades", "entender a base de código", "reverse PRD" ou similares.
-  A skill usa as ferramentas disponíveis (bash, view, etc.) para explorar autonomamente a base de código
-  antes de gerar o documento — o usuário não precisa colar código manualmente.
+  Generates a complete Product Requirements Document (PRD) in Markdown from an existing codebase.
+  Use this skill whenever the user wants to document software without documentation, understand what a project does,
+  generate a product document from code, map application features, identify system agents/roles,
+  or mentions terms such as "PRD", "document the project", "generate product documentation",
+  "what does this code do", "map features", "understand the codebase", "reverse PRD", or similar.
+  The skill uses the available tools (bash, view, etc.) to autonomously explore the codebase
+  before generating the document—the user does not need to manually paste any code.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"
@@ -15,27 +15,27 @@ metadata:
 
 # PRD from Codebase
 
-Gera um PRD estruturado e profissional a partir da análise autônoma de uma base de código, usando as ferramentas disponíveis para explorar arquivos, dependências, rotas e estrutura do projeto.
+Generates a structured, professional PRD from the autonomous analysis of an existing codebase, using the available tools to explore files, dependencies, routes, and project structure.
 
 ---
 
-## Fluxo de execução
+## Execution Flow
 
-### FASE 1 — Descoberta do projeto
+### PHASE 1 — Project Discovery
 
-Antes de escrever qualquer linha do PRD, execute as etapas de descoberta abaixo em ordem. **Não pule etapas.** Use `bash_tool` e `view` para cada uma.
+Before writing any part of the PRD, execute the discovery steps below in order. **Do not skip any steps.** Use `bash_tool` and `view` for each one.
 
-#### 1.1 Localizar o projeto
+#### 1.1 Locate the project
 
-Se o usuário informou um caminho, use-o. Caso contrário, procure em ordem:
+If the user provided a path, use it. Otherwise, search in this order:
 
 ```bash
-ls /mnt/user-data/uploads/        # arquivos enviados via upload
-ls /home/claude/                   # diretório de trabalho
+ls /mnt/user-data/uploads/        # uploaded files
+ls /home/claude/                  # working directory
 find / -name "package.json" -o -name "requirements.txt" -o -name "go.mod" 2>/dev/null | head -20
 ```
 
-#### 1.2 Mapear a estrutura de alto nível
+#### 1.2 Map the high-level structure
 
 ```bash
 find <ROOT> -type f \
@@ -48,48 +48,50 @@ find <ROOT> -type f \
   | head -120
 ```
 
-Depois use `view <ROOT>` para ter a visão em árvore de 2 níveis.
+Then use `view <ROOT>` to obtain a two-level tree view.
 
-#### 1.3 Identificar a stack tecnológica
+#### 1.3 Identify the technology stack
 
-Leia os arquivos de manifesto/dependências relevantes. Leia **todos** que existirem:
+Read the relevant manifest/dependency files. Read **every** file that exists:
 
-| Arquivo                                            | Stack                         |
-| -------------------------------------------------- | ----------------------------- |
-| `package.json`                                     | Node / JS / TS                |
-| `requirements.txt` / `pyproject.toml` / `setup.py` | Python                        |
-| `go.mod`                                           | Go                            |
-| `Cargo.toml`                                       | Rust                          |
-| `pom.xml` / `build.gradle`                         | Java / Kotlin                 |
-| `Gemfile`                                          | Ruby                          |
-| `composer.json`                                    | PHP                           |
-| `*.csproj` / `*.sln`                               | .NET / C#                     |
-| `Dockerfile` / `docker-compose.yml`                | Infraestrutura                |
-| `.env.example` / `.env.sample`                     | Variáveis e serviços externos |
+| File                                               | Stack                                       |
+| -------------------------------------------------- | ------------------------------------------- |
+| `package.json`                                     | Node / JS / TS                              |
+| `requirements.txt` / `pyproject.toml` / `setup.py` | Python                                      |
+| `go.mod`                                           | Go                                          |
+| `Cargo.toml`                                       | Rust                                        |
+| `pom.xml` / `build.gradle`                         | Java / Kotlin                               |
+| `Gemfile`                                          | Ruby                                        |
+| `composer.json`                                    | PHP                                         |
+| `*.csproj` / `*.sln`                               | .NET / C#                                   |
+| `Dockerfile` / `docker-compose.yml`                | Infrastructure                              |
+| `.env.example` / `.env.sample`                     | Environment variables and external services |
 
-#### 1.4 Ler arquivos de entrada do projeto
+#### 1.4 Read the project's entry files
 
-Leia nesta ordem de prioridade:
+Read them in the following priority order:
 
-1. `README.md` ou `README.rst` (visão geral existente)
-2. Arquivos de configuração principal (`config.js`, `settings.py`, `appsettings.json`, etc.)
-3. Ponto de entrada da aplicação (`main.py`, `index.js`, `app.py`, `server.ts`, `Program.cs`, `main.go`, etc.)
+1. `README.md` or `README.rst` (existing project overview)
+2. Main configuration files (`config.js`, `settings.py`, `appsettings.json`, etc.)
+3. Application entry point (`main.py`, `index.js`, `app.py`, `server.ts`, `Program.cs`, `main.go`, etc.)
 
-#### 1.5 Mapear módulos e domínios
+#### 1.5 Map modules and domains
 
-Identifique as pastas de domínio/módulo (ex: `src/`, `app/`, `modules/`, `services/`, `controllers/`, `features/`).
-Para cada módulo principal, leia seu arquivo de índice ou o arquivo mais representativo:
+Identify the domain/module folders (e.g. `src/`, `app/`, `modules/`, `services/`, `controllers/`, `features/`).
+
+For each main module, read its index file or the most representative file:
 
 ```bash
-# Exemplo para projetos Node/TS:
+# Example for Node/TypeScript projects:
 find <ROOT>/src -name "index.*" | head -30
-# Exemplo para projetos Python:
+
+# Example for Python projects:
 find <ROOT> -name "__init__.py" | head -30
 ```
 
-#### 1.6 Descobrir rotas e endpoints
+#### 1.6 Discover routes and endpoints
 
-Busque padrões de roteamento conforme a stack:
+Search for routing patterns according to the project's stack:
 
 ```bash
 # Express / Fastify / Koa (JS)
@@ -105,28 +107,28 @@ grep -r "\.GET\|\.POST\|\.PUT\|\.DELETE\|Handle\|HandleFunc" <ROOT> --include="*
 find <ROOT> -name "routes.rb"
 ```
 
-Depois leia os arquivos encontrados para extrair os endpoints.
+Then read the discovered files to extract the endpoints.
 
-#### 1.7 Identificar agentes, papéis e entidades
+#### 1.7 Identify agents, roles, and entities
 
-Busque por:
+Search for:
 
-- Modelos de dados / entidades (`models/`, `entities/`, `schemas/`)
-- Serviços de negócio (`services/`, `usecases/`, `handlers/`)
-- Integrações externas (`integrations/`, `adapters/`, `clients/`, `providers/`)
-- Autenticação e papéis de usuário (busque por "role", "permission", "auth", "guard", "middleware")
-- Workers / jobs / agendadores (busque por "queue", "worker", "cron", "scheduler", "job")
+- Data models/entities (`models/`, `entities/`, `schemas/`)
+- Business services (`services/`, `usecases/`, `handlers/`)
+- External integrations (`integrations/`, `adapters/`, `clients/`, `providers/`)
+- Authentication and user roles (search for `"role"`, `"permission"`, `"auth"`, `"guard"`, `"middleware"`)
+- Workers/jobs/schedulers (search for `"queue"`, `"worker"`, `"cron"`, `"scheduler"`, `"job"`)
 
 ```bash
 grep -r "role\|permission\|admin\|user\|auth" <ROOT>/src --include="*.ts" --include="*.js" --include="*.py" -l | head -15
 ```
 
-#### 1.8 Mapear integrações e fluxos de dados
+#### 1.8 Map integrations and data flows
 
-Identifique serviços externos e fluxos:
+Identify external services and data flows:
 
 ```bash
-# Buscar imports de SDKs, clients HTTP e filas
+# Search for SDK imports, HTTP clients, and queue libraries
 grep -r "import\|require\|from" <ROOT>/src --include="*.ts" --include="*.js" --include="*.py" | \
   grep -iE "stripe|sendgrid|twilio|s3|sqs|redis|rabbitmq|kafka|openai|anthropic|firebase|supabase|prisma|mongoose|sequelize|typeorm|axios|fetch|httpx|requests" | \
   head -40
@@ -134,44 +136,44 @@ grep -r "import\|require\|from" <ROOT>/src --include="*.ts" --include="*.js" --i
 
 ---
 
-### FASE 2 — Síntese e geração do PRD
+### PHASE 2 — Synthesis and PRD Generation
 
-Com todas as informações coletadas, gere o PRD seguindo **exatamente** o template em `references/prd-template.md`.
+Using all the collected information, generate the PRD by following **exactly** the template in `references/prd-template.md`.
 
-**Regras de geração:**
+**Generation rules:**
 
-- Escreva em linguagem clara e orientada a produto — não técnica demais, não vaga demais
-- Cada seção deve ter conteúdo real extraído do código — **nunca deixe seções genéricas ou com placeholder**
-- Se uma seção não se aplicar (ex: sem workers), omita-a completamente
-- Infira nomes de produto/sistema a partir do `package.json` (campo `name`), `README`, ou nome da pasta raiz
-- Ao listar endpoints, use o formato `MÉTODO /caminho — descrição inferida`
-- Ao descrever funcionalidades, use bullets curtos e diretos ao ponto
-- Adicione uma seção `⚠️ Limitações da Análise` ao final caso alguma parte do código não tenha sido possível analisar
+- Write in clear, product-oriented language—not overly technical, but not vague either.
+- Every section must contain real information extracted from the code—**never leave generic sections or placeholders**.
+- If a section does not apply (e.g. no workers), omit it entirely.
+- Infer the product/system name from `package.json` (`name` field), the `README`, or the root folder name.
+- When listing endpoints, use the format `METHOD /path — inferred description`.
+- When describing features, use short, direct bullet points.
+- Add a `⚠️ Analysis Limitations` section at the end if any part of the codebase could not be analyzed.
 
-### FASE 3 — Salvar o arquivo
+### PHASE 3 — Save the file
 
-Salve o PRD gerado em:
+Save the generated PRD to:
 
+```text
+/mnt/user-data/outputs/<project-name>-prd.md
 ```
-/mnt/user-data/outputs/<nome-do-projeto>-prd.md
-```
 
-Depois use `present_files` para entregar ao usuário.
+Then use `present_files` to deliver it to the user.
 
 ---
 
-## Boas práticas de análise
+## Analysis Best Practices
 
-- **Não assuma** — se não encontrou algo, diga que não encontrou
-- **Priorize código sobre comentários** — o código é a fonte de verdade
-- **Leia no mínimo 5-10 arquivos centrais** antes de escrever qualquer coisa
-- **Busque por testes** (`__tests__/`, `tests/`, `spec/`) — eles revelam comportamentos esperados
-- **Verifique variáveis de ambiente** — revelam serviços externos e configurações críticas
-- Se o projeto for muito grande (>500 arquivos), foque nos módulos com mais conexões (mais importados)
+- **Do not assume**—if you could not find something, explicitly state that.
+- **Prioritize code over comments**—the code is the source of truth.
+- **Read at least 5–10 core files** before writing anything.
+- **Search for tests** (`__tests__/`, `tests/`, `spec/`)—they reveal expected behavior.
+- **Inspect environment variables**—they often reveal external services and critical configuration.
+- If the project is very large (>500 files), focus on the modules with the highest connectivity (most imported).
 
 ---
 
-## Leia antes de gerar
+## Read Before Generating
 
-→ `references/prd-template.md` — Template obrigatório do PRD
-→ `references/stack-hints.md` — Dicas por linguagem/framework para localizar rotas, modelos e serviços
+→ `references/prd-template.md` — Required PRD template
+→ `references/stack-hints.md` — Language/framework-specific tips for locating routes, models, and services
