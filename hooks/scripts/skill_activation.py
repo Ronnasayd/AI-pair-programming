@@ -20,7 +20,7 @@ LOG = get_hooks_logger("SkillActivation")
 
 DB_PATH = Path(".claude/skills/skills.db")
 MODEL_NAME = "all-MiniLM-L6-v2"
-MIN_SIMILARITY = 0.35
+MIN_SIMILARITY = 0.4
 MAX_SUGGESTIONS = 5
 DEDUP_HOURS = 24
 
@@ -95,36 +95,55 @@ def main():
 
     try:
         payload = json.load(sys.stdin)
-    except (json.JSONDecodeError, EOFError):
+        LOG.debug(f"Payload keys: {list(payload.keys())}")
+    except (json.JSONDecodeError, EOFError) as e:
+        LOG.debug(f"Failed to parse stdin JSON: {e}")
         sys.exit(0)
 
     try:
         prompt = get_by_key(payload, "prompt")
         if not prompt:
+            LOG.debug("No prompt in payload — skipping")
             sys.exit(0)
 
-        LOG.debug(f"Processing prompt ({len(prompt)} chars)")
+        LOG.debug(f"Processing prompt ({len(prompt)} chars): {prompt[:80]!r}...")
 
         session_id = get_session_id_short(get_by_key(payload, "session_id") or "")
         rec_log_path = Path(f"/tmp/skill-rec-log-{session_id}.json")
+        LOG.debug(f"Session: {session_id} | rec_log: {rec_log_path}")
         rec_log = loadRecLog(rec_log_path)
+        LOG.debug(f"Rec log has {len(rec_log)} entries: {list(rec_log.keys())}")
 
+        LOG.debug(f"Loading model: {MODEL_NAME}")
         model = SentenceTransformer(MODEL_NAME)
         query_vector = model.encode(prompt).astype(np.float32)
+        LOG.debug(f"Query vector shape: {query_vector.shape}")
+
+        skills_raw = loadDbSkills(DB_PATH)
+        LOG.debug(f"Loaded {len(skills_raw)} skills from DB")
 
         candidates = findSkills(
             DB_PATH, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
         )
+        LOG.debug(
+            f"Candidates above sim={MIN_SIMILARITY}: {[(name, f'{sim:.3f}') for sim, name, _ in candidates]}"
+        )
+
         matches = [
             (name, hint) for _, name, hint in candidates if shouldSuggest(name, rec_log)
         ]
+        skipped = [
+            name for _, name, _ in candidates if not shouldSuggest(name, rec_log)
+        ]
+        if skipped:
+            LOG.debug(f"Skipped (dedup {DEDUP_HOURS}h): {skipped}")
         matches = matches[:MAX_SUGGESTIONS]
 
         for name, _ in matches:
             rec_log[name] = datetime.now().isoformat()
 
         if matches:
-            LOG.debug(f"Found {len(matches)} matches: {[m[0] for m in matches]}")
+            LOG.debug(f"Final matches ({len(matches)}): {[m[0] for m in matches]}")
             saveRecLog(rec_log_path, rec_log)
             suggestions = "; ".join(f"`/{m[0]}` — {m[1]}" for m in matches)
             output = {
@@ -133,12 +152,13 @@ def main():
                     "additionalContext": f"**Skill suggestions:** {suggestions}",
                 }
             }
+            LOG.debug(f"Output JSON size: {len(json.dumps(output))} bytes")
             print(json.dumps(output))
         else:
-            LOG.debug("No skill matches found")
+            LOG.debug("No skill matches after dedup filter")
 
     except Exception as e:
-        LOG.debug(f"Unexpected error: {e}")
+        LOG.warning(f"Unexpected error: {type(e).__name__}: {e}", exc_info=True)
 
     sys.exit(0)
 
