@@ -1,6 +1,6 @@
 # agent.instructions.md
 # code.instructions.md
-# test.instructions.md
+test.instructions.md
 http.instructions.md
 jsdocs.instructions.md
 node-ts.instructions.md
@@ -9,3 +9,4 @@ react.instructions.md
 reactjs.instructions.md
 test-typescript-node-backend.instructions.md
 vue.instructions.md
+docs.instructions.md
