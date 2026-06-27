@@ -24,7 +24,7 @@ LOG = get_hooks_logger("SkillActivation")
 
 DB_PATH = Path(".claude/skills/skills.db")
 MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
-MIN_SIMILARITY = 0.45
+MIN_SIMILARITY = 0.48
 MAX_SUGGESTIONS = 5
 DEDUP_HOURS = 24
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
