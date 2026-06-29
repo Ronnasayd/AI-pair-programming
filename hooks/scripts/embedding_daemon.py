@@ -10,7 +10,7 @@ import sys
 import time
 from pathlib import Path
 
-MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
+MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 INACTIVITY_TIMEOUT = 30 * 60  # 30 min
 
 
@@ -42,12 +42,12 @@ def main():
     LOG.debug(f"Daemon starting — project={project_name} socket={sock_path}")
 
     try:
-        from sentence_transformers import SentenceTransformer
+        from fastembed import TextEmbedding
     except ImportError:
-        LOG.error("sentence-transformers not installed")
+        LOG.error("fastembed not installed")
         sys.exit(1)
 
-    model = SentenceTransformer(MODEL_NAME)
+    model = TextEmbedding(MODEL_NAME)
     LOG.debug(f"Model '{MODEL_NAME}' loaded")
 
     # Write PID
@@ -100,7 +100,7 @@ def main():
 
             request = json.loads(data.decode())
             text = request.get("text", "")
-            vector = model.encode(text).astype("float32").tolist()
+            vector = list(model.embed([text]))[0].tolist()
             response = json.dumps({"vector": vector}) + "\n"
             conn.sendall(response.encode())
         except Exception as e:

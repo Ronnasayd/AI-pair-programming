@@ -6,7 +6,6 @@ import sqlite3
 import sys
 from pathlib import Path
 
-import numpy as np
 import yaml
 
 
@@ -39,10 +38,10 @@ def main():
             print("Index up-to-date")
             sys.exit(0)
 
-    from sentence_transformers import SentenceTransformer
+    from fastembed import TextEmbedding
 
     print("Loading model...")
-    model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+    model = TextEmbedding("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
 
     with open(index_path) as f:
         data = yaml.safe_load(f)
@@ -71,7 +70,7 @@ def main():
         name = names[0] if isinstance(names, list) else names
         desc = skill.get("description", "")
         text = f"{name}: {desc}"
-        vector = model.encode(text).astype(np.float32)
+        vector = list(model.embed([text]))[0]
         hint = format_hint(desc)
         rows.append((name, desc, hint, vector.tobytes()))
 
