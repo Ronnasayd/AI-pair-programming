@@ -23,7 +23,7 @@ from utils import (
 LOG = get_hooks_logger("SkillActivation")
 
 DB_PATH = Path(".claude/skills/skills.db")
-MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
+MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 MIN_SIMILARITY = 0.48
 MAX_SUGGESTIONS = 5
 DEDUP_HOURS = 24
@@ -158,8 +158,8 @@ def main():
     try:
         import importlib.util
 
-        if importlib.util.find_spec("sentence_transformers") is None:
-            LOG.warning("sentence-transformers not installed")
+        if importlib.util.find_spec("fastembed") is None:
+            LOG.warning("fastembed not installed")
             sys.exit(0)
     except Exception:
         pass
