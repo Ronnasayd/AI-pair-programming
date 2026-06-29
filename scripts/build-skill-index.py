@@ -70,7 +70,7 @@ def main():
         name = names[0] if isinstance(names, list) else names
         desc = skill.get("description", "")
         text = f"{name}: {desc}"
-        vector = list(model.embed([text]))[0]
+        vector = list(model.embed([text]))[0].astype("float32")
         hint = format_hint(desc)
         rows.append((name, desc, hint, vector.tobytes()))
 
