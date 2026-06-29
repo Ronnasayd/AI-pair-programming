@@ -147,6 +147,7 @@ def findSkills(db_path: Path, query_vector: np.ndarray, min_sim: float, limit: i
         (cosineSimilarity(query_vector, emb), name, hint) for name, hint, emb in skills
     ]
     scored.sort(key=lambda x: x[0], reverse=True)
+    LOG.debug(f"Top scored skills: {[(name, f'{sim:.3f}') for sim, name, _ in scored[:5]]}")
     return [(sim, name, hint) for sim, name, hint in scored if sim >= min_sim][:limit]
 
 

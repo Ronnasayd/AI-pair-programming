@@ -306,6 +306,5 @@
     "enabled": false,
     "mode": "hold"
   },
-  "skipDangerousModePermissionPrompt": true,
   "voiceEnabled": false
 }
