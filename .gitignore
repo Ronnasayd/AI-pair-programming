@@ -173,7 +173,6 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
-AGENTS.md
 .taskmaster/state.json
 GEMINI.md
 .taskmaster/
