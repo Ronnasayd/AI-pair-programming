@@ -1,5 +1,6 @@
 <!-- INIT AUTO-CONTEXT -->
 
+
 ## Environments
 
 - JS/TS: use `yarn`, not `npm`, unless project says `npm`.
@@ -72,9 +73,7 @@ If interactive tool exists, never ask plain-text question.
 ## Context-Specific Rules
 
 The following rules apply to specific file types:
-
 - [code.instructions](.claude/instructions/code.instructions.md) — applies to: `**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx`
-
 <!-- END AUTO-CONTEXT -->
 
 ## Project Architecture
