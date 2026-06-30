@@ -87,7 +87,7 @@ replace_between \
 cat > "$LOCAL/CLAUDE.md" << 'EOF'
 # Instructions
 
-Read and follow [`AGENTS.md`](AGENTS.md). This repository keeps a single
+Always Read and follow [`AGENTS.md`](AGENTS.md). This repository keeps a single
 canonical agent instruction file for Claude Code, OpenCode, Codex, Cursor,
 Gemini CLI, and other AGENTS-aware harnesses.
 
