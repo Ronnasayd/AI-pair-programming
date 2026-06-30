@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # log-tool-calls.py
 
-import sys
 import json
-from datetime import datetime, timezone
 import os
+import sys
+from datetime import datetime, timezone
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -13,6 +13,8 @@ if script_dir not in sys.path:
 from utils import get_by_key, get_hooks_logger
 
 logger = get_hooks_logger("ToolCalls")
+
+
 def main():
     try:
         payload = json.load(sys.stdin)
@@ -30,6 +32,7 @@ def main():
 
     logger.debug(json.dumps(entry))
     sys.exit(0)  # nunca bloqueia
+
 
 if __name__ == "__main__":
     main()

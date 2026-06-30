@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Quality Gate Hook
 
@@ -28,8 +28,8 @@ from utils import (
     detect_formatter,
     find_project_root,
     get_by_key,
-    resolve_formatter_bin,
     get_hooks_logger,
+    resolve_formatter_bin,
 )
 
 logger = get_hooks_logger("QualityGate")
