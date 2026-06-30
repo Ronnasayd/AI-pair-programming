@@ -82,7 +82,17 @@ replace_between \
   "<!-- INIT AUTO-CONTEXT -->" \
   "<!-- END AUTO-CONTEXT -->" \
   "$instructions" \
-  "$LOCAL/CLAUDE.md"
+  "$LOCAL/AGENTS.md"
+
+cat > "$LOCAL/CLAUDE.md" << 'EOF'
+# Instructions
+
+Read and follow [`AGENTS.md`](AGENTS.md). This repository keeps a single
+canonical agent instruction file for Claude Code, OpenCode, Codex, Cursor,
+Gemini CLI, and other AGENTS-aware harnesses.
+
+Do not duplicate project rules here. Update `AGENTS.md` instead.
+EOF
 
 ########################################################################################
 if [ -L "$LOCAL/.mcp.json" ] || [ -d "$LOCAL/.mcp.json" ]; then
