@@ -1,12 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # check_available_files.py
 
-import os
-import sys
 import json
+import os
 import subprocess
-from pathlib import Path
+import sys
 from glob import glob
+from pathlib import Path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:

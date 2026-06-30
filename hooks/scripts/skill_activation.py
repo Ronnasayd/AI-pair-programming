@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import json
 import socket
 import sqlite3
@@ -26,7 +26,7 @@ DB_PATH = Path(".claude/skills/skills.db")
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 MIN_SIMILARITY = 0.48
 MAX_SUGGESTIONS = 5
-DEDUP_HOURS = 24
+DEDUP_HOURS = 1
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 DAEMON_START_TIMEOUT = 10
 
@@ -147,7 +147,9 @@ def findSkills(db_path: Path, query_vector: np.ndarray, min_sim: float, limit: i
         (cosineSimilarity(query_vector, emb), name, hint) for name, hint, emb in skills
     ]
     scored.sort(key=lambda x: x[0], reverse=True)
-    LOG.debug(f"Top scored skills: {[(name, f'{sim:.3f}') for sim, name, _ in scored[:5]]}")
+    LOG.debug(
+        f"Top scored skills: {[(name, f'{sim:.3f}') for sim, name, _ in scored[:5]]}"
+    )
     return [(sim, name, hint) for sim, name, hint in scored if sim >= min_sim][:limit]
 
 

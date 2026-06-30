@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Stop Hook (Session End) - Persist learnings during active sessions
 
@@ -20,18 +20,18 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (
-    get_hooks_logger,
-    strip_ansi,
-    get_sessions_dir,
-    get_date_string,
-    get_time_string,
-    get_session_id_short,
-    get_project_name,
     ensure_dir,
-    read_file,
-    write_file,
-    run_command,
     get_by_key,
+    get_date_string,
+    get_hooks_logger,
+    get_project_name,
+    get_session_id_short,
+    get_sessions_dir,
+    get_time_string,
+    read_file,
+    run_command,
+    strip_ansi,
+    write_file,
 )
 
 # ---------------------------------------------------------------------------

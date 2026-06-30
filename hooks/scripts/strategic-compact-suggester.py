@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Strategic Compact Suggester
 
@@ -26,6 +26,7 @@ from utils import get_by_key, get_hooks_logger
 
 logger = get_hooks_logger("CompactSuggester")
 
+
 def get_temp_dir():
     """Get the system temporary directory."""
     return tempfile.gettempdir()
@@ -40,7 +41,11 @@ def log(message):
 def log_error(message):
     """Log an error message to stderr."""
     logger.debug(message)
-    print(json.dumps({"hookSpecificOutput": {"error": message}}), file=sys.stderr, flush=True)
+    print(
+        json.dumps({"hookSpecificOutput": {"error": message}}),
+        file=sys.stderr,
+        flush=True,
+    )
 
 
 def main():
@@ -49,9 +54,9 @@ def main():
     # Use a session-specific counter file based on session ID from environment
     # or process ID as fallback
     payload = json.load(sys.stdin)
-    session_id = get_by_key(payload, "session_id") 
+    session_id = get_by_key(payload, "session_id")
 
-    counter_file =   f"/tmp/tool-count-{session_id[:8]}"
+    counter_file = f"/tmp/tool-count-{session_id[:8]}"
     logger.debug(f"Using counter file: {counter_file}")
     threshold = 2
 

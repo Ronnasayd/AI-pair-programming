@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """Persistent embedding daemon — loads SentenceTransformer once, serves via Unix socket."""
 
 import json

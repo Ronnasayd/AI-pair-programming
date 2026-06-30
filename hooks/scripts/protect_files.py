@@ -1,12 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # protect-files.py (hardened)
 
-import sys
-import json
-import shlex
 import fnmatch
-import os
 import glob
+import json
+import os
+import shlex
+import sys
 from pathlib import Path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
