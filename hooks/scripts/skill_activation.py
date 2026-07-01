@@ -228,8 +228,8 @@ def main():
                     "additionalContext": f"IMPORTANT: check if these skills match user request, invoke via Skill tool if so: {suggestions}",
                 }
             }
-            LOG.debug(f"Output JSON: {json.dumps(output)}")
-            print(json.dumps(output))
+            LOG.debug(f"Output JSON: {json.dumps(output, ensure_ascii=False)}")
+            print(json.dumps(output, ensure_ascii=False))
         else:
             LOG.debug("No skill matches after dedup filter")
 
