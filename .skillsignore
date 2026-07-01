@@ -1,5 +1,11 @@
+# code-review
+# diagnosing-bugs
+# generate-pr-description
 # grilling
 # orchestrate
+# plan-generator
+# resolve-merge-conflicts
+# skill-advisor
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
@@ -13,7 +19,6 @@ apk-reverse
 auto-improve
 backend-patterns
 blueprint
-code-review
 codebase-linguistic-analysis-to-csv-export
 codebase-rules-extractor
 codenavi
@@ -33,7 +38,6 @@ deep-research
 deep-research-web
 deployment-patterns
 design-image-diff
-diagnosing-bugs
 docker-patterns
 document-summarizer
 domain-analysis
@@ -54,7 +58,6 @@ frontend-design
 frontend-patterns
 generate-docs-init
 generate-docs-update
-generate-pr-description
 gh-address-comments
 gh-fix-ci
 git-diff-analyzer
@@ -79,7 +82,6 @@ modular-decomposition
 modular-monolith-decomposer
 opencv
 perf-web-optimization
-plan-generator
 pr-review
 prd-from-codebase
 prd-generator
@@ -90,12 +92,10 @@ python-testing
 react-best-practices
 react-composition-patterns
 regex-vs-llm-structured-text
-resolve-merge-conflicts
 safe-refactor
 security-best-practices
 semantic-commit-message
 seo
-skill-advisor
 skill-architect
 skill-creator
 skill-description-generator
