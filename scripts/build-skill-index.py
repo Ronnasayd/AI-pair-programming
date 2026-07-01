@@ -9,16 +9,6 @@ from pathlib import Path
 import yaml
 
 
-def format_hint(desc):
-    if not desc:
-        return ""
-    sentences = desc.split(". ")
-    first = sentences[0]
-    if not first.endswith("."):
-        first += "."
-    return first
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", default="skills/index.yaml")
@@ -71,8 +61,7 @@ def main():
         desc = skill.get("description", "")
         text = f"{name}: {desc}"
         vector = list(model.embed([text]))[0].astype("float32")
-        hint = format_hint(desc)
-        rows.append((name, desc, hint, vector.tobytes()))
+        rows.append((name, desc, desc, vector.tobytes()))
 
     conn.executemany(
         "INSERT INTO skills (name, description, hint, embedding) VALUES (?, ?, ?, ?)",
