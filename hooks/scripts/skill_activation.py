@@ -28,7 +28,7 @@ MIN_SIMILARITY = 0.5
 MAX_SUGGESTIONS = 3
 DEDUP_HOURS = 1
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
-DAEMON_START_TIMEOUT = 10
+DAEMON_START_TIMEOUT = 90
 
 
 def getDaemonSocketPath() -> str:
