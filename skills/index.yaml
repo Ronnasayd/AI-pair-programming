@@ -6,15 +6,16 @@ skills:
     from basic repository setup to advanced history manipulation.
 - name:
   - skill-advisor
-  description: "Analyzes a task or problem and recommends which available skill(s)\
-    \ are the best fit \u2014 including whether to combine multiple skills together.\
-    \ Use this skill whenever the user asks \"which skill should I use?\", \"what\
-    \ skill is good for X?\", \"do I have a skill for Y?\", \"is there a skill that\
-    \ can help with Z?\", or any variant of \"help me pick a skill\". Also trigger\
-    \ this when the user describes a task that clearly involves multiple steps or\
-    \ file types and they seem unsure how to approach it \u2014 even if they don't\
-    \ use the word \"skill\". The goal is to be the routing layer that maps problems\
-    \ to the right capabilities.\n"
+  description: 'Analyzes a task or problem and recommends which available skill(s)
+    are the best fit — including whether to combine multiple skills together. Use
+    this skill whenever the user asks "which skill should I use?", "what skill is
+    good for X?", "do I have a skill for Y?", "is there a skill that can help with
+    Z?", or any variant of "help me pick a skill". Also trigger this when the user
+    describes a task that clearly involves multiple steps or file types and they seem
+    unsure how to approach it — even if they don''t use the word "skill". The goal
+    is to be the routing layer that maps problems to the right capabilities.
+
+    '
 - name:
   - context-map
   description: Generate a map of all files relevant to a task before making changes
@@ -66,15 +67,15 @@ skills:
     to ensure that the testing strategy is robust and follows best practices.
 - name:
   - opencv
-  description: "Use this skill whenever the user asks about Python OpenCV, computer\
-    \ vision, or image/video processing with cv2. Triggers include reading/writing/displaying\
-    \ images, drawing on images, image transformations (resize, rotate, warp, crop),\
-    \ thresholding, edge detection, feature detection, color space conversion, smoothing/blurring,\
-    \ morphological operations, working with video or webcam feeds, camera calibration,\
-    \ and object detection with OpenCV. Apply this skill even if the user just mentions\
-    \ cv2, imread, imshow, or asks how to do anything visual/image-related in Python.\
-    \ Always use this skill before writing any OpenCV code \u2014 it contains critical\
-    \ syntax reminders, common parameter patterns, and usage notes."
+  description: Use this skill whenever the user asks about Python OpenCV, computer
+    vision, or image/video processing with cv2. Triggers include reading/writing/displaying
+    images, drawing on images, image transformations (resize, rotate, warp, crop),
+    thresholding, edge detection, feature detection, color space conversion, smoothing/blurring,
+    morphological operations, working with video or webcam feeds, camera calibration,
+    and object detection with OpenCV. Apply this skill even if the user just mentions
+    cv2, imread, imshow, or asks how to do anything visual/image-related in Python.
+    Always use this skill before writing any OpenCV code — it contains critical syntax
+    reminders, common parameter patterns, and usage notes.
 - name:
   - mermaid-class-diagram
   description: 'Generate, render, and explain Mermaid class diagrams (UML). Use this
@@ -102,20 +103,22 @@ skills:
     '
 - name:
   - plan-generator
-  description: "Generate structured plans for tasks and projects, saved as date-stamped\
-    \ markdown files in docs/agents/plans/. Use whenever the user wants to plan a\
-    \ project, break down a task, create a roadmap, design a workflow, or organize\
-    \ phases and milestones \u2014 even if they just say \"make a plan for X\" or\
-    \ \"how should I approach Y\"."
+  description: Generate structured plans for tasks and projects, saved as date-stamped
+    markdown files in docs/agents/plans/. Use whenever the user wants to plan a project,
+    break down a task, create a roadmap, design a workflow, or organize phases and
+    milestones — even if they just say "make a plan for X" or "how should I approach
+    Y".
 - name:
   - auto-improve
-  description: "After completing any task, extract reusable rules from what worked\
-    \ and what failed. Produces output in the exact format used by agent.instructions.md\
-    \ (## Mandatory: Rules to Follow / ## Mandatory: Rules to Avoid). Trigger after\
-    \ a task finishes when the user asks for a retrospective, lessons learned, or\
-    \ rule extraction \u2014 or implicitly with phrases like \"what did we learn\"\
-    , \"what went wrong\", \"what should we avoid next time\". Do NOT trigger mid-task\
-    \ or before execution completes.\n"
+  description: 'After completing any task, extract reusable rules from what worked
+    and what failed. Produces output in the exact format used by agent.instructions.md
+    (## Mandatory: Rules to Follow / ## Mandatory: Rules to Avoid). Trigger after
+    a task finishes when the user asks for a retrospective, lessons learned, or rule
+    extraction — or implicitly with phrases like "what did we learn", "what went wrong",
+    "what should we avoid next time". Do NOT trigger mid-task or before execution
+    completes.
+
+    '
 - name:
   - context7-documentation-lookup
   description: Use up-to-date library and framework docs via Context7 MCP instead
@@ -157,14 +160,14 @@ skills:
     phrases.
 - name:
   - document-summarizer
-  description: "Extract and condense key information from any document or text while\
-    \ preserving critical details. Use when you need to summarize PRDs, specifications,\
-    \ technical documents, articles, reports, emails, or any text that needs a condensed,\
-    \ structured overview. Produces output in sections with bullet points, intelligently\
-    \ combining extracted quotes with rewritten insights. Always use this skill whenever\
-    \ the user asks to \"summarize\", \"condense\", \"brief\", \"extract key points\"\
-    , \"make a summary\", \"create an overview\", \"reduce this\", or provides a document/text\
-    \ saying \"please summarize this\" \u2014 even if they mention it informally."
+  description: Extract and condense key information from any document or text while
+    preserving critical details. Use when you need to summarize PRDs, specifications,
+    technical documents, articles, reports, emails, or any text that needs a condensed,
+    structured overview. Produces output in sections with bullet points, intelligently
+    combining extracted quotes with rewritten insights. Always use this skill whenever
+    the user asks to "summarize", "condense", "brief", "extract key points", "make
+    a summary", "create an overview", "reduce this", or provides a document/text saying
+    "please summarize this" — even if they mention it informally.
 - name:
   - code-review
   description: A skill for performing structured code reviews based on git diffs and
@@ -189,15 +192,17 @@ skills:
     files with backup and analysis.
 - name:
   - copilot-sdk
-  description: "Use this skill whenever the user wants to build Python applications\
-    \ or scripts using the GitHub Copilot SDK. Triggers include: building Copilot-powered\
-    \ agents or tools in Python, integrating GitHub Copilot CLI programmatically,\
-    \ using the copilot Python package, creating sessions with CopilotClient, defining\
-    \ custom tools for Copilot, handling streaming from Copilot, setting up custom\
-    \ LLM providers (BYOK/Ollama/Azure), permission handling for tool calls, or any\
-    \ workflow involving the `copilot` Python package (copilot-sdk). Use this skill\
-    \ even if the user only says \"Copilot agent\", \"Copilot session\", or \"Copilot\
-    \ tool\" in a Python context \u2014 they almost certainly need this.\n"
+  description: 'Use this skill whenever the user wants to build Python applications
+    or scripts using the GitHub Copilot SDK. Triggers include: building Copilot-powered
+    agents or tools in Python, integrating GitHub Copilot CLI programmatically, using
+    the copilot Python package, creating sessions with CopilotClient, defining custom
+    tools for Copilot, handling streaming from Copilot, setting up custom LLM providers
+    (BYOK/Ollama/Azure), permission handling for tool calls, or any workflow involving
+    the `copilot` Python package (copilot-sdk). Use this skill even if the user only
+    says "Copilot agent", "Copilot session", or "Copilot tool" in a Python context
+    — they almost certainly need this.
+
+    '
 - name:
   - integration-testing
   description: 'Expert guidance on Integration Testing in software engineering. Use
@@ -222,28 +227,29 @@ skills:
     conversions.
 - name:
   - prd-from-codebase
-  description: "Gera um PRD (Product Requirements Document) completo em Markdown a\
-    \ partir de uma base de c\xF3digo existente. Use esta skill sempre que o usu\xE1\
-    rio quiser documentar um software sem documenta\xE7\xE3o, entender o que um projeto\
-    \ faz, gerar um documento de produto a partir de c\xF3digo, mapear funcionalidades\
-    \ de uma aplica\xE7\xE3o, identificar agentes/pap\xE9is de um sistema, ou quando\
-    \ mencionar termos como \"PRD\", \"documentar o projeto\", \"gerar documenta\xE7\
-    \xE3o do produto\", \"o que esse c\xF3digo faz\", \"mapear funcionalidades\",\
-    \ \"entender a base de c\xF3digo\", \"reverse PRD\" ou similares. A skill usa\
-    \ as ferramentas dispon\xEDveis (bash, view, etc.) para explorar autonomamente\
-    \ a base de c\xF3digo antes de gerar o documento \u2014 o usu\xE1rio n\xE3o precisa\
-    \ colar c\xF3digo manualmente.\n"
+  description: 'Generates a complete Product Requirements Document (PRD) in Markdown
+    from an existing codebase. Use this skill whenever the user wants to document
+    software without documentation, understand what a project does, generate a product
+    document from code, map application features, identify system agents/roles, or
+    mentions terms such as "PRD", "document the project", "generate product documentation",
+    "what does this code do", "map features", "understand the codebase", "reverse
+    PRD", or similar. The skill uses the available tools (bash, view, etc.) to autonomously
+    explore the codebase before generating the document—the user does not need to
+    manually paste any code.
+
+    '
 - name:
   - event-storming
-  description: "Use this skill whenever the user wants to create, document, or model\
-    \ an Event Storming. Triggers include: \"do event storming\", \"model a domain\"\
-    , \"map domain flow\", \"create an event diagram\", \"document bounded contexts\"\
-    , \"model commands and events\", \"DDD\", \"Domain-Driven Design\", \"convert\
-    \ sticky notes into code\", \"represent flows with Mermaid\", \"create aggregates\"\
-    , \"identify bounded contexts\", \"map domain policies\". Also use this skill\
-    \ when the user provides business process descriptions and wants to transform\
-    \ them into structured Event Storming artifacts \u2014 even if they do not explicitly\
-    \ mention the term.\n"
+  description: 'Use this skill whenever the user wants to create, document, or model
+    an Event Storming. Triggers include: "do event storming", "model a domain", "map
+    domain flow", "create an event diagram", "document bounded contexts", "model commands
+    and events", "DDD", "Domain-Driven Design", "convert sticky notes into code",
+    "represent flows with Mermaid", "create aggregates", "identify bounded contexts",
+    "map domain policies". Also use this skill when the user provides business process
+    descriptions and wants to transform them into structured Event Storming artifacts
+    — even if they do not explicitly mention the term.
+
+    '
 - name:
   - skill-creator
   description: Create new skills, modify and improve existing skills, and measure
@@ -287,28 +293,30 @@ skills:
     across ALL skills with reasons why each matches.'
 - name:
   - safe-refactor
-  description: "Guide safe refactoring of complex, untested code using a multi-phase\
-    \ hybrid approach: characterization tests \u2192 agent-assisted refactoring \u2192\
-    \ manual review \u2192 integration testing \u2192 staged rollout. Use this skill\
-    \ whenever the user mentions refactoring, code cleanup, or code modernization\
-    \ \u2014 especially when there are no existing tests, when delegating to an agent,\
-    \ or when regressions would be costly. Also trigger for: \"improve code quality\
-    \ without breaking things\", \"migrate to a new pattern safely\", \"modernize\
-    \ legacy code\", \"rewrite this module\", \"clean up this file\", \"my code has\
-    \ no tests but I need to refactor it\", or any scenario involving high-risk code\
-    \ changes where behavior preservation matters. When in doubt, use this skill \u2014\
-    \ a structured approach is almost always better than ad-hoc refactoring.\n"
+  description: 'Guide safe refactoring of complex, untested code using a multi-phase
+    hybrid approach: characterization tests → agent-assisted refactoring → manual
+    review → integration testing → staged rollout. Use this skill whenever the user
+    mentions refactoring, code cleanup, or code modernization — especially when there
+    are no existing tests, when delegating to an agent, or when regressions would
+    be costly. Also trigger for: "improve code quality without breaking things", "migrate
+    to a new pattern safely", "modernize legacy code", "rewrite this module", "clean
+    up this file", "my code has no tests but I need to refactor it", or any scenario
+    involving high-risk code changes where behavior preservation matters. When in
+    doubt, use this skill — a structured approach is almost always better than ad-hoc
+    refactoring.
+
+    '
 - name:
   - execute-task
-  description: "Execute a specified task by reading detailed specifications, analyzing\
-    \ requirements, planning the approach, and implementing step-by-step. Use this\
-    \ skill when: you have a task specification file or task ID that needs completion;\
-    \ the task is multi-step, involves architecture decisions, or requires tool orchestration;\
-    \ you need to track progress across subtasks and delegate work to specialist agents.\
-    \ Triggers on task execution requests, implementation assignments, feature builds,\
-    \ bug fixes, refactoring projects, or when a user provides a task spec .md file.\
-    \ Always use this skill for complex development work rather than tackling it directly\
-    \ \u2014delegate to specialists and maintain progress visibility with task tracking."
+  description: 'Execute a specified task by reading detailed specifications, analyzing
+    requirements, planning the approach, and implementing step-by-step. Use this skill
+    when: you have a task specification file or task ID that needs completion; the
+    task is multi-step, involves architecture decisions, or requires tool orchestration;
+    you need to track progress across subtasks and delegate work to specialist agents.
+    Triggers on task execution requests, implementation assignments, feature builds,
+    bug fixes, refactoring projects, or when a user provides a task spec .md file.
+    Always use this skill for complex development work rather than tackling it directly
+    —delegate to specialists and maintain progress visibility with task tracking.'
 - name:
   - golang-style-guide
   description: 'Conventions and best practices for writing readable, maintainable
@@ -334,28 +342,27 @@ skills:
     NOT use for React/Next.js performance optimization (use react-best-practices instead).
 - name:
   - codenavi
-  description: "Your pathfinder for navigating unknown codebases. Investigates with\
-    \ precision, implements surgically, and never assumes \u2014 if it doesn't know,\
-    \ it says so. Maintains a .notebook/ knowledge base that grows across sessions,\
-    \ turning every discovery into lasting intelligence. Summons available skills,\
-    \ MCPs, and docs when the mission demands. Use when fixing bugs, implementing\
-    \ features, refactoring, investigating flows, or any development task in unfamiliar\
-    \ territory. Triggers on \"fix this\", \"implement this\", \"how does this work\"\
-    , \"investigate this flow\", \"help me with this code\". Do NOT use for greenfield\
-    \ scaffolding, CI/CD, or infrastructure provisioning."
+  description: Your pathfinder for navigating unknown codebases. Investigates with
+    precision, implements surgically, and never assumes — if it doesn't know, it says
+    so. Maintains a .notebook/ knowledge base that grows across sessions, turning
+    every discovery into lasting intelligence. Summons available skills, MCPs, and
+    docs when the mission demands. Use when fixing bugs, implementing features, refactoring,
+    investigating flows, or any development task in unfamiliar territory. Triggers
+    on "fix this", "implement this", "how does this work", "investigate this flow",
+    "help me with this code". Do NOT use for greenfield scaffolding, CI/CD, or infrastructure
+    provisioning.
 - name:
   - frontend-blueprint
-  description: "AI frontend specialist and design consultant that guides users through\
-    \ a structured discovery process before generating any code. Collects visual references,\
-    \ design tokens, typography, icons, layout preferences, and brand guidelines to\
-    \ ensure the final output matches the user's vision with high fidelity. Use when\
-    \ the user asks to build, design, create, or improve any frontend interface \u2014\
-    \ websites, landing pages, dashboards, components, apps, emails, forms, modals,\
-    \ or any UI element. Also triggers on \"build me a UI\", \"design a page\", \"\
-    create a component\", \"improve this layout\", \"make this look better\", \"frontend\"\
-    , \"interface\", \"redesign\", or when the user provides mockups, screenshots,\
-    \ or design references. Do NOT use for backend logic, API design, database schemas,\
-    \ or non-visual code tasks."
+  description: AI frontend specialist and design consultant that guides users through
+    a structured discovery process before generating any code. Collects visual references,
+    design tokens, typography, icons, layout preferences, and brand guidelines to
+    ensure the final output matches the user's vision with high fidelity. Use when
+    the user asks to build, design, create, or improve any frontend interface — websites,
+    landing pages, dashboards, components, apps, emails, forms, modals, or any UI
+    element. Also triggers on "build me a UI", "design a page", "create a component",
+    "improve this layout", "make this look better", "frontend", "interface", "redesign",
+    or when the user provides mockups, screenshots, or design references. Do NOT use
+    for backend logic, API design, database schemas, or non-visual code tasks.
 - name:
   - tlc-spec-driven
   description: Project and feature planning with 4 adaptive phases - Specify, Design,
@@ -446,11 +453,11 @@ skills:
     pipeline (install domain-analysis standalone).
 - name:
   - jira-assistant
-  description: "Manage Jira issues via Atlassian MCP \u2014 search, create, update,\
-    \ transition status, and handle sprint tasks. Auto-detects workspace configuration.\
-    \ Use when user says \"create a Jira ticket\", \"update my sprint\", \"check Jira\
-    \ status\", \"transition this issue\", \"search Jira\", or \"move ticket to done\"\
-    . Do NOT use for Confluence pages (use confluence-assistant)."
+  description: Manage Jira issues via Atlassian MCP — search, create, update, transition
+    status, and handle sprint tasks. Auto-detects workspace configuration. Use when
+    user says "create a Jira ticket", "update my sprint", "check Jira status", "transition
+    this issue", "search Jira", or "move ticket to done". Do NOT use for Confluence
+    pages (use confluence-assistant).
 - name:
   - coupling-analysis
   description: Analyzes coupling between modules using the three-dimensional model
@@ -632,11 +639,11 @@ skills:
     "I need something that specializes in X".
 - name:
   - handling-large-files
-  description: "Strategies for reading, chunking, and processing files that exceed\
-    \ practical token limits. Covers streaming reads, selective extraction, summarization-before-analysis,\
-    \ and memory-efficient patterns for large codebases, logs, or datasets. Use whenever\
-    \ a file or set of files is too large to fit in context at once. Do NOT use for\
-    \ normally-sized files \u2014 adds unnecessary overhead."
+  description: Strategies for reading, chunking, and processing files that exceed
+    practical token limits. Covers streaming reads, selective extraction, summarization-before-analysis,
+    and memory-efficient patterns for large codebases, logs, or datasets. Use whenever
+    a file or set of files is too large to fit in context at once. Do NOT use for
+    normally-sized files — adds unnecessary overhead.
 - name:
   - generate-docs-update
   description: 'Use this skill to update existing project documentation based on code
@@ -664,17 +671,18 @@ skills:
     when creating new code, and generates a comprehensive rules reference document.
 - name:
   - mermaid-erd
-  description: "Generate, render, and explain Mermaid Entity Relationship Diagrams\
-    \ (ERD) using erDiagram syntax. Use this skill whenever the user wants to model\
-    \ database schemas, data models, relational structures, or entity relationships.\
-    \ Triggers include: \"ER diagram\", \"ERD\", \"entity relationship\", \"database\
-    \ schema\", \"data model\", \"draw my tables\", \"show table relationships\",\
-    \ \"model the database\", \"schema diagram\", \"foreign key diagram\", or any\
-    \ request to visualize how data entities relate to each other. Also use when a\
-    \ user shares SQL DDL, ORM models, or describes tables/entities and wants a diagram.\
-    \ Proactively use this skill whenever database design, relational modeling, or\
-    \ schema visualization is involved \u2014 even if the user doesn't say \"ERD\"\
-    \ or \"Mermaid\".\n"
+  description: 'Generate, render, and explain Mermaid Entity Relationship Diagrams
+    (ERD) using erDiagram syntax. Use this skill whenever the user wants to model
+    database schemas, data models, relational structures, or entity relationships.
+    Triggers include: "ER diagram", "ERD", "entity relationship", "database schema",
+    "data model", "draw my tables", "show table relationships", "model the database",
+    "schema diagram", "foreign key diagram", or any request to visualize how data
+    entities relate to each other. Also use when a user shares SQL DDL, ORM models,
+    or describes tables/entities and wants a diagram. Proactively use this skill whenever
+    database design, relational modeling, or schema visualization is involved — even
+    if the user doesn''t say "ERD" or "Mermaid".
+
+    '
 - name:
   - technical-decision-helper
   description: Helps make informed technical decisions by presenting viable options
@@ -750,14 +758,16 @@ skills:
     and expectations.
 - name:
   - taskmaster-prd-generator
-  description: "Generate structured Product Requirements Documents (PRDs) for development\
-    \ projects in the `.taskmaster/prds/` directory. Use this skill whenever the user:\
-    \ says \"create a PRD\", \"write requirements\", \"document this spec\", \"plan\
-    \ this project\", or \"help me structure this idea\"; pastes a project description,\
-    \ rough notes, or spec file and wants it organized; mentions wanting to run `task-master\
-    \ parse-prd`; or describes a feature, app, or system they want to build \u2014\
-    \ even casually. Trigger on intent to plan or document a project, not just the\
-    \ word \"PRD\". When in doubt, use this skill.\n"
+  description: 'Generate structured Product Requirements Documents (PRDs) for development
+    projects in the `.taskmaster/prds/` directory. Use this skill whenever the user:
+    says "create a PRD", "write requirements", "document this spec", "plan this project",
+    or "help me structure this idea"; pastes a project description, rough notes, or
+    spec file and wants it organized; mentions wanting to run `task-master parse-prd`;
+    or describes a feature, app, or system they want to build — even casually. Trigger
+    on intent to plan or document a project, not just the word "PRD". When in doubt,
+    use this skill.
+
+    '
 - name:
   - taskmaster-append-tasks
   description: A skill for appending new tasks to an existing task specification in
@@ -794,23 +804,26 @@ skills:
     at `docs/srs/yyyy-mm-dd-<short-description>.md`
 - name:
   - design-image-diff
-  description: "Use this skill whenever the user wants to compare a design mockup/wireframe/Figma\
-    \ screenshot with a frontend implementation screenshot to identify visual differences\
-    \ and generate a list of changes needed. Triggers include: \"compare design with\
-    \ implementation\", \"find differences between design and code\", \"what's different\
-    \ from the mockup\", \"design review\", \"pixel comparison\", \"why doesn't my\
-    \ implementation match the design\", \"QA visual comparison\", \"design vs screenshot\"\
-    , or any time two images are provided where one is a design reference and the\
-    \ other is a rendered UI. Always use this skill when the user uploads two images\
-    \ and asks what needs to change to make one look like the other \u2014 even if\
-    \ they don't mention \"design\" explicitly.\n"
+  description: 'Use this skill whenever the user wants to compare a design mockup/wireframe/Figma
+    screenshot with a frontend implementation screenshot to identify visual differences
+    and generate a list of changes needed. Triggers include: "compare design with
+    implementation", "find differences between design and code", "what''s different
+    from the mockup", "design review", "pixel comparison", "why doesn''t my implementation
+    match the design", "QA visual comparison", "design vs screenshot", or any time
+    two images are provided where one is a design reference and the other is a rendered
+    UI. Always use this skill when the user uploads two images and asks what needs
+    to change to make one look like the other — even if they don''t mention "design"
+    explicitly.
+
+    '
 - name:
   - tlc-execute-tasks
   description: 'Executes feature tasks by tag, integrating spec files with tlc-spec-driven.
-    Filters pending tasks from taskmaster, executes them in order, and updates status
-    via MCP when each task finishes. The user decides what to do on failures. Use:
-    "execute feature <tag>" or "run tasks for <tag>". Do not use for direct task management
-    (taskmaster skill) or spec creation (tlc-spec-driven).'
+    Filters pending tasks from taskmaster, groups them into waves, and executes tasks
+    within each wave in parallel (via orchestrate skill) while respecting wave dependencies.
+    Updates status via MCP after each wave completes. The user decides what to do
+    on failures. Use: "execute feature <tag>" or "run tasks for <tag>". Do not use
+    for direct task management (taskmaster skill) or spec creation (tlc-spec-driven).'
 - name:
   - database-migrations
   description: Database migration best practices for schema changes, data migrations,
@@ -849,12 +862,11 @@ skills:
     and idiomatic practices.
 - name:
   - data-scraper-agent
-  description: "Build a fully automated AI-powered data collection agent for any public\
-    \ source \u2014 job boards, prices, news, GitHub, sports, anything. Scrapes on\
-    \ a schedule, enriches data with a free LLM (Gemini Flash), stores results in\
-    \ Notion/Sheets/Supabase, and learns from user feedback. Runs 100% free on GitHub\
-    \ Actions. Use when the user wants to monitor, collect, or track any public data\
-    \ automatically."
+  description: Build a fully automated AI-powered data collection agent for any public
+    source — job boards, prices, news, GitHub, sports, anything. Scrapes on a schedule,
+    enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase,
+    and learns from user feedback. Runs 100% free on GitHub Actions. Use when the
+    user wants to monitor, collect, or track any public data automatically.
 - name:
   - blueprint
   description: 'Turn a one-line objective into a step-by-step construction plan for
@@ -867,9 +879,8 @@ skills:
     user says "just do it".'
 - name:
   - regex-vs-llm-structured-text
-  description: "Decision framework for choosing between regex and LLM when parsing\
-    \ structured text \u2014 start with regex, add LLM only for low-confidence edge\
-    \ cases."
+  description: Decision framework for choosing between regex and LLM when parsing
+    structured text — start with regex, add LLM only for low-confidence edge cases.
 - name:
   - coding-standards
   description: Baseline cross-project coding conventions for naming, readability,
@@ -882,8 +893,8 @@ skills:
     patterns to catch AI blind spots where the same model writes and reviews code.
 - name:
   - content-hash-cache-pattern
-  description: "Cache expensive file processing results using SHA-256 content hashes\
-    \ \u2014 path-independent, auto-invalidating, with service layer separation."
+  description: Cache expensive file processing results using SHA-256 content hashes
+    — path-independent, auto-invalidating, with service layer separation.
 - name:
   - pr-review
   description: Systematic PR review using GitHub MCP tools. Produces structured report
@@ -904,23 +915,24 @@ skills:
     web interfaces, extract design context, manage design systems, and create diagrams.
 - name:
   - figma-requirements-screen-mapper
-  description: "Map software requirements to Figma screens, producing a table that\
-    \ shows which requirements belong to each screen, and which requirements don't\
-    \ belong to any screen. Use this skill whenever the user provides a requirements\
-    \ document (SRS, PRD, technical spec) AND a Figma file with multiple screens/frames\
-    \ and wants to understand which requirements apply to each screen. Triggers on\
-    \ phrases like: \"map these requirements to the Figma screens\", \"which requirements\
-    \ belong to each screen\", \"create a requirements matrix for these screens\"\
-    , \"relate my spec to each Figma frame\", \"which spec items apply to each screen\"\
-    , \"trace requirements to screens\", \"requirements traceability matrix\", \"\
-    which requirements are covered per screen\", \"organize requirements by screen\"\
-    , or when the user provides a requirements doc path AND a Figma file URL and wants\
-    \ a mapping/matrix. Also triggers when the user asks \"which requirements don't\
-    \ belong to any screen\" or \"what requirements are cross-cutting / non-UI\".\
-    \ Always use this skill when BOTH a requirements document AND a multi-screen Figma\
-    \ reference are present and the user wants a mapping, matrix, or traceability\
-    \ table \u2014 even if they don't use the exact words \"requirements screen mapper\"\
-    .\n"
+  description: 'Map software requirements to Figma screens, producing a table that
+    shows which requirements belong to each screen, and which requirements don''t
+    belong to any screen. Use this skill whenever the user provides a requirements
+    document (SRS, PRD, technical spec) AND a Figma file with multiple screens/frames
+    and wants to understand which requirements apply to each screen. Triggers on phrases
+    like: "map these requirements to the Figma screens", "which requirements belong
+    to each screen", "create a requirements matrix for these screens", "relate my
+    spec to each Figma frame", "which spec items apply to each screen", "trace requirements
+    to screens", "requirements traceability matrix", "which requirements are covered
+    per screen", "organize requirements by screen", or when the user provides a requirements
+    doc path AND a Figma file URL and wants a mapping/matrix. Also triggers when the
+    user asks "which requirements don''t belong to any screen" or "what requirements
+    are cross-cutting / non-UI". Always use this skill when BOTH a requirements document
+    AND a multi-screen Figma reference are present and the user wants a mapping, matrix,
+    or traceability table — even if they don''t use the exact words "requirements
+    screen mapper".
+
+    '
 - name:
   - figma-requirements-conformance
   description: 'Verify conformance between a software requirements specification (SRS)
@@ -948,27 +960,32 @@ skills:
     connection.
 - name:
   - figma-to-code-agentic
-  description: "Convert Figma designs into production-ready component code using an\
-    \ agentic loop that validates implementation against the design.\n\nUse this skill\
-    \ whenever: a Figma link or file is provided and the user wants code generated\
-    \ from it; the user says \"generate this Figma design as React/Vue/HTML\", \"\
-    convert this Figma to code\", \"build a component from this design\", \"make it\
-    \ look exactly like Figma\", or \"match the design\"; the user needs pixel-perfect\
-    \ design-to-development handoff; the user mentions needing to validate UI against\
-    \ a Figma spec.\n\nThe skill reads design specs via Figma MCP, auto-detects the\
-    \ framework, generates code, renders a screenshot via browser automation, compares\
-    \ using SSIM (Structural Similarity Index), and iterates up to 10 times until\
-    \ reaching \u22650.9 visual similarity. Works for React, Vue 3, and vanilla HTML/CSS.\
-    \ Perfect for design system components, landing pages, or any UI that must match\
-    \ a Figma spec.\n"
+  description: 'Convert Figma designs into production-ready component code using an
+    agentic loop that validates implementation against the design.
+
+
+    Use this skill whenever: a Figma link or file is provided and the user wants code
+    generated from it; the user says "generate this Figma design as React/Vue/HTML",
+    "convert this Figma to code", "build a component from this design", "make it look
+    exactly like Figma", or "match the design"; the user needs pixel-perfect design-to-development
+    handoff; the user mentions needing to validate UI against a Figma spec.
+
+
+    The skill reads design specs via Figma MCP, auto-detects the framework, generates
+    code, renders a screenshot via browser automation, compares using SSIM (Structural
+    Similarity Index), and iterates up to 10 times until reaching ≥0.9 visual similarity.
+    Works for React, Vue 3, and vanilla HTML/CSS. Perfect for design system components,
+    landing pages, or any UI that must match a Figma spec.
+
+    '
 - name:
   - figma-capture
-  description: "Captures a screenshot and reference JSX code from a Figma node URL\
-    \ and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when\
-    \ the user says \"captura esse n\xF3 do figma\", \"salva a imagem e o c\xF3digo\
-    \ de [url figma]\", \"usa o figma mcp para salvar [url]\", \"capture this figma\
-    \ node\", or any variation requesting to save a Figma design locally. Do NOT use\
-    \ for generating new designs, syncing components, or code-connect mapping workflows."
+  description: Captures a screenshot and reference JSX code from a Figma node URL
+    and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the
+    user says "captura esse nó do figma", "salva a imagem e o código de [url figma]",
+    "usa o figma mcp para salvar [url]", "capture this figma node", or any variation
+    requesting to save a Figma design locally. Do NOT use for generating new designs,
+    syncing components, or code-connect mapping workflows.
 - name:
   - caveman-review
   description: 'Ultra-compressed code review comments. Cuts noise from PR feedback
@@ -988,10 +1005,12 @@ skills:
     '
 - name:
   - caveman-stats
-  description: "Show real token usage and estimated savings for the current session.\
-    \ Reads directly from the Claude Code session log \u2014 no AI estimation. Triggers\
-    \ on /caveman-stats. Output is injected by the mode-tracker hook; the model itself\
-    \ does not compute the numbers.\n"
+  description: 'Show real token usage and estimated savings for the current session.
+    Reads directly from the Claude Code session log — no AI estimation. Triggers on
+    /caveman-stats. Output is injected by the mode-tracker hook; the model itself
+    does not compute the numbers.
+
+    '
 - name:
   - caveman-help
   description: 'Quick-reference card for all caveman modes, skills, and commands.
@@ -1001,18 +1020,21 @@ skills:
     '
 - name:
   - cavecrew
-  description: "Decision guide for delegating to caveman-style subagents. Tells the\
-    \ main thread WHEN to spawn `cavecrew-investigator` (locate code), `cavecrew-builder`\
-    \ (1-2 file edit), or `cavecrew-reviewer` (diff review) instead of doing the work\
-    \ inline or using vanilla `Explore`. Subagent output is caveman-compressed so\
-    \ the tool-result injected back into main context is ~60% smaller \u2014 main\
-    \ context lasts longer across long sessions. Trigger: \"delegate to subagent\"\
-    , \"use cavecrew\", \"spawn investigator/builder/reviewer\", \"save context\"\
-    , \"compressed agent output\".\n"
+  description: 'Decision guide for delegating to caveman-style subagents. Tells the
+    main thread WHEN to spawn `cavecrew-investigator` (locate code), `cavecrew-builder`
+    (1-2 file edit), or `cavecrew-reviewer` (diff review) instead of doing the work
+    inline or using vanilla `Explore`. Subagent output is caveman-compressed so the
+    tool-result injected back into main context is ~60% smaller — main context lasts
+    longer across long sessions. Trigger: "delegate to subagent", "use cavecrew",
+    "spawn investigator/builder/reviewer", "save context", "compressed agent output".
+
+    '
 - name:
   - caveman-commit
-  description: "Ultra-compressed commit message generator. Cuts noise from commit\
-    \ messages while preserving intent and reasoning. Conventional Commits format.\
-    \ Subject \u226450 chars, body only when \"why\" isn't obvious. Use when user\
-    \ says \"write a commit\", \"commit message\", \"generate commit\", \"/commit\"\
-    , or invokes /caveman-commit. Auto-triggers when staging changes.\n"
+  description: 'Ultra-compressed commit message generator. Cuts noise from commit
+    messages while preserving intent and reasoning. Conventional Commits format. Subject
+    ≤50 chars, body only when "why" isn''t obvious. Use when user says "write a commit",
+    "commit message", "generate commit", "/commit", or invokes /caveman-commit. Auto-triggers
+    when staging changes.
+
+    '
