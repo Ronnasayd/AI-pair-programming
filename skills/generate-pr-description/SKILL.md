@@ -1,55 +1,55 @@
 ---
 name: generate-pr-description
-description: "A skill for generating structured Pull Request descriptions based on git diffs and commit history. It automatically detects and uses .github/pull_request_template.md if available, otherwise it uses standard sections like ## Description, ## Task, and ## Impact. It also ensures the description is generated in the user's preferred language."
-argument-hint: "[language]: (Optional) The language in which the PR description should be generated (e.g., 'English', 'Portuguese'). If not provided, the skill MUST ask the user."
+description: "Generate structured Pull Request descriptions from git diffs (staged or branch) and commit history. Auto-detects .github/pull_request_template.md; falls back to Description/Impact/Task sections. Use when user says 'generate PR description', 'write PR description', 'create pull request description', 'gera descricao de PR', or 'crie descricao do PR'. Always asks user for output language if not specified. Do NOT use for writing code, reviewing diffs (use code-review), or generating commit messages (use caveman-commit)."
+argument-hint: "[language]: (Optional) Language for PR description (e.g., 'English', 'Portuguese'). Not provided → skill MUST ask user."
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"
 ---
 
 MANDATORY: Use developer-specialist or review-refactor-specialist agent.
-MANDATORY: If the {language} argument is not provided, you MUST ask the user: "Which language should I use for the PR description (e.g., English, Portuguese)?"
+MANDATORY: {language} arg not provided → MUST ask user: "Which language should I use for the PR description (e.g., English, Portuguese)?"
 
-Your objective is to generate a professional and comprehensive Pull Request description by analyzing the staged changes and recent commit history.
+Objective: generate professional, comprehensive PR description by analyzing staged changes + recent commit history.
 
 ====================
 PHASE 1 — TEMPLATE DETECTION
 ====================
 
-1. Check if `.github/pull_request_template.md` exists in the workspace.
-2. If it exists, read its content and use it as the MANDATORY structure for the PR description.
-3. If it does NOT exist, use the following default topics as sections:
-   - ## Description: High-level overview of what this PR does.
-   - ## Impact: Technical and functional impact of the changes.
+1. Check if `.github/pull_request_template.md` exists in workspace.
+2. Exists → read content, use as MANDATORY structure for PR description.
+3. Not exist → use default topics as sections:
+   - ## Description: High-level overview of what PR does.
+   - ## Impact: Technical + functional impact of changes.
    - ## Task: List of specific tasks or user stories addressed.
 
 ====================
 PHASE 2 — CONTEXT GATHERING
 ====================
 
-1. Identify the changes to be described:
-   - Run `git diff --staged`. If not empty, use this as the primary source.
-   - If `git diff --staged` is empty, run `git diff main...HEAD` (or the default branch) to see changes in the current branch.
-   - If still empty, inform the user and ask for the source of changes.
-2. Run `git log -n 10 --oneline` to understand the sequence of commits and their intent.
-3. Search for relevant PRDs or task specifications in `.taskmaster/` or `docs/` that match the branch name or commit keywords.
+1. Identify changes to describe:
+   - Run `git diff --staged`. Not empty → use as primary source.
+   - `git diff --staged` empty → run `git diff main...HEAD` (or default branch) for current branch changes.
+   - Still empty → inform user, ask for source of changes.
+2. Run `git log -n 10 --oneline` to understand commit sequence + intent.
+3. Search `.taskmaster/` or `docs/` for relevant PRDs/task specs matching branch name or commit keywords.
 
 ====================
 PHASE 3 — GENERATION
 ====================
 
-Based on your analysis, generate the PR description:
+Based on analysis, generate PR description:
 
-1. Follow the detected or default template strictly.
-2. Ensure the tone is professional and the content is accurate.
-3. If a language was specified, generate the entire description in that language.
-4. If no language was specified, you MUST have asked the user in advance (see MANDATORY rule).
+1. Follow detected or default template strictly.
+2. Tone professional, content accurate.
+3. Language specified → generate entire description in that language.
+4. No language specified → must have asked user in advance (see MANDATORY rule).
 
 ====================
 PHASE 4 — OUTPUT
 ====================
 
-Present the generated PR description to the user in a Markdown block.
+Present generated PR description to user in Markdown block.
 
 Example Output (Default Template):
 
@@ -74,6 +74,6 @@ This PR introduces a new skill for generating PR descriptions automatically...
 WORKFLOW
 ====================
 
-- Always verify if a PR template exists before proposing a structure.
-- If the `git diff --staged` is empty, inform the user that there are no staged changes to analyze.
-- Use the commit history to add context that might not be obvious from the diff alone.
+- Always verify PR template exists before proposing structure.
+- `git diff --staged` empty → inform user no staged changes to analyze.
+- Use commit history to add context not obvious from diff alone.

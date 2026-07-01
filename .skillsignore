@@ -6,6 +6,7 @@
 # plan-generator
 # resolve-merge-conflicts
 # skill-advisor
+# skill-description-generator
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
@@ -98,7 +99,6 @@ semantic-commit-message
 seo
 skill-architect
 skill-creator
-skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator

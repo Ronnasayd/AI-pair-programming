@@ -690,11 +690,13 @@ skills:
     into smaller sub-problems.
 - name:
   - generate-pr-description
-  description: 'A skill for generating structured Pull Request descriptions based
-    on git diffs and commit history. It automatically detects and uses .github/pull_request_template.md
-    if available, otherwise it uses standard sections like ## Description, ## Task,
-    and ## Impact. It also ensures the description is generated in the user''s preferred
-    language.'
+  description: Generate structured Pull Request descriptions from git diffs (staged
+    or branch) and commit history. Auto-detects .github/pull_request_template.md;
+    falls back to Description/Impact/Task sections. Use when user says 'generate PR
+    description', 'write PR description', 'create pull request description', 'gera
+    descricao de PR', or 'crie descricao do PR'. Always asks user for output language
+    if not specified. Do NOT use for writing code, reviewing diffs (use code-review),
+    or generating commit messages (use caveman-commit).
 - name:
   - prd-get-implicit-requirements
   description: 'Extract implicit requirements from product requirement documents (PRDs),
@@ -822,7 +824,7 @@ skills:
     Filters pending tasks from taskmaster, groups them into waves, and executes tasks
     within each wave in parallel (via orchestrate skill) while respecting wave dependencies.
     Updates status via MCP after each wave completes. The user decides what to do
-    on failures. Use: "execute feature <tag>" or "run tasks for <tag>". Do not use
+    on failures. Use: ''execute feature <tag>'' or run tasks for <tag>. Do not use
     for direct task management (taskmaster skill) or spec creation (tlc-spec-driven).'
 - name:
   - database-migrations
