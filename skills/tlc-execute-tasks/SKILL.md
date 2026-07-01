@@ -9,6 +9,8 @@ Executes the tasks of a feature by tag, integrating spec files with tlc-spec-dri
 
 ## Instructions
 
+Use `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate` to track wave/task progress and give user feedback throughout execution (in addition to taskmaster MCP status updates).
+
 ### Step 1: Validate Tag & Load Spec Files
 
 The user provides a tag (e.g. `tag="auto-null-cancellation"`). Validate that:
