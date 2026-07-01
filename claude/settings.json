@@ -85,7 +85,7 @@
       "Bash(docker stop:*)"
     ]
   },
-  "model": "sonnet",
+  "model": "haiku",
   "hooks": {
     "PreToolUse": [
       {
