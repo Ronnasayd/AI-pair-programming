@@ -59,6 +59,17 @@
       "env": {
         "SQLITEDB_PATH": "${MCP_SQLITEDB_PATH:-add-value-to-env-vars}"
       }
+    },
+    "keycloak": {
+      "command": "npx",
+      "args": [
+        "keycloak-mcp-server"
+      ],
+      "env": {
+        "KEYCLOAK_URL": "${MCP_KEYCLOAK_URL:-add-value-to-env-vars}",
+        "KEYCLOAK_ADMIN": "${MCP_KEYCLOAK_ADMIN:-add-value-to-env-vars}",
+        "KEYCLOAK_ADMIN_PASSWORD": "${MCP_KEYCLOAK_ADMIN_PASSWORD:-add-value-to-env-vars}"
+      }
     }
   }
 }
