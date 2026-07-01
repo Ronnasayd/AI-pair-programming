@@ -1,12 +1,11 @@
 # code-review
+# codenavi
 # diagnosing-bugs
+# dynamic-programming-analysis
 # generate-pr-description
 # grilling
 # orchestrate
-# plan-generator
 # resolve-merge-conflicts
-# skill-advisor
-# skill-description-generator
 # technical-decision-maker
 # tlc-execute-tasks
 # tlc-spec-driven
@@ -22,7 +21,6 @@ backend-patterns
 blueprint
 codebase-linguistic-analysis-to-csv-export
 codebase-rules-extractor
-codenavi
 coding-standards
 content-hash-cache-pattern
 context-map
@@ -43,7 +41,6 @@ docker-patterns
 document-summarizer
 domain-analysis
 domain-modeling
-dynamic-programming-analysis
 event-storming
 execute-task
 figma-capture
@@ -83,6 +80,7 @@ modular-decomposition
 modular-monolith-decomposer
 opencv
 perf-web-optimization
+plan-generator
 pr-review
 prd-from-codebase
 prd-generator
@@ -97,8 +95,10 @@ safe-refactor
 security-best-practices
 semantic-commit-message
 seo
+skill-advisor
 skill-architect
 skill-creator
+skill-description-generator
 skills-discovery
 srs-generator
 subagent-creator

@@ -26,6 +26,8 @@ PROJECT_ROOT = os.getcwd()
 ALLOWED_PATTERNS = [
     ".claude/**",
     "/tmp/**",
+    "/home/ronnas/develop/personal/AI-pair-programming/skills/**",
+    "/home/ronnas/develop/personal/AI-pair-programming/instructions/**",
 ]
 
 PROTECTED_PATTERNS = [
