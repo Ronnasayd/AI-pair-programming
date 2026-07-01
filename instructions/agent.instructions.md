@@ -21,6 +21,10 @@ Use this for clarifications, options, confirmations, preference checks, all user
 
 If interactive tool exists, never ask plain-text question.
 
+## Task Tracking
+
+When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate` to give user feedback. Mark tasks complete as done, don't batch.
+
 ## Code style
 
 - Functions: 4-20 lines. Split if longer.
