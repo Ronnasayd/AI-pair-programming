@@ -47,7 +47,8 @@ def main():
         LOG.error("fastembed not installed")
         sys.exit(1)
 
-    model = TextEmbedding(MODEL_NAME)
+    hf_cache = str(Path.home() / ".cache" / "huggingface" / "hub")
+    model = TextEmbedding(MODEL_NAME, cache_dir=hf_cache)
     LOG.debug(f"Model '{MODEL_NAME}' loaded")
 
     # Write PID
