@@ -3,9 +3,9 @@ name: taskmaster-prd-generator
 description: |
   Generate structured Product Requirements Documents (PRDs) for development projects in the `.taskmaster/prds/` directory. Use this skill whenever the user: says "create a PRD", "write requirements", "document this spec", "plan this project", or "help me structure this idea"; pastes a project description, rough notes, or spec file and wants it organized; mentions wanting to run `task-master parse-prd`; or describes a feature, app, or system they want to build — even casually. Trigger on intent to plan or document a project, not just the word "PRD". When in doubt, use this skill.
 
-compatibility: |
-  - Requires: File system access to create `.taskmaster/prds/` and write `.md` files
-  - Optional: `task-master` CLI for downstream parse-prd usage
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 ## Overview

@@ -2,6 +2,9 @@
 name: test-coverage-review
 description: "A skill for performing a deep analysis of test coverage for either a task specification (pre-implementation) or a completed task (post-implementation). Use this skill to identify missing scenarios, edge cases, and error paths, and to ensure that the testing strategy is robust and follows best practices."
 argument-hint: "[target]: A string containing the task specification, a file path to a task spec, or a description of the implemented changes/tests to be analyzed."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 MANDATORY: execute the {target} argument as the target for coverage analysis and follow the specialist's instructions.

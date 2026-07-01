@@ -9,7 +9,9 @@ description: |
   you want to migrate code to use only valid config-defined classes instead of free-form utilities.
   Works with React, Vue, HTML, Svelte, and any code containing Tailwind classes. Automatically discovers tailwind.config.js/ts
   and validates against both built-in Tailwind defaults and custom extensions defined in the config.
-compatibility: null
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Tailwind Config Conformance Validator
@@ -235,13 +237,13 @@ export default {
     extend: {
       colors: {
         primary: "#007AFF",
-        "primary-dark": "#0051D5",
+        "primary-dark": "#0051D5"
       },
       spacing: {
-        "custom-lg": "18px",
-      },
-    },
-  },
+        "custom-lg": "18px"
+      }
+    }
+  }
 };
 ```
 

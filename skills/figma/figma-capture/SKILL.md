@@ -2,10 +2,8 @@
 name: figma-capture
 description: Captures a screenshot and reference JSX code from a Figma node URL and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the user says "captura esse nó do figma", "salva a imagem e o código de [url figma]", "usa o figma mcp para salvar [url]", "capture this figma node", or any variation requesting to save a Figma design locally. Do NOT use for generating new designs, syncing components, or code-connect mapping workflows.
 metadata:
-  author: ronnas
-  version: 1.0.0
-  mcp-server: figma
-license: CC-BY-4.0
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # figma-capture

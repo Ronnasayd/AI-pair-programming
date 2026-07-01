@@ -1,6 +1,9 @@
 ---
 name: tlc-execute-tasks
-description: 'Executes feature tasks by tag, integrating spec files with tlc-spec-driven. Filters pending tasks from taskmaster, groups them into waves, and executes tasks within each wave in parallel (via orchestrate skill) while respecting wave dependencies. Updates status via MCP after each wave completes. The user decides what to do on failures. Use: "execute feature <tag>" or "run tasks for <tag>". Do not use for direct task management (taskmaster skill) or spec creation (tlc-spec-driven).'
+description: "Executes feature tasks by tag, integrating spec files with tlc-spec-driven. Filters pending tasks from taskmaster, groups them into waves, and executes tasks within each wave in parallel (via orchestrate skill) while respecting wave dependencies. Updates status via MCP after each wave completes. The user decides what to do on failures. Use: 'execute feature <tag>' or run tasks for <tag>. Do not use for direct task management (taskmaster skill) or spec creation (tlc-spec-driven)."
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Execute Feature Tasks

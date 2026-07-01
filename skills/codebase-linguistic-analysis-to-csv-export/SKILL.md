@@ -1,6 +1,9 @@
 ---
 name: codebase-linguistic-analysis-to-csv-export
 description: Identify all non-English text in a codebase (specifically Portuguese characters) and export findings to a structured CSV for translation/remediation workflows.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Codebase Linguistic Analysis to CSV Export

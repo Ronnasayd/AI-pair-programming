@@ -1,6 +1,9 @@
 ---
 name: frontend-patterns
 description: Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Frontend Development Patterns
@@ -162,7 +165,7 @@ interface UseQueryOptions<T> {
 export function useQuery<T>(
   key: string,
   fetcher: () => Promise<T>,
-  options?: UseQueryOptions<T>,
+  options?: UseQueryOptions<T>
 ) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -199,10 +202,10 @@ const {
   data: markets,
   loading,
   error,
-  refetch,
+  refetch
 } = useQuery("markets", () => fetch("/api/markets").then((r) => r.json()), {
   onSuccess: (data) => console.log("Fetched", data.length, "markets"),
-  onError: (err) => console.error("Failed:", err),
+  onError: (err) => console.error("Failed:", err)
 });
 ```
 

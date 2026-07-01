@@ -12,7 +12,8 @@ description: >
   Always use this skill when BOTH a requirements document path AND a Figma reference are present in the request,
   even if the user doesn't use the word "conformance" or "audit".
 metadata:
-  mcp-server: figma
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Figma Requirements Conformance

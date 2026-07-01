@@ -1,6 +1,9 @@
 ---
 name: taskmaster-overview
 description: AI-driven task management and project tracking using Task Master. Use when agent needs to initialize projects, parse Product Requirements Documents (PRDs), break down tasks into subtasks, or perform contextual research for technical implementations.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Task Master

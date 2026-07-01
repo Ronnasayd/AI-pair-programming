@@ -1,7 +1,9 @@
 ---
 name: document-summarizer
 description: Extract and condense key information from any document or text while preserving critical details. Use when you need to summarize PRDs, specifications, technical documents, articles, reports, emails, or any text that needs a condensed, structured overview. Produces output in sections with bullet points, intelligently combining extracted quotes with rewritten insights. Always use this skill whenever the user asks to "summarize", "condense", "brief", "extract key points", "make a summary", "create an overview", "reduce this", or provides a document/text saying "please summarize this" — even if they mention it informally.
-compatibility: Text processing (no external dependencies required)
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Document Summarizer

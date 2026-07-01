@@ -1,6 +1,9 @@
 ---
 name: prd-get-implicit-requirements
 description: 'Extract implicit requirements from product requirement documents (PRDs), identify coverage gaps across 14 universal categories, and generate clarification questions for stakeholders. Use when user says "analyze PRD for gaps", "extract implicit requirements", "find missing requirements", "what''s not defined in our spec", "identify PRD holes", or "get clarification questions from PRD". Systematically covers: interface states, error handling, navigation, data persistence, network behavior, security, performance, platform behavior, content fallbacks, localization, accessibility, legal compliance, deployment, and observability. Do NOT use for creating PRDs (use tlc-spec-driven), technical design documents, architectural decisions, or test planning.'
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 ### Phase 1 — Structured Reading
