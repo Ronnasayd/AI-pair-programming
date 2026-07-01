@@ -24,8 +24,8 @@ LOG = get_hooks_logger("SkillActivation")
 
 DB_PATH = Path(".claude/skills/skills.db")
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-MIN_SIMILARITY = 0.48
-MAX_SUGGESTIONS = 5
+MIN_SIMILARITY = 0.5
+MAX_SUGGESTIONS = 3
 DEDUP_HOURS = 1
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 DAEMON_START_TIMEOUT = 10
@@ -225,7 +225,7 @@ def main():
             output = {
                 "hookSpecificOutput": {
                     "hookEventName": "UserPromptSubmit",
-                    "additionalContext": f"**Skill suggestions:** {suggestions}",
+                    "additionalContext": f"IMPORTANT: check if these skills match user request, invoke via Skill tool if so: {suggestions}",
                 }
             }
             LOG.debug(f"Output JSON: {json.dumps(output)}")
