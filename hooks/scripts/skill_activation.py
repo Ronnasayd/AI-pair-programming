@@ -221,11 +221,17 @@ def main():
         if matches:
             LOG.debug(f"Final matches ({len(matches)}): {[m[0] for m in matches]}")
             saveRecLog(rec_log_path, rec_log)
-            suggestions = "; ".join(f"`/{m[0]}` — {m[1]}" for m in matches)
+            suggestions = [{"skill": name, "hint": hint} for name, hint in matches]
             output = {
                 "hookSpecificOutput": {
                     "hookEventName": "UserPromptSubmit",
-                    "additionalContext": f"IMPORTANT: check if these skills match user request, invoke via Skill tool if so: {suggestions}",
+                    "additionalContext": json.dumps(
+                        {
+                            "instruction": "check if these skills match user request, invoke via Skill tool if so",
+                            "suggestions": suggestions,
+                        },
+                        ensure_ascii=False,
+                    ),
                 }
             }
             LOG.debug(f"Output JSON: {json.dumps(output, ensure_ascii=False)}")
