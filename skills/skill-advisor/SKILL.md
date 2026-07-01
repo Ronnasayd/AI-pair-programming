@@ -5,6 +5,9 @@ description: >
   Use this skill whenever the user asks "which skill should I use?", "what skill is good for X?", "do I have a skill for Y?", "is there a skill that can help with Z?",
   or any variant of "help me pick a skill". Also trigger this when the user describes a task that clearly involves multiple steps or file types and they seem unsure
   how to approach it — even if they don't use the word "skill". The goal is to be the routing layer that maps problems to the right capabilities.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Skill Advisor

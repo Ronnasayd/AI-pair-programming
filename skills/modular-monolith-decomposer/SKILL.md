@@ -1,10 +1,9 @@
 ---
 name: modular-monolith-decomposer
 description: Decomposes a system description into Modular Monolith modules using Domain-Driven Design (DDD) principles. Produces a bounded context map, data ownership table, external integration boundaries, cross-module communication patterns, a ready-to-use directory structure, and an architectural decision log. Use when the user says "which modules should I create", "modular monolith decomposition", "map bounded contexts", "identify modules from PRD", "structure this codebase", "DDD module mapping", "data ownership", "find module boundaries", "how to organize my modules", or provides any system description (PRD, requirements, informal explanation) and wants to implement it as a Modular Monolith. Do NOT use for Event Storming artifact creation (use event-storming skill), microservices decomposition, or general architectural Q&A without a concrete system description to analyze.
-license: CC-BY-4.0
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
-  version: 1.0.0
+  version: "1.0.0"
 ---
 
 # Modular Monolith Decomposer

@@ -1,6 +1,9 @@
 ---
 name: tdd-workflow
 description: Use this skill when writing new features, fixing bugs, or refactoring code. Enforces test-driven development with 80%+ coverage including unit, integration, and E2E tests.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Test-Driven Development Workflow
@@ -177,7 +180,7 @@ describe("GET /api/markets", () => {
 
   it("validates query parameters", async () => {
     const request = new NextRequest(
-      "http://localhost/api/markets?limit=invalid",
+      "http://localhost/api/markets?limit=invalid"
     );
     const response = await GET(request);
 
@@ -281,12 +284,12 @@ jest.mock("@/lib/supabase", () => ({
         eq: jest.fn(() =>
           Promise.resolve({
             data: [{ id: 1, name: "Test Market" }],
-            error: null,
-          }),
-        ),
-      })),
-    })),
-  },
+            error: null
+          })
+        )
+      }))
+    }))
+  }
 }));
 ```
 
@@ -295,9 +298,9 @@ jest.mock("@/lib/supabase", () => ({
 ```typescript
 jest.mock("@/lib/redis", () => ({
   searchMarketsByVector: jest.fn(() =>
-    Promise.resolve([{ slug: "test-market", similarity_score: 0.95 }]),
+    Promise.resolve([{ slug: "test-market", similarity_score: 0.95 }])
   ),
-  checkRedisHealth: jest.fn(() => Promise.resolve({ connected: true })),
+  checkRedisHealth: jest.fn(() => Promise.resolve({ connected: true }))
 }));
 ```
 
@@ -307,9 +310,9 @@ jest.mock("@/lib/redis", () => ({
 jest.mock("@/lib/openai", () => ({
   generateEmbedding: jest.fn(() =>
     Promise.resolve(
-      new Array(1536).fill(0.1), // Mock 1536-dim embedding
-    ),
-  ),
+      new Array(1536).fill(0.1) // Mock 1536-dim embedding
+    )
+  )
 }));
 ```
 

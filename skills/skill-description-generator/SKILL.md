@@ -1,10 +1,9 @@
 ---
 name: skill-description-generator
 description: Generate skill description fields that trigger correctly with specific phrases and clear negatives. Use when creating new skills and need description copy following trigger rules. Do NOT use for entire SKILL.md files, architecture docs, or non-description content.
-license: CC-BY-4.0
 metadata:
-  author: Ronnasayd
-  version: 1.0.0
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Skill Description Generator

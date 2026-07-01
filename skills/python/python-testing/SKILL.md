@@ -1,6 +1,9 @@
 ---
 name: python-testing
 description: Python testing strategies using pytest, TDD methodology, fixtures, mocking, parametrization, and coverage requirements.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Python Testing Patterns

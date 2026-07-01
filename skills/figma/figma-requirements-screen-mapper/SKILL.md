@@ -18,7 +18,8 @@ description: >
   are present and the user wants a mapping, matrix, or traceability table — even if they
   don't use the exact words "requirements screen mapper".
 metadata:
-  mcp-server: figma
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Requirements ↔ Screen Mapper

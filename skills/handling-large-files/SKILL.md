@@ -1,6 +1,9 @@
 ---
 name: handling-large-files
 description: Strategies for reading, chunking, and processing files that exceed practical token limits. Covers streaming reads, selective extraction, summarization-before-analysis, and memory-efficient patterns for large codebases, logs, or datasets. Use whenever a file or set of files is too large to fit in context at once. Do NOT use for normally-sized files — adds unnecessary overhead.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Handling Large Files

@@ -2,7 +2,8 @@
 name: figma-mcp
 description: Provides instructions and workflows for using the Figma MCP (Model-Context-Protocol) server to interact with Figma and FigJam. Use this skill to generate designs from web interfaces, extract design context, manage design systems, and create diagrams.
 metadata:
-  mcp-server: figma
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Figma MCP Skill

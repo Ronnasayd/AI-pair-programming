@@ -10,6 +10,9 @@ description: >-
   provides a .taskmaster/tasks.json and asks what skills/agents to use. Always trigger this skill when the
   user wants to associate available skills or specialist agents with a list of tasks or subtasks,
   even if they phrase it as "who should do this" or "what tool fits each task".
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Task Skills Mapper

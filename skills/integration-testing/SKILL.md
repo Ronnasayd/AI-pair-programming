@@ -9,6 +9,9 @@ description: >
   "how to write integration tests for my modules", "what testing approach should I use", or any
   mention of module interaction testing, stub/driver usage, or interface verification. Also trigger
   when users discuss CI/CD pipelines and want to know where integration tests fit in.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Integration Testing Skill

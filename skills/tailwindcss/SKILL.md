@@ -1,6 +1,9 @@
 ---
 name: tailwindcss
 description: Tailwind CSS v4 utility-first styling patterns including responsive design, dark mode, and custom configuration. Use when styling with Tailwind, adding utility classes, configuring Tailwind, setting up dark mode, or customizing the theme.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Tailwind CSS v4 Development Guidelines
@@ -257,7 +260,7 @@ Best practices for using Tailwind CSS v4 utility classes effectively.
 module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}"
   ],
   theme: {
     extend: {
@@ -265,18 +268,18 @@ module.exports = {
         brand: {
           50: "#eff6ff",
           100: "#dbeafe",
-          900: "#1e3a8a",
-        },
+          900: "#1e3a8a"
+        }
       },
       spacing: {
-        128: "32rem",
+        128: "32rem"
       },
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-      },
-    },
+        sans: ["Inter", "sans-serif"]
+      }
+    }
   },
-  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")]
 };
 ```
 

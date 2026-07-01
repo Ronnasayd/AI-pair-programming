@@ -1,6 +1,9 @@
 ---
 name: orchestrate
 description: Coordinate the execution of complex tasks using multiple specialized subagents, ensuring dependencies are respected and parallelization is maximized.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 You are an Agent Orchestrator responsible for coordinating the execution of complex tasks using multiple specialized subagents.

@@ -6,6 +6,9 @@ description: |
   Use this skill whenever: a Figma link or file is provided and the user wants code generated from it; the user says "generate this Figma design as React/Vue/HTML", "convert this Figma to code", "build a component from this design", "make it look exactly like Figma", or "match the design"; the user needs pixel-perfect design-to-development handoff; the user mentions needing to validate UI against a Figma spec.
 
   The skill reads design specs via Figma MCP, auto-detects the framework, generates code, renders a screenshot via browser automation, compares using SSIM (Structural Similarity Index), and iterates up to 10 times until reaching ≥0.9 visual similarity. Works for React, Vue 3, and vanilla HTML/CSS. Perfect for design system components, landing pages, or any UI that must match a Figma spec.
+metadata:
+  author: Ronnasayd Machado - github.com/Ronnasayd
+  version: "1.0.0"
 ---
 
 # Figma-to-Code Agentic
