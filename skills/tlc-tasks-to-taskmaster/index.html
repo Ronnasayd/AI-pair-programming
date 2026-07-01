@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Taskmaster Board</title>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --col-bg: #ebecf0;
+    --card-bg: #ffffff;
+    --text: #172b4d;
+    --muted: #5e6c84;
+    --high: #de350b;
+    --medium: #ff991f;
+    --low: #36b37e;
+    --border: #dfe1e6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 { font-size: 18px; margin: 0; margin-right: 8px; }
+  button {
+    cursor: pointer;
+    border: none;
+    background: #0052cc;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  button:hover { background: #0747a6; }
+  select {
+    padding: 7px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    min-width: 220px;
+  }
+  .filename { color: var(--muted); font-size: 13px; }
+  .board {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    overflow-x: auto;
+    align-items: flex-start;
+  }
+  .column {
+    background: var(--col-bg);
+    border-radius: 6px;
+    width: 320px;
+    min-width: 320px;
+    padding: 10px;
+    flex-shrink: 0;
+  }
+  .column h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 4px 6px 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(9,30,66,.25);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .card:hover { box-shadow: 0 2px 6px rgba(9,30,66,.35); }
+  .card-title { font-size: 14px; margin: 0 0 6px; }
+  .card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge.high { background: var(--high); }
+  .badge.medium { background: var(--medium); }
+  .badge.low { background: var(--low); }
+  .id-tag { color: var(--muted); font-size: 12px; margin-right: 6px; }
+  .empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    color: var(--muted);
+    font-size: 16px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(9,30,66,.54);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 6px;
+    max-width: 720px;
+    width: 100%;
+    padding: 24px;
+  }
+  .modal h2 { margin-top: 0; }
+  .modal .close {
+    float: right;
+    background: transparent;
+    color: var(--muted);
+    font-size: 20px;
+    padding: 0 6px;
+  }
+  .modal .close:hover { color: var(--text); background: transparent; }
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .field pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: inherit;
+    background: #f4f5f7;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 0;
+    font-size: 13px;
+  }
+  .deps { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dep-chip {
+    background: #f4f5f7;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+  .subtask-list { list-style: none; padding: 0; margin: 0; }
+  .subtask-list li {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .subtask-list li:hover { background: #f4f5f7; }
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  .status-dot.done { background: var(--low); }
+  .status-dot.pending { background: #ffab00; }
+  .status-dot.other { background: var(--muted); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.25.6/babel.min.js" crossorigin></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useMemo, useCallback } = React;
+
+const COLUMN_ORDER = ["pending", "in-progress", "review", "done"];
+
+function countSubtasks(task) {
+  let total = 0;
+  let done = 0;
+  (task.subtasks || []).forEach((s) => {
+    total += 1;
+    if (s.status === "done") done += 1;
+    const nested = countSubtasks(s);
+    total += nested.total;
+    done += nested.done;
+  });
+  return { total, done };
+}
+
+function PriorityBadge({ priority }) {
+  if (!priority) return null;
+  return <span className={"badge " + priority}>{priority}</span>;
+}
+
+function TaskCard({ task, onOpen }) {
+  const { total, done } = countSubtasks(task);
+  return (
+    <div className="card" onClick={() => onOpen(task)}>
+      <p className="card-title"><span className="id-tag">#{task.id}</span>{task.title}</p>
+      <div className="card-meta">
+        <PriorityBadge priority={task.priority} />
+        {total > 0 && <span>{done}/{total} subtasks</span>}
+        {(task.dependencies || []).length > 0 && (
+          <span>deps: {task.dependencies.join(", ")}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TaskDetail({ task, onClose, onOpen }) {
+  if (!task) return null;
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <button className="close" onClick={onClose}>&times;</button>
+        <h2>#{task.id} {task.title}</h2>
+        <div className="card-meta" style={{ marginBottom: 16 }}>
+          <PriorityBadge priority={task.priority} />
+          <span className={"status-dot " + (task.status === "done" || task.status === "pending" ? task.status : "other")}></span>
+          <span>{task.status}</span>
+        </div>
+
+        {task.description && (
+          <div className="field">
+            <label>Description</label>
+            <pre>{task.description}</pre>
+          </div>
+        )}
+
+        {task.details && (
+          <div className="field">
+            <label>Details</label>
+            <pre>{task.details}</pre>
+          </div>
+        )}
+
+        {task.testStrategy && task.testStrategy !== "none" && (
+          <div className="field">
+            <label>Test Strategy</label>
+            <pre>{task.testStrategy}</pre>
+          </div>
+        )}
+
+        {(task.dependencies || []).length > 0 && (
+          <div className="field">
+            <label>Dependencies</label>
+            <div className="deps">
+              {task.dependencies.map((d) => (
+                <span className="dep-chip" key={d}>#{d}</span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(task.subtasks || []).length > 0 && (
+          <div className="field">
+            <label>Subtasks</label>
+            <ul className="subtask-list">
+              {task.subtasks.map((s) => (
+                <li key={s.id} onClick={() => onOpen(s)}>
+                  <span>
+                    <span className={"status-dot " + (s.status === "done" || s.status === "pending" ? s.status : "other")}></span>
+                    #{s.id} {s.title}
+                  </span>
+                  <PriorityBadge priority={s.priority} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Board({ tasks }) {
+  const [selected, setSelected] = useState(null);
+
+  const columns = useMemo(() => {
+    const map = {};
+    tasks.forEach((t) => {
+      const key = t.status || "unknown";
+      if (!map[key]) map[key] = [];
+      map[key].push(t);
+    });
+    const ordered = COLUMN_ORDER.filter((c) => map[c]);
+    Object.keys(map).forEach((k) => {
+      if (!ordered.includes(k)) ordered.push(k);
+    });
+    return ordered.map((key) => ({ key, items: map[key] }));
+  }, [tasks]);
+
+  return (
+    <React.Fragment>
+      <div className="board">
+        {columns.map((col) => (
+          <div className="column" key={col.key}>
+            <h2>{col.key} <span>{col.items.length}</span></h2>
+            {col.items.map((t) => (
+              <TaskCard key={t.id} task={t} onOpen={setSelected} />
+            ))}
+          </div>
+        ))}
+      </div>
+      <TaskDetail task={selected} onClose={() => setSelected(null)} onOpen={setSelected} />
+    </React.Fragment>
+  );
+}
+
+function App() {
+  const [data, setData] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [tag, setTag] = useState(null);
+  const fileInputRef = React.useRef(null);
+
+  const handleFile = useCallback((e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target.result);
+        setData(parsed);
+        setFileName(file.name);
+        const tags = Object.keys(parsed);
+        setTag(tags[0] || null);
+      } catch (err) {
+        alert("Erro ao ler JSON: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }, []);
+
+  const tags = data ? Object.keys(data) : [];
+  const currentTasks = data && tag && data[tag] ? data[tag].tasks || [] : [];
+
+  return (
+    <React.Fragment>
+      <header>
+        <h1>Taskmaster Board</h1>
+        <button onClick={() => fileInputRef.current.click()}>Abrir tasks.json</button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          style={{ display: "none" }}
+          onChange={handleFile}
+        />
+        {fileName && <span className="filename">{fileName}</span>}
+        {tags.length > 0 && (
+          <select value={tag} onChange={(e) => setTag(e.target.value)}>
+            {tags.map((t) => (
+              <option key={t} value={t}>{t} ({data[t].tasks ? data[t].tasks.length : 0})</option>
+            ))}
+          </select>
+        )}
+      </header>
+      {data ? (
+        <Board tasks={currentTasks} />
+      ) : (
+        <div className="empty">
+          <p>Nenhum arquivo carregado.</p>
+          <button onClick={() => fileInputRef.current.click()}>Abrir tasks.json</button>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
