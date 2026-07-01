@@ -195,6 +195,9 @@ Global aggregated execution data:
 ```bash
 mkdir -p .taskmaster/tasks .taskmaster/execution
 
+# Copy the Kanban board viewer into .taskmaster (overwrite ok, static asset)
+cp <skill-path>/index.html .taskmaster/index.html
+
 # Merge new tasks into tasks.json (preserves existing tags)
 python3 <skill-path>/scripts/merge-tasks.py \
   .taskmaster/tasks/tasks.json \
@@ -215,6 +218,7 @@ python3 <skill-path>/scripts/validate-tasks.py metadata .taskmaster/execution/me
 - `validate-tasks.py`: Checks structure and required fields for both file types
 - If validation fails, fix syntax errors and re-validate before presenting the result
 - Both files must be valid before confirming delivery
+- `index.html`: standalone Kanban board viewer, copied to `.taskmaster/index.html` for viewing tasks.json in browser
 
 ## Final Checklist
 
