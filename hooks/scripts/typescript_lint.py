@@ -131,17 +131,37 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
     }
 
 
+def _run_jscpd(resolved: Path, project_root: str) -> dict:
+    """Run jscpd duplication check via npx. Returns {success, output, error}."""
+    cmd = f"npx jscpd --no-tips {str(resolved)}"
+    logger.info("[TypeScriptLint] Executing: %s (cwd=%s)", cmd, project_root)
+    result = run_command(cmd, cwd=project_root)
+    logger.debug("[TypeScriptLint] jscpd result for %s: %s", resolved, result)
+    if not result["success"]:
+        logger.debug(
+            "[TypeScriptLint] jscpd issues in %s:\n%s",
+            resolved,
+            result.get("output", ""),
+        )
+    return {
+        "success": result["success"],
+        "output": result.get("output", ""),
+        "error": result.get("error", ""),
+        "installed": True,
+    }
+
+
 def maybe_run_typescript_lint(file_path: str | None) -> dict:
     """
-    Run TypeScript and ESLint checks for JS/TS files.
+    Run TypeScript, ESLint and jscpd checks for JS/TS files.
 
     Args:
         file_path: Path to the edited file.
 
     Returns:
-        Dict with typescript and eslint results.
+        Dict with typescript, eslint and jscpd results.
     """
-    result: dict[str, dict | None] = {"typescript": None, "eslint": None}
+    result: dict[str, dict | None] = {"typescript": None, "eslint": None, "jscpd": None}
 
     if not file_path:
         logger.debug("[TypeScriptLint] No file_path provided, skipping.")
@@ -164,6 +184,7 @@ def maybe_run_typescript_lint(file_path: str | None) -> dict:
 
     result["typescript"] = _run_typescript(resolved, project_root)
     result["eslint"] = _run_eslint(resolved, project_root)
+    result["jscpd"] = _run_jscpd(resolved, project_root)
     return result
 
 
@@ -190,7 +211,11 @@ def main() -> None:
         lint_results = maybe_run_typescript_lint(file_path)
 
         # Add lint results to output data if present
-        if lint_results.get("typescript") or lint_results.get("eslint"):
+        if (
+            lint_results.get("typescript")
+            or lint_results.get("eslint")
+            or lint_results.get("jscpd")
+        ):
             output_data = json.dumps(
                 {
                     "hookSpecificOutput": {

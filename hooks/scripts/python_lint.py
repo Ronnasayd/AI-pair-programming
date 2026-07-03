@@ -138,17 +138,41 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
     }
 
 
+def _run_jscpd(resolved: Path, project_root: str) -> dict:
+    """Run jscpd duplication check via npx. Returns {success, output, error}."""
+    cmd = f"npx jscpd --no-tips {str(resolved)}"
+    logger.info("[PythonLint] Executing: %s (cwd=%s)", cmd, project_root)
+    result = run_command(cmd, cwd=project_root)
+    logger.debug("[PythonLint] jscpd result: success=%s", result["success"])
+    if not result["success"]:
+        logger.warning(
+            "[PythonLint] jscpd found issues in %s:\n%s",
+            resolved,
+            result.get("output", ""),
+        )
+    return {
+        "success": result["success"],
+        "output": result.get("output", ""),
+        "error": result.get("error", ""),
+        "installed": True,
+    }
+
+
 def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | None]:
     """
-    Run mypy and ruff checks for Python files.
+    Run mypy, ruff and jscpd checks for Python files.
 
     Args:
         file_path: Path to the edited file.
 
     Returns:
-        Dict with mypy and ruff results.
+        Dict with mypy, ruff and jscpd results.
     """
-    result: dict[str, dict[str, Any] | None] = {"mypy": None, "ruff": None}
+    result: dict[str, dict[str, Any] | None] = {
+        "mypy": None,
+        "ruff": None,
+        "jscpd": None,
+    }
 
     if not file_path:
         logger.debug("[PythonLint] No file_path provided, skipping.")
@@ -169,6 +193,7 @@ def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | N
 
     result["mypy"] = _run_mypy(resolved, project_root)
     result["ruff"] = _run_ruff(resolved, project_root)
+    result["jscpd"] = _run_jscpd(resolved, project_root)
     return result
 
 
