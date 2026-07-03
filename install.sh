@@ -147,6 +147,14 @@ for backend in "${BACKENDS[@]}"; do
   run_install "$backend"
 done
 
+
+if ! grep -qF ".agents/skills/*" .gitignore; then
+    echo ".agents/skills/*" >> .gitignore
+fi
+if ! grep -qF "skills-lock.json" .gitignore; then
+    echo "skills-lock.json" >> .gitignore
+fi
+
 # Copy configuration files
 cat $SOURCE/.agentsignore | while read agent; do
     if ! grep -q "$agent" $LOCAL/.agentsignore; then
@@ -167,9 +175,6 @@ cat $SOURCE/.rulesignore | while read rule; do
 done
 
 
-if ! grep -q ".sessions/*" $LOCAL/.gitignore; then
-    echo ".sessions/*" >> $LOCAL/.gitignore
-fi
 
 ###########################################################################################
 
