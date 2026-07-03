@@ -1,9 +1,372 @@
 # Changelog
 
-## v2026.05.12 (Initial Release / Full History)
+## v2026.07.03 (Initial Release / Full History)
+
+### **2026-07-03**
+
+- **[🧹 Chores]** Pin model per prompt file ([14feb2f](https://github.com/Ronnasayd/AI-pair-programming/commit/14feb2f))
+- **[🐛 Bug Fixes]** Switch database mcp servers to git-hosted uvx packages ([a3b4b94](https://github.com/Ronnasayd/AI-pair-programming/commit/a3b4b94))
+- **[🐛 Bug Fixes]** Fix keycloak spelling and add admin credential env vars ([f231dd7](https://github.com/Ronnasayd/AI-pair-programming/commit/f231dd7))
+- **[🧹 Chores]** Reorganize ignore rules and add claude.md pointer ([ff7c6fc](https://github.com/Ronnasayd/AI-pair-programming/commit/ff7c6fc))
+- **[🐛 Bug Fixes]** Switch keycloak server to git-hosted uvx package, add gcloud server ([37ed36b](https://github.com/Ronnasayd/AI-pair-programming/commit/37ed36b))
+
+### **2026-07-01**
+
+- **[🐛 Bug Fixes]** Resolve embedding daemon socket never created on cold start ([9b48848](https://github.com/Ronnasayd/AI-pair-programming/commit/9b48848))
+- **[🧹 Chores]** Update skillsignore entries and protect skill/instruction dirs ([abeb198](https://github.com/Ronnasayd/AI-pair-programming/commit/abeb198))
+- **[🐛 Bug Fixes]** Emit structured json suggestions instead of joined string ([b60896f](https://github.com/Ronnasayd/AI-pair-programming/commit/b60896f))
+- **[🐛 Bug Fixes]** Preserve non-ascii chars in json output ([f837fef](https://github.com/Ronnasayd/AI-pair-programming/commit/f837fef))
+- **[♻️ Refactoring]** Use full description as hint, activate skill-description-generator ([a4ac5cb](https://github.com/Ronnasayd/AI-pair-programming/commit/a4ac5cb))
+- **[📚 Documentation]** Require task* tools for multi-step progress feedback ([1315de4](https://github.com/Ronnasayd/AI-pair-programming/commit/1315de4))
+- **[📚 Documentation]** Require task* tools for multi-step progress feedback ([0180c16](https://github.com/Ronnasayd/AI-pair-programming/commit/0180c16))
+- **[✨ Features]** Copy kanban board viewer to .taskmaster on generation ([0c55d7e](https://github.com/Ronnasayd/AI-pair-programming/commit/0c55d7e))
+- **[✨ Features]** Add standalone kanban board viewer for tasks.json ([26fdcb2](https://github.com/Ronnasayd/AI-pair-programming/commit/26fdcb2))
+- **[🧹 Chores]** Activate general-use skills in .skillsignore ([55e84ff](https://github.com/Ronnasayd/AI-pair-programming/commit/55e84ff))
+- **[🐛 Bug Fixes]** Preserve unicode in generated skill/agent index.yaml files ([cc87be9](https://github.com/Ronnasayd/AI-pair-programming/commit/cc87be9))
+- **[🐛 Bug Fixes]** Tune skill suggestion threshold and strengthen prompt ([8694930](https://github.com/Ronnasayd/AI-pair-programming/commit/8694930))
+
+### **2026-06-30**
+
+- **[✨ Features]** Add keycloak mcp server config and revert default model to sonnet ([ed98d4b](https://github.com/Ronnasayd/AI-pair-programming/commit/ed98d4b))
+- **[♻️ Refactoring]** Emphasize agents.md instructions and clean up whitespace ([d458a87](https://github.com/Ronnasayd/AI-pair-programming/commit/d458a87))
+- **[🧹 Chores]** Switch default model to haiku and begin ai-memory consolidation ([7704607](https://github.com/Ronnasayd/AI-pair-programming/commit/7704607))
+- **[♻️ Refactoring]** Use agents.md for instructions in install scripts ([f1655b4](https://github.com/Ronnasayd/AI-pair-programming/commit/f1655b4))
+- **[♻️ Refactoring]** Change shebangs to use /usr/bin/python3 for consistency across scripts ([dc59c6c](https://github.com/Ronnasayd/AI-pair-programming/commit/dc59c6c))
+
+### **2026-06-29**
+
+- **[🧹 Chores]** Add debug logging to skill scoring and remove unused permission setting ([8d77c8d](https://github.com/Ronnasayd/AI-pair-programming/commit/8d77c8d))
+- **[🐛 Bug Fixes]** Ensure embeddings use float32 dtype and set default model to haiku ([7df467a](https://github.com/Ronnasayd/AI-pair-programming/commit/7df467a))
+- **[♻️ Refactoring]** Replace sentence_transformers with fastembed ([f1a7146](https://github.com/Ronnasayd/AI-pair-programming/commit/f1a7146))
+
+### **2026-06-27**
+
+- **[🐛 Bug Fixes]** Update session start script path in settings.json ([68bac32](https://github.com/Ronnasayd/AI-pair-programming/commit/68bac32))
+- **[🧹 Chores]** Switch default model to haiku and adjust skill similarity threshold ([d7021bc](https://github.com/Ronnasayd/AI-pair-programming/commit/d7021bc))
+- **[♻️ Refactoring]** Split agent and docs conventions into separate files ([dbb5422](https://github.com/Ronnasayd/AI-pair-programming/commit/dbb5422))
+
+### **2026-06-26**
+
+- **[✨ Features]** Enable parallel execution within waves via orchestrate skill ([9d59936](https://github.com/Ronnasayd/AI-pair-programming/commit/9d59936))
+- **[✨ Features]** Switch to multilingual sentence transformer model ([917c27c](https://github.com/Ronnasayd/AI-pair-programming/commit/917c27c))
+- **[✨ Features]** Introduce daemon for persistent model serving ([d246402](https://github.com/Ronnasayd/AI-pair-programming/commit/d246402))
+- **[🐛 Bug Fixes]** Tighten similarity threshold and fix gitignore path ([f25f42c](https://github.com/Ronnasayd/AI-pair-programming/commit/f25f42c))
+- **[✨ Features]** Expand debug logging for vector search pipeline ([9a91de5](https://github.com/Ronnasayd/AI-pair-programming/commit/9a91de5))
+- **[✨ Features]** Expand debug logging for vector search pipeline ([5797fbb](https://github.com/Ronnasayd/AI-pair-programming/commit/5797fbb))
+- **[✨ Features]** Replace keyword/regex matching with vector search ([5aeb3ef](https://github.com/Ronnasayd/AI-pair-programming/commit/5aeb3ef))
+
+### **2026-06-25**
+
+- **[♻️ Refactoring]** Complete hint descriptions and simplify sync script ([732f353](https://github.com/Ronnasayd/AI-pair-programming/commit/732f353))
+- **[🧹 Chores]** Refine keywords and intent patterns for precision ([785c640](https://github.com/Ronnasayd/AI-pair-programming/commit/785c640))
+- **[✨ Features]** Add sync script to map index.yaml to skill-rules ([45217fa](https://github.com/Ronnasayd/AI-pair-programming/commit/45217fa))
+- **[🐛 Bug Fixes]** Ensure hooks.log exists before tailing in lgh alias ([d4a93ed](https://github.com/Ronnasayd/AI-pair-programming/commit/d4a93ed))
+- **[✨ Features]** Enhance skill activation observability ([78f858a](https://github.com/Ronnasayd/AI-pair-programming/commit/78f858a))
+- **[✨ Features]** Add skill activation hook to suggest relevant skills ([48663e1](https://github.com/Ronnasayd/AI-pair-programming/commit/48663e1))
+- **[🐛 Bug Fixes]** Date command compatibility and display formatting ([6fb9263](https://github.com/Ronnasayd/AI-pair-programming/commit/6fb9263))
+
+### **2026-06-24**
+
+- **[🚧 Other Changes]** Simplify statusline display with nerd font icons and cleaner formatting ([8a02db7](https://github.com/Ronnasayd/AI-pair-programming/commit/8a02db7))
+- **[🐛 Bug Fixes]** Adjust context-refs.json symlink check to handle existing files ([1b39a34](https://github.com/Ronnasayd/AI-pair-programming/commit/1b39a34))
+- **[✨ Features]** Add codebase-linguistic-analysis skill and extend context references for test and vue files ([42a2989](https://github.com/Ronnasayd/AI-pair-programming/commit/42a2989))
+- **[✨ Features]** Add type-specific context references for js, openapi, react, and test files ([ff78056](https://github.com/Ronnasayd/AI-pair-programming/commit/ff78056))
+- **[♻️ Refactoring]** Adjust context-refs.json and update install script to symlink it ([caf93dd](https://github.com/Ronnasayd/AI-pair-programming/commit/caf93dd))
+- **[♻️ Refactoring]** Update .gitignore and context-refs.json for new rules ([f39b951](https://github.com/Ronnasayd/AI-pair-programming/commit/f39b951))
+- **[✨ Features]** Add support for multiple glob patterns in context_refs.py ([bb9d251](https://github.com/Ronnasayd/AI-pair-programming/commit/bb9d251))
+- **[♻️ Refactoring]** Simplify glob matching in context_refs.py ([f63fe31](https://github.com/Ronnasayd/AI-pair-programming/commit/f63fe31))
+- **[✨ Features]** Add context-refs hook and reorganize skills ([ca142f7](https://github.com/Ronnasayd/AI-pair-programming/commit/ca142f7))
+- **[✨ Features]** Add mattpocock engineering skills for diagnosing-bugs and domain-modeling ([6245eb9](https://github.com/Ronnasayd/AI-pair-programming/commit/6245eb9))
+- **[✨ Features]** Add grilling skill for stress-testing plans ([25e4f9a](https://github.com/Ronnasayd/AI-pair-programming/commit/25e4f9a))
+- **[♻️ Refactoring]** Add mattpocock skills and remove ignored skills ([93fbb21](https://github.com/Ronnasayd/AI-pair-programming/commit/93fbb21))
+
+### **2026-06-23**
+
+- **[✨ Features]** Add analyze-comfyui-workflow-json skill ([c59722d](https://github.com/Ronnasayd/AI-pair-programming/commit/c59722d))
+- **[♻️ Refactoring]** Update prompts ([79c083c](https://github.com/Ronnasayd/AI-pair-programming/commit/79c083c))
+- **[♻️ Refactoring]** Update skill descriptions to use single quotes for consistency and escape apostrophes. ([bc1fb8e](https://github.com/Ronnasayd/AI-pair-programming/commit/bc1fb8e))
+
+### **2026-06-22**
+
+- **[♻️ Refactoring]** Test coverage review skill and update settings ([50cbb60](https://github.com/Ronnasayd/AI-pair-programming/commit/50cbb60))
+- **[✨ Features]** Add permissions for git merge and git commit commands ([b79449f](https://github.com/Ronnasayd/AI-pair-programming/commit/b79449f))
+- **[♻️ Refactoring]** Adjust type hints and handle missing file_path in lint scripts ([9c649da](https://github.com/Ronnasayd/AI-pair-programming/commit/9c649da))
+- **[♻️ Refactoring]** Add logs for mypy and ruff execution results in python_lint.py ([e76940d](https://github.com/Ronnasayd/AI-pair-programming/commit/e76940d))
+- **[✨ Features]** Add python linting hook with mypy and ruff support ([483589d](https://github.com/Ronnasayd/AI-pair-programming/commit/483589d))
+- **[♻️ Refactoring]** Update typescript linting to use tsc-files for better performance and support for project references ([71368cc](https://github.com/Ronnasayd/AI-pair-programming/commit/71368cc))
+
+### **2026-06-21**
+
+- **[♻️ Refactoring]** Use local tsc and eslint binaries in typescript lint hook ([6619b61](https://github.com/Ronnasayd/AI-pair-programming/commit/6619b61))
+- **[♻️ Refactoring]** Add --quiet flag to eslint command and simplify output data construction ([0502284](https://github.com/Ronnasayd/AI-pair-programming/commit/0502284))
+- **[♻️ Refactoring]** Remove .js and .jsx from linting extensions ([6624c65](https://github.com/Ronnasayd/AI-pair-programming/commit/6624c65))
+- **[♻️ Refactoring]** Enhance typescript and eslint hooks with detailed results and logging ([f0eab9d](https://github.com/Ronnasayd/AI-pair-programming/commit/f0eab9d))
+- **[♻️ Refactoring]** Update post-tool-use hooks and matchers in settings.json ([b7c1980](https://github.com/Ronnasayd/AI-pair-programming/commit/b7c1980))
+- **[🧹 Chores]** Updates ([e0ee088](https://github.com/Ronnasayd/AI-pair-programming/commit/e0ee088))
+- **[✨ Features]** Allow .claude directory access in protect_files hook ([58d92b4](https://github.com/Ronnasayd/AI-pair-programming/commit/58d92b4))
+- **[♻️ Refactoring]** Update quality gate to remove 'strict' mode and related logging ([b09f595](https://github.com/Ronnasayd/AI-pair-programming/commit/b09f595))
+- **[♻️ Refactoring]** Add logging hooks for subagent events ([a7ca09f](https://github.com/Ronnasayd/AI-pair-programming/commit/a7ca09f))
+- **[✨ Features]** Add logging hook for all hooks to debug and monitor their payloads ([53e589d](https://github.com/Ronnasayd/AI-pair-programming/commit/53e589d))
+
+### **2026-06-19**
+
+- **[✨ Features]** Add prd-get-implicit-requirements skill for analyzing prds and identifying gaps ([ace202f](https://github.com/Ronnasayd/AI-pair-programming/commit/ace202f))
+- **[✨ Features]** Add clc alias for conventional commit message generation ([9525788](https://github.com/Ronnasayd/AI-pair-programming/commit/9525788))
+- **[♻️ Refactoring]** Improve alias comment clarity and conciseness in .ai.alias.zshrc ([b0ea061](https://github.com/Ronnasayd/AI-pair-programming/commit/b0ea061))
+- **[♻️ Refactoring]** Improve ignore file management and ai memory container handling in .ai.alias.zshrc ([16ef461](https://github.com/Ronnasayd/AI-pair-programming/commit/16ef461))
+- **[♻️ Refactoring]** Shorten alias names for better usability ([8c98685](https://github.com/Ronnasayd/AI-pair-programming/commit/8c98685))
+- **[✨ Features]** Add pr-review skill for systematic github pr analysis and feedback generation ([175ed01](https://github.com/Ronnasayd/AI-pair-programming/commit/175ed01))
+
+### **2026-06-18**
+
+- **[♻️ Refactoring]** Update mcp environment variable defaults and model setting ([b068925](https://github.com/Ronnasayd/AI-pair-programming/commit/b068925))
+
+### **2026-06-17**
+
+- **[🐛 Bug Fixes]** Handle large get_diff output in pr-review skill ([18ddec4](https://github.com/Ronnasayd/AI-pair-programming/commit/18ddec4))
+- **[✨ Features]** Add pr-review skill for systematic github pr evaluation ([d86aa31](https://github.com/Ronnasayd/AI-pair-programming/commit/d86aa31))
+- **[♻️ Refactoring]** Remove claude.md and .mcp.json from .gitignore in installation script ([ce8d6e6](https://github.com/Ronnasayd/AI-pair-programming/commit/ce8d6e6))
+- **[🐛 Bug Fixes]** Update taskmaster mcp calls to use set_task_status with tag parameter ([f092f23](https://github.com/Ronnasayd/AI-pair-programming/commit/f092f23))
+
+### **2026-06-16**
+
+- **[🧹 Chores]** Update claude ([751e681](https://github.com/Ronnasayd/AI-pair-programming/commit/751e681))
+- **[🧹 Chores]** Add .mcp.json configuration for multiple mcp servers ([346cd42](https://github.com/Ronnasayd/AI-pair-programming/commit/346cd42))
+- **[✨ Features]** Add git command restrictions to settings.json ([e0fa0dd](https://github.com/Ronnasayd/AI-pair-programming/commit/e0fa0dd))
+- **[🧹 Chores]** Add attribution fields to settings.json ([e45ebeb](https://github.com/Ronnasayd/AI-pair-programming/commit/e45ebeb))
+- **[🧹 Chores]** Update .skillsignore to exclude tlc-execute-tasks skill ([b99f110](https://github.com/Ronnasayd/AI-pair-programming/commit/b99f110))
+- **[✨ Features]** Add tlc-execute-tasks skill with tag validation and task execution flow ([7e9232f](https://github.com/Ronnasayd/AI-pair-programming/commit/7e9232f))
+- **[✨ Features]** Add active skills, rules, and agents aliases ([4b0f528](https://github.com/Ronnasayd/AI-pair-programming/commit/4b0f528))
+- **[♻️ Refactoring]** Update agent context search order and formatting in docs/agent.instructions.md ([0d19f32](https://github.com/Ronnasayd/AI-pair-programming/commit/0d19f32))
+- **[♻️ Refactoring]** Format cost to three decimal places in status line ([020970d](https://github.com/Ronnasayd/AI-pair-programming/commit/020970d))
+- **[✨ Features]** Add total session cost to status line ([7b5717c](https://github.com/Ronnasayd/AI-pair-programming/commit/7b5717c))
+- **[✨ Features]** Add sort when saving ([affb675](https://github.com/Ronnasayd/AI-pair-programming/commit/affb675))
+- **[✨ Features]** Add search filter to ignore file manager ui ([7011a3a](https://github.com/Ronnasayd/AI-pair-programming/commit/7011a3a))
+- **[✨ Features]** Update taskmaster conversion scripts and tests ([73d4856](https://github.com/Ronnasayd/AI-pair-programming/commit/73d4856))
+
+### **2026-06-15**
+
+- **[🧹 Chores]** Refactor gemini installation ([af24b72](https://github.com/Ronnasayd/AI-pair-programming/commit/af24b72))
+- **[🧹 Chores]** Add script to list mcp manager servers and update instructions ([e02a565](https://github.com/Ronnasayd/AI-pair-programming/commit/e02a565))
+- **[🧹 Chores]** Adjust mkdir claude instructions to avoid potential issues with symlinks and directories ([f99d8d7](https://github.com/Ronnasayd/AI-pair-programming/commit/f99d8d7))
+- **[🧹 Chores]** Update generation claude.md and gemini.md to support context-specific rules ([5b0fe0a](https://github.com/Ronnasayd/AI-pair-programming/commit/5b0fe0a))
+- **[✨ Features]** Process all frontmatter fields in converters ([a77433b](https://github.com/Ronnasayd/AI-pair-programming/commit/a77433b))
+- **[🧹 Chores]** Update agent instructions and node.js/typescript guidelines ([99e2736](https://github.com/Ronnasayd/AI-pair-programming/commit/99e2736))
+- **[🧹 Chores]** Add alias for claude with code execution capabilities ([ff11175](https://github.com/Ronnasayd/AI-pair-programming/commit/ff11175))
+- **[🧹 Chores]** Add plansdirectory setting to settings.json ([12affc4](https://github.com/Ronnasayd/AI-pair-programming/commit/12affc4))
+- **[✨ Features]** Add caveman mode status to status line ([a318bdc](https://github.com/Ronnasayd/AI-pair-programming/commit/a318bdc))
+- **[🧹 Chores]** Update status line script location in settings.json ([d8b7867](https://github.com/Ronnasayd/AI-pair-programming/commit/d8b7867))
+- **[✨ Features]** Add skill-description-generator skill with description and frontmatter, update tlc-tasks-to-taskmaster description for better trigger accuracy, and add skill-description-generator to index.yaml and .skillsignore. ([907654b](https://github.com/Ronnasayd/AI-pair-programming/commit/907654b))
+- **[✨ Features]** Add tlc-tasks-to-taskmaster skill for converting tasks.md to taskmaster format with execution metadata ([e847f9d](https://github.com/Ronnasayd/AI-pair-programming/commit/e847f9d))
+- **[🧹 Chores]** Update status line script with enhanced context and rate limit info ([03ac03c](https://github.com/Ronnasayd/AI-pair-programming/commit/03ac03c))
+
+### **2026-06-13**
+
+- **[🧹 Chores]** Update .skillsignore to include prd-generator ([a8aed2c](https://github.com/Ronnasayd/AI-pair-programming/commit/a8aed2c))
+- **[✨ Features]** Add prd generator skill with 5-battery framework and project type patterns reference guide ([54fefef](https://github.com/Ronnasayd/AI-pair-programming/commit/54fefef))
+- **[🧹 Chores]** Update settings.json ([d9ada15](https://github.com/Ronnasayd/AI-pair-programming/commit/d9ada15))
+- **[🧹 Chores]** Update claude.install.sh ([31ede09](https://github.com/Ronnasayd/AI-pair-programming/commit/31ede09))
+- **[🧹 Chores]** Add ai-memory ([5f82b23](https://github.com/Ronnasayd/AI-pair-programming/commit/5f82b23))
+- **[🧹 Chores]** Add status line command script for model and context display ([687db0d](https://github.com/Ronnasayd/AI-pair-programming/commit/687db0d))
+- **[🧹 Chores]** Add status line command script and update settings ([6ae86bb](https://github.com/Ronnasayd/AI-pair-programming/commit/6ae86bb))
+
+### **2026-06-12**
+
+- **[✨ Features]** Update claude settings and installation script ([c95c8cc](https://github.com/Ronnasayd/AI-pair-programming/commit/c95c8cc))
+
+### **2026-06-11**
+
+- **[🧹 Chores]** Remove skills-lock.json during clean mode execution ([280fa37](https://github.com/Ronnasayd/AI-pair-programming/commit/280fa37))
+- **[✨ Features]** Update installation scripts to use npx for adding skills instead of curl ([51d6b7b](https://github.com/Ronnasayd/AI-pair-programming/commit/51d6b7b))
+- **[🧹 Chores]** Update .gitignore entries for caveman and cavecrew, add skills-lock.json and .agents/skills/* feat: add activate-caveman command documentation ([6cb3d25](https://github.com/Ronnasayd/AI-pair-programming/commit/6cb3d25))
+- **[📚 Documentation]** Clarify instructions for creating files in create-tlc-files prompt ([6bdd72a](https://github.com/Ronnasayd/AI-pair-programming/commit/6bdd72a))
+- **[✨ Features]** Add create-tlc-files command documentation ([46012f5](https://github.com/Ronnasayd/AI-pair-programming/commit/46012f5))
+- **[✨ Features]** Add task conversion script and restore orchestrate taskmaster prompt ([d570fcb](https://github.com/Ronnasayd/AI-pair-programming/commit/d570fcb))
+
+### **2026-06-10**
+
+- **[✨ Features]** Add mcp_config.json and update installation script to manage mcp configuration ([1c99cf9](https://github.com/Ronnasayd/AI-pair-programming/commit/1c99cf9))
+- **[✨ Features]** Add antigravity backend support and clean scripts ([d049f63](https://github.com/Ronnasayd/AI-pair-programming/commit/d049f63))
+- **[📚 Documentation]** Add response style guidelines for agent interactions ([eee3b46](https://github.com/Ronnasayd/AI-pair-programming/commit/eee3b46))
+- **[🧹 Chores]** Add .sessions/* to .gitignore if not already present ([890f111](https://github.com/Ronnasayd/AI-pair-programming/commit/890f111))
+
+### **2026-06-09**
+
+- **[🐛 Bug Fixes]** Correct condition checks for existing copilot configuration files ([8209bba](https://github.com/Ronnasayd/AI-pair-programming/commit/8209bba))
+
+### **2026-06-06**
+
+- **[🧹 Chores]** Update ignore scripts to ensure all ignore files are added to .gitignore ([fb35e7f](https://github.com/Ronnasayd/AI-pair-programming/commit/fb35e7f))
+- **[🚧 Other Changes]** Uncomment test.instructions.md for clarity ([bcf4eff](https://github.com/Ronnasayd/AI-pair-programming/commit/bcf4eff))
+- **[📚 Documentation]** Update mcp-manager instructions for clarity and consistency ([f11da00](https://github.com/Ronnasayd/AI-pair-programming/commit/f11da00))
+
+### **2026-06-05**
+
+- **[✨ Features]** Enable additional services in mcp-server-enablement.json configuration ([e5f1c00](https://github.com/Ronnasayd/AI-pair-programming/commit/e5f1c00))
+- **[✨ Features]** Implement replace_between function and update claude.md and gemini.md with dynamic instructions ([ecad982](https://github.com/Ronnasayd/AI-pair-programming/commit/ecad982))
+- **[🚧 Other Changes]** Comment out specific entries in ignore files for clarity ([8ce37af](https://github.com/Ronnasayd/AI-pair-programming/commit/8ce37af))
+
+### **2026-06-03**
+
+- **[✨ Features]** Set asdf_nodejs_version in install script for environment configuration ([c2d1f5c](https://github.com/Ronnasayd/AI-pair-programming/commit/c2d1f5c))
+
+### **2026-06-02**
+
+- **[✨ Features]** Update installation scripts to check for skills-lock.json before executing installation and updating .gitignore ([6783f10](https://github.com/Ronnasayd/AI-pair-programming/commit/6783f10))
+- **[✨ Features]** Add caveman installation and update .gitignore for new patterns ([f5cde45](https://github.com/Ronnasayd/AI-pair-programming/commit/f5cde45))
+- **[✨ Features]** Add new prompt files for memory management and task conversion functionalities ([d8e8300](https://github.com/Ronnasayd/AI-pair-programming/commit/d8e8300))
+- **[✨ Features]** Update ignore files to enable specified agents and rules for improved functionality ([0bf0acf](https://github.com/Ronnasayd/AI-pair-programming/commit/0bf0acf))
+
+### **2026-05-29**
+
+- **[✨ Features]** Add transcript path handling in session header for improved session continuity ([0b76cbc](https://github.com/Ronnasayd/AI-pair-programming/commit/0b76cbc))
+- **[✨ Features]** Update configuration file copying to append missing entries instead of overwriting ([5898c38](https://github.com/Ronnasayd/AI-pair-programming/commit/5898c38))
+- **[✨ Features]** Add new skills and update agent descriptions for improved task orchestration and execution ([8185632](https://github.com/Ronnasayd/AI-pair-programming/commit/8185632))
+
+### **2026-05-28**
+
+- **[✨ Features]** Add tcl-execute-tasks-by-orchestrate-taskmaster command prompt documentation ([e21f0c1](https://github.com/Ronnasayd/AI-pair-programming/commit/e21f0c1))
+- **[✨ Features]** Add new commands for task orchestration and memory management ([18b2eb2](https://github.com/Ronnasayd/AI-pair-programming/commit/18b2eb2))
+- **[✨ Features]** Add mcp-manager instructions for tool usage and examples ([c3b323d](https://github.com/Ronnasayd/AI-pair-programming/commit/c3b323d))
+- **[🧹 Chores]** Remove outdated command documentation and add new prompts for task management and ai setup audit ([10fe122](https://github.com/Ronnasayd/AI-pair-programming/commit/10fe122))
+- **[✨ Features]** Add new command prompts for task conversion and simulation ([3740fcd](https://github.com/Ronnasayd/AI-pair-programming/commit/3740fcd))
+
+### **2026-05-26**
+
+- **[🐛 Bug Fixes]** Update .skillsignore and skill.md for task delegation clarity ([f3a8733](https://github.com/Ronnasayd/AI-pair-programming/commit/f3a8733))
+- **[✨ Features]** Add orchestrate to skills ignore list ([b72a9f0](https://github.com/Ronnasayd/AI-pair-programming/commit/b72a9f0))
+- **[✨ Features]** Add orchestrate skill documentation for task coordination and execution strategy ([84842b4](https://github.com/Ronnasayd/AI-pair-programming/commit/84842b4))
+- **[🐛 Bug Fixes]** Update .gitignore entries to include wildcard patterns for skills, commands, instructions, agents, and hooks ([cdf2033](https://github.com/Ronnasayd/AI-pair-programming/commit/cdf2033))
+- **[✨ Features]** Add orchestrate command documentation for task coordination and execution strategy ([0574089](https://github.com/Ronnasayd/AI-pair-programming/commit/0574089))
+- **[🐛 Bug Fixes]** Correct skill-architect entry to skill-specialist in .agentsignore ([a0e0a73](https://github.com/Ronnasayd/AI-pair-programming/commit/a0e0a73))
+- **[🐛 Bug Fixes]** Update agent description and instructions for clarity and accuracy ([c27836d](https://github.com/Ronnasayd/AI-pair-programming/commit/c27836d))
+- **[✨ Features]** Add openapi instructions for creating *.openapi.ts files ([46c242b](https://github.com/Ronnasayd/AI-pair-programming/commit/46c242b))
+- **[✨ Features]** Add comprehensive documentation for claude code hooks ([64d6287](https://github.com/Ronnasayd/AI-pair-programming/commit/64d6287))
+- **[🚧 Other Changes]** Fix formatting by removing trailing commas in function parameters and object literals ([2ec286b](https://github.com/Ronnasayd/AI-pair-programming/commit/2ec286b))
+
+### **2026-05-25**
+
+- **[🐛 Bug Fixes]** Update cleanignore alias to remove all ignore files and refine jsdoc applyto patterns ([707751e](https://github.com/Ronnasayd/AI-pair-programming/commit/707751e))
+- **[🚧 Other Changes]** Fix formatting by adding missing commas in function parameters and object literals ([eb33774](https://github.com/Ronnasayd/AI-pair-programming/commit/eb33774))
+- **[✨ Features]** Add jsdocs instructions and update task documentation for clarity ([74dadb7](https://github.com/Ronnasayd/AI-pair-programming/commit/74dadb7))
+
+### **2026-05-22**
+
+- **[✨ Features]** Add output tag resolution step to tlc-tasks-to-taskmaster skill documentation ([70ca366](https://github.com/Ronnasayd/AI-pair-programming/commit/70ca366))
+- **[✨ Features]** Add tasks-md-to-taskmaster-json skill for converting tasks.md to taskmaster format ([9890511](https://github.com/Ronnasayd/AI-pair-programming/commit/9890511))
+- **[✨ Features]** Add tlc-tasks-to-taskmaster skill and update related documentation ([ea73f71](https://github.com/Ronnasayd/AI-pair-programming/commit/ea73f71))
+- **[🧹 Chores]** Remove unused aliases for ignore and ai context cleanup ([e16f008](https://github.com/Ronnasayd/AI-pair-programming/commit/e16f008))
+- **[🧹 Chores]** Update file permissions for clean scripts to executable ([d59238a](https://github.com/Ronnasayd/AI-pair-programming/commit/d59238a))
+- **[✨ Features]** Add clean functionality for install scripts to remove symlinks ([d614468](https://github.com/Ronnasayd/AI-pair-programming/commit/d614468))
+
+### **2026-05-21**
+
+- **[🧹 Chores]** Update .skillsignore to reorganize skills and remove commented entries ([a5e91e3](https://github.com/Ronnasayd/AI-pair-programming/commit/a5e91e3))
+- **[✨ Features]** Add figma-capture skill to capture screenshots and jsx from figma nodes ([5757859](https://github.com/Ronnasayd/AI-pair-programming/commit/5757859))
+- **[♻️ Refactoring]** Streamline symlink management for skills, commands, hooks, and agents in installation scripts ([6c2d2b2](https://github.com/Ronnasayd/AI-pair-programming/commit/6c2d2b2))
+- **[🧹 Chores]** Update symlink management for skills, prompts, hooks, agents, and instructions in copilot installation script ([37b45fe](https://github.com/Ronnasayd/AI-pair-programming/commit/37b45fe))
+- **[✨ Features]** Enable modular-monolith-decomposer in skills ignore list ([3e45331](https://github.com/Ronnasayd/AI-pair-programming/commit/3e45331))
+- **[✨ Features]** Add modular monolith decomposer skill and folder structure rules documentation ([a96b7f8](https://github.com/Ronnasayd/AI-pair-programming/commit/a96b7f8))
+- **[📚 Documentation]** Improve formatting and clarity in documentation sections for srs and task generation steps ([96139e9](https://github.com/Ronnasayd/AI-pair-programming/commit/96139e9))
+
+### **2026-05-20**
+
+- **[📚 Documentation]** Remove context section from code instructions to clarify scope of rules ([0240cc5](https://github.com/Ronnasayd/AI-pair-programming/commit/0240cc5))
+- **[📚 Documentation]** Update agent behavior documentation; simplify descriptions and enhance clarity on interactive question tools ([4b64db5](https://github.com/Ronnasayd/AI-pair-programming/commit/4b64db5))
+- **[✨ Features]** Update documentation for agent behavior, http api, node.js/typescript, react, and vue standards; remove outdated reactjs instructions ([184fc40](https://github.com/Ronnasayd/AI-pair-programming/commit/184fc40))
+- **[✨ Features]** Add rules management to ignore file manager ([913acc5](https://github.com/Ronnasayd/AI-pair-programming/commit/913acc5))
+- **[✨ Features]** Add .rulesignore file and update scripts to handle rules ignoring ([40bcde6](https://github.com/Ronnasayd/AI-pair-programming/commit/40bcde6))
+- **[✨ Features]** Add vuejs 3 development instructions and best practices documentation ([1ad30a4](https://github.com/Ronnasayd/AI-pair-programming/commit/1ad30a4))
+- **[✨ Features]** Add additional rules for vue code standards and split complex computed properties into simpler ones ([66f4e88](https://github.com/Ronnasayd/AI-pair-programming/commit/66f4e88))
+- **[✨ Features]** Add rules for code standards in vue_rules_prompt.md ([695208f](https://github.com/Ronnasayd/AI-pair-programming/commit/695208f))
+- **[✨ Features]** Add initial rules for code standards in react_rules_prompt.md ([d2a3b90](https://github.com/Ronnasayd/AI-pair-programming/commit/d2a3b90))
+
+### **2026-05-19**
+
+- **[✨ Features]** Remove command for protecting sensitive files from hooks ([a7387fc](https://github.com/Ronnasayd/AI-pair-programming/commit/a7387fc))
+- **[📚 Documentation]** Refine documentation on context search directories for clarity and order ([dacb70e](https://github.com/Ronnasayd/AI-pair-programming/commit/dacb70e))
+- **[✨ Features]** Update documentation skill version and refine documentation file references ([31d2e4f](https://github.com/Ronnasayd/AI-pair-programming/commit/31d2e4f))
+- **[✨ Features]** Enhance documentation templates with new sections for models and endpoints ([d93ef63](https://github.com/Ronnasayd/AI-pair-programming/commit/d93ef63))
+- **[✨ Features]** Update module context documentation template and enhance versioning ([7b61c67](https://github.com/Ronnasayd/AI-pair-programming/commit/7b61c67))
+- **[✨ Features]** Add documentation templates for project structure and guidelines ([8bd4253](https://github.com/Ronnasayd/AI-pair-programming/commit/8bd4253))
+- **[📚 Documentation]** Update code standards with comprehensive guidelines for naming conventions, function structure, and readability ([8907bce](https://github.com/Ronnasayd/AI-pair-programming/commit/8907bce))
+- **[✨ Features]** Add new command to protect sensitive files and enhance code modification guidelines ([e234251](https://github.com/Ronnasayd/AI-pair-programming/commit/e234251))
+- **[📚 Documentation]** Add typescript coding guidelines and best practices ([81af574](https://github.com/Ronnasayd/AI-pair-programming/commit/81af574))
+- **[📚 Documentation]** Add comprehensive guidelines for code standards, http api standards, react standards, and testing practices ([f940fea](https://github.com/Ronnasayd/AI-pair-programming/commit/f940fea))
+- **[♻️ Refactoring]** Rename technical-decision-maker to technical-decision-helper across documentation and skills ([f142703](https://github.com/Ronnasayd/AI-pair-programming/commit/f142703))
+- **[🧹 Chores]** Add cleanignore alias to remove ignore files ([c41fe35](https://github.com/Ronnasayd/AI-pair-programming/commit/c41fe35))
+- **[📚 Documentation]** Enhance interaction rules for using interactive question tools ([95d5651](https://github.com/Ronnasayd/AI-pair-programming/commit/95d5651))
+- **[📚 Documentation]** Enhance interaction rules for technical decision-making process ([ad13010](https://github.com/Ronnasayd/AI-pair-programming/commit/ad13010))
+
+### **2026-05-18**
+
+- **[♻️ Refactoring]** Consolidate figma server entries in configuration files ([62534aa](https://github.com/Ronnasayd/AI-pair-programming/commit/62534aa))
+- **[♻️ Refactoring]** Consolidate atlassian server entries in configuration files ([8f09553](https://github.com/Ronnasayd/AI-pair-programming/commit/8f09553))
+- **[📚 Documentation]** Update wording for clarity in skills discovery documentation ([0507f91](https://github.com/Ronnasayd/AI-pair-programming/commit/0507f91))
+- **[✨ Features]** Add skills-discovery skill with detailed description and update .skillsignore ([03af585](https://github.com/Ronnasayd/AI-pair-programming/commit/03af585))
+- **[🧹 Chores]** Remove empty code change entries from the changes log ([480150d](https://github.com/Ronnasayd/AI-pair-programming/commit/480150d))
+- **[✨ Features]** Add seo and subagent creator skills with comprehensive guidelines and best practices ([dabe565](https://github.com/Ronnasayd/AI-pair-programming/commit/dabe565))
+- **[✨ Features]** Update .agentsignore and .skillsignore to include and reorganize agent and skill entries ([aa04014](https://github.com/Ronnasayd/AI-pair-programming/commit/aa04014))
+- **[✨ Features]** Update .agentsignore to include file extensions for agent specifications ([7d11159](https://github.com/Ronnasayd/AI-pair-programming/commit/7d11159))
+- **[✨ Features]** Reorganize .agentsignore and .skillsignore files, add new skills, and remove obsolete entries ([e7bb67d](https://github.com/Ronnasayd/AI-pair-programming/commit/e7bb67d))
+- **[✨ Features]** Enable plan in settings and add agents overrides section ([56cd64c](https://github.com/Ronnasayd/AI-pair-programming/commit/56cd64c))
+- **[✨ Features]** Update mcp server configurations to include new figma and github entries with distinct labels ([b3a0e73](https://github.com/Ronnasayd/AI-pair-programming/commit/b3a0e73))
+- **[✨ Features]** Add metadata section to multiple skill.md files and remove prompt-optimizer skill ([7dd7308](https://github.com/Ronnasayd/AI-pair-programming/commit/7dd7308))
+- **[✨ Features]** Add rendering and validation scripts for mermaid diagrams ([4a9f1b4](https://github.com/Ronnasayd/AI-pair-programming/commit/4a9f1b4))
+- **[🚧 Other Changes]** Update .skillsignore to uncomment tlc-spec-driven entry ([bcc9beb](https://github.com/Ronnasayd/AI-pair-programming/commit/bcc9beb))
+- **[✨ Features]** Add detailed methodologies for research and plan phases, including migration patterns and testing strategies ([1fba652](https://github.com/Ronnasayd/AI-pair-programming/commit/1fba652))
+- **[✨ Features]** Enhance gghget script with sha1 comparison and improved error handling for github api calls ([293052b](https://github.com/Ronnasayd/AI-pair-programming/commit/293052b))
+- **[✨ Features]** Add project initialization, quick mode, roadmap creation, session handoff, specification, state management, task breakdown, and validation processes ([653ca2a](https://github.com/Ronnasayd/AI-pair-programming/commit/653ca2a))
+
+### **2026-05-17**
+
+- **[✨ Features]** Add comprehensive documentation for database migrations, deployment patterns, docker best practices, and regex vs llm structured text parsing ([21c6153](https://github.com/Ronnasayd/AI-pair-programming/commit/21c6153))
+- **[✨ Features]** Add comprehensive documentation for database migrations, deployment patterns, docker patterns, and regex vs llm structured text parsing ([a7710fb](https://github.com/Ronnasayd/AI-pair-programming/commit/a7710fb))
+- **[✨ Features]** Add api design patterns and guidelines, including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production apis; introduce agent harness construction and ai regression testing strategies ([2791f11](https://github.com/Ronnasayd/AI-pair-programming/commit/2791f11))
+- **[✨ Features]** Add python mcp server implementation guide and evaluation scripts ([6687a2c](https://github.com/Ronnasayd/AI-pair-programming/commit/6687a2c))
+- **[✨ Features]** Add skill evaluation and improvement scripts ([439b565](https://github.com/Ronnasayd/AI-pair-programming/commit/439b565))
+- **[🧹 Chores]** Update vendoring instructions for skill.md to reflect correct file path ([fde3903](https://github.com/Ronnasayd/AI-pair-programming/commit/fde3903))
+- **[✨ Features]** Add tdd and test coverage review skills for enhanced testing practices ([20886ff](https://github.com/Ronnasayd/AI-pair-programming/commit/20886ff))
+- **[✨ Features]** Implement structured framework for resolving git merge conflicts ([0e998cd](https://github.com/Ronnasayd/AI-pair-programming/commit/0e998cd))
+- **[✨ Features]** Rename deep-research skill to deep-research-web and update .skillsignore ([8a45878](https://github.com/Ronnasayd/AI-pair-programming/commit/8a45878))
+- **[🧹 Chores]** Update .skillsignore to include git-guide for improved skill management ([2fbcffa](https://github.com/Ronnasayd/AI-pair-programming/commit/2fbcffa))
+- **[✨ Features]** Add new taskmaster skills for task management and validation ([f4a79f8](https://github.com/Ronnasayd/AI-pair-programming/commit/f4a79f8))
+- **[✨ Features]** Add figma-to-code agentic skill for automated design-to-development handoff ([4b4399e](https://github.com/Ronnasayd/AI-pair-programming/commit/4b4399e))
+- **[✨ Features]** Add skill architecture references and validation scripts ([22e094f](https://github.com/Ronnasayd/AI-pair-programming/commit/22e094f))
+- **[✨ Features]** Add skill-architect to .skillsignore for improved skill management ([fe9d277](https://github.com/Ronnasayd/AI-pair-programming/commit/fe9d277))
+- **[✨ Features]** Add skill-architect to .skillsignore and update external tools script for skill management ([67f0ba5](https://github.com/Ronnasayd/AI-pair-programming/commit/67f0ba5))
+- **[✨ Features]** Add skill architecture references and validation scripts ([65df366](https://github.com/Ronnasayd/AI-pair-programming/commit/65df366))
+
+### **2026-05-16**
+
+- **[✨ Features]** Add prd-from-codebase to .skillsignore for improved skill management ([034d127](https://github.com/Ronnasayd/AI-pair-programming/commit/034d127))
+- **[✨ Features]** Add prd generation skill and stack hints reference for improved documentation ([702ea61](https://github.com/Ronnasayd/AI-pair-programming/commit/702ea61))
+- **[♻️ Refactoring]** Update script paths in skill.md and handle-deleted-modified.sh for consistency ([f127316](https://github.com/Ronnasayd/AI-pair-programming/commit/f127316))
+- **[♻️ Refactoring]** Uncomment specialists in .agentsignore for improved visibility ([bb2414f](https://github.com/Ronnasayd/AI-pair-programming/commit/bb2414f))
+- **[♻️ Refactoring]** Update exit menu option from '0' to 'q' for consistency ([883e4df](https://github.com/Ronnasayd/AI-pair-programming/commit/883e4df))
+- **[♻️ Refactoring]** Uncomment skills in .skillsignore for better visibility ([ebb5fe8](https://github.com/Ronnasayd/AI-pair-programming/commit/ebb5fe8))
+- **[♻️ Refactoring]** Comment out echo statements for removed skills and agents in ignores.sh ([cce6f76](https://github.com/Ronnasayd/AI-pair-programming/commit/cce6f76))
+- **[♻️ Refactoring]** Reorganize .skillsignore entries and update comments in manage-ignore-files.py for clarity ([7b01942](https://github.com/Ronnasayd/AI-pair-programming/commit/7b01942))
+- **[♻️ Refactoring]** Update .skillsignore to toggle comments for better organization ([3bb6b3c](https://github.com/Ronnasayd/AI-pair-programming/commit/3bb6b3c))
+- **[♻️ Refactoring]** Clarify comments and logic in ignore file processing ([17ded6a](https://github.com/Ronnasayd/AI-pair-programming/commit/17ded6a))
+- **[✨ Features]** Update .skillsignore to enable specific skills and remove comments ([85f360f](https://github.com/Ronnasayd/AI-pair-programming/commit/85f360f))
+- **[✨ Features]** Add alias for managing ignore files in .ai.alias.zshrc ([331bb65](https://github.com/Ronnasayd/AI-pair-programming/commit/331bb65))
+- **[✨ Features]** Add symlink for manage-ignore-files script in install.sh and update workspace root resolution in manage-ignore-files.py ([d34f4bb](https://github.com/Ronnasayd/AI-pair-programming/commit/d34f4bb))
+- **[✨ Features]** Add interactive script for managing .skillsignore and .agentsignore files ([b86fe0e](https://github.com/Ronnasayd/AI-pair-programming/commit/b86fe0e))
+
+### **2026-05-13**
+
+- **[✨ Features]** Add skill-advisor documentation and update .skillsignore ([37bcd07](https://github.com/Ronnasayd/AI-pair-programming/commit/37bcd07))
+- **[🧹 Chores]** Remove evals.json files for document summarizer, requirements screen mapper, figma to code agentic, and tailwind config conformance skills ([38b03a3](https://github.com/Ronnasayd/AI-pair-programming/commit/38b03a3))
+- **[✨ Features]** Add event-storming skill documentation and ignore file entry ([b4a3520](https://github.com/Ronnasayd/AI-pair-programming/commit/b4a3520))
+- **[✨ Features]** Enhance install script with argument parsing and help display ([2b62492](https://github.com/Ronnasayd/AI-pair-programming/commit/2b62492))
+- **[♻️ Refactoring]** Improve cleanai alias for better readability and maintainability ([dda1f8c](https://github.com/Ronnasayd/AI-pair-programming/commit/dda1f8c))
+- **[✨ Features]** Enable claude installation script in the setup process ([da88546](https://github.com/Ronnasayd/AI-pair-programming/commit/da88546))
 
 ### **2026-05-12**
 
+- **[✨ Features]** Enhance figma requirements conformance skill with detailed design context and reporting structure ([72c2856](https://github.com/Ronnasayd/AI-pair-programming/commit/72c2856))
+- **[🧹 Chores]** Update changelog for version 2026.05.12 with recent features and fixes ([186d83f](https://github.com/Ronnasayd/AI-pair-programming/commit/186d83f))
 - **[✨ Features]** Add figma requirements screen mapper skill and evaluation prompts ([2615c71](https://github.com/Ronnasayd/AI-pair-programming/commit/2615c71))
 - **[✨ Features]** Add figma requirements conformance skill and evaluation prompts ([6fe3725](https://github.com/Ronnasayd/AI-pair-programming/commit/6fe3725))
 - **[✨ Features]** Add dynamic programming analysis skill for structured problem-solving ([c0783ca](https://github.com/Ronnasayd/AI-pair-programming/commit/c0783ca))
@@ -811,4 +1174,4 @@
 - **[🚧 Other Changes]** D83773e - first commit | 2025-09-11
 
 ---
-Generated on 2026-05-12 17:31:48
+Generated on 2026-07-03 11:57:34
