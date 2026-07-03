@@ -6,6 +6,15 @@ alias aims="docker run -d --name ai-memory \
     -p 127.0.0.1:49374:49374 \
     -v ai-memory-data:/data \
     akitaonrails/ai-memory:latest" # Start AI Memory container: ai-memory-start
+alias aimsllm="docker run -d --name ai-memory \
+    --restart unless-stopped \
+    -p 127.0.0.1:49374:49374 \
+    -v ai-memory-data:/data \
+    -e AI_MEMORY_LLM_MODEL=claude-haiku-4-5 \
+    -e AI_MEMORY_LLM_PROVIDER=anthropic-oauth \
+    -e AI_MEMORY_AUTH_TOKEN=$AI_MEMORY_AUTH_TOKEN \
+    -e CLAUDE_CODE_OAUTH_TOKEN=$CLAUDE_CODE_OAUTH_TOKEN \
+    akitaonrails/ai-memory:latest" # Start AI Memory container: ai-memory-start
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias claude-yolo="claude --dangerously-skip-permissions" # Claude with no permission prompts: yolo
 alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills

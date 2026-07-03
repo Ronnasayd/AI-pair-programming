@@ -645,6 +645,15 @@ skills:
     a file or set of files is too large to fit in context at once. Do NOT use for
     normally-sized files — adds unnecessary overhead.
 - name:
+  - scan-codebase-rules-ai-memory
+  description: Scan the current repo's structure, config files, and code to extract
+    concrete conventions (lint/format rules, naming, folder layout, commit style,
+    CI checks, testing conventions) and persist them as durable rule pages in ai-memory
+    for future sessions. Use when the user says "scan codebase for rules", "extract
+    conventions", "analyze repo and save to memory", "gera regras da codebase", or
+    "cria regras no ai memory". Do NOT use for one-off code questions, business-logic/architecture
+    deep dives (use codenavi), or bug diagnosis (use diagnosing-bugs).
+- name:
   - generate-docs-update
   description: 'Use this skill to update existing project documentation based on code
     changes. Triggers include: any request to "update the docs", "reflect these changes
