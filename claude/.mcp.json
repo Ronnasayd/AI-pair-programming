@@ -8,7 +8,7 @@
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
-        "Authorization": "Bearer ${GITHUB_PAT_TOKEN_L:-github_pat_token_not_set}"
+        "Authorization": "Bearer ${GITHUB_PAT_TOKEN_L:-add-value-to-env-vars}"
       }
     },
     "atlassian": {
@@ -64,14 +64,16 @@
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/Ronnasayd/keyclock-mcp-server",
+        "git+https://github.com/Ronnasayd/keycloak-mcp-server",
         "keycloak-mcp-server"
       ],
       "env": {
-        "MCP_KEYCLOCK_BASE_URL": "${MCP_KEYCLOCK_BASE_URL:-http://localhost:8080}",
-        "MCP_KEYCLOCK_AUTH_METHOD": "${MCP_KEYCLOCK_AUTH_METHOD:-client_credentials}",
-        "MCP_KEYCLOCK_CLIENT_ID": "${MCP_KEYCLOCK_CLIENT_ID:-add-value-to-env-vars}",
-        "MCP_KEYCLOCK_CLIENT_SECRET": "${MCP_KEYCLOCK_CLIENT_SECRET:-add-value-to-env-vars}"
+        "MCP_KEYCLOAK_BASE_URL": "${MCP_KEYCLOAK_BASE_URL:-http://localhost:8080}",
+        "MCP_KEYCLOAK_AUTH_METHOD": "${MCP_KEYCLOAK_AUTH_METHOD:-client_credentials}",
+        "MCP_KEYCLOAK_CLIENT_ID": "${MCP_KEYCLOAK_CLIENT_ID:-add-value-to-env-vars}",
+        "MCP_KEYCLOAK_CLIENT_SECRET": "${MCP_KEYCLOAK_CLIENT_SECRET:-add-value-to-env-vars}",
+        "MCP_KEYCLOAK_ADMIN_USERNAME": "${MCP_KEYCLOAK_ADMIN_USERNAME:-add-value-to-env-vars}",
+        "MCP_KEYCLOAK_ADMIN_PASSWORD": "${MCP_KEYCLOAK_ADMIN_PASSWORD:-add-value-to-env-vars}"
       }
     },
     "gcloud": {
