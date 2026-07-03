@@ -169,7 +169,6 @@ def main():
 
     try:
         payload = json.load(sys.stdin)
-        LOG.debug(f"Payload keys: {list(payload.keys())}")
     except (json.JSONDecodeError, EOFError) as e:
         LOG.debug(f"Failed to parse stdin JSON: {e}")
         sys.exit(0)
@@ -193,7 +192,6 @@ def main():
         if query_vector is None:
             LOG.warning("Failed to get embedding — skipping")
             sys.exit(0)
-        LOG.debug(f"Query vector shape: {query_vector.shape}")
 
         skills_raw = loadDbSkills(DB_PATH)
         LOG.debug(f"Loaded {len(skills_raw)} skills from DB")
