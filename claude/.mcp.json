@@ -61,15 +61,25 @@
       }
     },
     "keycloak": {
-      "command": "npx",
+      "command": "uvx",
       "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/keyclock-mcp-server",
         "keycloak-mcp-server"
       ],
       "env": {
-        "KEYCLOAK_URL": "${MCP_KEYCLOAK_URL:-add-value-to-env-vars}",
-        "KEYCLOAK_ADMIN": "${MCP_KEYCLOAK_ADMIN:-add-value-to-env-vars}",
-        "KEYCLOAK_ADMIN_PASSWORD": "${MCP_KEYCLOAK_ADMIN_PASSWORD:-add-value-to-env-vars}"
+        "MCP_KEYCLOCK_BASE_URL": "${MCP_KEYCLOCK_BASE_URL:-http://localhost:8080}",
+        "MCP_KEYCLOCK_AUTH_METHOD": "${MCP_KEYCLOCK_AUTH_METHOD:-client_credentials}",
+        "MCP_KEYCLOCK_CLIENT_ID": "${MCP_KEYCLOCK_CLIENT_ID:-add-value-to-env-vars}",
+        "MCP_KEYCLOCK_CLIENT_SECRET": "${MCP_KEYCLOCK_CLIENT_SECRET:-add-value-to-env-vars}"
       }
+    },
+    "gcloud": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@google-cloud/gcloud-mcp"
+      ]
     }
   }
 }
