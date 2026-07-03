@@ -85,7 +85,7 @@
       "Bash(docker stop:*)"
     ]
   },
-  "model": "sonnet",
+  "model": "haiku",
   "hooks": {
     "PreToolUse": [
       {
@@ -306,5 +306,7 @@
     "enabled": false,
     "mode": "hold"
   },
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
   "voiceEnabled": false
 }

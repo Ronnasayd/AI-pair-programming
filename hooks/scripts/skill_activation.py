@@ -187,7 +187,6 @@ def main():
         rec_log = loadRecLog(rec_log_path)
         LOG.debug(f"Rec log has {len(rec_log)} entries: {list(rec_log.keys())}")
 
-        LOG.debug("Requesting embedding from daemon")
         query_vector = encodeViaDaemon(prompt)
         if query_vector is None:
             LOG.warning("Failed to get embedding — skipping")
