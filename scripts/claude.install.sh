@@ -185,8 +185,8 @@ fi
 if ! grep -q "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
     echo "$DEFAULT_FOLDER/context-refs.json" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/skills/skills.db" .gitignore; then
-    echo "$DEFAULT_FOLDER/skills/skills.db" >> .gitignore
+if ! grep -qF "skills.db" .gitignore; then
+    echo "skills.db" >> .gitignore
 fi
 ###########################################################################################
 rtk init -g

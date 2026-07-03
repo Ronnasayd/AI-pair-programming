@@ -173,21 +173,7 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
-.taskmaster/state.json
-GEMINI.md
-.taskmaster/
-docs/agents/
-.sessions/*
-.gemini/*
-.claude/skills/*
-.claude/prompts/*
-.claude/instructions/*
-.claude/agents/*
-.claude/hooks/*
-CLAUDE.md
-.claude/commands/*
-.agentsignore
-.skillsignore
+
 
 # Logs
 logs
@@ -209,22 +195,19 @@ node_modules/
 # OS specific
 .DS_Store
 
-# Task files
-tasks.json
-tasks/
-.github/skills/*
-.github/prompts/*
-.github/instructions/*
-.github/agents/*
-.github/hooks/*
-skills-lock.json
-.rulesignore
-.agents/rules/*
-.agents/skills/*
-.agents/mcp_config.json
+.claude/skills/*
+.claude/commands/*
+.claude/instructions/*
+.claude/agents/*
+.claude/hooks/*
 .claude/context-refs.json
-.claude/skill-rules.json
-.specs/*
-docs/plans/*
+.rulesignore
+.skillsignore
+.agentsignore
+.agents/skills/*
 skills.db
-.claude/skills/skills.db
+skills-lock.json
+.specs/features/*
+.taskmaster/*
+docs/agents/*
+docs/plans/*
