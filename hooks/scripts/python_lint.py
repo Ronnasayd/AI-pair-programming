@@ -10,7 +10,6 @@ Runs mypy (type checking) and ruff (linting) on Python files after edit.
 Cross-platform (Windows, macOS, Linux)
 """
 
-import json
 import os
 import subprocess
 import sys
@@ -23,8 +22,10 @@ if script_dir not in sys.path:
 
 from utils import (  # noqa: E402
     find_project_root,
-    get_by_key,
     get_hooks_logger,
+    run_command_cwd,
+    run_jscpd,
+    run_lint_hook_main,
 )
 
 logger = get_hooks_logger("PythonLint")
@@ -37,32 +38,10 @@ MAX_STDIN = 1024 * 1024  # 1 MB
 _PY_EXTS = {".py"}
 
 
-def run_command(cmd: str, cwd: str | None = None) -> dict:
-    """Run a shell command and return {success, output, error}."""
-    logger.debug("[PythonLint] Executing: %s (cwd=%s)", cmd, cwd or os.getcwd())
-    try:
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=30,
-            cwd=cwd,
-        )
-        return {
-            "success": result.returncode == 0,
-            "output": result.stdout.strip(),
-            "error": result.stderr.strip(),
-        }
-    except Exception as exc:
-        logger.debug("[PythonLint] Command failed: %s", exc)
-        return {"success": False, "output": "", "error": str(exc)}
-
-
 def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
     """Wrapper for tool invocations."""
     cmd = " ".join([bin_, *args])
-    return run_command(cmd, cwd=cwd)
+    return run_command_cwd(cmd, cwd=cwd)
 
 
 def _check_tool_installed(tool: str, project_root: str) -> bool:
@@ -138,26 +117,6 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
     }
 
 
-def _run_jscpd(resolved: Path, project_root: str) -> dict:
-    """Run jscpd duplication check via npx. Returns {success, output, error}."""
-    cmd = f"npx jscpd --no-tips --exit-code 1 {str(resolved)}"
-    logger.info("[PythonLint] Executing: %s (cwd=%s)", cmd, project_root)
-    result = run_command(cmd, cwd=project_root)
-    logger.debug("[PythonLint] jscpd result: success=%s", result["success"])
-    if not result["success"]:
-        logger.warning(
-            "[PythonLint] jscpd found issues in %s:\n%s",
-            resolved,
-            result.get("output", ""),
-        )
-    return {
-        "success": result["success"],
-        "output": result.get("output", ""),
-        "error": result.get("error", ""),
-        "installed": True,
-    }
-
-
 def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | None]:
     """
     Run mypy, ruff and jscpd checks for Python files.
@@ -193,7 +152,7 @@ def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | N
 
     result["mypy"] = _run_mypy(resolved, project_root)
     result["ruff"] = _run_ruff(resolved, project_root)
-    result["jscpd"] = _run_jscpd(resolved, project_root)
+    result["jscpd"] = run_jscpd(resolved, project_root, logger, "PythonLint")
     return result
 
 
@@ -203,37 +162,7 @@ def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | N
 
 
 def main() -> None:
-    stdin_data = ""
-    try:
-        stdin_data = sys.stdin.read(MAX_STDIN)
-    except OSError:
-        pass
-
-    output_data = stdin_data
-    try:
-        data = json.loads(stdin_data)
-        tool_input = get_by_key(data, "tool_input")
-        file_path = get_by_key(tool_input, "file_path") if tool_input else None
-        logger.debug("[PythonLint] Received file_path: %s", file_path)
-        lint_results = maybe_run_python_lint(file_path)
-
-        # Add lint results to output data if present
-        if lint_results.get("mypy") or lint_results.get("ruff"):
-            output_data = json.dumps(
-                {
-                    "hookSpecificOutput": {
-                        "hookEventName": "PostToolUse",
-                        "additionalContext": json.dumps(lint_results),
-                    }
-                }
-            )
-    except (json.JSONDecodeError, AttributeError):
-        # Ignore parse errors — pass through silently
-        pass
-
-    # Always pass (possibly augmented) data through to stdout (hook convention)
-    sys.stdout.write(output_data)
-    sys.exit(0)
+    run_lint_hook_main("PythonLint", logger, maybe_run_python_lint)
 
 
 if __name__ == "__main__":
