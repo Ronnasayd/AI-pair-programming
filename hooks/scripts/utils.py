@@ -1,13 +1,11 @@
+import json
+import logging
+import os
 import re
-import sys
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
-import json
-import os
-import sys
-import logging
-import re
 from typing import Any, Mapping, Optional
 # ---------------------------------------------------------------------------
 # Utility helpers
@@ -79,6 +77,87 @@ def run_command(cmd: str) -> dict:
         }
     except Exception as err:
         return {"success": False, "output": str(err)}
+
+
+def run_command_cwd(cmd: str, cwd: str | None = None, timeout: int = 30) -> dict:
+    """Run a shell command with cwd/timeout support and return {success, output, error}."""
+    try:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=cwd,
+        )
+        return {
+            "success": result.returncode == 0,
+            "output": result.stdout.strip(),
+            "error": result.stderr.strip(),
+        }
+    except Exception as exc:
+        return {"success": False, "output": "", "error": str(exc)}
+
+
+def run_jscpd(
+    resolved: Path, project_root: str, logger: logging.Logger, tag: str
+) -> dict:
+    """Run jscpd duplication check via npx. Returns {success, output, error, installed}."""
+    cmd = f"npx jscpd --no-tips --exit-code 1 {str(resolved)}"
+    logger.info("[%s] Executing: %s (cwd=%s)", tag, cmd, project_root)
+    result = run_command_cwd(cmd, cwd=project_root)
+    logger.debug("[%s] jscpd result: success=%s", tag, result["success"])
+    if not result["success"]:
+        logger.warning(
+            "[%s] jscpd found issues in %s:\n%s",
+            tag,
+            resolved,
+            result.get("output", ""),
+        )
+    return {
+        "success": result["success"],
+        "output": result.get("output", ""),
+        "error": result.get("error", ""),
+        "installed": True,
+    }
+
+
+def run_lint_hook_main(tag: str, logger: logging.Logger, maybe_run_lint) -> None:
+    """Shared PostToolUse hook entrypoint: read stdin, run lint checks, emit output."""
+    max_stdin = 1024 * 1024  # 1 MB
+    stdin_data = ""
+    try:
+        stdin_data = sys.stdin.read(max_stdin)
+    except OSError:
+        pass
+
+    output_data = stdin_data
+    try:
+        data = json.loads(stdin_data)
+        tool_input = get_by_key(data, "tool_input")
+        file_path = get_by_key(tool_input, "file_path") if tool_input else None
+        logger.debug("[%s] Received file_path: %s", tag, file_path)
+        lint_results = maybe_run_lint(file_path)
+        output_data = emit_lint_output(stdin_data, lint_results)
+    except (json.JSONDecodeError, AttributeError):
+        pass
+
+    sys.stdout.write(output_data)
+    sys.exit(0)
+
+
+def emit_lint_output(stdin_data: str, lint_results: dict) -> str:
+    """Build the hook stdout payload, wrapping lint_results if any check ran."""
+    if any(lint_results.values()):
+        return json.dumps(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "PostToolUse",
+                    "additionalContext": json.dumps(lint_results),
+                }
+            }
+        )
+    return stdin_data
 
 
 def escape_regexp(value: str) -> str:

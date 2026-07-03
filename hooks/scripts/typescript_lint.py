@@ -10,9 +10,7 @@ Runs TypeScript and ESLint checks on JS/TS files after edit.
 Cross-platform (Windows, macOS, Linux)
 """
 
-import json
 import os
-import subprocess
 import sys
 from pathlib import Path
 
@@ -22,8 +20,10 @@ if script_dir not in sys.path:
 
 from utils import (  # noqa: E402
     find_project_root,
-    get_by_key,
     get_hooks_logger,
+    run_command_cwd,
+    run_jscpd,
+    run_lint_hook_main,
 )
 
 logger = get_hooks_logger("TypeScriptLint")
@@ -32,36 +32,13 @@ logger = get_hooks_logger("TypeScriptLint")
 # Constants
 # ---------------------------------------------------------------------------
 
-MAX_STDIN = 1024 * 1024  # 1 MB
 _TS_JS_EXTS = {".ts", ".tsx"}
-
-
-def run_command(cmd: str, cwd: str | None = None) -> dict:
-    """Run a shell command and return {success, output}."""
-    logger.debug("[TypeScriptLint] Executing: %s (cwd=%s)", cmd, cwd or os.getcwd())
-    try:
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=30,
-            cwd=cwd,
-        )
-        return {
-            "success": result.returncode == 0,
-            "output": result.stdout.strip(),
-            "error": result.stderr.strip(),
-        }
-    except Exception as exc:
-        logger.debug("[TypeScriptLint] Command failed: %s", exc)
-        return {"success": False, "output": "", "error": str(exc)}
 
 
 def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
     """Wrapper for tool invocations."""
     cmd = " ".join([bin_, *args])
-    return run_command(cmd, cwd=cwd)
+    return run_command_cwd(cmd, cwd=cwd)
 
 
 def _check_tool_installed(tool: str, project_root: str) -> bool:
@@ -131,26 +108,6 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
     }
 
 
-def _run_jscpd(resolved: Path, project_root: str) -> dict:
-    """Run jscpd duplication check via npx. Returns {success, output, error}."""
-    cmd = f"npx jscpd --no-tips --exit-code 1 {str(resolved)}"
-    logger.info("[TypeScriptLint] Executing: %s (cwd=%s)", cmd, project_root)
-    result = run_command(cmd, cwd=project_root)
-    logger.debug("[TypeScriptLint] jscpd result for %s: %s", resolved, result)
-    if not result["success"]:
-        logger.debug(
-            "[TypeScriptLint] jscpd issues in %s:\n%s",
-            resolved,
-            result.get("output", ""),
-        )
-    return {
-        "success": result["success"],
-        "output": result.get("output", ""),
-        "error": result.get("error", ""),
-        "installed": True,
-    }
-
-
 def maybe_run_typescript_lint(file_path: str | None) -> dict:
     """
     Run TypeScript, ESLint and jscpd checks for JS/TS files.
@@ -184,7 +141,7 @@ def maybe_run_typescript_lint(file_path: str | None) -> dict:
 
     result["typescript"] = _run_typescript(resolved, project_root)
     result["eslint"] = _run_eslint(resolved, project_root)
-    result["jscpd"] = _run_jscpd(resolved, project_root)
+    result["jscpd"] = run_jscpd(resolved, project_root, logger, "TypeScriptLint")
     return result
 
 
@@ -194,43 +151,7 @@ def maybe_run_typescript_lint(file_path: str | None) -> dict:
 
 
 def main() -> None:
-    stdin_data = ""
-    try:
-        stdin_data = sys.stdin.read(MAX_STDIN)
-    except OSError:
-        pass
-
-    output_data = stdin_data
-    try:
-        data = json.loads(stdin_data)
-        tool_input = get_by_key(data, "tool_input")
-        file_path = (
-            get_by_key(tool_input, "file_path") if tool_input is not None else None
-        )
-        logger.debug("[TypeScriptLint] Received file_path: %s", file_path)
-        lint_results = maybe_run_typescript_lint(file_path)
-
-        # Add lint results to output data if present
-        if (
-            lint_results.get("typescript")
-            or lint_results.get("eslint")
-            or lint_results.get("jscpd")
-        ):
-            output_data = json.dumps(
-                {
-                    "hookSpecificOutput": {
-                        "hookEventName": "PostToolUse",
-                        "additionalContext": json.dumps(lint_results),
-                    }
-                }
-            )
-    except (json.JSONDecodeError, AttributeError):
-        # Ignore parse errors — pass through silently
-        pass
-
-    # Always pass (possibly augmented) data through to stdout (hook convention)
-    sys.stdout.write(output_data)
-    sys.exit(0)
+    run_lint_hook_main("TypeScriptLint", logger, maybe_run_typescript_lint)
 
 
 if __name__ == "__main__":
