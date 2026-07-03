@@ -133,7 +133,7 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
 
 def _run_jscpd(resolved: Path, project_root: str) -> dict:
     """Run jscpd duplication check via npx. Returns {success, output, error}."""
-    cmd = f"npx jscpd --no-tips {str(resolved)}"
+    cmd = f"npx jscpd --no-tips --exit-code 1 {str(resolved)}"
     logger.info("[TypeScriptLint] Executing: %s (cwd=%s)", cmd, project_root)
     result = run_command(cmd, cwd=project_root)
     logger.debug("[TypeScriptLint] jscpd result for %s: %s", resolved, result)
