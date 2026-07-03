@@ -1,27 +1,50 @@
 #!/usr/bin/env python3
-"""Build SQLite vector index from skills/index.yaml."""
+"""Build SQLite vector index and name->path manifest from skills/index.yaml."""
 
 import argparse
+import json
+import re
 import sqlite3
 import sys
 from pathlib import Path
 
 import yaml
 
+_FRONTMATTER_NAME_RE = re.compile(r"^name:\s*(.+)$", re.MULTILINE)
+
+
+def build_manifest(skills_dir: Path) -> dict:
+    """Walk skills_dir for SKILL.md files, map frontmatter name -> relative path."""
+    manifest = {}
+    for skill_md in sorted(skills_dir.glob("**/SKILL.md")):
+        match = _FRONTMATTER_NAME_RE.search(skill_md.read_text())
+        if not match:
+            continue
+        name = match.group(1).strip().strip("'\"")
+        manifest[name] = str(skill_md.relative_to(skills_dir))
+    return manifest
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", default="skills/index.yaml")
     parser.add_argument("--output", default="skills/skills.db")
+    parser.add_argument("--manifest", default="skills/manifest.json")
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
 
     index_path = Path(args.index)
     db_path = Path(args.output)
+    manifest_path = Path(args.manifest)
 
     if not index_path.exists():
         print(f"Error: {index_path} not found", file=sys.stderr)
         sys.exit(1)
+
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest = build_manifest(index_path.parent)
+    manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
+    print(f"Built manifest: {len(manifest)} skills → {manifest_path}")
 
     if not args.force and db_path.exists():
         if db_path.stat().st_mtime > index_path.stat().st_mtime:

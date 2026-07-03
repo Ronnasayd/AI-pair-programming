@@ -75,6 +75,15 @@
         "SQLITEDB_PATH": "${MCP_SQLITEDB_PATH:-add-value-to-env-vars}"
       }
     },
+    "skill-loader": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "skill-loader-mcp"
+      ]
+    },
     "keycloak": {
       "command": "uvx",
       "args": [
@@ -93,10 +102,7 @@
     },
     "gcloud": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@google-cloud/gcloud-mcp"
-      ]
+      "args": ["-y", "@google-cloud/gcloud-mcp"]
     }
   }
 }

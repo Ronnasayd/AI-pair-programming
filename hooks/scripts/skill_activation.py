@@ -221,13 +221,24 @@ def main():
         if matches:
             LOG.debug(f"Final matches ({len(matches)}): {[m[0] for m in matches]}")
             saveRecLog(rec_log_path, rec_log)
-            suggestions = [{"skill": name, "hint": hint} for name, hint in matches]
+            suggestions = [
+                {
+                    "skill": name,
+                    "hint": hint,
+                    "present_locally": Path(f".claude/skills/{name}").exists(),
+                }
+                for name, hint in matches
+            ]
             output = {
                 "hookSpecificOutput": {
                     "hookEventName": "UserPromptSubmit",
                     "additionalContext": json.dumps(
                         {
-                            "instruction": "check if these skills match user request, invoke via Skill tool if so",
+                            "instruction": (
+                                "check if these skills match user request; if present_locally, "
+                                "invoke via Skill tool; if not, call the skill-loader MCP tool "
+                                "get_remote_skill(name) to fetch it and follow its instructions inline"
+                            ),
                             "suggestions": suggestions,
                         },
                         ensure_ascii=False,
