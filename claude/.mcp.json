@@ -28,25 +28,36 @@
       "type": "stdio"
     },
     "postgresql": {
-      "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/postgresql_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "postgresql-mcp"
+      ],
       "env": {
         "POSTGRES_URL": "${MCP_POSTGRES_URL:-add-value-to-env-vars}"
       }
     },
     "mysql": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mysql_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mysql-mcp"
+      ],
       "env": {
         "MYSQL_URL": "${MCP_MYSQL_URL:-add-value-to-env-vars}"
       }
     },
     "mongodb": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/mongodb_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "mongodb-mcp"
+      ],
       "env": {
         "MONGODB_URL": "${MCP_MONGODB_URL:-add-value-to-env-vars}",
         "MONGODB_DATABASE": "${MCP_MONGODB_DATABASE:-add-value-to-env-vars}"
@@ -54,8 +65,12 @@
     },
     "sqlite": {
       "type": "stdio",
-      "command": "/home/ronnas/develop/personal/AI-pair-programming/src/mcps/sqlite_mcp.py",
-      "args": [],
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "sqlite-mcp"
+      ],
       "env": {
         "SQLITEDB_PATH": "${MCP_SQLITEDB_PATH:-add-value-to-env-vars}"
       }
