@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # log-tool-calls.py
 
-import json
 import os
 import subprocess
 import sys
@@ -32,12 +31,6 @@ def prewarmEmbeddingDaemon() -> None:
 
 
 def main():
-    try:
-        payload = json.load(sys.stdin)
-    except json.JSONDecodeError:
-        sys.exit(0)
-    logger.debug("## Session Started ##")
-    logger.debug(payload)
     prewarmEmbeddingDaemon()
     sys.exit(0)
 

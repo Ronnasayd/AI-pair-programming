@@ -119,7 +119,7 @@
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -151,7 +151,7 @@
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -167,7 +167,7 @@
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           },
           {
             "type": "command",
@@ -196,7 +196,7 @@
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -218,7 +218,7 @@
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -242,7 +242,7 @@
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -253,7 +253,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -264,7 +264,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -279,7 +279,7 @@
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -308,5 +308,6 @@
   },
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "voiceEnabled": false
+  "voiceEnabled": false,
+  "remoteControlAtStartup": true
 }
