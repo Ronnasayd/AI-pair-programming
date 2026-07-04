@@ -36,15 +36,15 @@ Expected output: confirmation that files were loaded plus a summary of what will
 
 Call taskmaster MCP:
 
-```json
-{
+```
+mcp__mcp-manager__call_tool({
   "server": "taskmaster-ai",
   "tool_name": "get_tasks",
   "arguments": {
     "projectRoot": "{PROJECT_ROOT}",
     "tag": "{TAG}"
   }
-}
+})
 ```
 
 Result: array of tasks with id, title, description, status, dependencies, metadata.
@@ -140,8 +140,8 @@ If any task in wave N fails:
 
 After each wave N completes (all tasks in wave N have status), call set_task_status for each task:
 
-```json
-{
+```
+mcp__mcp-manager__call_tool({
   "server": "taskmaster-ai",
   "tool_name": "set_task_status",
   "arguments": {
@@ -150,7 +150,7 @@ After each wave N completes (all tasks in wave N have status), call set_task_sta
     "status": "{done|deferred|cancelled}",
     "tag": "{TAG}"
   }
-}
+})
 ```
 
 **Critical**: Without `tag` parameter, call returns success but makes no actual change. With `tag`, updates both MCP backend AND `.taskmaster/tasks/tasks.json` file.

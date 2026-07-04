@@ -211,3 +211,4 @@ skills-lock.json
 .taskmaster/*
 docs/agents/*
 docs/plans/*
+.mcp.json
