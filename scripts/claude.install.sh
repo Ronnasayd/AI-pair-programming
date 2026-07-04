@@ -164,29 +164,32 @@ fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GITIGNORE
-if ! grep -q "$DEFAULT_FOLDER/skills/*" .gitignore; then
+if ! grep -qF "$DEFAULT_FOLDER/skills/*" .gitignore; then
     echo "$DEFAULT_FOLDER/skills/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/commands/*" .gitignore; then
+if ! grep -qF "$DEFAULT_FOLDER/commands/*" .gitignore; then
     echo "$DEFAULT_FOLDER/commands/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/instructions/*" .gitignore; then
+if ! grep -qF "$DEFAULT_FOLDER/instructions/*" .gitignore; then
     echo "$DEFAULT_FOLDER/instructions/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/agents/*" .gitignore; then
+if ! grep -qF "$DEFAULT_FOLDER/agents/*" .gitignore; then
     echo "$DEFAULT_FOLDER/agents/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/hooks/*" .gitignore; then
+if ! grep -qF "$DEFAULT_FOLDER/hooks/*" .gitignore; then
     echo "$DEFAULT_FOLDER/hooks/*" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
+if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
     echo "$DEFAULT_FOLDER/context-refs.json" >> .gitignore
 fi
-if ! grep -q "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
+if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
     echo "$DEFAULT_FOLDER/context-refs.json" >> .gitignore
 fi
 if ! grep -qF "skills.db" .gitignore; then
     echo "skills.db" >> .gitignore
+fi
+if ! grep -qF ".mcp.json" .gitignore; then
+    echo ".mcp.json" >> .gitignore
 fi
 ###########################################################################################
 rtk init -g
