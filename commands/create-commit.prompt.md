@@ -2,4 +2,4 @@
 model: haiku
 ---
 
-Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made. Don't execute any commands or scripts. Only provide the commit message.
+Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made. Don't execute any `git` commands or scripts. Only provide the commit message and copy to clipboard.
