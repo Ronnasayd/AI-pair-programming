@@ -212,3 +212,4 @@ skills-lock.json
 docs/agents/*
 docs/plans/*
 .mcp.json
+!.mcp.json
