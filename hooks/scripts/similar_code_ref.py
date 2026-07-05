@@ -114,6 +114,8 @@ def rg_search(term: str, rg_type: str | None, exclude_file: str) -> list[str]:
         cmd += ["--type", rg_type]
     cmd += ["--glob", f"!{exclude_file}", "."]
 
+    logger.debug("rg_search cmd=%s", " ".join(cmd))
+
     try:
         result = subprocess.run(
             cmd,
@@ -131,7 +133,9 @@ def rg_search(term: str, rg_type: str | None, exclude_file: str) -> list[str]:
         logger.debug("rg -l nonzero for term=%s: %s", term, result.stderr)
         return []
 
-    return [f for f in result.stdout.splitlines() if f][:MAX_FILES_PER_TERM]
+    files = [f for f in result.stdout.splitlines() if f][:MAX_FILES_PER_TERM]
+    logger.debug("rg_search term=%s found=%d files=%s", term, len(files), files)
+    return files
 
 
 def rg_snippet(term: str, file_path: str) -> str:
@@ -151,8 +155,16 @@ def rg_snippet(term: str, file_path: str) -> str:
         return ""
 
     out = result.stdout.strip()
-    if len(out) > MAX_SNIPPET_CHARS:
+    truncated = len(out) > MAX_SNIPPET_CHARS
+    if truncated:
         out = out[:MAX_SNIPPET_CHARS] + "\n... (truncated)"
+    logger.debug(
+        "rg_snippet term=%s file=%s len=%d truncated=%s",
+        term,
+        file_path,
+        len(out),
+        truncated,
+    )
     return out
 
 
@@ -166,8 +178,10 @@ def is_daemon_running(sock_path: str) -> bool:
         conn.settimeout(1)
         conn.connect(sock_path)
         conn.close()
+        logger.debug("daemon running at %s", sock_path)
         return True
-    except (ConnectionRefusedError, FileNotFoundError, OSError):
+    except (ConnectionRefusedError, FileNotFoundError, OSError) as exc:
+        logger.debug("daemon not running at %s: %s", sock_path, exc)
         return False
 
 
@@ -190,7 +204,9 @@ def encode_via_daemon(text: str, sock_path: str) -> np.ndarray | None:
         if "error" in response:
             logger.debug("daemon error: %s", response["error"])
             return None
-        return np.array(response["vector"], dtype=np.float32)
+        vec = np.array(response["vector"], dtype=np.float32)
+        logger.debug("encode_via_daemon ok, vec shape=%s", vec.shape)
+        return vec
     except Exception as exc:
         logger.debug("daemon communication failed: %s", exc)
         return None
@@ -215,6 +231,7 @@ def rank_by_similarity(
 
     new_vec = encode_via_daemon(content, sock_path)
     if new_vec is None:
+        logger.debug("could not encode new content, skipping similarity rank")
         return candidates[:MAX_RESULTS]
 
     scored: list[tuple[float, tuple[str, str, str]]] = []
@@ -222,13 +239,24 @@ def rank_by_similarity(
         _, _, snippet = candidate
         vec = encode_via_daemon(snippet, sock_path)
         if vec is None:
+            logger.debug("could not encode candidate=%s, skipping", candidate[1])
             continue
         sim = cosine_similarity(new_vec, vec)
         logger.debug("similarity=%.3f candidate=%s", sim, candidate[1])
         if sim >= MIN_SIMILARITY:
             scored.append((sim, candidate))
+        else:
+            logger.debug(
+                "similarity=%.3f below threshold=%.3f, dropping candidate=%s",
+                sim,
+                MIN_SIMILARITY,
+                candidate[1],
+            )
 
     scored.sort(key=lambda x: -x[0])
+    logger.debug(
+        "rank_by_similarity kept=%d of %d candidates", len(scored), len(candidates)
+    )
     return [c for _, c in scored[:MAX_RESULTS]]
 
 
@@ -239,6 +267,7 @@ def build_context(content: str, target_file: str) -> str:
     terms = extract_terms(content)
     logger.debug("target=%s ext=%s terms=%s", target_file, ext, terms)
     if not terms:
+        logger.debug("no terms extracted, skipping build_context")
         return ""
 
     candidates: list[tuple[str, str, str]] = []
@@ -247,13 +276,16 @@ def build_context(content: str, target_file: str) -> str:
         for f in files:
             snippet = rg_snippet(term, f)
             if not snippet:
+                logger.debug("empty snippet for term=%s file=%s, skipping", term, f)
                 continue
             candidates.append((term, f, snippet))
 
+    logger.debug("collected %d candidates before ranking", len(candidates))
     if not candidates:
         return ""
 
     ranked = rank_by_similarity(content, candidates)
+    logger.debug("build_context returning %d ranked blocks", len(ranked))
     blocks = [
         f"=== existing usage of '{term}' in {f} ===\n{snippet}"
         for term, f, snippet in ranked
@@ -272,10 +304,14 @@ def main() -> None:
         data = json.loads(stdin_data)
         tool_name = get_by_key(data, "tool_name")
         tool_input = get_by_key(data, "tool_input")
-    except (json.JSONDecodeError, AttributeError):
+    except (json.JSONDecodeError, AttributeError) as exc:
+        logger.debug("failed to parse stdin json: %s", exc)
         sys.exit(0)
 
+    logger.debug("tool_name=%s", tool_name)
+
     if tool_name not in ("Edit", "Write") or not tool_input:
+        logger.debug("skipping: tool_name not in (Edit, Write) or no tool_input")
         sys.exit(0)
 
     file_path = get_by_key(tool_input, "file_path") or ""
@@ -283,11 +319,15 @@ def main() -> None:
         get_by_key(tool_input, "content") or get_by_key(tool_input, "new_string") or ""
     )
 
+    logger.debug("file_path=%s content_len=%d", file_path, len(content))
+
     if not file_path or not content:
+        logger.debug("skipping: missing file_path or content")
         sys.exit(0)
 
     context = build_context(content, file_path)
     if context:
+        logger.debug("emitting additionalContext: %s", context)
         print(
             json.dumps(
                 {
@@ -298,6 +338,8 @@ def main() -> None:
                 }
             )
         )
+    else:
+        logger.debug("no context found, emitting nothing")
 
     sys.exit(0)
 
@@ -306,5 +348,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:
-        logger.debug("Error: %s", exc)
+        logger.debug("Error: %s", exc, exc_info=True)
         sys.exit(0)
