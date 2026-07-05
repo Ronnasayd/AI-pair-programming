@@ -33,6 +33,7 @@ MAX_TERMS = 3
 MAX_FILES_PER_TERM = 5
 CONTEXT_LINES = 2
 MAX_SNIPPET_CHARS = 800
+MAX_EMBED_CHARS = 4000
 MIN_SIMILARITY = 0.5
 MAX_RESULTS = 3
 
@@ -69,8 +70,11 @@ IMPORT_PATTERNS = [
     re.compile(r"^\s*import\s+.*?\s+from\s+['\"](.+?)['\"]", re.MULTILINE),  # JS/TS
     re.compile(r"^\s*import\s+['\"](.+?)['\"]", re.MULTILINE),  # JS side-effect import
     re.compile(r"^\s*from\s+([\w.]+)\s+import\s+", re.MULTILINE),  # Python
-    re.compile(r"^\s*import\s+([\w.]+)", re.MULTILINE),  # Python
+    re.compile(
+        r"^\s*import\s+([\w.,\s]+)", re.MULTILINE
+    ),  # Python (incl. multi-import)
     re.compile(r"require\(['\"](.+?)['\"]\)"),  # CJS
+    re.compile(r'^\s*(?:\w+\s+)?"([\w./-]+)"\s*$', re.MULTILINE),  # Go import line
 ]
 
 SYMBOL_PATTERNS = [
@@ -78,6 +82,8 @@ SYMBOL_PATTERNS = [
     re.compile(r"^\s*(?:export\s+)?class\s+(\w+)", re.MULTILINE),
     re.compile(r"^\s*def\s+(\w+)", re.MULTILINE),
     re.compile(r"^\s*class\s+(\w+)", re.MULTILINE),
+    re.compile(r"^\s*func\s+(?:\([^)]*\)\s*)?(\w+)", re.MULTILINE),  # Go
+    re.compile(r"^\s*type\s+(\w+)\s+(?:struct|interface)\b", re.MULTILINE),  # Go
 ]
 
 
@@ -89,16 +95,17 @@ def extract_terms(content: str) -> list[str]:
     for pattern in IMPORT_PATTERNS + SYMBOL_PATTERNS:
         for match in pattern.finditer(content):
             raw = match.group(1)
-            term = raw.split(".")[-1].split("/")[-1]
-            term_norm = term.lower()
-            if not term or term_norm in DENYLIST or len(term) < 3:
-                continue
-            if term_norm in seen:
-                continue
-            seen.add(term_norm)
-            terms.append(term)
-            if len(terms) >= MAX_TERMS:
-                return terms
+            for part in raw.split(","):
+                term = part.strip().split(".")[-1].split("/")[-1]
+                term_norm = term.lower()
+                if not term or term_norm in DENYLIST or len(term) < 3:
+                    continue
+                if term_norm in seen:
+                    continue
+                seen.add(term_norm)
+                terms.append(term)
+                if len(terms) >= MAX_TERMS:
+                    return terms
 
     return terms
 
@@ -229,7 +236,7 @@ def rank_by_similarity(
         logger.debug("embedding daemon not running, skipping similarity rank")
         return candidates[:MAX_RESULTS]
 
-    new_vec = encode_via_daemon(content, sock_path)
+    new_vec = encode_via_daemon(content[:MAX_EMBED_CHARS], sock_path)
     if new_vec is None:
         logger.debug("could not encode new content, skipping similarity rank")
         return candidates[:MAX_RESULTS]
