@@ -1,5 +1,5 @@
 ---
-description: Rules for code generation and modification tasks.
+description: JSDoc requirements for functions, methods, and parameters in JS/TS code.
 applyTo: "**/*.ts, **/*.js, **/*.jsx, **/*.tsx"
 ---
 

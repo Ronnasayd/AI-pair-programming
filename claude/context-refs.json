@@ -42,6 +42,12 @@
       "refs": [
         "/home/ronnas/develop/personal/AI-pair-programming/instructions/python.instructions.md"
       ]
+    },
+    {
+      "glob": "*.py",
+      "refs": [
+        "/home/ronnas/develop/personal/AI-pair-programming/instructions/pydocs.instructions.md"
+      ]
     }
   ]
 }
