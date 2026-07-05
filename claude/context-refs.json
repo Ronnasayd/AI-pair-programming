@@ -1,5 +1,5 @@
 {
-  "refresh_after": 10,
+  "refresh_after": 20,
   "rules": [
     {
       "glob": "*.ts,*.js,*.py,*.java,*.go,*.css,*.cpp,*.c,*.vue,*.jsx,*.tsx",
