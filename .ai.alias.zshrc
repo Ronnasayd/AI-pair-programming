@@ -22,6 +22,13 @@ alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesig
 alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'" # Show agents: show-agents
 alias clc="claude --model haiku -p 'Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made.'" # Commit message generator: commit-create
 alias lgh="touch /tmp/hooks.log && tail -f /tmp/hooks.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
+alias lgh-pylint="touch /tmp/hooks.log && tail -f /tmp/hooks.log | grep -e '\[PythonLint\]' | bat --paging=never -l log"
+alias lgh-tslint="touch /tmp/hooks.log && tail -f /tmp/hooks.log | grep -e '\[TypeScriptLint\]' | bat --paging=never -l log"
+alias lgh-golint="touch /tmp/hooks.log && tail -f /tmp/hooks.log | grep -e '\[GolangLint\]' | bat --paging=never -l log"
+alias lgh-ctxrefs="touch /tmp/hooks.log && tail -f /tmp/hooks.log | grep -e '\[ContextRefs\]' | bat --paging=never -l log"
+alias lgh-prtfiles="touch /tmp/hooks.log && tail -f /tmp/hooks.log | grep -e '\[ProtectFiles\]' | bat --paging=never -l log"
+alias lgh-scr="touch /tmp/hooks.log && tail -f /tmp/hooks.log | grep -e '\[SimilarCodeRef\]' | bat --paging=never -l log"
+alias lgh-sa="touch /tmp/hooks.log && tail -f /tmp/hooks.log | grep -e '\[SkillActivation\]' | bat --paging=never -l log"
 alias mia="mif && iai --claude"
 
 

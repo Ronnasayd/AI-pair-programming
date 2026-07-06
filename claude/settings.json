@@ -314,5 +314,17 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "voiceEnabled": false,
-  "remoteControlAtStartup": true
+  "remoteControlAtStartup": true,
+  "disabledMcpServers": [
+    "atlassian",
+    "figma",
+    "github",
+    "mongodb",
+    "mysql",
+    "postgresql",
+    "sqlite",
+    "github-L",
+    "keycloak",
+    "gcloud"
+  ]
 }
