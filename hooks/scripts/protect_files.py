@@ -89,6 +89,17 @@ PROTECTED_PATTERNS = [
     "**/.config/gh/hosts.yml",
     "/proc/*/environ",
     "/proc/self/environ",
+    "**/.pgpass",
+    "**/.git/hooks/**",
+    "**/.node_repl_history",
+    "**/.irb_history",
+    "**/fish_history",
+    # .claude/hooks, .claude/settings.json etc are symlinks into these real
+    # paths — normalize() resolves symlinks, so protect the real targets too,
+    # or realpath silently strips the .claude/** prefix before matching.
+    os.path.join(PROJECT_ROOT, ".claude", "hooks", "**"),
+    os.path.join(PROJECT_ROOT, ".claude", "settings.json"),
+    os.path.join(PROJECT_ROOT, ".claude", "settings.local.json"),
 ]
 
 READ_COMMANDS = {
@@ -183,6 +194,10 @@ INPUT_REDIRECT_OPERATORS = {"<", "<<"}
 SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";", "\n"}
 
 CMD_SUBSTITUTION_RE = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
+
+# bash process substitution: <(cmd) / >(cmd) — smuggles a command whose
+# output/input is a target file, bypassing normal tokenization entirely
+PROCESS_SUBSTITUTION_RE = re.compile(r"[<>]\(([^()]*)\)")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -438,6 +453,8 @@ def extract_file_targets(command: str) -> list[str]:
     raw_commands = split_subcommands(command)
     for sub in extract_substitutions(command):
         raw_commands.extend(split_subcommands(sub))
+    for m in PROCESS_SUBSTITUTION_RE.finditer(command):
+        raw_commands.extend(split_subcommands(m.group(1)))
 
     for sub in raw_commands:
         try:
