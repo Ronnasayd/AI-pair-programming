@@ -143,6 +143,15 @@ agents:
     you need deep technical investigation, architecture design, technology selection,
     and development planning before implementing software tasks.
 - name:
+  - qa-specialist
+  description: This custom agent is a QA specialist responsible for planning, executing,
+    and reporting on quality assurance activities across a feature or release. Use
+    this agent when you need functional/manual test planning, exploratory testing,
+    regression suites, bug triage, and release sign-off — distinct from test-coverage-specialist,
+    which audits unit/code-level test coverage. The agent will autonomously design
+    test plans, execute test cases, log reproducible bug reports, and iterate with
+    developers until quality gates are met.
+- name:
   - task-orchestration-specialist
   description: This custom agent is a task orchestration specialist responsible for
     intelligently distributing work across available specialist agents. Use this agent
