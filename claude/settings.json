@@ -42,7 +42,10 @@
       "Bash(diff:*)",
       "Bash(timeout:*)",
       "Bash(test:*)",
-      "Bash(rtk:*)"
+      "Bash(rtk:*)",
+      "mcp__mcp-manager__list_servers",
+      "mcp__mcp-manager__search_tools",
+      "mcp__mcp-manager__get_tool_schema"
     ],
     "deny": [
       "Bash(rm:*)",
@@ -96,7 +99,10 @@
       "Bash(git merge:*)",
       "Bash(git commit:*)",
       "Bash(docker run:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(eval:*)",
+      "Bash(xargs:*)",
+      "mcp__mcp-manager__call_tool"
     ]
   },
   "model": "sonnet",
