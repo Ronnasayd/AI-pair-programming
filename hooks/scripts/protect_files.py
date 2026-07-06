@@ -87,6 +87,8 @@ PROTECTED_PATTERNS = [
     "**/*.keystore",
     "**/.dockercfg",
     "**/.config/gh/hosts.yml",
+    "/proc/*/environ",
+    "/proc/self/environ",
 ]
 
 READ_COMMANDS = {
@@ -113,7 +115,7 @@ COPY_COMMANDS = {"cp", "mv", "rsync", "scp", "install", "dd", "tar", "zip", "cat
 DESTRUCTIVE_COMMANDS = {"rm", "unlink", "shred", "truncate"}
 
 # commands whose FIRST non-flag arg is a mode/owner spec, not a file target
-PERM_COMMANDS = {"chmod", "chown", "chgrp"}
+PERM_COMMANDS = {"chmod", "chown", "chgrp", "setfacl", "getfacl"}
 
 # commands that can exfiltrate file contents over the network via upload flags
 NETWORK_COMMANDS = {"curl", "wget"}
@@ -295,6 +297,10 @@ def extract_targets_from_tokens(tokens: list[str]) -> list[str]:
                             break
                         if not sub.startswith("-") and sub != "{}":
                             targets.append(sub)
+                elif not arg.startswith("-"):
+                    # leading search path(s), e.g. `find /home/x -name *.pem -delete`
+                    # — matched files inherit this path, so it must be checked too
+                    targets.append(arg)
             break
 
         if cmd == "docker":
@@ -315,6 +321,15 @@ def extract_targets_from_tokens(tokens: list[str]) -> list[str]:
                         break
                     if not arg.startswith("-") and ":" in arg:
                         targets.append(arg.split(":", 1)[1])
+            elif subcmd == "config":
+                # tampering with credential.helper / including .gitconfig etc
+                # isn't a file-target op, but the key/value can still smuggle
+                # a protected reference (e.g. `git config --get credential.helper`)
+                for arg in it:
+                    if arg in SHELL_OPERATORS:
+                        break
+                    if any(kw in arg for kw in PROTECTED_KEYWORDS):
+                        targets.append(arg)
             break
 
         if cmd in INTERPRETER_COMMANDS:
@@ -472,8 +487,10 @@ def main():
 
     tool_input = get_by_key(payload, "tool_input")
 
-    # ── 1. Direct file access (Read/Write/Edit tools)
-    file_path = get_by_key(tool_input, "file_path")
+    # ── 1. Direct file access (Read/Write/Edit/NotebookEdit tools)
+    file_path = get_by_key(tool_input, "file_path") or get_by_key(
+        tool_input, "notebook_path"
+    )
 
     if file_path:
         norm = normalize(file_path)
