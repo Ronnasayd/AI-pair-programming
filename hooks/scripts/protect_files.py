@@ -5,6 +5,7 @@ import fnmatch
 import glob
 import json
 import os
+import re
 import shlex
 import sys
 from pathlib import Path
@@ -21,7 +22,10 @@ logger = get_hooks_logger("ProtectFiles")
 # CONFIG
 # ─────────────────────────────────────────────────────────────
 
-PROJECT_ROOT = os.getcwd()
+# CLAUDE_PROJECT_DIR (set by Claude Code) takes precedence when present, since it's
+# stable for the whole session; os.getcwd() is the fallback but can drift if cwd
+# changes mid-session (cd, subagents), silently widening the boundary check.
+PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
 
 ALLOWED_PATTERNS = [
     ".claude/**",
@@ -77,9 +81,34 @@ PROTECTED_PATTERNS = [
     "**/*.der",
 ]
 
-READ_COMMANDS = {"cat", "less", "more", "head", "tail", "grep", "awk", "sed", "bat"}
+READ_COMMANDS = {
+    "cat",
+    "less",
+    "more",
+    "head",
+    "tail",
+    "grep",
+    "awk",
+    "sed",
+    "bat",
+    "xxd",
+    "od",
+    "strings",
+    "base64",
+    "openssl",
+}
 
-SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";"}
+# commands whose args are ALL file targets (both src/dest for copy-like tools)
+COPY_COMMANDS = {"cp", "mv", "rsync", "scp", "install", "dd", "tar", "zip", "cat"}
+
+# commands that can exfiltrate file contents over the network via upload flags
+NETWORK_COMMANDS = {"curl", "wget"}
+
+UPLOAD_FLAGS = {"-T", "--upload-file", "-d", "--data", "--data-binary", "--data-raw"}
+
+SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";", "\n"}
+
+CMD_SUBSTITUTION_RE = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -136,26 +165,80 @@ def expand_targets(targets: list[str]) -> list[str]:
     return expanded
 
 
-def extract_file_targets(command: str) -> list[str]:
-    """Extract file arguments from common read commands."""
-    try:
-        tokens = shlex.split(command)
-    except ValueError:
-        tokens = command.split()
+def split_subcommands(command: str) -> list[str]:
+    """Split a shell command string on pipe/list operators into subcommands."""
+    parts = re.split(r"\|\||&&|[|;\n]", command)
+    return [p.strip() for p in parts if p.strip()]
 
+
+def extract_substitutions(command: str) -> list[str]:
+    """Pull inner text out of $(...) / `...` so it gets scanned too."""
+    found = []
+    for m in CMD_SUBSTITUTION_RE.finditer(command):
+        inner = m.group(1) or m.group(2) or ""
+        if inner:
+            found.append(inner)
+    return found
+
+
+def extract_upload_ref(arg: str) -> str | None:
+    """Pull a file path out of an @file / field=@file style value."""
+    at = arg.find("@")
+    if at == -1:
+        return None
+    ref = arg[at + 1 :]
+    return ref if ref and ref not in ("-", "") else None
+
+
+def extract_targets_from_tokens(tokens: list[str]) -> list[str]:
+    """Extract file arguments from a single tokenized command."""
     targets = []
-
     it = iter(tokens)
     for token in it:
         cmd = os.path.basename(token)
 
-        if cmd in READ_COMMANDS:
+        if cmd in NETWORK_COMMANDS:
+            prev = None
             for arg in it:
                 if arg in SHELL_OPERATORS:
                     break
-                if not arg.startswith("-"):
+                ref = extract_upload_ref(arg)
+                if ref:
+                    targets.append(ref)
+                elif prev in UPLOAD_FLAGS and not arg.startswith("-"):
                     targets.append(arg)
+                prev = arg
             break
+
+        if cmd in READ_COMMANDS or cmd in COPY_COMMANDS:
+            for arg in it:
+                if arg in SHELL_OPERATORS:
+                    break
+                if arg.startswith("-"):
+                    continue
+                if "=" in arg and arg.startswith("--"):
+                    continue
+                targets.append(arg)
+            break
+
+    return targets
+
+
+def extract_file_targets(command: str) -> list[str]:
+    """Extract file arguments from common read/copy commands, across chained
+    subcommands and command substitutions ($(...) / `...`)."""
+    targets = []
+
+    raw_commands = split_subcommands(command)
+    for sub in extract_substitutions(command):
+        raw_commands.extend(split_subcommands(sub))
+
+    for sub in raw_commands:
+        try:
+            tokens = shlex.split(sub)
+        except ValueError:
+            tokens = sub.split()
+        targets.extend(extract_targets_from_tokens(tokens))
 
     return targets
 
