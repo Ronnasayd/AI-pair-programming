@@ -139,6 +139,10 @@
           },
           {
             "type": "command",
+            "command": ".claude/hooks/scripts/golang_lint.py"
+          },
+          {
+            "type": "command",
             "command": ".claude/hooks/scripts/quality_gate.py"
           }
         ]
