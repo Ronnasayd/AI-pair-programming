@@ -25,30 +25,6 @@ If interactive tool exists, never ask plain-text question.
 
 When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate` to give user feedback. Mark tasks complete as done, don't batch.
 
-## MCP-Manager
-
-### `mcp__mcp-manager__call_tool`
-
-Executa uma ferramenta em um servidor MCP.
-
-**Argumentos**
-
-- `server`: ID exato do servidor (ex.: `taskmaster-ai`)
-- `tool_name`: nome da ferramenta (ex.: `get_tasks`)
-- `arguments`: objeto JSON compatível com o `inputSchema`
-
-**Antes de chamar**
-
-```text
-# Listar ferramentas de um servidor
-mcp__mcp-manager__get_tools_by_server({ server: "<server_id>" })
-
-# Listar servidores disponíveis
-mcp__mcp-manager__list_servers()
-```
-
-> **Importante:** `server`, `tool_name` e `arguments` são obrigatórios. Os `arguments` devem seguir exatamente o `inputSchema`, caso contrário a chamada falhará na validação.
-
 ## Code style
 
 - Functions: 4-20 lines. Split if longer.
