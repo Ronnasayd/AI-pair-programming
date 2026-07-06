@@ -79,7 +79,13 @@
       "Bash(git commit:*)",
       "Bash(docker rm:*)",
       "Bash(docker rmi:*)",
-      "Bash(docker system prune:*)"
+      "Bash(docker system prune:*)",
+      "Bash(docker run:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(npm publish:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl apply:*)"
     ]
   },
   "model": "sonnet",
