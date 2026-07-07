@@ -1,0 +1,63 @@
+{
+  "hook": "scripts/context_refs.py",
+  "description": "Eval cases for context_refs.py (PreToolUse Edit|Write ref-injection hook)",
+  "cases": [
+    {
+      "name": "non_edit_write_tool_no_output",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "ls" },
+        "session_id": "evalctx01"
+      },
+      "expect_output": false
+    },
+    {
+      "name": "no_file_path_no_output",
+      "input": {
+        "tool_name": "Edit",
+        "tool_input": {},
+        "session_id": "evalctx02"
+      },
+      "expect_output": false
+    },
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "empty_stdin_no_output",
+      "raw_stdin": "",
+      "expect_output": false
+    },
+    {
+      "name": "unmatched_glob_no_output",
+      "input": {
+        "tool_name": "Write",
+        "tool_input": { "file_path": "README.md" },
+        "session_id": "evalctx03"
+      },
+      "expect_output": false
+    },
+    {
+      "name": "py_edit_matches_ref",
+      "input": {
+        "tool_name": "Edit",
+        "tool_input": { "file_path": "hooks/scripts/dummy.py" },
+        "session_id": "evalctx04"
+      },
+      "expect_output": true,
+      "expect_pattern": "python.instructions.md"
+    },
+    {
+      "name": "cache_suppresses_repeat_within_refresh_window",
+      "input": {
+        "tool_name": "Edit",
+        "tool_input": { "file_path": "hooks/scripts/dummy.py" },
+        "session_id": "evalctx04"
+      },
+      "expect_output": false,
+      "reset_cache": false
+    }
+  ]
+}
