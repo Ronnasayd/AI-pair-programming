@@ -1,0 +1,92 @@
+{
+  "hook": "scripts/similar_code_ref.py",
+  "description": "Eval cases for similar_code_ref.py (PreToolUse Edit|Write ref-injection hook)",
+  "cases": [
+    {
+      "name": "non_edit_write_tool_no_output",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "ls"
+        }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "no_file_path_no_output",
+      "input": {
+        "tool_name": "Write",
+        "tool_input": {
+          "content": "import numpy as np"
+        }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "no_content_no_output",
+      "input": {
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "hooks/scripts/dummy_new.py"
+        }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "empty_stdin_no_output",
+      "raw_stdin": "",
+      "expect_output": false
+    },
+    {
+      "name": "only_denylisted_terms_no_output",
+      "input": {
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "hooks/scripts/dummy_new.py",
+          "content": "import os\nimport sys\nimport json\n"
+        }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "unmatched_term_no_output",
+      "input": {
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "hooks/scripts/dummy_new.py",
+          "content": "import zzznonexistentlibzzz"
+        }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "py_import_matches_existing_usage",
+      "input": {
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "hooks/scripts/dummy_new.py",
+          "content": "import numpy as np\n"
+        }
+      },
+      "expect_output": true,
+      "expect_pattern": "existing usage of 'numpy as np'"
+    },
+    {
+      "name": "py_import_matches_existing_usage",
+      "input": {
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "hooks/scripts/dummy_new.py",
+          "content": "def extract_terms(content: str) -> list[str]:\n"
+        }
+      },
+      "expect_output": true,
+      "expect_pattern": "existing usage of 'extract_terms'"
+    }
+  ]
+}
