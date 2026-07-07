@@ -126,7 +126,10 @@ COPY_COMMANDS = {"cp", "mv", "rsync", "scp", "install", "dd", "tar", "zip", "cat
 DESTRUCTIVE_COMMANDS = {"rm", "unlink", "shred", "truncate"}
 
 # commands whose FIRST non-flag arg is a mode/owner spec, not a file target
-PERM_COMMANDS = {"chmod", "chown", "chgrp", "setfacl", "getfacl"}
+PERM_COMMANDS = {"chmod", "chown", "chgrp", "setfacl"}
+
+# getfacl has no mode/owner spec arg — every non-flag arg is a file target
+PERM_READONLY_COMMANDS = {"getfacl"}
 
 # commands that can exfiltrate file contents over the network via upload flags
 NETWORK_COMMANDS = {"curl", "wget"}
@@ -199,6 +202,12 @@ CMD_SUBSTITUTION_RE = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
 # output/input is a target file, bypassing normal tokenization entirely
 PROCESS_SUBSTITUTION_RE = re.compile(r"[<>]\(([^()]*)\)")
 
+# find's -exec ... ; terminator uses a bare/escaped semicolon that is NOT a
+# shell command separator — split_subcommands() must not cut here, or the
+# -exec argument list (and any protected target inside it) gets truncated
+# away, silently defeating the whole targets scan.
+EXEC_TERMINATOR_RE = re.compile(r"(-exec\b(?:(?!\\;|;).)*?)(\\;|;)", re.DOTALL)
+
 
 # ─────────────────────────────────────────────────────────────
 # HELPERS
@@ -257,8 +266,9 @@ def expand_targets(targets: list[str]) -> list[str]:
 
 def split_subcommands(command: str) -> list[str]:
     """Split a shell command string on pipe/list operators into subcommands."""
-    parts = re.split(r"\|\||&&|[|;\n]", command)
-    return [p.strip() for p in parts if p.strip()]
+    protected = EXEC_TERMINATOR_RE.sub(lambda m: m.group(1) + "\x00", command)
+    parts = re.split(r"\|\||&&|[|;\n]", protected)
+    return [p.replace("\x00", ";").strip() for p in parts if p.strip()]
 
 
 def extract_substitutions(command: str) -> list[str]:
@@ -429,6 +439,14 @@ def extract_targets_from_tokens(tokens: list[str]) -> list[str]:
                     )
                     continue
                 targets.append(arg)
+            break
+
+        if cmd in PERM_READONLY_COMMANDS:
+            for arg in it:
+                if arg in SHELL_OPERATORS:
+                    break
+                if not arg.startswith("-"):
+                    targets.append(arg)
             break
 
         if cmd in DESTRUCTIVE_COMMANDS or cmd in READ_COMMANDS or cmd in COPY_COMMANDS:

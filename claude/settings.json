@@ -43,6 +43,7 @@
       "Bash(timeout:*)",
       "Bash(test:*)",
       "Bash(rtk:*)",
+      "Bash(jest:*)",
       "mcp__mcp-manager__list_servers",
       "mcp__mcp-manager__search_tools",
       "mcp__mcp-manager__get_tool_schema"
@@ -85,15 +86,6 @@
     "ask": [
       "Bash(git checkout:*)",
       "Bash(git switch:*)",
-      "Bash(docker compose:*)",
-      "Bash(git pull:*)",
-      "Bash(git fetch:*)",
-      "Bash(python:*)",
-      "Bash(python3:*)",
-      "Bash(node:*)",
-      "Bash(pip:*)",
-      "Bash(pip3:*)",
-      "Bash(yarn:*)",
       "Bash(curl:*)",
       "Bash(wget:*)",
       "Bash(git merge:*)",
@@ -101,8 +93,7 @@
       "Bash(docker run:*)",
       "Bash(docker exec:*)",
       "Bash(eval:*)",
-      "Bash(xargs:*)",
-      "mcp__mcp-manager__call_tool"
+      "Bash(xargs:*)"
     ]
   },
   "model": "sonnet",
@@ -334,10 +325,10 @@
     "enabled": false,
     "mode": "hold"
   },
+  "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "voiceEnabled": false,
-  "remoteControlAtStartup": true,
   "disabledMcpServers": [
     "atlassian",
     "figma",
