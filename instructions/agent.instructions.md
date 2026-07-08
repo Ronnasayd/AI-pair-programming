@@ -1,5 +1,5 @@
 ---
-description: Core dev conventions for all files — package managers (yarn/pip/asdf), mandatory AskUserQuestion for every interaction, code style (SRP/early-returns/no-any/4-20 line functions), comment policy (WHY not WHAT), test rules (FIRST/named fakes), DI, formatting, and logging. Apply to every code task. Do NOT use for doc navigation or project-specific architecture.
+description: Core dev conventions for all files — package managers (yarn/pip/asdf), mandatory AskUserQuestion for every interaction, task tracking, code style (SRP/early-returns/no-any/4-20 line functions/<5-grep-hit names), comment policy (WHY not WHAT), test rules (FIRST/named fakes), DI, framework-convention structure, formatting, logging. Apply to every code task, always. Do NOT use for doc navigation (see docs.instructions.md) or per-language/framework detail (see code/node-ts/python/react/vue.instructions.md).
 applyTo: "**/*"
 ---
 

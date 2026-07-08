@@ -1,5 +1,5 @@
 ---
-description: Rules for code generation and modification tasks.
+description: General code style — naming (camelCase/PascalCase/verb-first funcs), no magic numbers, max 2 nesting levels, max 3 params, no switch/case, const/let, 30-line function limit, anti-patterns (duplication, dead code, broad catch, circular deps, hardcoded config, weak crypto). Apply to any code edit/creation in JS/TS/Java/Go/CSS/C/C++/Vue/JSX/TSX. Do NOT use for docs, HTTP API shape, or test files (see test.instructions.md).
 applyTo: "**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx"
 ---
 

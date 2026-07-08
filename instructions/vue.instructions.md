@@ -1,5 +1,5 @@
 ---
-description: Vue Code Standards.
+description: Vue SFC rules — English content, multi-word component names, typed props via defineProps, keyed v-for, no v-if+v-for on same element, scoped styles, one component per file, naming conventions (Base/App prefix, parent-prefix for children, general-to-specific), self-closing tags, simple template expressions, split computed properties. Apply to any .vue file. Do NOT use for React (see react.instructions.md).
 applyTo: "**/*.vue"
 ---
 

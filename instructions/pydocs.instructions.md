@@ -1,5 +1,5 @@
 ---
-description: Google-style docstring requirements for functions, classes, and modules in Python code.
+description: Google-style docstring rules for Python — summary line, Args (no type duplication), Returns, Raises, class Attributes. Apply when writing/reviewing any .py function, class, or module. Test files (test_*.py, *_test.py) exempt except module docstring. Do NOT use for JS/TS JSDoc (see jsdocs.instructions.md).
 applyTo: "**/*.py"
 ---
 
