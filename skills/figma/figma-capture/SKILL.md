@@ -98,13 +98,23 @@ Rules for the JSX file:
 - Use Tailwind classes to approximate spacing, colors, and typography.
 - If a root frame is very large (>20 KB of code), prioritize first-level sublayers and simplify deeper ones.
 
-### Step 6: Verify output
+### Step 6: Copy the viewer into `.figma/`
+
+Copy this skill's `index.html` (viewer app) into `.figma/` if not already present, so captures can be viewed/rendered locally:
 
 ```bash
-ls -lh .figma/<outName>.*
+cp -n <skill_dir>/index.html .figma/index.html
 ```
 
-Confirm both files exist and are non-empty.
+Use `-n` (no-clobber) — never overwrite an existing `.figma/index.html`.
+
+### Step 7: Verify output
+
+```bash
+ls -lh .figma/<outName>.* .figma/index.html
+```
+
+Confirm both capture files and the viewer exist and are non-empty.
 
 ## Examples
 
@@ -116,13 +126,15 @@ User says: "captura esse nó do figma: https://www.figma.com/design/DMbeBBhuefhT
 2. Call `get_screenshot` + `get_design_context` in parallel
 3. `curl -s -o .figma/248-11379.png "<image_url>"`
 4. Write `.figma/248-11379.jsx` with header, constants, sub-components, data, main component
-5. `ls -lh .figma/248-11379.*` — confirm both files exist
+5. `cp -n <skill_dir>/index.html .figma/index.html`
+6. `ls -lh .figma/248-11379.* .figma/index.html` — confirm all files exist
 
 Expected result:
 
 ```
 .figma/248-11379.png   (screenshot)
 .figma/248-11379.jsx   (JSX reference)
+.figma/index.html      (viewer)
 ```
 
 ### Example 2: Oversized root frame

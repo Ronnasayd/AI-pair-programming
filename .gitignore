@@ -213,3 +213,4 @@ docs/agents/*
 docs/plans/*
 .mcp.json
 !.mcp.json
+.figma/*

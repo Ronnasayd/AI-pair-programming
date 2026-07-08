@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Figma Capture Viewer</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --card-bg: #ffffff;
+    --text: #172b4d;
+    --muted: #5e6c84;
+    --border: #dfe1e6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 { font-size: 18px; margin: 0; margin-right: 8px; }
+  button {
+    cursor: pointer;
+    border: none;
+    background: #0052cc;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  button:hover { background: #0747a6; }
+  select {
+    padding: 7px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    min-width: 220px;
+  }
+  .filename { color: var(--muted); font-size: 13px; }
+  .layout {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    align-items: flex-start;
+  }
+  .panel {
+    background: var(--card-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    padding: 10px;
+    flex-shrink: 0;
+  }
+  .panel h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 4px 6px 10px;
+  }
+  .ref-panel { width: 340px; min-width: 340px; }
+  .ref-panel img { width: 100%; border-radius: 4px; border: 1px solid var(--border); }
+  .render-panel { flex: 1; min-width: 0; overflow: auto; background: #fff; }
+  .render-frame {
+    min-height: 60vh;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 12px;
+  }
+  .empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    color: var(--muted);
+    font-size: 16px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .error {
+    background: #ffebe6;
+    color: #bf2600;
+    border: 1px solid #ff8f73;
+    border-radius: 4px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.25.6/babel.min.js" crossorigin></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useCallback, useMemo } = React;
+
+function transformAndEval(code, fileName) {
+  // Strip import/export statements — reference JSX files are standalone,
+  // rendered against the global React already loaded on this page.
+  const stripped = code
+    .replace(/^import\s+.*$/gm, "")
+    .replace(/^export\s+default\s+/m, "const __CapturedNode__ = ")
+    .replace(/^export\s+/gm, "");
+
+  const transpiled = Babel.transform(stripped, {
+    presets: ["react"],
+    filename: fileName,
+  }).code;
+
+  const fn = new Function("React", `"use strict";\n${transpiled}\nreturn __CapturedNode__;`);
+  return fn(React);
+}
+
+function RenderedComponent({ code, fileName }) {
+  const Comp = useMemo(() => {
+    try {
+      const result = transformAndEval(code, fileName);
+      return { component: result, error: null };
+    } catch (err) {
+      return { component: null, error: err };
+    }
+  }, [code, fileName]);
+
+  if (Comp.error) {
+    return <pre className="error">{Comp.error.message}\n\n{Comp.error.stack}</pre>;
+  }
+  const C = Comp.component;
+  try {
+    return <C />;
+  } catch (err) {
+    return <pre className="error">{err.message}\n\n{err.stack}</pre>;
+  }
+}
+
+function App() {
+  const [entries, setEntries] = useState([]); // [{ name, base, jsxCode, pngUrl }]
+  const [selected, setSelected] = useState(null);
+  const [showRef, setShowRef] = useState(true);
+  const fileInputRef = React.useRef(null);
+
+  const handleFiles = useCallback((e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const byBase = {};
+    files.forEach((file) => {
+      const dot = file.name.lastIndexOf(".");
+      const base = dot >= 0 ? file.name.slice(0, dot) : file.name;
+      const ext = dot >= 0 ? file.name.slice(dot + 1).toLowerCase() : "";
+      if (!byBase[base]) byBase[base] = { name: base, base };
+      if (ext === "jsx" || ext === "js") byBase[base].jsxFile = file;
+      if (ext === "png" || ext === "jpg" || ext === "jpeg") byBase[base].pngFile = file;
+    });
+
+    const bases = Object.keys(byBase).filter((b) => byBase[b].jsxFile);
+    if (!bases.length) {
+      alert("Nenhum arquivo .jsx encontrado.");
+      return;
+    }
+
+    Promise.all(
+      bases.map(
+        (base) =>
+          new Promise((resolve) => {
+            const entry = byBase[base];
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const jsxCode = ev.target.result;
+              const pngUrl = entry.pngFile ? URL.createObjectURL(entry.pngFile) : null;
+              resolve({ name: entry.name, base, jsxCode, pngUrl });
+            };
+            reader.readAsText(entry.jsxFile);
+          })
+      )
+    ).then((results) => {
+      setEntries(results);
+      setSelected(results[0]?.base || null);
+    });
+  }, []);
+
+  const current = entries.find((en) => en.base === selected) || null;
+
+  return (
+    <React.Fragment>
+      <header>
+        <h1>Figma Capture Viewer</h1>
+        <button onClick={() => fileInputRef.current.click()}>Abrir .figma/</button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".jsx,.js,.png,.jpg,.jpeg"
+          webkitdirectory="true"
+          directory="true"
+          multiple
+          style={{ display: "none" }}
+          onChange={handleFiles}
+        />
+        {entries.length > 0 && (
+          <select value={selected || ""} onChange={(e) => setSelected(e.target.value)}>
+            {entries.map((en) => (
+              <option key={en.base} value={en.base}>{en.name}</option>
+            ))}
+          </select>
+        )}
+        {current && <span className="filename">{current.name}.jsx</span>}
+        {current && current.pngUrl && (
+          <button onClick={() => setShowRef((v) => !v)}>
+            {showRef ? "Ocultar referência" : "Mostrar referência"}
+          </button>
+        )}
+      </header>
+
+      {current ? (
+        <div className="layout">
+          {current.pngUrl && showRef && (
+            <div className="panel ref-panel">
+              <h2>Referência (Figma)</h2>
+              <img src={current.pngUrl} alt={current.name} />
+            </div>
+          )}
+          <div className="panel render-panel">
+            <h2>Render (JSX capturado)</h2>
+            <div className="render-frame">
+              <RenderedComponent code={current.jsxCode} fileName={current.name + ".jsx"} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="empty">
+          <p>Nenhum arquivo carregado. Selecione o diretório .figma/.</p>
+          <button onClick={() => fileInputRef.current.click()}>Abrir .figma/</button>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
