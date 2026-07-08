@@ -1,5 +1,5 @@
 ---
-description: Test Standards
+description: General test-writing rules — independent tests, Arrange/Act/Assert or Given/When/Then, mock the clock for time-dependent logic, <100-line test cases, descriptive names, beforeEach/afterEach usage. Apply to any *.test.ts/js or *.spec.ts/js file. Do NOT use for backend integration/SQLite specifics (see test-typescript-node-backend.instructions.md).
 applyTo: "**/*.test.ts,**/*.test.js,**/*.spec.ts,**/*.spec.js"
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: Node.js/JavaScript/TypeScript rules and guidelines.
+description: Node/TS conventions — npm only, TypeScript everywhere, no any/var/require/module.exports, private/readonly class props, prefer find/filter/map/reduce and arrow functions, async/await over callbacks, default vs named exports. Apply to any .ts/.js/.vue/.jsx/.tsx file. Do NOT use for React-specific rules (see react.instructions.md) or general naming/style (see code.instructions.md).
 applyTo: "**/*.ts, **/*.js,**/*.vue, **/*.jsx, **/*.tsx"
 ---
 

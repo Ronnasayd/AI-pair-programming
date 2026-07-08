@@ -1,5 +1,5 @@
 ---
-description: React Standards
+description: React/JSX rules — functional components only, .tsx + typed props, local state placement, explicit prop passing, ~100-line component limit, Tailwind styling, useMemo, use-prefixed hooks, purity/idempotency, hooks-only-at-top-level, no mutating props/state. Apply to any .jsx/.tsx file. Do NOT use for Vue (see vue.instructions.md) or generic TS rules (see node-ts.instructions.md).
 applyTo: "**/*.jsx, **/*.tsx"
 ---
 

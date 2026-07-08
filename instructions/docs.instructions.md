@@ -1,5 +1,5 @@
 ---
-description: Define documentation search order and module context loading strategy. Use when reading, writing, or navigating project docs (.md files) — consult SUMMARY.md first, then architecture/setup/usage/contribution/models/endpoints/faq, then per-module CONTEXT.md. Do NOT use for code behavior, agent config, or non-doc tasks.
+description: Documentation search order and module-context loading strategy — SUMMARY.md first, then architecture/setup/usage/contribution/models/endpoints/faq, then per-module CONTEXT.md, then ADRs. Apply when reading, writing, or navigating any project .md file; load only the minimum sections needed. Do NOT use for code behavior, agent config, or non-doc tasks.
 applyTo: "**/*.md"
 ---
 

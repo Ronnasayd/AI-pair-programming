@@ -1,5 +1,5 @@
 ---
-description: JSDoc requirements for functions, methods, and parameters in JS/TS code.
+description: JSDoc requirements for JS/TS functions/methods — mandatory block description, one @param per parameter (incl. destructured fields), @returns when function has explicit return. Apply when writing/reviewing any .ts/.js/.jsx/.tsx function. Test files (*.spec.ts, *.test.ts) exempt. Do NOT use for Python docstrings (see pydocs.instructions.md).
 applyTo: "**/*.ts, **/*.js, **/*.jsx, **/*.tsx"
 ---
 
