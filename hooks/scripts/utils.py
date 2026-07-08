@@ -7,6 +7,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Mapping, Optional
+
 # ---------------------------------------------------------------------------
 # Utility helpers
 # ---------------------------------------------------------------------------
@@ -402,6 +403,37 @@ def resolve_formatter_bin(
         f"[resolve_formatter_bin] Using package manager runner for {formatter}: {result}"
     )
     return result
+
+
+def rgb_to_ansi(r, g, b):
+    return f"\033[38;2;{r};{g};{b}m"
+
+
+def colorize_json(payload, indent: int = 0) -> str:
+    """Dump JSON with ANSI-colored keys and values (recursive, no regex)."""
+    _KEY_COLOR = "\033[36m"  # cyan
+    _VALUE_COLOR = "\033[32m"  # green
+    _RESET = "\033[0m"
+    pad = "  " * indent
+    child_pad = "  " * (indent + 1)
+
+    if isinstance(payload, dict):
+        if not payload:
+            return "{}"
+        items = []
+        for key, value in payload.items():
+            key_str = f"{_KEY_COLOR}{json.dumps(key)}{_RESET}"
+            value_str = colorize_json(value, indent + 1)
+            items.append(f"{child_pad}{key_str}: {value_str}")
+        return "{\n" + ",\n".join(items) + "\n" + pad + "}"
+
+    if isinstance(payload, list):
+        if not payload:
+            return "[]"
+        items = [f"{child_pad}{colorize_json(v, indent + 1)}" for v in payload]
+        return "[\n" + ",\n".join(items) + "\n" + pad + "]"
+
+    return f"{_VALUE_COLOR}{json.dumps(payload)}{_RESET}"
 
 
 # ---------------------------------------------------------------------------
