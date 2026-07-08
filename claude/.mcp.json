@@ -102,7 +102,19 @@
     },
     "gcloud": {
       "command": "npx",
-      "args": ["-y", "@google-cloud/gcloud-mcp"]
+      "args": [
+        "-y",
+        "@google-cloud/gcloud-mcp"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "${CONTEXT7_API_KEY:-add-value-to-env-vars}"
+      ]
     }
   }
 }
