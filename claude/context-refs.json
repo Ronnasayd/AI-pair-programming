@@ -1,53 +1,38 @@
 {
   "refresh_after": 20,
+  "git_repo_url": "https://github.com/Ronnasayd/AI-pair-programming.git",
   "rules": [
     {
       "glob": "*.ts,*.js,*.py,*.java,*.go,*.css,*.cpp,*.c,*.vue,*.jsx,*.tsx",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/code.instructions.md"
-      ]
+      "refs": ["instructions/code.instructions.md"]
     },
     {
       "glob": "*.ts,*.js,*.jsx,*.tsx",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/jsdocs.instructions.md"
-      ]
+      "refs": ["instructions/jsdocs.instructions.md"]
     },
     {
       "glob": "*.openapi.ts",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/openapi.instructions.md"
-      ]
+      "refs": ["instructions/openapi.instructions.md"]
     },
     {
       "glob": "*.jsx,*.tsx",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/react.instructions.md"
-      ]
+      "refs": ["instructions/react.instructions.md"]
     },
     {
       "glob": "*.test.ts,*.test.js,*.spec.ts,*.spec.js",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/test.instructions.md"
-      ]
+      "refs": ["instructions/test.instructions.md"]
     },
     {
       "glob": "*.vue",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/vue.instructions.md"
-      ]
+      "refs": ["instructions/vue.instructions.md"]
     },
     {
       "glob": "*.py",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/python.instructions.md"
-      ]
+      "refs": ["instructions/python.instructions.md"]
     },
     {
       "glob": "*.py",
-      "refs": [
-        "/home/ronnas/develop/personal/AI-pair-programming/instructions/pydocs.instructions.md"
-      ]
+      "refs": ["instructions/pydocs.instructions.md"]
     }
   ]
 }

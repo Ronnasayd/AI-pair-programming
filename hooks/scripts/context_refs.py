@@ -8,6 +8,7 @@ context when a matched file is about to be edited.
 
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
@@ -22,6 +23,7 @@ logger = get_hooks_logger("ContextRefs")
 MAX_STDIN = 1024 * 1024
 CONFIG_FILE = ".claude/context-refs.json"
 DEFAULT_REFRESH_AFTER = 3
+GIT_CACHE_ROOT = Path("/tmp/context_refs_git_cache")
 
 
 def _cache_path(session_id: str) -> Path:
@@ -54,6 +56,55 @@ def _glob_match(file_path: str, glob: str) -> bool:
         if fnmatch.fnmatch(str(p), g):
             return True
     return False
+
+
+def _git_cache_dir(repo_url: str) -> Path:
+    name = PurePosixPath(repo_url.rstrip("/")).name or "repo"
+    return GIT_CACHE_ROOT / name
+
+
+def _ensure_git_cache(repo_url: str) -> Path | None:
+    """Clone or update the cached bare mirror of the repo. Returns the cache dir on success."""
+    cache_dir = _git_cache_dir(repo_url)
+    try:
+        if cache_dir.exists():
+            result = subprocess.run(
+                ["git", "--git-dir", str(cache_dir), "fetch", "--quiet", "origin"],
+                capture_output=True,
+                timeout=30,
+            )
+            return cache_dir if result.returncode == 0 else None
+        cache_dir.parent.mkdir(parents=True, exist_ok=True)
+        result = subprocess.run(
+            ["git", "clone", "--quiet", "--bare", repo_url, str(cache_dir)],
+            capture_output=True,
+            timeout=60,
+        )
+        return cache_dir if result.returncode == 0 else None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _read_ref_from_git(ref: str, repo_url: str) -> str | None:
+    """Fetch a ref's content from the cached repo clone when the local file is missing."""
+    if not repo_url:
+        return None
+    rel_path = ref.replace("\\", "/")
+    cache_dir = _ensure_git_cache(repo_url)
+    if cache_dir is None:
+        return None
+    try:
+        result = subprocess.run(
+            ["git", "--git-dir", str(cache_dir), "show", f"HEAD:{rel_path}"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        if result.returncode != 0:
+            return None
+        return result.stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
 
 
 def _normalize_path(path: str) -> str:
@@ -113,6 +164,7 @@ def main() -> None:
         sys.exit(0)
 
     refresh_after = config.get("refresh_after", DEFAULT_REFRESH_AFTER)
+    git_repo_url = config.get("git_repo_url", "")
     rules = config.get("rules", [])
     logger.debug("refresh_after=%d, rules_count=%d", refresh_after, len(rules))
 
@@ -175,16 +227,21 @@ def main() -> None:
             continue
 
         ref_path = Path(ref)
-        if not ref_path.exists():
+        if not ref_path.is_absolute():
+            ref_path = Path.cwd() / ref_path
+        contents: str | None = None
+        if ref_path.exists():
+            try:
+                contents = ref_path.read_text()
+            except OSError:
+                logger.debug("Could not read ref: %s", ref)
+        else:
+            logger.debug("ref not found locally, trying git cache: %s", ref)
+            contents = _read_ref_from_git(ref, git_repo_url)
+
+        if contents is None:
             logger.debug("ref not found: %s", ref)
             output_lines.append(f"# WARNING: ref not found: {ref}")
-            continue
-
-        try:
-            contents = ref_path.read_text()
-        except OSError:
-            logger.debug("Could not read ref: %s", ref)
-            output_lines.append(f"# WARNING: could not read ref: {ref}")
             continue
 
         logger.debug("Injecting ref=%s (%d chars)", ref, len(contents))
