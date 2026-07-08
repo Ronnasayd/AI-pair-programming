@@ -13,13 +13,12 @@
     --border: #dfe1e6;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
+  #root {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
   }
-  header {
+  .fcv-header {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -30,8 +29,8 @@
     top: 0;
     z-index: 10;
   }
-  header h1 { font-size: 18px; margin: 0; margin-right: 8px; }
-  button {
+  .fcv-header h1 { font-size: 18px; margin: 0; margin-right: 8px; }
+  .fcv-btn {
     cursor: pointer;
     border: none;
     background: #0052cc;
@@ -40,44 +39,44 @@
     border-radius: 4px;
     font-size: 14px;
   }
-  button:hover { background: #0747a6; }
-  select {
+  .fcv-btn:hover { background: #0747a6; }
+  .fcv-select {
     padding: 7px 10px;
     border-radius: 4px;
     border: 1px solid var(--border);
     font-size: 14px;
     min-width: 220px;
   }
-  .filename { color: var(--muted); font-size: 13px; }
-  .layout {
+  .fcv-filename { color: var(--muted); font-size: 13px; }
+  .fcv-layout {
     display: flex;
     gap: 16px;
     padding: 20px;
     align-items: flex-start;
   }
-  .panel {
+  .fcv-panel {
     background: var(--card-bg);
     border-radius: 6px;
     border: 1px solid var(--border);
     padding: 10px;
     flex-shrink: 0;
   }
-  .panel h2 {
+  .fcv-panel h2 {
     font-size: 13px;
     text-transform: uppercase;
     color: var(--muted);
     margin: 4px 6px 10px;
   }
-  .ref-panel { width: 340px; min-width: 340px; }
-  .ref-panel img { width: 100%; border-radius: 4px; border: 1px solid var(--border); }
-  .render-panel { flex: 1; min-width: 0; overflow: auto; background: #fff; }
-  .render-frame {
+  .fcv-ref-panel { width: 340px; min-width: 340px; }
+  .fcv-ref-panel img { width: 100%; border-radius: 4px; border: 1px solid var(--border); }
+  .fcv-render-panel { flex: 1; min-width: 0; overflow: auto; background: #fff; }
+  .fcv-render-frame {
     min-height: 60vh;
     border: 1px dashed var(--border);
     border-radius: 4px;
     padding: 12px;
   }
-  .empty {
+  .fcv-empty {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,7 +86,7 @@
     flex-direction: column;
     gap: 10px;
   }
-  .error {
+  .fcv-error {
     background: #ffebe6;
     color: #bf2600;
     border: 1px solid #ff8f73;
@@ -137,13 +136,13 @@ function RenderedComponent({ code, fileName }) {
   }, [code, fileName]);
 
   if (Comp.error) {
-    return <pre className="error">{Comp.error.message}\n\n{Comp.error.stack}</pre>;
+    return <pre className="fcv-error">{Comp.error.message}\n\n{Comp.error.stack}</pre>;
   }
   const C = Comp.component;
   try {
     return <C />;
   } catch (err) {
-    return <pre className="error">{err.message}\n\n{err.stack}</pre>;
+    return <pre className="fcv-error">{err.message}\n\n{err.stack}</pre>;
   }
 }
 
@@ -197,9 +196,9 @@ function App() {
 
   return (
     <React.Fragment>
-      <header>
+      <header className="fcv-header">
         <h1>Figma Capture Viewer</h1>
-        <button onClick={() => fileInputRef.current.click()}>Abrir .figma/</button>
+        <button className="fcv-btn" onClick={() => fileInputRef.current.click()}>Abrir .figma/</button>
         <input
           ref={fileInputRef}
           type="file"
@@ -211,39 +210,39 @@ function App() {
           onChange={handleFiles}
         />
         {entries.length > 0 && (
-          <select value={selected || ""} onChange={(e) => setSelected(e.target.value)}>
+          <select className="fcv-select" value={selected || ""} onChange={(e) => setSelected(e.target.value)}>
             {entries.map((en) => (
               <option key={en.base} value={en.base}>{en.name}</option>
             ))}
           </select>
         )}
-        {current && <span className="filename">{current.name}.jsx</span>}
+        {current && <span className="fcv-filename">{current.name}.jsx</span>}
         {current && current.pngUrl && (
-          <button onClick={() => setShowRef((v) => !v)}>
+          <button className="fcv-btn" onClick={() => setShowRef((v) => !v)}>
             {showRef ? "Ocultar referência" : "Mostrar referência"}
           </button>
         )}
       </header>
 
       {current ? (
-        <div className="layout">
+        <div className="fcv-layout">
           {current.pngUrl && showRef && (
-            <div className="panel ref-panel">
+            <div className="fcv-panel fcv-ref-panel">
               <h2>Referência (Figma)</h2>
               <img src={current.pngUrl} alt={current.name} />
             </div>
           )}
-          <div className="panel render-panel">
+          <div className="fcv-panel fcv-render-panel">
             <h2>Render (JSX capturado)</h2>
-            <div className="render-frame">
+            <div className="fcv-render-frame">
               <RenderedComponent code={current.jsxCode} fileName={current.name + ".jsx"} />
             </div>
           </div>
         </div>
       ) : (
-        <div className="empty">
+        <div className="fcv-empty">
           <p>Nenhum arquivo carregado. Selecione o diretório .figma/.</p>
-          <button onClick={() => fileInputRef.current.click()}>Abrir .figma/</button>
+          <button className="fcv-btn" onClick={() => fileInputRef.current.click()}>Abrir .figma/</button>
         </div>
       )}
     </React.Fragment>
