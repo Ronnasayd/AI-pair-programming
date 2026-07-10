@@ -68,7 +68,9 @@ def files_with_errors(report: list[dict]) -> dict[str, str]:
     return result
 
 
-async def fix_file(semaphore: asyncio.Semaphore, file_path: str, errors: str) -> None:
+async def fix_file(
+    semaphore: asyncio.Semaphore, project_root: Path, file_path: str, errors: str
+) -> None:
     async with semaphore:
         print(f"[start] {file_path}")
         async for message in query(
@@ -79,7 +81,7 @@ async def fix_file(semaphore: asyncio.Semaphore, file_path: str, errors: str) ->
             options=ClaudeAgentOptions(
                 allowed_tools=["Read", "Edit"],
                 model=MODEL,
-                cwd=str(Path(file_path).parent),
+                cwd=str(project_root),
                 settings=str(SETTINGS_PATH),
             ),
         ):
@@ -101,7 +103,9 @@ async def main(directory: str, concurrency: int, eslint_args: str) -> None:
     )
 
     semaphore = asyncio.Semaphore(concurrency)
-    await asyncio.gather(*(fix_file(semaphore, f, e) for f, e in targets.items()))
+    await asyncio.gather(
+        *(fix_file(semaphore, target, f, e) for f, e in targets.items())
+    )
 
     print("\nDone.")
 
