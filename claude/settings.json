@@ -96,7 +96,7 @@
       "Bash(docker run:*)",
       "Bash(docker exec:*)",
       "Bash(eval:*)",
-      "Bash(xargs:*)",
+      "Bash(xargs:*)"
     ]
   },
   "model": "sonnet",
@@ -116,11 +116,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/context_refs.py"
+            "command": ".claude/hooks/scripts/context_refs.py"
           },
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/similar_code_ref.py"
+            "command": ".claude/hooks/scripts/similar_code_ref.py"
           }
         ]
       },
@@ -129,7 +129,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
+            "command": ".claude/hooks/scripts/protect_files.py"
           },
           {
             "type": "command",
@@ -137,7 +137,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -148,19 +148,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/typescript_lint.py"
+            "command": ".claude/hooks/scripts/typescript_lint.py"
           },
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/python_lint.py"
+            "command": ".claude/hooks/scripts/python_lint.py"
           },
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/golang_lint.py"
+            "command": ".claude/hooks/scripts/golang_lint.py"
           },
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/quality_gate.py"
+            "command": ".claude/hooks/scripts/quality_gate.py"
           }
         ]
       },
@@ -173,7 +173,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -183,17 +183,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/$CLAUDE_PROJECT_DIR/.claude/hooks/caveman-activate.js\"",
+            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-activate.js\"",
             "timeout": 5,
             "statusMessage": "Loading caveman mode..."
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           },
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/session_start.py",
+            "command": ".claude/hooks/scripts/session_start.py",
             "timeout": 5
           }
         ]
@@ -218,7 +218,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -228,19 +228,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
+            "command": ".claude/hooks/scripts/skill_activation.py",
             "timeout": 10,
             "statusMessage": "Finding relevant skills..."
           },
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/$CLAUDE_PROJECT_DIR/.claude/hooks/caveman-mode-tracker.js\"",
+            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\"",
             "timeout": 5,
             "statusMessage": "Tracking caveman mode..."
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -264,7 +264,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -275,7 +275,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -286,7 +286,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -301,7 +301,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
