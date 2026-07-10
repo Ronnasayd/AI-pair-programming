@@ -115,6 +115,10 @@
         "--api-key",
         "${CONTEXT7_API_KEY:-add-value-to-env-vars}"
       ]
+    },
+    "expo": {
+      "type": "http",
+      "url": "https://mcp.expo.dev/mcp"
     }
   }
 }
