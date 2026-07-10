@@ -25,6 +25,7 @@ from pathlib import Path
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
 MODEL = "claude-haiku-4-5-20251001"
+SETTINGS_PATH = Path.home() / ".claude" / "settings.json"
 
 
 def run_eslint(directory: Path, eslint_args: str) -> list[dict]:
@@ -79,6 +80,7 @@ async def fix_file(semaphore: asyncio.Semaphore, file_path: str, errors: str) ->
                 allowed_tools=["Read", "Edit"],
                 model=MODEL,
                 cwd=str(Path(file_path).parent),
+                settings=str(SETTINGS_PATH),
             ),
         ):
             if isinstance(message, ResultMessage):
