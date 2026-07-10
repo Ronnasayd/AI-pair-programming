@@ -32,5 +32,3 @@ alias cat-scr='cat /tmp/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=
 alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log'
 alias mia="mif && iai --claude"
 alias lintfix='/home/ronnas/develop/personal/AI-pair-programming/src/venv/bin/python /home/ronnas/develop/personal/AI-pair-programming/src/sdk/lint_fix_agent.py'
-
-
