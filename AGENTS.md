@@ -144,3 +144,19 @@ Development workflow:
 2. Track changes in `.taskmaster/` as tasks for significant work.
 3. Use focused edits — prefer targeted replacements over full rewrites.
 4. Validate via linting, type checking, or running the MCP server.
+
+## Relevant Skills
+
+**Repo maintenance (core)**
+- `skill-creator` / `skill-architect` — build/edit skills like ones just added (frontend-patterns, golang-*, python-*, tdd-workflow)
+- `skill-description-generator` — tune trigger phrasing for new skill descriptions
+- `agent-creator` / `subagent-creator` — same for `.claude/agents`
+- `taskmaster-mapper` — map skills/agents to taskmaster tasks (repo has `.taskmaster/`)
+
+**Git/PR hygiene (repo has heavy commit history)**
+- `semantic-commit-message` / `caveman-commit`
+- `generate-pr-description`
+- `code-review`, `git-guide`, `git-workflow`
+
+**MCP work** (repo has `mcps/` dir)
+- `mcp-builder`, `mcp-manager-instructions`
