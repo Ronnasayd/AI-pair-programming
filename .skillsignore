@@ -41,9 +41,6 @@ docker-patterns
 document-summarizer
 domain-analysis
 domain-modeling
-engineering/diagnosing-bugs
-engineering/domain-modeling
-engineering/grill-with-docs
 event-storming
 execute-task
 figma-capture
@@ -61,11 +58,11 @@ generate-docs-init
 generate-docs-update
 gh-address-comments
 gh-fix-ci
-git-diff-analyzer
 git-guide
 golang-patterns
 golang-style-guide
 golang-testing
+grill-with-docs
 gtm-engineering
 gtm-metrics
 handling-large-files
@@ -88,7 +85,6 @@ pr-review
 prd-from-codebase
 prd-generator
 prd-get-implicit-requirements
-productivity/grilling
 python-patterns
 python-style-guide
 python-testing
