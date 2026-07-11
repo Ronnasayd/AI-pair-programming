@@ -25,7 +25,7 @@ def _fetch_text(url: str) -> str:
         return response.read().decode("utf-8")
 
 
-def _fetch_manifest() -> Dict[str, str]:
+def _fetch_manifest() -> Dict[str, Dict[str, Any]]:
     return json.loads(_fetch_text(f"{_RAW_BASE}/manifest.json"))
 
 
@@ -46,22 +46,53 @@ def get_remote_skill(name: str) -> Dict[str, Any]:
     """
     Fetch a skill's SKILL.md content by name from the AI-pair-programming
     GitHub repo, for use when the skill isn't present in the current project.
+
+    The response also lists `files`: relative paths of scripts/references
+    adjacent to SKILL.md in the skill's directory. Fetch any of them with
+    get_remote_skill_file(name, relpath) if SKILL.md references them.
     """
     try:
         manifest = _fetch_manifest()
     except Exception as e:
         return {"error": f"Failed to fetch manifest: {e}"}
 
-    path = manifest.get(name)
-    if not path:
+    entry = manifest.get(name)
+    if not entry:
         return {"error": f"Skill '{name}' not found in manifest"}
 
     try:
-        content = _fetch_text(f"{_RAW_BASE}/{path}")
+        content = _fetch_text(f"{_RAW_BASE}/{entry['skill_md']}")
     except Exception as e:
         return {"error": f"Failed to fetch skill content: {e}"}
 
-    return {"name": name, "content": content}
+    return {"name": name, "content": content, "files": entry.get("files", [])}
+
+
+@mcp.tool()
+def get_remote_skill_file(name: str, relpath: str) -> Dict[str, Any]:
+    """
+    Fetch one adjacent file (script or reference) for a remote skill by its
+    relative path, as listed in `files` from get_remote_skill(name).
+    """
+    try:
+        manifest = _fetch_manifest()
+    except Exception as e:
+        return {"error": f"Failed to fetch manifest: {e}"}
+
+    entry = manifest.get(name)
+    if not entry:
+        return {"error": f"Skill '{name}' not found in manifest"}
+
+    if relpath not in entry.get("files", []):
+        return {"error": f"'{relpath}' is not a listed file of skill '{name}'"}
+
+    skill_dir = entry["skill_md"].rsplit("/", 1)[0]
+    try:
+        content = _fetch_text(f"{_RAW_BASE}/{skill_dir}/{relpath}")
+    except Exception as e:
+        return {"error": f"Failed to fetch file content: {e}"}
+
+    return {"name": name, "relpath": relpath, "content": content}
 
 
 def main():
