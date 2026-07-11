@@ -105,6 +105,12 @@ rm -rf $HOME/$DEFAULT_FOLDER/settings.json
 fi
 ln -s "$SOURCE/claude/settings.json" "$HOME/$DEFAULT_FOLDER/settings.json"
 ########################################################################################
+mkdir -p "$LOCAL/$DEFAULT_FOLDER"
+LOCAL_SETTINGS="$LOCAL/$DEFAULT_FOLDER/settings.local.json"
+if [ ! -f "$LOCAL_SETTINGS" ]; then
+  echo '{}' > "$LOCAL_SETTINGS"
+fi
+jq --arg dir "$LOCAL" '.env.AI_PROJECT_DIR = $dir' "$LOCAL_SETTINGS" > "${LOCAL_SETTINGS}.tmp" && mv "${LOCAL_SETTINGS}.tmp" "$LOCAL_SETTINGS"
 ########################################################################################
 if ! [ -e "$LOCAL/$DEFAULT_FOLDER/context-refs.json" ]; then
 ln -s "$SOURCE/claude/context-refs.json" "$LOCAL/$DEFAULT_FOLDER/context-refs.json"
