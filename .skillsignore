@@ -2,7 +2,7 @@
 # grilling
 # orchestrate
 # resolve-merge-conflicts
-# technical-decision-maker
+# technical-decision-helper
 # tlc-execute-tasks
 # tlc-spec-driven
 # tlc-tasks-to-taskmaster
@@ -101,6 +101,12 @@ mermaid-erd
 mermaid-studio
 modular-decomposition
 modular-monolith-decomposer
+my-frontend-patterns
+my-golang-patterns
+my-golang-testing
+my-python-patterns
+my-python-testing
+my-tdd-workflow
 mysql-patterns
 opencv
 parallel-execution-optimizer
@@ -114,7 +120,6 @@ prd-generator
 prd-get-implicit-requirements
 prisma-patterns
 production-audit
-productivity/grilling
 python-patterns
 python-style-guide
 python-testing
