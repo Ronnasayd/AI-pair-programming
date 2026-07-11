@@ -1,8 +1,4 @@
-# code-review
 # codenavi
-# diagnosing-bugs
-# dynamic-programming-analysis
-# generate-pr-description
 # grilling
 # orchestrate
 # resolve-merge-conflicts
@@ -19,6 +15,7 @@ apk-reverse
 auto-improve
 backend-patterns
 blueprint
+code-review
 codebase-linguistic-analysis-to-csv-export
 codebase-rules-extractor
 coding-standards
@@ -37,10 +34,12 @@ deep-research
 deep-research-web
 deployment-patterns
 design-image-diff
+diagnosing-bugs
 docker-patterns
 document-summarizer
 domain-analysis
 domain-modeling
+dynamic-programming-analysis
 event-storming
 execute-task
 figma-capture
@@ -56,6 +55,7 @@ frontend-design
 frontend-patterns
 generate-docs-init
 generate-docs-update
+generate-pr-description
 gh-address-comments
 gh-fix-ci
 git-guide

@@ -1,120 +1,753 @@
 {
-  "agent-creator": "agent-creator/SKILL.md",
-  "analyze-comfyui-workflow-json": "analyze-comfyui-workflow-json/SKILL.md",
-  "frontend-design": "anthropics/frontend-design/SKILL.md",
-  "mcp-builder": "anthropics/mcp-builder/SKILL.md",
-  "skill-creator": "anthropics/skill-creator/SKILL.md",
-  "apk-reverse": "apk-reverse/SKILL.md",
-  "auto-improve": "auto-improve/SKILL.md",
-  "code-review": "code-review/SKILL.md",
-  "codebase-linguistic-analysis-to-csv-export": "codebase-linguistic-analysis-to-csv-export/SKILL.md",
-  "codebase-rules-extractor": "codebase-rules-extractor/SKILL.md",
-  "context-map": "context-map/SKILL.md",
-  "context7-documentation-lookup": "context7-documentation-lookup/SKILL.md",
-  "copilot-sdk": "copilot-sdk/SKILL.md",
-  "create-task-spec": "create-task-spec/SKILL.md",
-  "deep-research-web": "deep-research-web/SKILL.md",
-  "design-image-diff": "design-image-diff/SKILL.md",
-  "document-summarizer": "document-summarizer/SKILL.md",
-  "dynamic-programming-analysis": "dynamic-programming-analysis/SKILL.md",
-  "event-storming": "event-storming/SKILL.md",
-  "agent-harness-construction": "everything-claude-code/agent-harness-construction/SKILL.md",
-  "ai-regression-testing": "everything-claude-code/ai-regression-testing/SKILL.md",
-  "api-design": "everything-claude-code/api-design/SKILL.md",
-  "backend-patterns": "everything-claude-code/backend-patterns/SKILL.md",
-  "blueprint": "everything-claude-code/blueprint/SKILL.md",
-  "coding-standards": "everything-claude-code/coding-standards/SKILL.md",
-  "content-hash-cache-pattern": "everything-claude-code/content-hash-cache-pattern/SKILL.md",
-  "cpp-coding-standards": "everything-claude-code/cpp-coding-standards/SKILL.md",
-  "data-scraper-agent": "everything-claude-code/data-scraper-agent/SKILL.md",
-  "database-migrations": "everything-claude-code/database-migrations/SKILL.md",
-  "deep-research": "everything-claude-code/deep-research/SKILL.md",
-  "deployment-patterns": "everything-claude-code/deployment-patterns/SKILL.md",
-  "docker-patterns": "everything-claude-code/docker-patterns/SKILL.md",
-  "regex-vs-llm-structured-text": "everything-claude-code/regex-vs-llm-structured-text/SKILL.md",
-  "execute-task": "execute-task/SKILL.md",
-  "figma-capture": "figma/figma-capture/SKILL.md",
-  "figma-code-connect-components": "figma/figma-code-connect-components/SKILL.md",
-  "figma-design-system-to-tailwind": "figma/figma-design-system-to-tailwind/SKILL.md",
-  "figma-mcp": "figma/figma-mcp/SKILL.md",
-  "figma-requirements-conformance": "figma/figma-requirements-conformance/SKILL.md",
-  "figma-requirements-screen-mapper": "figma/figma-requirements-screen-mapper/SKILL.md",
-  "figma-to-code-agentic": "figma/figma-to-code-agentic/SKILL.md",
-  "frontend-patterns": "frontend-patterns/SKILL.md",
-  "generate-docs-init": "generate-docs-init/SKILL.md",
-  "generate-docs-update": "generate-docs-update/SKILL.md",
-  "generate-pr-description": "generate-pr-description/SKILL.md",
-  "git-guide": "git-guide/SKILL.md",
-  "golang-patterns": "golang/golang-patterns/SKILL.md",
-  "golang-style-guide": "golang/golang-style-guide/SKILL.md",
-  "golang-testing": "golang/golang-testing/SKILL.md",
-  "handling-large-files": "handling-large-files/SKILL.md",
-  "integration-testing": "integration-testing/SKILL.md",
-  "keycloak-docs-index": "keycloak-docs-index/SKILL.md",
-  "leet-code-patterns": "leet-code-patterns/SKILL.md",
-  "diagnosing-bugs": "mattpocock/engineering/diagnosing-bugs/SKILL.md",
-  "domain-modeling": "mattpocock/engineering/domain-modeling/SKILL.md",
-  "grill-with-docs": "mattpocock/engineering/grill-with-docs/SKILL.md",
-  "grilling": "mattpocock/productivity/grilling/SKILL.md",
-  "mcp-manager-instructions": "mcp-manager-instructions/SKILL.md",
-  "mermaid-class-diagram": "mermaid-class-diagram/SKILL.md",
-  "mermaid-erd": "mermaid-erd/SKILL.md",
-  "modular-monolith-decomposer": "modular-monolith-decomposer/SKILL.md",
-  "opencv": "opencv/SKILL.md",
-  "orchestrate": "orchestrate/SKILL.md",
-  "plan-generator": "plan-generator/SKILL.md",
-  "pr-review": "pr-review/SKILL.md",
-  "prd-from-codebase": "prd-from-codebase/SKILL.md",
-  "prd-generator": "prd-generator/SKILL.md",
-  "prd-get-implicit-requirements": "prd-get-implicit-requirements/SKILL.md",
-  "python-patterns": "python/python-patterns/SKILL.md",
-  "python-style-guide": "python/python-style-guide/SKILL.md",
-  "python-testing": "python/python-testing/SKILL.md",
-  "resolve-merge-conflicts": "resolve-merge-conflicts/SKILL.md",
-  "safe-refactor": "safe-refactor/SKILL.md",
-  "scan-codebase-rules-ai-memory": "scan-codebase-rules-ai-memory/SKILL.md",
-  "semantic-commit-message": "semantic-commit-message/SKILL.md",
-  "skill-advisor": "skill-advisor/SKILL.md",
-  "skill-description-generator": "skill-description-generator/SKILL.md",
-  "skills-discovery": "skills-discovery/SKILL.md",
-  "srs-generator": "srs-generator/SKILL.md",
-  "tailwind-config-conformance": "tailwind-config-conformance/SKILL.md",
-  "tailwindcss": "tailwindcss/SKILL.md",
-  "taskmaster-append-tasks": "taskmaster/taskmaster-append-tasks/SKILL.md",
-  "taskmaster-create-task": "taskmaster/taskmaster-create-task/SKILL.md",
-  "taskmaster-expand-task": "taskmaster/taskmaster-expand-task/SKILL.md",
-  "taskmaster-mapper": "taskmaster/taskmaster-mapper/SKILL.md",
-  "taskmaster-overview": "taskmaster/taskmaster-overview/SKILL.md",
-  "taskmaster-prd-generator": "taskmaster/taskmaster-prd-generator/SKILL.md",
-  "taskmaster-task-validator": "taskmaster/taskmaster-task-validator/SKILL.md",
-  "codenavi": "tech-leads-club/codenavi/SKILL.md",
-  "coupling-analysis": "tech-leads-club/coupling-analysis/SKILL.md",
-  "create-adr": "tech-leads-club/create-adr/SKILL.md",
-  "create-rfc": "tech-leads-club/create-rfc/SKILL.md",
-  "domain-analysis": "tech-leads-club/domain-analysis/SKILL.md",
-  "figma-implement-design": "tech-leads-club/figma-implement-design/SKILL.md",
-  "frontend-blueprint": "tech-leads-club/frontend-blueprint/SKILL.md",
-  "gh-address-comments": "tech-leads-club/gh-address-comments/SKILL.md",
-  "gh-fix-ci": "tech-leads-club/gh-fix-ci/SKILL.md",
-  "gtm-engineering": "tech-leads-club/gtm-engineering/SKILL.md",
-  "gtm-metrics": "tech-leads-club/gtm-metrics/SKILL.md",
-  "jira-assistant": "tech-leads-club/jira-assistant/SKILL.md",
-  "legacy-migration-planner": "tech-leads-club/legacy-migration-planner/SKILL.md",
-  "mermaid-studio": "tech-leads-club/mermaid-studio/SKILL.md",
-  "modular-decomposition": "tech-leads-club/modular-decomposition/SKILL.md",
-  "perf-web-optimization": "tech-leads-club/perf-web-optimization/SKILL.md",
-  "react-best-practices": "tech-leads-club/react-best-practices/SKILL.md",
-  "react-composition-patterns": "tech-leads-club/react-composition-patterns/SKILL.md",
-  "security-best-practices": "tech-leads-club/security-best-practices/SKILL.md",
-  "seo": "tech-leads-club/seo/SKILL.md",
-  "skill-architect": "tech-leads-club/skill-architect/SKILL.md",
-  "subagent-creator": "tech-leads-club/subagent-creator/SKILL.md",
-  "tlc-spec-driven": "tech-leads-club/tlc-spec-driven/SKILL.md",
-  "technical-decision-helper": "technical-decision-helper/SKILL.md",
-  "tdd": "tests/tdd/SKILL.md",
-  "tdd-workflow": "tests/tdd-workflow/SKILL.md",
-  "test-coverage-review": "tests/test-coverage-review/SKILL.md",
-  "tlc-execute-tasks": "tlc-execute-tasks/SKILL.md",
-  "tlc-tasks-to-taskmaster": "tlc-tasks-to-taskmaster/SKILL.md",
-  "typescript-style-guide": "typescript-style-guide/SKILL.md"
+  "agent-creator": {
+    "skill_md": "agent-creator/SKILL.md",
+    "files": []
+  },
+  "analyze-comfyui-workflow-json": {
+    "skill_md": "analyze-comfyui-workflow-json/SKILL.md",
+    "files": []
+  },
+  "frontend-design": {
+    "skill_md": "anthropics/frontend-design/SKILL.md",
+    "files": [
+      "LICENSE.txt"
+    ]
+  },
+  "mcp-builder": {
+    "skill_md": "anthropics/mcp-builder/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "reference/evaluation.md",
+      "reference/mcp_best_practices.md",
+      "reference/node_mcp_server.md",
+      "reference/python_mcp_server.md",
+      "scripts/connections.py",
+      "scripts/evaluation.py",
+      "scripts/example_evaluation.xml",
+      "scripts/requirements.txt"
+    ]
+  },
+  "skill-creator": {
+    "skill_md": "anthropics/skill-creator/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "agents/analyzer.md",
+      "agents/comparator.md",
+      "agents/grader.md",
+      "assets/eval_review.html",
+      "eval-viewer/generate_review.py",
+      "eval-viewer/viewer.html",
+      "references/schemas.md",
+      "scripts/__init__.py",
+      "scripts/aggregate_benchmark.py",
+      "scripts/generate_report.py",
+      "scripts/improve_description.py",
+      "scripts/package_skill.py",
+      "scripts/quick_validate.py",
+      "scripts/run_eval.py",
+      "scripts/run_loop.py",
+      "scripts/utils.py"
+    ]
+  },
+  "apk-reverse": {
+    "skill_md": "apk-reverse/SKILL.md",
+    "files": [
+      "references/api_patterns.md",
+      "references/output_guide.md",
+      "scripts/analyze_apk.py"
+    ]
+  },
+  "auto-improve": {
+    "skill_md": "auto-improve/SKILL.md",
+    "files": []
+  },
+  "code-review": {
+    "skill_md": "code-review/SKILL.md",
+    "files": []
+  },
+  "codebase-linguistic-analysis-to-csv-export": {
+    "skill_md": "codebase-linguistic-analysis-to-csv-export/SKILL.md",
+    "files": []
+  },
+  "codebase-rules-extractor": {
+    "skill_md": "codebase-rules-extractor/SKILL.md",
+    "files": []
+  },
+  "context-map": {
+    "skill_md": "context-map/SKILL.md",
+    "files": []
+  },
+  "context7-documentation-lookup": {
+    "skill_md": "context7-documentation-lookup/SKILL.md",
+    "files": []
+  },
+  "copilot-sdk": {
+    "skill_md": "copilot-sdk/SKILL.md",
+    "files": []
+  },
+  "create-task-spec": {
+    "skill_md": "create-task-spec/SKILL.md",
+    "files": []
+  },
+  "deep-research-web": {
+    "skill_md": "deep-research-web/SKILL.md",
+    "files": []
+  },
+  "design-image-diff": {
+    "skill_md": "design-image-diff/SKILL.md",
+    "files": []
+  },
+  "document-summarizer": {
+    "skill_md": "document-summarizer/SKILL.md",
+    "files": []
+  },
+  "dynamic-programming-analysis": {
+    "skill_md": "dynamic-programming-analysis/SKILL.md",
+    "files": []
+  },
+  "event-storming": {
+    "skill_md": "event-storming/SKILL.md",
+    "files": []
+  },
+  "agent-harness-construction": {
+    "skill_md": "everything-claude-code/agent-harness-construction/SKILL.md",
+    "files": []
+  },
+  "ai-regression-testing": {
+    "skill_md": "everything-claude-code/ai-regression-testing/SKILL.md",
+    "files": []
+  },
+  "api-design": {
+    "skill_md": "everything-claude-code/api-design/SKILL.md",
+    "files": []
+  },
+  "backend-patterns": {
+    "skill_md": "everything-claude-code/backend-patterns/SKILL.md",
+    "files": []
+  },
+  "blueprint": {
+    "skill_md": "everything-claude-code/blueprint/SKILL.md",
+    "files": []
+  },
+  "coding-standards": {
+    "skill_md": "everything-claude-code/coding-standards/SKILL.md",
+    "files": []
+  },
+  "content-hash-cache-pattern": {
+    "skill_md": "everything-claude-code/content-hash-cache-pattern/SKILL.md",
+    "files": []
+  },
+  "cpp-coding-standards": {
+    "skill_md": "everything-claude-code/cpp-coding-standards/SKILL.md",
+    "files": []
+  },
+  "data-scraper-agent": {
+    "skill_md": "everything-claude-code/data-scraper-agent/SKILL.md",
+    "files": []
+  },
+  "database-migrations": {
+    "skill_md": "everything-claude-code/database-migrations/SKILL.md",
+    "files": []
+  },
+  "deep-research": {
+    "skill_md": "everything-claude-code/deep-research/SKILL.md",
+    "files": []
+  },
+  "deployment-patterns": {
+    "skill_md": "everything-claude-code/deployment-patterns/SKILL.md",
+    "files": []
+  },
+  "docker-patterns": {
+    "skill_md": "everything-claude-code/docker-patterns/SKILL.md",
+    "files": []
+  },
+  "regex-vs-llm-structured-text": {
+    "skill_md": "everything-claude-code/regex-vs-llm-structured-text/SKILL.md",
+    "files": []
+  },
+  "execute-task": {
+    "skill_md": "execute-task/SKILL.md",
+    "files": []
+  },
+  "figma-capture": {
+    "skill_md": "figma/figma-capture/SKILL.md",
+    "files": [
+      "index.html"
+    ]
+  },
+  "figma-code-connect-components": {
+    "skill_md": "figma/figma-code-connect-components/SKILL.md",
+    "files": []
+  },
+  "figma-design-system-to-tailwind": {
+    "skill_md": "figma/figma-design-system-to-tailwind/SKILL.md",
+    "files": []
+  },
+  "figma-mcp": {
+    "skill_md": "figma/figma-mcp/SKILL.md",
+    "files": []
+  },
+  "figma-requirements-conformance": {
+    "skill_md": "figma/figma-requirements-conformance/SKILL.md",
+    "files": []
+  },
+  "figma-requirements-screen-mapper": {
+    "skill_md": "figma/figma-requirements-screen-mapper/SKILL.md",
+    "files": []
+  },
+  "figma-to-code-agentic": {
+    "skill_md": "figma/figma-to-code-agentic/SKILL.md",
+    "files": [
+      "QUICKSTART.md",
+      "README.md",
+      "references/browser-automation.md",
+      "references/diff-analysis.md",
+      "scripts/agentic_loop.py",
+      "scripts/compare_ssim.py"
+    ]
+  },
+  "frontend-patterns": {
+    "skill_md": "frontend-patterns/SKILL.md",
+    "files": []
+  },
+  "generate-docs-init": {
+    "skill_md": "generate-docs-init/SKILL.md",
+    "files": [
+      "templates/docs-SUMMARY.md",
+      "templates/docs-adr.md",
+      "templates/docs-architecture.md",
+      "templates/docs-contribution.md",
+      "templates/docs-endpoints.md",
+      "templates/docs-faq.md",
+      "templates/docs-models.md",
+      "templates/docs-modules.md",
+      "templates/docs-setup.md",
+      "templates/docs-techs.md",
+      "templates/docs-usage.md"
+    ]
+  },
+  "generate-docs-update": {
+    "skill_md": "generate-docs-update/SKILL.md",
+    "files": []
+  },
+  "generate-pr-description": {
+    "skill_md": "generate-pr-description/SKILL.md",
+    "files": []
+  },
+  "git-guide": {
+    "skill_md": "git-guide/SKILL.md",
+    "files": []
+  },
+  "golang-patterns": {
+    "skill_md": "golang/golang-patterns/SKILL.md",
+    "files": []
+  },
+  "golang-style-guide": {
+    "skill_md": "golang/golang-style-guide/SKILL.md",
+    "files": []
+  },
+  "golang-testing": {
+    "skill_md": "golang/golang-testing/SKILL.md",
+    "files": []
+  },
+  "handling-large-files": {
+    "skill_md": "handling-large-files/SKILL.md",
+    "files": [
+      "reference/optimization-techniques.md",
+      "reference/processing-patterns.md",
+      "reference/token-estimation.md",
+      "reference/tools-commands.md",
+      "scripts/analyze_large_file.py",
+      "scripts/estimate_tokens.py"
+    ]
+  },
+  "integration-testing": {
+    "skill_md": "integration-testing/SKILL.md",
+    "files": []
+  },
+  "keycloak-docs-index": {
+    "skill_md": "keycloak-docs-index/SKILL.md",
+    "files": []
+  },
+  "leet-code-patterns": {
+    "skill_md": "leet-code-patterns/SKILL.md",
+    "files": []
+  },
+  "diagnosing-bugs": {
+    "skill_md": "mattpocock/engineering/diagnosing-bugs/SKILL.md",
+    "files": [
+      "scripts/hitl-loop.template.sh"
+    ]
+  },
+  "domain-modeling": {
+    "skill_md": "mattpocock/engineering/domain-modeling/SKILL.md",
+    "files": [
+      "ADR-FORMAT.md",
+      "CONTEXT-FORMAT.md"
+    ]
+  },
+  "grill-with-docs": {
+    "skill_md": "mattpocock/engineering/grill-with-docs/SKILL.md",
+    "files": []
+  },
+  "grilling": {
+    "skill_md": "mattpocock/productivity/grilling/SKILL.md",
+    "files": []
+  },
+  "mcp-manager-instructions": {
+    "skill_md": "mcp-manager-instructions/SKILL.md",
+    "files": []
+  },
+  "mermaid-class-diagram": {
+    "skill_md": "mermaid-class-diagram/SKILL.md",
+    "files": []
+  },
+  "mermaid-erd": {
+    "skill_md": "mermaid-erd/SKILL.md",
+    "files": []
+  },
+  "modular-monolith-decomposer": {
+    "skill_md": "modular-monolith-decomposer/SKILL.md",
+    "files": []
+  },
+  "opencv": {
+    "skill_md": "opencv/SKILL.md",
+    "files": []
+  },
+  "orchestrate": {
+    "skill_md": "orchestrate/SKILL.md",
+    "files": []
+  },
+  "plan-generator": {
+    "skill_md": "plan-generator/SKILL.md",
+    "files": []
+  },
+  "pr-review": {
+    "skill_md": "pr-review/SKILL.md",
+    "files": []
+  },
+  "prd-from-codebase": {
+    "skill_md": "prd-from-codebase/SKILL.md",
+    "files": [
+      "references/prd-template.md",
+      "references/stack-hints.md"
+    ]
+  },
+  "prd-generator": {
+    "skill_md": "prd-generator/SKILL.md",
+    "files": [
+      "references/patterns.md",
+      "references/prd-template.md",
+      "scripts/validate_briefing.py"
+    ]
+  },
+  "prd-get-implicit-requirements": {
+    "skill_md": "prd-get-implicit-requirements/SKILL.md",
+    "files": []
+  },
+  "python-patterns": {
+    "skill_md": "python/python-patterns/SKILL.md",
+    "files": []
+  },
+  "python-style-guide": {
+    "skill_md": "python/python-style-guide/SKILL.md",
+    "files": []
+  },
+  "python-testing": {
+    "skill_md": "python/python-testing/SKILL.md",
+    "files": []
+  },
+  "resolve-merge-conflicts": {
+    "skill_md": "resolve-merge-conflicts/SKILL.md",
+    "files": [
+      "references/patterns.md",
+      "references/sample-plan.md",
+      "scripts/handle-deleted-modified.sh",
+      "scripts/validate-conflicts.sh"
+    ]
+  },
+  "safe-refactor": {
+    "skill_md": "safe-refactor/SKILL.md",
+    "files": []
+  },
+  "scan-codebase-rules-ai-memory": {
+    "skill_md": "scan-codebase-rules-ai-memory/SKILL.md",
+    "files": []
+  },
+  "semantic-commit-message": {
+    "skill_md": "semantic-commit-message/SKILL.md",
+    "files": []
+  },
+  "skill-advisor": {
+    "skill_md": "skill-advisor/SKILL.md",
+    "files": []
+  },
+  "skill-description-generator": {
+    "skill_md": "skill-description-generator/SKILL.md",
+    "files": []
+  },
+  "skills-discovery": {
+    "skill_md": "skills-discovery/SKILL.md",
+    "files": []
+  },
+  "srs-generator": {
+    "skill_md": "srs-generator/SKILL.md",
+    "files": []
+  },
+  "tailwind-config-conformance": {
+    "skill_md": "tailwind-config-conformance/SKILL.md",
+    "files": []
+  },
+  "tailwindcss": {
+    "skill_md": "tailwindcss/SKILL.md",
+    "files": [
+      "resources/component-library.md",
+      "resources/configuration.md",
+      "resources/utility-patterns.md",
+      "skill-rules-fragment.json"
+    ]
+  },
+  "taskmaster-append-tasks": {
+    "skill_md": "taskmaster/taskmaster-append-tasks/SKILL.md",
+    "files": []
+  },
+  "taskmaster-create-task": {
+    "skill_md": "taskmaster/taskmaster-create-task/SKILL.md",
+    "files": []
+  },
+  "taskmaster-expand-task": {
+    "skill_md": "taskmaster/taskmaster-expand-task/SKILL.md",
+    "files": []
+  },
+  "taskmaster-mapper": {
+    "skill_md": "taskmaster/taskmaster-mapper/SKILL.md",
+    "files": []
+  },
+  "taskmaster-overview": {
+    "skill_md": "taskmaster/taskmaster-overview/SKILL.md",
+    "files": [
+      "references/commands.md",
+      "references/workflows.md"
+    ]
+  },
+  "taskmaster-prd-generator": {
+    "skill_md": "taskmaster/taskmaster-prd-generator/SKILL.md",
+    "files": []
+  },
+  "taskmaster-task-validator": {
+    "skill_md": "taskmaster/taskmaster-task-validator/SKILL.md",
+    "files": []
+  },
+  "codenavi": {
+    "skill_md": "tech-leads-club/codenavi/SKILL.md",
+    "files": [
+      "references/coding-principles.md",
+      "references/notebook-spec.md"
+    ]
+  },
+  "coupling-analysis": {
+    "skill_md": "tech-leads-club/coupling-analysis/SKILL.md",
+    "files": []
+  },
+  "create-adr": {
+    "skill_md": "tech-leads-club/create-adr/SKILL.md",
+    "files": [
+      "README.md"
+    ]
+  },
+  "create-rfc": {
+    "skill_md": "tech-leads-club/create-rfc/SKILL.md",
+    "files": [
+      "README.md",
+      "references/section-templates.md"
+    ]
+  },
+  "domain-analysis": {
+    "skill_md": "tech-leads-club/domain-analysis/SKILL.md",
+    "files": [
+      "EXAMPLES.md",
+      "QUICK-REFERENCE.md",
+      "README.md"
+    ]
+  },
+  "figma-implement-design": {
+    "skill_md": "tech-leads-club/figma-implement-design/SKILL.md",
+    "files": [
+      "LICENSE.txt"
+    ]
+  },
+  "frontend-blueprint": {
+    "skill_md": "tech-leads-club/frontend-blueprint/SKILL.md",
+    "files": [
+      "references/collection-guide.md",
+      "references/design-principles.md",
+      "references/stitch-integration.md"
+    ]
+  },
+  "gh-address-comments": {
+    "skill_md": "tech-leads-club/gh-address-comments/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "scripts/fetch_comments.py"
+    ]
+  },
+  "gh-fix-ci": {
+    "skill_md": "tech-leads-club/gh-fix-ci/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "scripts/inspect_pr_checks.py"
+    ]
+  },
+  "gtm-engineering": {
+    "skill_md": "tech-leads-club/gtm-engineering/SKILL.md",
+    "files": [
+      "references/implementation-guide.md",
+      "references/quick-reference.md"
+    ]
+  },
+  "gtm-metrics": {
+    "skill_md": "tech-leads-club/gtm-metrics/SKILL.md",
+    "files": []
+  },
+  "jira-assistant": {
+    "skill_md": "tech-leads-club/jira-assistant/SKILL.md",
+    "files": [
+      "README.md"
+    ]
+  },
+  "legacy-migration-planner": {
+    "skill_md": "tech-leads-club/legacy-migration-planner/SKILL.md",
+    "files": [
+      "references/assessment-framework.md",
+      "references/frontend-backend-strategies.md",
+      "references/plan-phase.md",
+      "references/research-phase.md",
+      "references/strangler-fig-patterns.md",
+      "references/testing-safety-nets.md"
+    ]
+  },
+  "mermaid-studio": {
+    "skill_md": "tech-leads-club/mermaid-studio/SKILL.md",
+    "files": [
+      "assets/puppeteer-config.json",
+      "references/aws-architecture.md",
+      "references/c4-architecture.md",
+      "references/code-to-diagram.md",
+      "references/diagram-types.md",
+      "references/themes.md",
+      "references/troubleshooting.md",
+      "scripts/batch.mjs",
+      "scripts/render-ascii.mjs",
+      "scripts/render.mjs",
+      "scripts/setup.sh",
+      "scripts/validate.mjs"
+    ]
+  },
+  "modular-decomposition": {
+    "skill_md": "tech-leads-club/modular-decomposition/SKILL.md",
+    "files": [
+      "references/domain-analysis-examples.md",
+      "references/domain-analysis-quick-reference.md",
+      "references/domain-analysis.md",
+      "references/pattern-01-identify-and-size-quick-reference.md",
+      "references/pattern-01-identify-and-size.md",
+      "references/pattern-02-common-domain-quick-reference.md",
+      "references/pattern-02-common-domain.md",
+      "references/pattern-03-flattening-quick-reference.md",
+      "references/pattern-03-flattening.md",
+      "references/pattern-04-coupling.md",
+      "references/pattern-05-domain-grouping-quick-reference.md",
+      "references/pattern-05-domain-grouping.md"
+    ]
+  },
+  "perf-web-optimization": {
+    "skill_md": "tech-leads-club/perf-web-optimization/SKILL.md",
+    "files": [
+      "references/bundle-optimization.md",
+      "references/core-web-vitals.md",
+      "references/image-optimization.md"
+    ]
+  },
+  "react-best-practices": {
+    "skill_md": "tech-leads-club/react-best-practices/SKILL.md",
+    "files": [
+      "AGENTS.md",
+      "README.md",
+      "rules/_sections.md",
+      "rules/_template.md",
+      "rules/advanced-event-handler-refs.md",
+      "rules/advanced-init-once.md",
+      "rules/advanced-use-latest.md",
+      "rules/async-api-routes.md",
+      "rules/async-defer-await.md",
+      "rules/async-dependencies.md",
+      "rules/async-parallel.md",
+      "rules/async-suspense-boundaries.md",
+      "rules/bundle-barrel-imports.md",
+      "rules/bundle-conditional.md",
+      "rules/bundle-defer-third-party.md",
+      "rules/bundle-dynamic-imports.md",
+      "rules/bundle-preload.md",
+      "rules/client-event-listeners.md",
+      "rules/client-localstorage-schema.md",
+      "rules/client-passive-event-listeners.md",
+      "rules/client-swr-dedup.md",
+      "rules/js-batch-dom-css.md",
+      "rules/js-cache-function-results.md",
+      "rules/js-cache-property-access.md",
+      "rules/js-cache-storage.md",
+      "rules/js-combine-iterations.md",
+      "rules/js-early-exit.md",
+      "rules/js-hoist-regexp.md",
+      "rules/js-index-maps.md",
+      "rules/js-length-check-first.md",
+      "rules/js-min-max-loop.md",
+      "rules/js-set-map-lookups.md",
+      "rules/js-tosorted-immutable.md",
+      "rules/rendering-activity.md",
+      "rules/rendering-animate-svg-wrapper.md",
+      "rules/rendering-conditional-render.md",
+      "rules/rendering-content-visibility.md",
+      "rules/rendering-hoist-jsx.md",
+      "rules/rendering-hydration-no-flicker.md",
+      "rules/rendering-hydration-suppress-warning.md",
+      "rules/rendering-svg-precision.md",
+      "rules/rendering-usetransition-loading.md",
+      "rules/rerender-defer-reads.md",
+      "rules/rerender-dependencies.md",
+      "rules/rerender-derived-state-no-effect.md",
+      "rules/rerender-derived-state.md",
+      "rules/rerender-functional-setstate.md",
+      "rules/rerender-lazy-state-init.md",
+      "rules/rerender-memo-with-default-value.md",
+      "rules/rerender-memo.md",
+      "rules/rerender-move-effect-to-event.md",
+      "rules/rerender-simple-expression-in-memo.md",
+      "rules/rerender-transitions.md",
+      "rules/rerender-use-ref-transient-values.md",
+      "rules/server-after-nonblocking.md",
+      "rules/server-auth-actions.md",
+      "rules/server-cache-lru.md",
+      "rules/server-cache-react.md",
+      "rules/server-dedup-props.md",
+      "rules/server-parallel-fetching.md",
+      "rules/server-serialization.md"
+    ]
+  },
+  "react-composition-patterns": {
+    "skill_md": "tech-leads-club/react-composition-patterns/SKILL.md",
+    "files": [
+      "AGENTS.md",
+      "README.md",
+      "rules/_sections.md",
+      "rules/_template.md",
+      "rules/architecture-avoid-boolean-props.md",
+      "rules/architecture-compound-components.md",
+      "rules/patterns-children-over-render-props.md",
+      "rules/patterns-explicit-variants.md",
+      "rules/react19-no-forwardref.md",
+      "rules/state-context-interface.md",
+      "rules/state-decouple-implementation.md",
+      "rules/state-lift-state.md"
+    ]
+  },
+  "security-best-practices": {
+    "skill_md": "tech-leads-club/security-best-practices/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "references/golang-general-backend-security.md",
+      "references/javascript-express-web-server-security.md",
+      "references/javascript-general-web-frontend-security.md",
+      "references/javascript-jquery-web-frontend-security.md",
+      "references/javascript-typescript-nextjs-web-server-security.md",
+      "references/javascript-typescript-react-web-frontend-security.md",
+      "references/javascript-typescript-vue-web-frontend-security.md",
+      "references/python-django-web-server-security.md",
+      "references/python-fastapi-web-server-security.md",
+      "references/python-flask-web-server-security.md"
+    ]
+  },
+  "seo": {
+    "skill_md": "tech-leads-club/seo/SKILL.md",
+    "files": []
+  },
+  "skill-architect": {
+    "skill_md": "tech-leads-club/skill-architect/SKILL.md",
+    "files": [
+      "references/examples.md",
+      "references/patterns.md",
+      "references/quality-checklist.md",
+      "scripts/validate_skill.py"
+    ]
+  },
+  "subagent-creator": {
+    "skill_md": "tech-leads-club/subagent-creator/SKILL.md",
+    "files": []
+  },
+  "tlc-spec-driven": {
+    "skill_md": "tech-leads-club/tlc-spec-driven/SKILL.md",
+    "files": [
+      "README.md",
+      "references/brownfield-mapping.md",
+      "references/code-analysis.md",
+      "references/coding-principles.md",
+      "references/concerns.md",
+      "references/context-limits.md",
+      "references/design.md",
+      "references/discuss.md",
+      "references/implement.md",
+      "references/lessons.md",
+      "references/memory.md",
+      "references/project-init.md",
+      "references/quick-mode.md",
+      "references/roadmap.md",
+      "references/session-handoff.md",
+      "references/specify.md",
+      "references/state-management.md",
+      "references/sub-agents.md",
+      "references/tasks.md",
+      "references/validate.md",
+      "scripts/lessons.py"
+    ]
+  },
+  "technical-decision-helper": {
+    "skill_md": "technical-decision-helper/SKILL.md",
+    "files": []
+  },
+  "tdd": {
+    "skill_md": "tests/tdd/SKILL.md",
+    "files": []
+  },
+  "tdd-workflow": {
+    "skill_md": "tests/tdd-workflow/SKILL.md",
+    "files": []
+  },
+  "test-coverage-review": {
+    "skill_md": "tests/test-coverage-review/SKILL.md",
+    "files": []
+  },
+  "tlc-execute-tasks": {
+    "skill_md": "tlc-execute-tasks/SKILL.md",
+    "files": [
+      "references/examples.md",
+      "references/feature-verification-process-summary.md",
+      "references/orchestrator-model.md",
+      "references/troubleshooting.md",
+      "scripts/validate_tag.sh"
+    ]
+  },
+  "tlc-tasks-to-taskmaster": {
+    "skill_md": "tlc-tasks-to-taskmaster/SKILL.md",
+    "files": [
+      "index.html",
+      "scripts/README.md",
+      "scripts/merge-tasks.py",
+      "scripts/validate-tasks.py",
+      "test-merge.sh"
+    ]
+  },
+  "typescript-style-guide": {
+    "skill_md": "typescript-style-guide/SKILL.md",
+    "files": []
+  }
 }

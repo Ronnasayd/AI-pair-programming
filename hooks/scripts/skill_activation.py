@@ -234,7 +234,9 @@ def main():
                             "instruction": (
                                 "check if these skills match user request; if present_locally, "
                                 "invoke via Skill tool; if not, call the skill-loader MCP tool "
-                                "get_remote_skill(name) to fetch it and follow its instructions inline"
+                                "get_remote_skill(name) to fetch it and follow its instructions "
+                                "inline — if the returned files list has entries SKILL.md "
+                                "references, fetch them with get_remote_skill_file(name, relpath)"
                             ),
                             "suggestions": suggestions,
                         },

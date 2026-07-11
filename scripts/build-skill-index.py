@@ -14,14 +14,23 @@ _FRONTMATTER_NAME_RE = re.compile(r"^name:\s*(.+)$", re.MULTILINE)
 
 
 def build_manifest(skills_dir: Path) -> dict:
-    """Walk skills_dir for SKILL.md files, map frontmatter name -> relative path."""
+    """Walk skills_dir for SKILL.md files, map frontmatter name -> path + adjacent files."""
     manifest = {}
     for skill_md in sorted(skills_dir.glob("**/SKILL.md")):
         match = _FRONTMATTER_NAME_RE.search(skill_md.read_text())
         if not match:
             continue
         name = match.group(1).strip().strip("'\"")
-        manifest[name] = str(skill_md.relative_to(skills_dir))
+        skill_dir = skill_md.parent
+        files = sorted(
+            str(p.relative_to(skill_dir))
+            for p in skill_dir.rglob("*")
+            if p.is_file() and p != skill_md
+        )
+        manifest[name] = {
+            "skill_md": str(skill_md.relative_to(skills_dir)),
+            "files": files,
+        }
     return manifest
 
 
