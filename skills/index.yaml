@@ -154,10 +154,13 @@ skills:
   description: Diagnosis loop for hard bugs and performance regressions. Use when
     the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
 - name:
+  - grill-with-docs
+  description: A relentless interview to sharpen a plan or design, which also creates
+    docs (ADR's and glossary) as we go.
+- name:
   - grilling
-  description: Interview the user relentlessly about a plan or design. Use when the
-    user wants to stress-test a plan before building, or uses any 'grill' trigger
-    phrases.
+  description: Grill the user relentlessly about a plan or design. Use when the user
+    wants to stress-test a plan before building, or uses any 'grill' trigger phrases.
 - name:
   - document-summarizer
   description: Extract and condense key information from any document or text while
@@ -365,19 +368,18 @@ skills:
     for backend logic, API design, database schemas, or non-visual code tasks.
 - name:
   - tlc-spec-driven
-  description: Project and feature planning with 4 adaptive phases - Specify, Design,
-    Tasks, Execute. Auto-sizes depth by complexity. Creates atomic tasks with verification
-    criteria, atomic git commits, requirement traceability, and persistent memory
-    across sessions. Stack-agnostic. Use when (1) Starting new projects (initialize
-    vision, goals, roadmap), (2) Working with existing codebases (map stack, architecture,
-    conventions), (3) Planning features (requirements, design, task breakdown), (4)
-    Implementing with verification and atomic commits, (5) Quick ad-hoc tasks (bug
-    fixes, config changes), (6) Tracking decisions/blockers/deferred ideas across
-    sessions, (7) Pausing/resuming work. Triggers on "initialize project", "map codebase",
-    "specify feature", "discuss feature", "design", "tasks", "implement", "validate",
-    "verify work", "UAT", "quick fix", "quick task", "pause work", "resume work".
-    Do NOT use for architecture decomposition analysis (use architecture skills) or
-    technical design docs (use create-technical-design-doc).
+  description: Feature planning and implementation with 4 adaptive phases — Specify,
+    Design, Tasks, Execute. Auto-sizes depth by complexity. Creates atomic tasks with
+    verification criteria, atomic git commits, and requirement traceability. Features
+    an independent Verifier (author != verifier, evidence-or-zero), persistent decision
+    log (STATE.md), and test-coverage-matrix-driven tests, plus a self-improving lessons
+    layer that turns verification failures into reusable project-local guidance. Stack-agnostic.
+    Use when (1) Planning features (requirements, design, task breakdown), (2) Implementing
+    with verification and atomic commits, (3) Validating or verifying an implementation
+    against a spec. Triggers on "specify feature", "discuss feature", "design", "tasks",
+    "implement", "validate", "verify work", "UAT", "record decision", "pause work",
+    "resume work". Do NOT use for architecture decomposition analysis (use architecture
+    skills) or technical design docs (use create-technical-design-doc).
 - name:
   - figma-implement-design
   description: Translate Figma nodes into production-ready code with 1:1 visual fidelity
@@ -829,12 +831,13 @@ skills:
     '
 - name:
   - tlc-execute-tasks
-  description: 'Executes feature tasks by tag, integrating spec files with tlc-spec-driven.
-    Filters pending tasks from taskmaster, groups them into waves, and executes tasks
-    within each wave in parallel (via orchestrate skill) while respecting wave dependencies.
-    Updates status via MCP after each wave completes. The user decides what to do
-    on failures. Use: ''execute feature <tag>'' or run tasks for <tag>. Do not use
-    for direct task management (taskmaster skill) or spec creation (tlc-spec-driven).'
+  description: 'Orchestrates feature task execution by tag. Main agent filters pending
+    tasks from taskmaster, groups them into waves, and directly spawns one subagent
+    per task (via the Agent tool) within each wave, in parallel, respecting wave dependencies.
+    Each subagent runs tlc-spec-driven with the task + spec context it''s given. Updates
+    status via MCP after each wave completes. The user decides what to do on failures.
+    Use: ''execute feature <tag>'' or run tasks for <tag>. Do not use for direct task
+    management (taskmaster skill) or spec creation (tlc-spec-driven).'
 - name:
   - database-migrations
   description: Database migration best practices for schema changes, data migrations,

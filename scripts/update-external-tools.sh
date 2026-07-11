@@ -69,13 +69,19 @@ gghget() {
     local api_path="$1" local_path="$2"
     local response
 
-    local curl_args=(-sf -H "Accept: application/vnd.github+json")
+    local curl_args=(-s -H "Accept: application/vnd.github+json")
     [[ -n "$AUTH_HEADER" ]] && curl_args+=(-H "$AUTH_HEADER")
 
-    response=$(curl "${curl_args[@]}" "${API_BASE}/${api_path}?ref=${BRANCH}") || {
-      echo "  ✗ Erro ao buscar: ${api_path}" >&2
+    local http_code
+    response=$(curl "${curl_args[@]}" -w $'\n%{http_code}' "${API_BASE}/${api_path}?ref=${BRANCH}")
+    http_code="${response##*$'\n'}"
+    response="${response%$'\n'*}"
+
+    if [[ "$http_code" -ge 400 ]]; then
+      echo "  ✗ Erro ao buscar: ${api_path} (HTTP $http_code)" >&2
+      echo "$response" | python3 -c "import sys,json; d=json.load(sys.stdin); print('    →', d.get('message',''))" 2>/dev/null >&2
       return 1
-    }
+    fi
 
     mkdir -p "$local_path"
 
