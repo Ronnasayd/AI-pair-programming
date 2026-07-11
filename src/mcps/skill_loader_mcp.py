@@ -60,12 +60,15 @@ def get_remote_skill(name: str) -> Dict[str, Any]:
     if not entry:
         return {"error": f"Skill '{name}' not found in manifest"}
 
+    skill_md = entry["skill_md"] if isinstance(entry, dict) else entry
+    files = entry.get("files", []) if isinstance(entry, dict) else []
+
     try:
-        content = _fetch_text(f"{_RAW_BASE}/{entry['skill_md']}")
+        content = _fetch_text(f"{_RAW_BASE}/{skill_md}")
     except Exception as e:
         return {"error": f"Failed to fetch skill content: {e}"}
 
-    return {"name": name, "content": content, "files": entry.get("files", [])}
+    return {"name": name, "content": content, "files": files}
 
 
 @mcp.tool()
@@ -83,10 +86,12 @@ def get_remote_skill_file(name: str, relpath: str) -> Dict[str, Any]:
     if not entry:
         return {"error": f"Skill '{name}' not found in manifest"}
 
-    if relpath not in entry.get("files", []):
+    files = entry.get("files", []) if isinstance(entry, dict) else []
+    if relpath not in files:
         return {"error": f"'{relpath}' is not a listed file of skill '{name}'"}
 
-    skill_dir = entry["skill_md"].rsplit("/", 1)[0]
+    skill_md = entry["skill_md"] if isinstance(entry, dict) else entry
+    skill_dir = skill_md.rsplit("/", 1)[0]
     try:
         content = _fetch_text(f"{_RAW_BASE}/{skill_dir}/{relpath}")
     except Exception as e:
