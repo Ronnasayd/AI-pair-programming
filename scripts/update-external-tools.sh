@@ -79,7 +79,7 @@ gghget() {
 
     if [[ "$http_code" -ge 400 ]]; then
       echo "  ✗ Erro ao buscar: ${api_path} (HTTP $http_code)" >&2
-      echo "$response" | python3 -c "import sys,json; d=json.load(sys.stdin); print('    →', d.get('message',''))" 2>/dev/null >&2
+      echo "$response" | python3 -c "import sys,json; d=json.load(sys.stdin); print('    →', d.get('message','') if isinstance(d, dict) else d)" 2>/dev/null >&2
       return 1
     fi
 
@@ -88,8 +88,10 @@ gghget() {
     # `sha` da API = git blob SHA1 — compara direto com o local, sem baixar
     echo "$response" | python3 -c "
 import sys, json
-for e in json.load(sys.stdin):
-    print(e['type'] + '|' + e['name'] + '|' + (e.get('download_url') or '') + '|' + (e.get('sha') or ''))
+d = json.load(sys.stdin)
+entries = d if isinstance(d, list) else [d]
+for e in entries:
+    print(e.get('type','') + '|' + e.get('name','') + '|' + (e.get('download_url') or '') + '|' + (e.get('sha') or ''))
 " | while IFS='|' read -r type name dl_url remote_sha; do
       if [[ "$type" == "file" ]]; then
         local local_file="${local_path}/${name}"
@@ -176,7 +178,7 @@ for skill in "${SKILLS[@]}"; do
 done
 
 # Everything Claude Code
-BASE_URL="https://github.com/affaan-m/everything-claude-code/tree/main/skills"
+BASE_URL="https://github.com/affaan-m/ECC/tree/main/skills"
 SKILLS=(
   "agent-architecture-audit"
   "agent-introspection-debugging"
