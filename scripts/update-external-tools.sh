@@ -194,6 +194,7 @@ SKILLS=(
   "productivity/grilling"
   "engineering/diagnosing-bugs"
   "engineering/domain-modeling"
+  "engineering/grill-with-docs"
 )
 for skill in "${SKILLS[@]}"; do
   echo "━━━ ${skill} ━━━"

@@ -119,6 +119,16 @@
     "expo": {
       "type": "http",
       "url": "https://mcp.expo.dev/mcp"
+    },
+    "mobile-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mobilenext/mobile-mcp@latest"
+      ],
+      "env": {
+        "MOBILEMCP_DISABLE_TELEMETRY": "1"
+      }
     }
   }
 }

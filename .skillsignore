@@ -41,6 +41,9 @@ docker-patterns
 document-summarizer
 domain-analysis
 domain-modeling
+engineering/diagnosing-bugs
+engineering/domain-modeling
+engineering/grill-with-docs
 event-storming
 execute-task
 figma-capture
@@ -85,6 +88,7 @@ pr-review
 prd-from-codebase
 prd-generator
 prd-get-implicit-requirements
+productivity/grilling
 python-patterns
 python-style-guide
 python-testing
