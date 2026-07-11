@@ -116,11 +116,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/context_refs.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context_refs.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/similar_code_ref.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/similar_code_ref.py"
           }
         ]
       },
@@ -129,7 +129,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/protect_files.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
           },
           {
             "type": "command",
@@ -137,7 +137,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -148,19 +148,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/typescript_lint.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/typescript_lint.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/python_lint.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/python_lint.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/golang_lint.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/golang_lint.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/quality_gate.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/quality_gate.py"
           }
         ]
       },
@@ -173,7 +173,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -189,11 +189,11 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           },
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/session_start.py",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/session_start.py",
             "timeout": 5
           }
         ]
@@ -218,7 +218,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -228,7 +228,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scripts/skill_activation.py",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
             "timeout": 10,
             "statusMessage": "Finding relevant skills..."
           },
@@ -240,7 +240,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -264,7 +264,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -275,7 +275,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -286,7 +286,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -301,7 +301,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 .claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
