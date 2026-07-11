@@ -1,5 +1,5 @@
 ---
-name: golang-patterns
+name: my-golang-patterns
 description: Idiomatic Go patterns, best practices, and conventions for building robust, efficient, and maintainable Go applications.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
