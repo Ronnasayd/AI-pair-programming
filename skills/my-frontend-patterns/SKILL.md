@@ -1,5 +1,5 @@
 ---
-name: frontend-patterns
+name: my-frontend-patterns
 description: Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
