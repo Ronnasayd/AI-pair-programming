@@ -159,6 +159,10 @@ security-scan
 team-builder
 vite-patterns
 vue-patterns
+grilling
+diagnosing-bugs
+domain-modeling
+grill-with-docs
 productivity/grilling
 engineering/diagnosing-bugs
 engineering/domain-modeling

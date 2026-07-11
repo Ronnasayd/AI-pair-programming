@@ -7,6 +7,79 @@
     "skill_md": "analyze-comfyui-workflow-json/SKILL.md",
     "files": []
   },
+  "algorithmic-art": {
+    "skill_md": "anthropics/algorithmic-art/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "templates/generator_template.js",
+      "templates/viewer.html"
+    ]
+  },
+  "docx": {
+    "skill_md": "anthropics/docx/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "scripts/__init__.py",
+      "scripts/accept_changes.py",
+      "scripts/comment.py",
+      "scripts/office/helpers/__init__.py",
+      "scripts/office/helpers/merge_runs.py",
+      "scripts/office/helpers/simplify_redlines.py",
+      "scripts/office/pack.py",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-chart.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-chartDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-diagram.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-lockedCanvas.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-main.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-picture.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-spreadsheetDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-wordprocessingDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/pml.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-additionalCharacteristics.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-bibliography.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-commonSimpleTypes.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-customXmlDataProperties.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-customXmlSchemaProperties.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesCustom.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesExtended.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesVariantTypes.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-math.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-relationshipReference.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/sml.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-main.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-officeDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-presentationDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-spreadsheetDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-wordprocessingDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/wml.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/xml.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-contentTypes.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-coreProperties.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-digSig.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-relationships.xsd",
+      "scripts/office/schemas/mce/mc.xsd",
+      "scripts/office/schemas/microsoft/wml-2010.xsd",
+      "scripts/office/schemas/microsoft/wml-2012.xsd",
+      "scripts/office/schemas/microsoft/wml-2018.xsd",
+      "scripts/office/schemas/microsoft/wml-cex-2018.xsd",
+      "scripts/office/schemas/microsoft/wml-cid-2016.xsd",
+      "scripts/office/schemas/microsoft/wml-sdtdatahash-2020.xsd",
+      "scripts/office/schemas/microsoft/wml-symex-2015.xsd",
+      "scripts/office/soffice.py",
+      "scripts/office/unpack.py",
+      "scripts/office/validate.py",
+      "scripts/office/validators/__init__.py",
+      "scripts/office/validators/base.py",
+      "scripts/office/validators/docx.py",
+      "scripts/office/validators/pptx.py",
+      "scripts/office/validators/redlining.py",
+      "scripts/templates/comments.xml",
+      "scripts/templates/commentsExtended.xml",
+      "scripts/templates/commentsExtensible.xml",
+      "scripts/templates/commentsIds.xml",
+      "scripts/templates/people.xml"
+    ]
+  },
   "frontend-design": {
     "skill_md": "anthropics/frontend-design/SKILL.md",
     "files": [
@@ -25,6 +98,22 @@
       "scripts/evaluation.py",
       "scripts/example_evaluation.xml",
       "scripts/requirements.txt"
+    ]
+  },
+  "pdf": {
+    "skill_md": "anthropics/pdf/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "forms.md",
+      "reference.md",
+      "scripts/check_bounding_boxes.py",
+      "scripts/check_fillable_fields.py",
+      "scripts/convert_pdf_to_images.py",
+      "scripts/create_validation_image.py",
+      "scripts/extract_form_field_info.py",
+      "scripts/extract_form_structure.py",
+      "scripts/fill_fillable_fields.py",
+      "scripts/fill_pdf_form_with_annotations.py"
     ]
   },
   "skill-creator": {
@@ -47,6 +136,74 @@
       "scripts/run_eval.py",
       "scripts/run_loop.py",
       "scripts/utils.py"
+    ]
+  },
+  "webapp-testing": {
+    "skill_md": "anthropics/webapp-testing/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "examples/console_logging.py",
+      "examples/element_discovery.py",
+      "examples/static_html_automation.py",
+      "scripts/with_server.py"
+    ]
+  },
+  "xlsx": {
+    "skill_md": "anthropics/xlsx/SKILL.md",
+    "files": [
+      "LICENSE.txt",
+      "scripts/office/helpers/__init__.py",
+      "scripts/office/helpers/merge_runs.py",
+      "scripts/office/helpers/simplify_redlines.py",
+      "scripts/office/pack.py",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-chart.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-chartDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-diagram.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-lockedCanvas.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-main.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-picture.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-spreadsheetDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/dml-wordprocessingDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/pml.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-additionalCharacteristics.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-bibliography.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-commonSimpleTypes.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-customXmlDataProperties.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-customXmlSchemaProperties.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesCustom.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesExtended.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-documentPropertiesVariantTypes.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-math.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/shared-relationshipReference.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/sml.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-main.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-officeDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-presentationDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-spreadsheetDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/vml-wordprocessingDrawing.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/wml.xsd",
+      "scripts/office/schemas/ISO-IEC29500-4_2016/xml.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-contentTypes.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-coreProperties.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-digSig.xsd",
+      "scripts/office/schemas/ecma/fouth-edition/opc-relationships.xsd",
+      "scripts/office/schemas/mce/mc.xsd",
+      "scripts/office/schemas/microsoft/wml-2010.xsd",
+      "scripts/office/schemas/microsoft/wml-2012.xsd",
+      "scripts/office/schemas/microsoft/wml-2018.xsd",
+      "scripts/office/schemas/microsoft/wml-cex-2018.xsd",
+      "scripts/office/schemas/microsoft/wml-cid-2016.xsd",
+      "scripts/office/schemas/microsoft/wml-sdtdatahash-2020.xsd",
+      "scripts/office/schemas/microsoft/wml-symex-2015.xsd",
+      "scripts/office/soffice.py",
+      "scripts/office/unpack.py",
+      "scripts/office/validate.py",
+      "scripts/office/validators/__init__.py",
+      "scripts/office/validators/base.py",
+      "scripts/office/validators/docx.py",
+      "scripts/office/validators/pptx.py",
+      "scripts/office/validators/redlining.py",
+      "scripts/recalc.py"
     ]
   },
   "apk-reverse": {
@@ -109,9 +266,28 @@
     "skill_md": "event-storming/SKILL.md",
     "files": []
   },
+  "agent-architecture-audit": {
+    "skill_md": "everything-claude-code/agent-architecture-audit/SKILL.md",
+    "files": []
+  },
   "agent-harness-construction": {
     "skill_md": "everything-claude-code/agent-harness-construction/SKILL.md",
     "files": []
+  },
+  "agent-introspection-debugging": {
+    "skill_md": "everything-claude-code/agent-introspection-debugging/SKILL.md",
+    "files": []
+  },
+  "agent-self-evaluation": {
+    "skill_md": "everything-claude-code/agent-self-evaluation/SKILL.md",
+    "files": [
+      "examples/high-score-example.md",
+      "examples/low-score-example.md",
+      "references/evaluation-criteria.md",
+      "references/hook-integration.md",
+      "scripts/evaluate.py",
+      "templates/evaluation-report.md"
+    ]
   },
   "ai-regression-testing": {
     "skill_md": "everything-claude-code/ai-regression-testing/SKILL.md",
@@ -121,12 +297,32 @@
     "skill_md": "everything-claude-code/api-design/SKILL.md",
     "files": []
   },
+  "architecture-decision-records": {
+    "skill_md": "everything-claude-code/architecture-decision-records/SKILL.md",
+    "files": []
+  },
+  "autonomous-agent-harness": {
+    "skill_md": "everything-claude-code/autonomous-agent-harness/SKILL.md",
+    "files": []
+  },
+  "autonomous-loops": {
+    "skill_md": "everything-claude-code/autonomous-loops/SKILL.md",
+    "files": []
+  },
   "backend-patterns": {
     "skill_md": "everything-claude-code/backend-patterns/SKILL.md",
     "files": []
   },
   "blueprint": {
     "skill_md": "everything-claude-code/blueprint/SKILL.md",
+    "files": []
+  },
+  "browser-qa": {
+    "skill_md": "everything-claude-code/browser-qa/SKILL.md",
+    "files": []
+  },
+  "codebase-onboarding": {
+    "skill_md": "everything-claude-code/codebase-onboarding/SKILL.md",
     "files": []
   },
   "coding-standards": {
@@ -139,6 +335,10 @@
   },
   "cpp-coding-standards": {
     "skill_md": "everything-claude-code/cpp-coding-standards/SKILL.md",
+    "files": []
+  },
+  "cpp-testing": {
+    "skill_md": "everything-claude-code/cpp-testing/SKILL.md",
     "files": []
   },
   "data-scraper-agent": {
@@ -157,12 +357,150 @@
     "skill_md": "everything-claude-code/deployment-patterns/SKILL.md",
     "files": []
   },
+  "dmux-workflows": {
+    "skill_md": "everything-claude-code/dmux-workflows/SKILL.md",
+    "files": []
+  },
   "docker-patterns": {
     "skill_md": "everything-claude-code/docker-patterns/SKILL.md",
     "files": []
   },
+  "e2e-testing": {
+    "skill_md": "everything-claude-code/e2e-testing/SKILL.md",
+    "files": []
+  },
+  "error-handling": {
+    "skill_md": "everything-claude-code/error-handling/SKILL.md",
+    "files": []
+  },
+  "exa-search": {
+    "skill_md": "everything-claude-code/exa-search/SKILL.md",
+    "files": []
+  },
+  "frontend-a11y": {
+    "skill_md": "everything-claude-code/frontend-a11y/SKILL.md",
+    "files": []
+  },
+  "frontend-patterns": {
+    "skill_md": "frontend-patterns/SKILL.md",
+    "files": []
+  },
+  "gan-style-harness": {
+    "skill_md": "everything-claude-code/gan-style-harness/SKILL.md",
+    "files": []
+  },
+  "git-workflow": {
+    "skill_md": "everything-claude-code/git-workflow/SKILL.md",
+    "files": []
+  },
+  "github-ops": {
+    "skill_md": "everything-claude-code/github-ops/SKILL.md",
+    "files": []
+  },
+  "golang-patterns": {
+    "skill_md": "golang/golang-patterns/SKILL.md",
+    "files": []
+  },
+  "golang-testing": {
+    "skill_md": "golang/golang-testing/SKILL.md",
+    "files": []
+  },
+  "hexagonal-architecture": {
+    "skill_md": "everything-claude-code/hexagonal-architecture/SKILL.md",
+    "files": []
+  },
+  "jira-integration": {
+    "skill_md": "everything-claude-code/jira-integration/SKILL.md",
+    "files": []
+  },
+  "kubernetes-patterns": {
+    "skill_md": "everything-claude-code/kubernetes-patterns/SKILL.md",
+    "files": []
+  },
+  "mcp-server-patterns": {
+    "skill_md": "everything-claude-code/mcp-server-patterns/SKILL.md",
+    "files": []
+  },
+  "mysql-patterns": {
+    "skill_md": "everything-claude-code/mysql-patterns/SKILL.md",
+    "files": []
+  },
+  "parallel-execution-optimizer": {
+    "skill_md": "everything-claude-code/parallel-execution-optimizer/SKILL.md",
+    "files": []
+  },
+  "postgres-patterns": {
+    "skill_md": "everything-claude-code/postgres-patterns/SKILL.md",
+    "files": []
+  },
+  "prisma-patterns": {
+    "skill_md": "everything-claude-code/prisma-patterns/SKILL.md",
+    "files": []
+  },
+  "production-audit": {
+    "skill_md": "everything-claude-code/production-audit/SKILL.md",
+    "files": []
+  },
+  "python-patterns": {
+    "skill_md": "python/python-patterns/SKILL.md",
+    "files": []
+  },
+  "python-testing": {
+    "skill_md": "python/python-testing/SKILL.md",
+    "files": []
+  },
+  "react-native-patterns": {
+    "skill_md": "everything-claude-code/react-native-patterns/SKILL.md",
+    "files": []
+  },
+  "react-patterns": {
+    "skill_md": "everything-claude-code/react-patterns/SKILL.md",
+    "files": []
+  },
+  "react-performance": {
+    "skill_md": "everything-claude-code/react-performance/SKILL.md",
+    "files": []
+  },
+  "react-testing": {
+    "skill_md": "everything-claude-code/react-testing/SKILL.md",
+    "files": []
+  },
+  "redis-patterns": {
+    "skill_md": "everything-claude-code/redis-patterns/SKILL.md",
+    "files": []
+  },
   "regex-vs-llm-structured-text": {
     "skill_md": "everything-claude-code/regex-vs-llm-structured-text/SKILL.md",
+    "files": []
+  },
+  "security-bounty-hunter": {
+    "skill_md": "everything-claude-code/security-bounty-hunter/SKILL.md",
+    "files": []
+  },
+  "security-review": {
+    "skill_md": "everything-claude-code/security-review/SKILL.md",
+    "files": [
+      "cloud-infrastructure-security.md"
+    ]
+  },
+  "security-scan": {
+    "skill_md": "everything-claude-code/security-scan/SKILL.md",
+    "files": []
+  },
+  "tdd-workflow": {
+    "skill_md": "tests/tdd-workflow/SKILL.md",
+    "files": []
+  },
+  "team-builder": {
+    "skill_md": "everything-claude-code/team-builder/SKILL.md",
+    "files": []
+  },
+  "vite-patterns": {
+    "skill_md": "everything-claude-code/vite-patterns/SKILL.md",
+    "files": []
+  },
+  "vue-patterns": {
+    "skill_md": "everything-claude-code/vue-patterns/SKILL.md",
     "files": []
   },
   "execute-task": {
@@ -206,10 +544,6 @@
       "scripts/compare_ssim.py"
     ]
   },
-  "frontend-patterns": {
-    "skill_md": "frontend-patterns/SKILL.md",
-    "files": []
-  },
   "generate-docs-init": {
     "skill_md": "generate-docs-init/SKILL.md",
     "files": [
@@ -238,16 +572,8 @@
     "skill_md": "git-guide/SKILL.md",
     "files": []
   },
-  "golang-patterns": {
-    "skill_md": "golang/golang-patterns/SKILL.md",
-    "files": []
-  },
   "golang-style-guide": {
     "skill_md": "golang/golang-style-guide/SKILL.md",
-    "files": []
-  },
-  "golang-testing": {
-    "skill_md": "golang/golang-testing/SKILL.md",
     "files": []
   },
   "handling-large-files": {
@@ -345,16 +671,8 @@
     "skill_md": "prd-get-implicit-requirements/SKILL.md",
     "files": []
   },
-  "python-patterns": {
-    "skill_md": "python/python-patterns/SKILL.md",
-    "files": []
-  },
   "python-style-guide": {
     "skill_md": "python/python-style-guide/SKILL.md",
-    "files": []
-  },
-  "python-testing": {
-    "skill_md": "python/python-testing/SKILL.md",
     "files": []
   },
   "resolve-merge-conflicts": {
@@ -684,6 +1002,18 @@
     "skill_md": "tech-leads-club/subagent-creator/SKILL.md",
     "files": []
   },
+  "the-fool": {
+    "skill_md": "tech-leads-club/the-fool/SKILL.md",
+    "files": [
+      "references/cognitive-bias-inventory.md",
+      "references/dialectic-synthesis.md",
+      "references/evidence-audit.md",
+      "references/mode-selection-guide.md",
+      "references/pre-mortem-analysis.md",
+      "references/red-team-adversarial.md",
+      "references/socratic-questioning.md"
+    ]
+  },
   "tlc-spec-driven": {
     "skill_md": "tech-leads-club/tlc-spec-driven/SKILL.md",
     "files": [
@@ -716,10 +1046,6 @@
   },
   "tdd": {
     "skill_md": "tests/tdd/SKILL.md",
-    "files": []
-  },
-  "tdd-workflow": {
-    "skill_md": "tests/tdd-workflow/SKILL.md",
     "files": []
   },
   "test-coverage-review": {
