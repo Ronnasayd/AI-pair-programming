@@ -382,7 +382,7 @@
     "files": []
   },
   "frontend-patterns": {
-    "skill_md": "frontend-patterns/SKILL.md",
+    "skill_md": "everything-claude-code/frontend-patterns/SKILL.md",
     "files": []
   },
   "gan-style-harness": {
@@ -398,11 +398,11 @@
     "files": []
   },
   "golang-patterns": {
-    "skill_md": "golang/golang-patterns/SKILL.md",
+    "skill_md": "everything-claude-code/golang-patterns/SKILL.md",
     "files": []
   },
   "golang-testing": {
-    "skill_md": "golang/golang-testing/SKILL.md",
+    "skill_md": "everything-claude-code/golang-testing/SKILL.md",
     "files": []
   },
   "hexagonal-architecture": {
@@ -442,11 +442,11 @@
     "files": []
   },
   "python-patterns": {
-    "skill_md": "python/python-patterns/SKILL.md",
+    "skill_md": "everything-claude-code/python-patterns/SKILL.md",
     "files": []
   },
   "python-testing": {
-    "skill_md": "python/python-testing/SKILL.md",
+    "skill_md": "everything-claude-code/python-testing/SKILL.md",
     "files": []
   },
   "react-native-patterns": {
@@ -488,7 +488,7 @@
     "files": []
   },
   "tdd-workflow": {
-    "skill_md": "tests/tdd-workflow/SKILL.md",
+    "skill_md": "everything-claude-code/tdd-workflow/SKILL.md",
     "files": []
   },
   "team-builder": {
@@ -576,6 +576,14 @@
     "skill_md": "golang/golang-style-guide/SKILL.md",
     "files": []
   },
+  "my-golang-patterns": {
+    "skill_md": "golang/my-golang-patterns/SKILL.md",
+    "files": []
+  },
+  "my-golang-testing": {
+    "skill_md": "golang/my-golang-testing/SKILL.md",
+    "files": []
+  },
   "handling-large-files": {
     "skill_md": "handling-large-files/SKILL.md",
     "files": [
@@ -636,6 +644,10 @@
     "skill_md": "modular-monolith-decomposer/SKILL.md",
     "files": []
   },
+  "my-frontend-patterns": {
+    "skill_md": "my-frontend-patterns/SKILL.md",
+    "files": []
+  },
   "opencv": {
     "skill_md": "opencv/SKILL.md",
     "files": []
@@ -669,6 +681,14 @@
   },
   "prd-get-implicit-requirements": {
     "skill_md": "prd-get-implicit-requirements/SKILL.md",
+    "files": []
+  },
+  "my-python-patterns": {
+    "skill_md": "python/my-python-patterns/SKILL.md",
+    "files": []
+  },
+  "my-python-testing": {
+    "skill_md": "python/my-python-testing/SKILL.md",
     "files": []
   },
   "python-style-guide": {
@@ -1042,6 +1062,10 @@
   },
   "technical-decision-helper": {
     "skill_md": "technical-decision-helper/SKILL.md",
+    "files": []
+  },
+  "my-tdd-workflow": {
+    "skill_md": "tests/my-tdd-workflow/SKILL.md",
     "files": []
   },
   "tdd": {

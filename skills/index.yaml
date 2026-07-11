@@ -50,7 +50,7 @@ skills:
 
     '
 - name:
-  - tdd-workflow
+  - my-tdd-workflow
   description: Use this skill when writing new features, fixing bugs, or refactoring
     code. Enforces test-driven development with 80%+ coverage including unit, integration,
     and E2E tests.
@@ -125,17 +125,21 @@ skills:
     of training data. Activates for setup questions, API references, code examples,
     or when the user names a framework (e.g. React, Next.js, Prisma).
 - name:
+  - my-frontend-patterns
+  description: Frontend development patterns for React, Next.js, state management,
+    performance optimization, and UI best practices.
+- name:
   - tailwindcss
   description: Tailwind CSS v4 utility-first styling patterns including responsive
     design, dark mode, and custom configuration. Use when styling with Tailwind, adding
     utility classes, configuring Tailwind, setting up dark mode, or customizing the
     theme.
 - name:
-  - python-patterns
+  - my-python-patterns
   description: Pythonic idioms, PEP 8 standards, type hints, and best practices for
     building robust, efficient, and maintainable Python applications.
 - name:
-  - python-testing
+  - my-python-testing
   description: Python testing strategies using pytest, TDD methodology, fixtures,
     mocking, parametrization, and coverage requirements.
 - name:
@@ -374,11 +378,11 @@ skills:
     Designing APIs and libraries for long-term maintainability. Avoiding unnecessary
     abstraction or complexity in Go programs.'
 - name:
-  - golang-testing
+  - my-golang-testing
   description: Go testing patterns including table-driven tests, subtests, benchmarks,
     fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
 - name:
-  - golang-patterns
+  - my-golang-patterns
   description: Idiomatic Go patterns, best practices, and conventions for building
     robust, efficient, and maintainable Go applications.
 - name:
@@ -772,10 +776,6 @@ skills:
     accessibility, legal compliance, deployment, and observability. Do NOT use for
     creating PRDs (use tlc-spec-driven), technical design documents, architectural
     decisions, or test planning.'
-- name:
-  - frontend-patterns
-  description: Frontend development patterns for React, Next.js, state management,
-    performance optimization, and UI best practices.
 - name:
   - taskmaster-overview
   description: AI-driven task management and project tracking using Task Master. Use
