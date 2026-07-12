@@ -595,6 +595,14 @@
       "scripts/estimate_tokens.py"
     ]
   },
+  "image-mockup-recreator": {
+    "skill_md": "image-mockup-recreator/SKILL.md",
+    "files": [
+      "scripts/compare_ssim.py",
+      "scripts/grid_image.py",
+      "scripts/screenshot.py"
+    ]
+  },
   "integration-testing": {
     "skill_md": "integration-testing/SKILL.md",
     "files": []
