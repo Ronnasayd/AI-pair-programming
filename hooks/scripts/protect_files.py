@@ -27,12 +27,15 @@ logger = get_hooks_logger("ProtectFiles")
 # changes mid-session (cd, subagents), silently widening the boundary check.
 PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
 
+# Get the home directory path object
+home_dir = str(Path.home())
+
 ALLOWED_PATTERNS = [
     os.path.join(PROJECT_ROOT, ".claude", "**"),
     "/tmp/**",
-    "/home/ronnas/develop/personal/AI-pair-programming/skills/**",
-    "/home/ronnas/develop/personal/AI-pair-programming/instructions/**",
-    "/home/ronnas/Desktop/*.md",
+    f"{home_dir}/develop/personal/AI-pair-programming/skills/**",
+    f"{home_dir}/develop/personal/AI-pair-programming/instructions/**",
+    f"{home_dir}/Desktop/*.md",
 ]
 
 PROTECTED_PATTERNS = [
