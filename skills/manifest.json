@@ -511,6 +511,14 @@
     "skill_md": "execute-task/SKILL.md",
     "files": []
   },
+  "extract-software-requirements": {
+    "skill_md": "extract-software-requirements/SKILL.md",
+    "files": [
+      "references/merge-and-conflicts.md",
+      "scripts/dump_git_log.sh",
+      "scripts/extract_user_prompts.py"
+    ]
+  },
   "figma-capture": {
     "skill_md": "figma/figma-capture/SKILL.md",
     "files": [
