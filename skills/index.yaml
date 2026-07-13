@@ -752,6 +752,19 @@ skills:
     Do NOT use for actual tool execution (call the MCP manager tool directly), implementing
     new MCP servers, or discovering non-MCP tools.
 - name:
+  - extract-software-requirements
+  description: Extracts and consolidates software requirements from a project's Claude
+    Code session transcripts, git commit history, and formal spec/PRD markdown files
+    into a single traceable RF-xxx/RNF-xxx requirements document with an explicit
+    unresolved-conflicts section. Use when the user asks to "extract requirements
+    from this project", "generate a requirements doc from commits", "extract requirements
+    from transcripts", "consolidate PRD and specs into one doc", "what requirements
+    were implemented vs still pending", or wants a cross-source requirements audit
+    with traceability between conversations, code history, and formal specs. Do NOT
+    use for writing a brand-new PRD from scratch with no existing project history
+    (use prd-generator instead), or for pure implicit-requirement gap analysis on
+    a single already-written PRD (use prd-get-implicit-requirements instead).
+- name:
   - codebase-rules-extractor
   description: Extract and document coding rules, patterns, conventions, and anti-patterns
     from a codebase. Maps the code structure, identifies what to do and what to avoid
@@ -904,12 +917,15 @@ skills:
 - name:
   - tlc-execute-tasks
   description: 'Orchestrates feature task execution by tag. Main agent filters pending
-    tasks from taskmaster, groups them into waves, and directly spawns one subagent
-    per task (via the Agent tool) within each wave, in parallel, respecting wave dependencies.
-    Each subagent runs tlc-spec-driven with the task + spec context it''s given. Updates
-    status via MCP after each wave completes. The user decides what to do on failures.
-    Use: ''execute feature <tag>'' or run tasks for <tag>. Do not use for direct task
-    management (taskmaster skill) or spec creation (tlc-spec-driven).'
+    tasks from taskmaster, groups them into waves, and drives each task through the
+    adversarial-dev skill (executor + evaluator loop) within each wave, in parallel
+    (capped concurrency), respecting wave dependencies. Each task''s executor runs
+    tlc-spec-driven with the task + spec context it''s given; the evaluator grades
+    against the task''s own verification criteria. A task only counts as done at score
+    8+/10. Updates status via MCP after each wave completes. The user decides what
+    to do on failures/exhaustion. Use: ''execute feature <tag>'' or run tasks for
+    <tag>. Do not use for direct task management (taskmaster skill) or spec creation
+    (tlc-spec-driven).'
 - name:
   - production-audit
   description: Local-evidence production readiness audit for shipped apps, pre-launch
