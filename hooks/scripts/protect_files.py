@@ -32,6 +32,7 @@ ALLOWED_PATTERNS = [
     "/tmp/**",
     "/home/ronnas/develop/personal/AI-pair-programming/skills/**",
     "/home/ronnas/develop/personal/AI-pair-programming/instructions/**",
+    "/home/ronnas/Desktop/*.md",
 ]
 
 PROTECTED_PATTERNS = [
