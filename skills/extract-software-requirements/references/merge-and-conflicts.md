@@ -4,9 +4,11 @@ Read this file when starting Phase 4 (consolidation), after Phases 1-3 have each
 
 ## Precedence order when sources disagree silently
 
-`spec/PRD (C) > commit history (B) > session transcripts (A)`
+`commit history (B) > spec/PRD (C) > session transcripts (A)`
 
-But **never resolve a disagreement by silently picking the higher-precedence source and discarding the other**. Every disagreement on a concrete fact (a number, a behavior, an endpoint, a threshold) goes in the Conflicts section (see below), even if precedence tells you which one is *probably* right. Precedence only decides which side gets the "likely correct" label in the conflict entry — it does not delete the conflict.
+Rationale: commits are ground truth of the currently implemented state (code that actually merged). Specs/PRD express design intent but can go stale relative to what shipped. Transcripts are the noisiest, least-reviewed signal.
+
+But **never resolve a disagreement by silently picking the higher-precedence source and discarding the other**. Every disagreement on a concrete fact (a number, a behavior, an endpoint, a threshold) goes in the Conflicts section (see below), even if precedence tells you which one is _probably_ right. Precedence only decides which side gets the "likely correct" label in the conflict entry — it does not delete the conflict.
 
 ## Final document structure
 
@@ -32,7 +34,7 @@ Do not invent additional states — a requirement under active tuning is 🟡, n
 
 ## What counts as a genuine conflict (vs. just "old info")
 
-A **conflict** is two sources making a factual claim about the *same* subject that cannot both be true at once (a threshold of 3 vs 5 attempts; portrait vs landscape; endpoint X vs endpoint Y). A **stale/superseded fact** (e.g. an old PRD documents an endpoint that was later migrated, and the migration spec + commits agree) is not a live conflict — resolve it as ✅ in the requirements table, but still note the stale document in the conflicts section as a documentation-hygiene item so someone updates it. Both belong in section 2, but phrase the second kind as "documental, not functional" so the reader doesn't waste time debating already-settled facts.
+A **conflict** is two sources making a factual claim about the _same_ subject that cannot both be true at once (a threshold of 3 vs 5 attempts; portrait vs landscape; endpoint X vs endpoint Y). A **stale/superseded fact** (e.g. an old PRD documents an endpoint that was later migrated, and the migration spec + commits agree) is not a live conflict — resolve it as ✅ in the requirements table, but still note the stale document in the conflicts section as a documentation-hygiene item so someone updates it. Both belong in section 2, but phrase the second kind as "documental, not functional" so the reader doesn't waste time debating already-settled facts.
 
 ## Timestamp reconciliation
 

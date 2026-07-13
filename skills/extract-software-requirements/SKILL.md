@@ -60,7 +60,7 @@ Expected output: same Markdown format, plus a "Conflicts / points of attention" 
 
 Only run this step once at least two of Steps 1-3 have produced output (a merge of one source is meaningless).
 
-1. Read `references/merge-and-conflicts.md` now — it defines the precedence rule, the exact final document structure (Requirements / Conflicts / Action checklist as three separate sections, never interleaved), the ID numbering scheme, the fixed 3-symbol status vocabulary (✅/🟡/❌), and how to distinguish a genuine conflict from a merely-stale document.
+1. Read `references/merge-and-conflicts.md` now — it defines the precedence rule (commits > specs > transcripts, ranked by proximity to the currently implemented state), the exact final document structure (Requirements / Conflicts / Action checklist as three separate sections, never interleaved), the ID numbering scheme, the fixed 3-symbol status vocabulary (✅/🟡/❌), and how to distinguish a genuine conflict from a merely-stale document.
 2. Walk every requirement gathered across the available phase outputs and classify each as: a requirement row with a status, or a conflict entry. Anything that was an inline "⚠️ note" in an intermediate doc becomes one or the other — never both, never left inline in the final requirements table.
 3. Build the Requirements section as short domain-scoped tables (5-15 rows each) — long single tables are the #1 readability failure mode for this deliverable.
 4. Build the Conflicts section as self-contained entries, each cross-referencing the RF/RNF ID(s) it affects.
@@ -75,16 +75,19 @@ Write each phase's output to a scratch file and send it directly as a file — d
 ## Examples
 
 ### Example 1: Single-source request
+
 User says: "extrai requisitos com base nos commits"
 Actions: Step 2 only — dump log, read in full, cluster, write file, send it.
 Result: one Markdown file with RF/RNF tables sourced only from commits; no merge step, no Conflicts section beyond what's derivable from commits alone.
 
 ### Example 2: Full audit request
+
 User says: "quero um documento final de requisitos cruzando specs, commits e transcrições, com conflitos"
 Actions: Steps 1 → 2 → 3 → 4, in order, each producing its own file, then Step 4 consolidates all three into the final structured doc per `references/merge-and-conflicts.md`.
 Result: 4 files delivered (3 intermediate + 1 final), final one has all 4 sections described in Step 4.
 
 ### Example 3: Restructure an already-delivered doc
+
 User says: "esse documento está confuso, separa requisitos de conflitos com prefixos RF/RNF"
 Actions: Re-read `references/merge-and-conflicts.md` structure rules, re-partition the existing content (don't re-run extraction), overwrite the same file, resend.
 Result: same file path, new structure, no new source data pulled.
@@ -92,10 +95,13 @@ Result: same file path, new structure, no new source data pulled.
 ## Troubleshooting
 
 ### Commit/line counts disagree after `dump_git_log.sh`
+
 Cause: a shell hook or CLI proxy (token-saving wrappers are common) rewrote `git` transparently and truncated output before it reached the redirect. The script already invokes `/usr/bin/git` directly to bypass this, but double-check no other wrapper sits even closer to the binary (`type git`, `alias git`) if the warning persists.
 
 ### `promptSource` field absent or all values differ from `"typed"`
+
 Cause: transcript schema changed. Read 3-4 raw `type == "user"` lines across different timestamps and find whichever field currently discriminates real typed input from injected tool-result/system-reminder content, then adjust the filter in `extract_user_prompts.py` accordingly before running it at scale.
 
 ### Same requirement appears with contradicting facts and no timestamp lets you order them
+
 Do not guess an order. Mark it "incerto — requer validação manual" in the Conflicts section per `references/merge-and-conflicts.md`, not as resolved either way.
