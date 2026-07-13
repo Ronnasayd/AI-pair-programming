@@ -104,6 +104,16 @@ Before dispatching a task, build its self-contained context package:
 - **Relevant excerpt** of spec.md/design.md scoped to that task (not the full files pasted verbatim unless small) — enough for the executor/evaluator to work without re-deriving context.
 - **File references**: absolute paths to spec.md, design.md, and metadata.json, so the executor or evaluator can read the full files themselves if the excerpt isn't enough.
 
+#### 4a.5: Select Executor Model by Difficulty
+
+Pick the executor's model before dispatch (evaluator is never affected — always its default, per adversarial-dev's own contract):
+
+1. **Complexity source**: if the task carries a `metadata.complexity` (or equivalent effort/difficulty) field from taskmaster, use it. Otherwise infer from a cheap structural heuristic — no extra LLM call: count of requirements/subtasks, keywords suggesting broad scope ("refactor", "new architecture", "migrate"), estimated file count from the spec excerpt.
+2. **Mapping (binary)**: trivial tasks (single small edit, narrow scope, no ambiguity) → `haiku`. Everything else (medium and hard) → `sonnet`. When in doubt, pick `sonnet` — a wrong haiku pick costs a full retry loop, which is more expensive than just using sonnet.
+3. **Pass it along as free text** in the `adversarial-dev` call's `args` (e.g. "Executor model: haiku") — adversarial-dev only honors it if present; do not expect a structured parameter, and do not couple adversarial-dev's internals to this orchestrator.
+
+This selection does not change the iteration cap (still fixed at 10, per adversarial-dev) and does not create new agent variants — only the `model` value passed to the executor changes.
+
 #### 4b. Wave-Based Execution Dispatch
 
 **For PARALLEL waves (2+ tasks), capped at 3 concurrent tasks:**
@@ -120,6 +130,7 @@ Before dispatching a task, build its self-contained context package:
        Design excerpt:\n{relevant design.md section}
        Full file references: {spec.md path}, {design.md path}, {metadata.json path}
        Acceptance criteria: use the task's own verification criteria verbatim — do not invent new ones.
+       Executor model: {selected model from Step 4a.5, e.g. haiku or sonnet}
        Isolation: run the executor in an isolated git worktree (isolation: \"worktree\") since this task runs in a parallel wave; the evaluator must operate against the same worktree."
    })
    ```
@@ -247,4 +258,5 @@ Feature partially executed. {N} tasks completed, {M} tasks pending/failed. Run a
 - Status updates use `set_task_status` MCP call with **`tag` parameter required** — without it, the call succeeds but makes no actual change
 - Only the `status` field is updated in taskmaster, not logs or output
 - Each task's adversarial-dev log lives at `<scratchpad>/adversarial-dev/{TAG}-{TASK_ID}/log.md`
+- Executor model is chosen per-task by difficulty (Step 4a.5): trivial → haiku, everything else → sonnet; evaluator always stays on its default model regardless of task difficulty
 - The summary shows what was completed; next actions remain user-directed
