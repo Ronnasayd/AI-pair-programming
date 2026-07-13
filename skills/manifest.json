@@ -1,4 +1,8 @@
 {
+  "adversarial-dev": {
+    "skill_md": "adversarial-dev/SKILL.md",
+    "files": []
+  },
   "agent-creator": {
     "skill_md": "agent-creator/SKILL.md",
     "files": []
