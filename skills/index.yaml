@@ -220,6 +220,18 @@ skills:
 
     '
 - name:
+  - tlc-execute-tasks-adversarial
+  description: 'Orchestrates feature task execution by tag. Main agent filters pending
+    tasks from taskmaster, groups them into waves, and drives each task through the
+    adversarial-dev skill (executor + evaluator loop) within each wave, in parallel
+    (capped concurrency), respecting wave dependencies. Each task''s executor runs
+    tlc-spec-driven with the task + spec context it''s given; the evaluator grades
+    against the task''s own verification criteria. A task only counts as done at score
+    8+/10. Updates status via MCP after each wave completes. The user decides what
+    to do on failures/exhaustion. Use: ''execute feature <tag>'' or run tasks for
+    <tag>. Do not use for direct task management (taskmaster skill) or spec creation
+    (tlc-spec-driven).'
+- name:
   - integration-testing
   description: 'Expert guidance on Integration Testing in software engineering. Use
     this skill whenever the user asks about integration testing strategies, approaches
@@ -917,15 +929,12 @@ skills:
 - name:
   - tlc-execute-tasks
   description: 'Orchestrates feature task execution by tag. Main agent filters pending
-    tasks from taskmaster, groups them into waves, and drives each task through the
-    adversarial-dev skill (executor + evaluator loop) within each wave, in parallel
-    (capped concurrency), respecting wave dependencies. Each task''s executor runs
-    tlc-spec-driven with the task + spec context it''s given; the evaluator grades
-    against the task''s own verification criteria. A task only counts as done at score
-    8+/10. Updates status via MCP after each wave completes. The user decides what
-    to do on failures/exhaustion. Use: ''execute feature <tag>'' or run tasks for
-    <tag>. Do not use for direct task management (taskmaster skill) or spec creation
-    (tlc-spec-driven).'
+    tasks from taskmaster, groups them into waves, and directly spawns one subagent
+    per task (via the Agent tool) within each wave, in parallel, respecting wave dependencies.
+    Each subagent runs tlc-spec-driven with the task + spec context it''s given. Updates
+    status via MCP after each wave completes. The user decides what to do on failures.
+    Use: ''execute feature <tag>'' or run tasks for <tag>. Do not use for direct task
+    management (taskmaster skill) or spec creation (tlc-spec-driven).'
 - name:
   - production-audit
   description: Local-evidence production readiness audit for shipped apps, pre-launch
