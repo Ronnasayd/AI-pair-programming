@@ -7,14 +7,18 @@ import json
 import os
 import re
 import shlex
+import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
+from typing import Mapping
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_by_key, get_hooks_logger
+from utils import get_by_key, get_hooks_logger  # noqa: E402
 
 logger = get_hooks_logger("ProtectFiles")
 
@@ -513,6 +517,81 @@ def deny(file_path: str, pattern: str, source: str) -> None:
 
 
 # ─────────────────────────────────────────────────────────────
+# CONTENT-BASED SECRET SCAN (complements the path-based checks above:
+# a secret can sit in a file whose path doesn't match PROTECTED_PATTERNS)
+# ─────────────────────────────────────────────────────────────
+
+DETECT_SECRETS_BIN = shutil.which("detect-secrets")
+
+
+def deny_secret(file_path: str, findings: list[dict]) -> None:
+    types = ", ".join(sorted({f["type"] for f in findings}))
+    print(
+        json.dumps(
+            {
+                "decision": "deny",
+                "file": file_path,
+                "source": "secret_scan",
+                "reason": f"potential secret detected ({types})",
+            }
+        ),
+        file=sys.stderr,
+    )
+    logger.debug(f"Denied '{file_path}' — secrets found: {findings}")
+    sys.exit(2)
+
+
+def scan_content_for_secrets(content: str, file_path: str) -> list[dict]:
+    """Run detect-secrets against `content` as if it were `file_path`. Scans
+    by writing to a tempdir under the target's basename and cwd'ing into it —
+    scanning by absolute path silently yields empty results, since
+    detect-secrets' filters key off a repo-relative path."""
+    if not DETECT_SECRETS_BIN:
+        return []
+
+    suffix = Path(file_path).name or "scanned_file"
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        target = Path(tmpdir) / suffix
+        target.write_text(content, encoding="utf-8")
+
+        try:
+            result = subprocess.run(
+                [DETECT_SECRETS_BIN, "scan", suffix],
+                cwd=tmpdir,
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+        except (subprocess.TimeoutExpired, OSError) as exc:
+            logger.debug(f"detect-secrets invocation failed: {exc}")
+            return []
+
+        try:
+            report = json.loads(result.stdout)
+        except json.JSONDecodeError:
+            logger.debug(f"detect-secrets non-JSON output: {result.stdout[:500]}")
+            return []
+
+        return report.get("results", {}).get(suffix, [])
+
+
+def get_write_content(
+    tool_input: Mapping, tool_name: str, file_path: str
+) -> str | None:
+    """Content about to enter the file, or the file's current content on
+    disk when the tool is only reading it (Read, or a Bash command target)."""
+    if tool_name == "Write":
+        return get_by_key(tool_input, "content")
+    if tool_name == "Edit":
+        return get_by_key(tool_input, "new_string")
+    try:
+        return Path(file_path).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
+# ─────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────
 
@@ -524,6 +603,7 @@ def main():
         logger.debug(f"Invalid JSON: {e}")
         sys.exit(1)
 
+    tool_name = get_by_key(payload, "tool_name")
     tool_input = get_by_key(payload, "tool_input")
 
     # ── 1. Direct file access (Read/Write/Edit/NotebookEdit tools)
@@ -543,6 +623,12 @@ def main():
         blocked, pattern = matches_pattern(norm)
         if blocked:
             deny(file_path, pattern, "file_path")
+
+        content = get_write_content(tool_input, tool_name, file_path)
+        if content:
+            findings = scan_content_for_secrets(content, file_path)
+            if findings:
+                deny_secret(file_path, findings)
 
         logger.debug(f"Allowed file access: {file_path}")
 
@@ -565,6 +651,13 @@ def main():
             blocked, pattern = matches_pattern(norm)
             if blocked:
                 deny(target, pattern, "command_read")
+
+            if os.path.isfile(target):
+                content = get_write_content(tool_input, "Bash", target)
+                if content:
+                    findings = scan_content_for_secrets(content, target)
+                    if findings:
+                        deny_secret(target, findings)
 
             logger.debug(f"Allowed command: {command} access: {target}")
 
