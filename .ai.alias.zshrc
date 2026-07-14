@@ -15,7 +15,8 @@ alias aimsllm='docker run -d --name ai-memory \
     -e AI_MEMORY_AUTH_TOKEN=$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2) \
     -e CLAUDE_CODE_OAUTH_TOKEN=$(grep CLAUDE_CODE_OAUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2) \
     akitaonrails/ai-memory:latest' # Start AI Memory container: ai-memory-start
-alias aimh='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)" && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)"'
+alias aimh='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp"  && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374"'
+alias aimhllm='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)" && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)"'
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias claude-yolo="claude --dangerously-skip-permissions" # Claude with no permission prompts: yolo
 alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills
