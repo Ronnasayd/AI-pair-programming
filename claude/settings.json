@@ -328,6 +328,7 @@
     "enabled": false,
     "mode": "hold"
   },
+  "autoCompactEnabled": true,
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
@@ -343,5 +344,6 @@
     "github-L",
     "keycloak",
     "gcloud"
-  ]
+  ],
+  "alwaysThinkingEnabled": false
 }
