@@ -8,7 +8,7 @@ metadata:
 
 # Execute Feature Tasks
 
-Main agent acts as orchestrator: filters pending tasks from taskmaster, groups them into execution waves, and drives each task in the wave through the `adversarial-dev` skill — an executor agent (running `tlc-spec-driven` mode="execute") paired with an independent evaluator agent that grades the result against the task's own verification criteria. A task is only marked done once the evaluator scores it 8+/10. Main agent respects wave dependencies (waits for wave N to finish before starting wave N+1), isolates parallel tasks in git worktrees, merges successful task branches back sequentially at the end of each wave, and updates taskmaster status after each wave completes. The user decides how failures/exhaustion should be handled.
+Main agent acts as orchestrator: filters pending tasks from taskmaster, groups them into execution waves, and drives each task in the wave through the `adversarial-dev` skill — an executor agent (running `tlc-spec-driven` mode="execute") paired with an independent evaluator agent that grades the result against the task's own verification criteria. A task is only marked done once the evaluator scores it 8+/10. Main agent respects wave dependencies (waits for wave N to finish before starting wave N+1), isolates parallel tasks in git worktrees, applies successful task diffs back sequentially at the end of each wave (uncommitted — the executor never commits, that's the user's call at the end), and updates taskmaster status after each wave completes. The user decides how failures/exhaustion should be handled.
 
 ## Instructions
 
@@ -103,6 +103,9 @@ Before dispatching a task, build its self-contained context package:
 - **Task object** (id, title, description, dependencies, verification criteria) from taskmaster.
 - **Relevant excerpt** of spec.md/design.md scoped to that task (not the full files pasted verbatim unless small) — enough for the executor/evaluator to work without re-deriving context.
 - **File references**: absolute paths to spec.md, design.md, and metadata.json, so the executor or evaluator can read the full files themselves if the excerpt isn't enough.
+- **Scoped test/lint command**: derive a command narrower than metadata.json's module-wide `testCommands` (e.g. `testCommands.unit` filtered to the task's own target file(s)/pattern, not the whole module) whenever the task's target file(s) are known from the spec/design excerpt. Fall back to the module-wide command only when the task's own files can't be determined in advance. This is what executor and evaluator must run instead of the full suite — per adversarial-dev's caller-supplied-scope contract.
+- **Expected file paths**: if spec.md/design.md names the file(s) the task should create/touch, list them explicitly so the executor doesn't need to `Glob`/explore to find them.
+- **No-commit directive**: the executor must NOT run `git commit` — leave all changes staged/unstaged in its working tree/worktree. This overrides `tlc-spec-driven`'s own default of an atomic commit per task when it runs under this orchestrator. Committing is the user's call, done once at the end after reviewing the full feature.
 
 #### 4a.5: Select Executor Model by Difficulty
 
@@ -112,7 +115,7 @@ Pick the executor's model before dispatch (evaluator is never affected — alway
 2. **Mapping (binary)**: trivial tasks (single small edit, narrow scope, no ambiguity) → `haiku`. Everything else (medium and hard) → `sonnet`. When in doubt, pick `sonnet` — a wrong haiku pick costs a full retry loop, which is more expensive than just using sonnet.
 3. **Pass it along as free text** in the `adversarial-dev` call's `args` (e.g. "Executor model: haiku") — adversarial-dev only honors it if present; do not expect a structured parameter, and do not couple adversarial-dev's internals to this orchestrator.
 
-This selection does not change the iteration cap (still fixed at 10, per adversarial-dev) and does not create new agent variants — only the `model` value passed to the executor changes.
+This selection does not change the iteration cap (still fixed at 8, per adversarial-dev) and does not create new agent variants — only the `model` value passed to the executor changes.
 
 #### 4b. Wave-Based Execution Dispatch
 
@@ -131,7 +134,11 @@ This selection does not change the iteration cap (still fixed at 10, per adversa
        Full file references: {spec.md path}, {design.md path}, {metadata.json path}
        Acceptance criteria: use the task's own verification criteria verbatim — do not invent new ones.
        Executor model: {selected model from Step 4a.5, e.g. haiku or sonnet}
-       Isolation: run the executor in an isolated git worktree (isolation: \"worktree\") since this task runs in a parallel wave; the evaluator must operate against the same worktree."
+       Isolation: run the executor in an isolated git worktree (isolation: \"worktree\") since this task runs in a parallel wave; the evaluator must operate against the same worktree.
+       Evaluator scope: the evaluator must review from the diff (git diff in the task's worktree) as primary source, not open-ended file/codebase exploration — cap extra reads to what's needed to check a specific acceptance criterion not visible in the diff.
+       Scoped test/lint command: {command from Step 4a, e.g. \"yarn jest src/modules/auth/login.spec.ts\"} — both executor and evaluator must use this exact command, never the full suite.
+       Expected file paths: {file paths from Step 4a, if known} — use these instead of exploring to find them.
+       No commits: the executor must not run git commit under any circumstance — leave changes staged/unstaged; the user commits at the end, not the executor."
    })
    ```
 
@@ -145,17 +152,17 @@ Invoke `adversarial-dev` once for the task, same context package as above, but n
 
 Once all tasks in a batch/wave have finished their adversarial-dev loop:
 
-1. For each task that reached score 8+/10 (APPROVED), merge its worktree branch back into the working branch, one task at a time, in task order.
-2. If a merge fails (conflict), invoke the `resolve-merge-conflicts` skill to resolve it before merging the next task's branch.
-3. Tasks that did not reach APPROVED are not merged — handle per 4d.
+1. For each task that reached score 8+/10 (APPROVED), apply its worktree's changes back onto the working branch, one task at a time, in task order. Since the executor never commits (per the no-commit directive), there is no branch history to `git merge` — instead take the worktree's diff (`git -C <worktree> diff`, staged + unstaged) and apply it onto the working tree (e.g. `git apply`), leaving it staged/unstaged there too. Do not commit on the orchestrator's behalf either.
+2. If applying a task's diff conflicts with changes already applied from an earlier task in the same wave, invoke the `resolve-merge-conflicts` skill to resolve it before applying the next task's diff.
+3. Tasks that did not reach APPROVED are not applied — handle per 4d.
 
 #### 4d. Handle Wave Failures / Exhaustion
 
-adversarial-dev does not prompt the user itself on exhaustion (10 iterations without score 8+) — it reports back to the orchestrator with the last score, verdict, and outstanding findings. The orchestrator intercepts that report and decides:
+adversarial-dev does not prompt the user itself on exhaustion (8 iterations without score 8+) or on early stagnation (2 non-improving rounds on the same core issue) — either way it reports back to the orchestrator with the last score, verdict, stop reason, and outstanding findings. The orchestrator intercepts that report and decides:
 
-- Capture the task ID, last score, verdict, and outstanding findings.
-- Ask user: **"[R]etry | [S]kip this task | [A]bort execution?"** via AskUserQuestion
-- **Retry**: re-invoke `adversarial-dev` for the failed task (or the entire batch for PARALLEL waves, per user preference) — this starts a fresh 10-iteration loop, explicitly authorized by the user per adversarial-dev's own exhaustion contract.
+- Capture the task ID, last score, verdict, stop reason (`"cap reached"` vs `"stagnation"`), and outstanding findings.
+- Ask user: **"[R]etry | [S]kip this task | [A]bort execution?"** via AskUserQuestion — if stop reason is `"stagnation"`, mention it: the criteria may need clarifying before a retry, not just another attempt.
+- **Retry**: re-invoke `adversarial-dev` for the failed task (or the entire batch for PARALLEL waves, per user preference) — this starts a fresh 8-iteration loop, explicitly authorized by the user per adversarial-dev's own exhaustion contract.
 - **Skip**: mark task as `"cancelled"` or `"deferred"` via set_task_status, continue to next task/wave. Its worktree (if any) is not merged.
 - **Abort**: stop wave processing, return partial summary for Wave 0..N-1 only (only APPROVED, merged tasks count as done).
 
@@ -184,9 +191,9 @@ Status values: `"pending"`, `"in-progress"`, `"done"`, `"deferred"`, `"cancelled
 
 **Status mapping:**
 
-- Task's adversarial-dev score reached 8+/10 (APPROVED) and its worktree merged cleanly → status = `"done"`
+- Task's adversarial-dev score reached 8+/10 (APPROVED) and its worktree diff applied cleanly → status = `"done"`
 - Task skipped (user choice, after exhaustion) → status = `"cancelled"` or `"deferred"`
-- Task exhausted 10 iterations without APPROVED and not retried → status = `"blocked"` or `"deferred"`
+- Task exhausted 8 iterations (or stopped early on stagnation) without APPROVED and not retried → status = `"blocked"` or `"deferred"`
 
 A task never reaches `"done"` on tlc-spec-driven's own internal gate alone — the adversarial-dev score is the authoritative gate for status.
 
@@ -252,11 +259,15 @@ Feature partially executed. {N} tasks completed, {M} tasks pending/failed. Run a
 - The evaluator agent grades against the task's own verification criteria — no separate criteria are invented
 - A task is only `"done"` once adversarial-dev scores it 8+/10 (APPROVED)
 - PARALLEL waves cap concurrency at 3 tasks per batch; each parallel task runs its executor in an isolated git worktree (`isolation: "worktree"`) to keep `git diff` scoping correct for the evaluator
-- Merges of approved task worktrees happen sequentially at the end of each batch/wave, never mid-execution; conflicts are handled by the `resolve-merge-conflicts` skill
-- On adversarial-dev exhaustion (10 iterations, no APPROVED), the orchestrator — not adversarial-dev — prompts the user with retry/skip/abort
+- Diffs of approved task worktrees are applied (not merged/committed) sequentially at the end of each batch/wave, never mid-execution; conflicts are handled by the `resolve-merge-conflicts` skill
+- Executor never commits — this overrides `tlc-spec-driven`'s default atomic-commit-per-task behavior; all changes stay staged/unstaged through the whole run, and the user commits once at the end after reviewing the full feature
+- On adversarial-dev exhaustion (8 iterations, no APPROVED) or early stagnation (2 non-improving rounds on the same core issue), the orchestrator — not adversarial-dev — prompts the user with retry/skip/abort
 - The user controls failure behavior (retry/skip/abort)
 - Status updates use `set_task_status` MCP call with **`tag` parameter required** — without it, the call succeeds but makes no actual change
 - Only the `status` field is updated in taskmaster, not logs or output
 - Each task's adversarial-dev log lives at `<scratchpad>/adversarial-dev/{TAG}-{TASK_ID}/log.md`
 - Executor model is chosen per-task by difficulty (Step 4a.5): trivial → haiku, everything else → sonnet; evaluator always stays on its default model regardless of task difficulty
+- Every adversarial-dev dispatch (Step 4b) passes an evaluator-scope directive: review from the diff, not open-ended exploration — this is what actually bounds token cost per task, not wave concurrency (which already respects the 3-task cap correctly)
+- Whatever the orchestrator already knows (target files, a scoped test/lint command narrower than the module-wide `testCommands`), it hands to executor/evaluator verbatim in Step 4a/4b — every fact re-derived by a subagent instead of handed to it is a wasted Read/Glob/Bash round
+- Executor and evaluator run in caveman-compressed communication mode for their own prose (findings, reports, reasoning) — baked into `adversarial-dev`'s own Step 1 agent-spawn briefing, not something this orchestrator needs to pass per-call. Code/diffs/commit messages they write stay normal syntax; only their explanatory text is compressed. This shrinks the verdict/report text relayed between executor and evaluator each iteration, compounding over retries — it does not reduce Read/tool-result tokens, which the scoping rules above already handle.
 - The summary shows what was completed; next actions remain user-directed
