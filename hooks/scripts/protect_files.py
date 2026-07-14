@@ -41,6 +41,8 @@ ALLOWED_PATTERNS = [
     f"{home_dir}/develop/personal/AI-pair-programming/skills/**",
     f"{home_dir}/develop/personal/AI-pair-programming/instructions/**",
     f"{home_dir}/Desktop/*.md",
+    f"{home_dir}/Desktop/*.png",
+    f"{home_dir}/Desktop/*.jpeg",
 ]
 
 PROTECTED_PATTERNS = [
