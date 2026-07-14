@@ -1098,6 +1098,10 @@
   },
   "tlc-execute-tasks": {
     "skill_md": "tlc-execute-tasks/SKILL.md",
+    "files": []
+  },
+  "tlc-execute-tasks-adversarial": {
+    "skill_md": "tlc-execute-tasks-adversarial/SKILL.md",
     "files": [
       "references/examples.md",
       "references/feature-verification-process-summary.md",
