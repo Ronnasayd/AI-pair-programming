@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import unicodedata
 from pathlib import Path
 from typing import Mapping
 
@@ -223,7 +224,16 @@ EXEC_TERMINATOR_RE = re.compile(r"(-exec\b(?:(?!\\;|;).)*?)(\\;|;)", re.DOTALL)
 
 
 def normalize(path: str) -> str:
-    """Normalize + resolve symlinks."""
+    """Normalize + resolve symlinks.
+
+    NFKC folds lookalike separator/punctuation codepoints (e.g. U+2044
+    FRACTION SLASH, U+FF0E FULLWIDTH FULL STOP) to their ASCII form before
+    pattern matching, so a homoglyph can't slip a protected path past
+    PROTECTED_PATTERNS. Null bytes are stripped for the same reason — some
+    downstream parsers truncate at \\x00, which would let a suffix like
+    ".env\\x00.txt" be read as ".env" while the raw string dodges fnmatch.
+    """
+    path = unicodedata.normalize("NFKC", path).replace("\x00", "")
     try:
         return os.path.realpath(os.path.abspath(path))
     except Exception:
@@ -245,16 +255,24 @@ def is_allowed(path: str) -> bool:
 
 
 def matches_pattern(path: str) -> tuple[bool, str]:
-    """Match against protected patterns using pathlib semantics."""
-    p = Path(path)
+    """Match against protected patterns using pathlib semantics.
+
+    Matching is case-folded so a case-insensitive filesystem (macOS,
+    Windows) can't be used to read ".env" via a differently-cased path
+    like ".ENV" that would otherwise miss every pattern below.
+    """
+    path_lower = path.lower()
+    p = Path(path_lower)
 
     for pattern in PROTECTED_PATTERNS:
+        pattern_lower = pattern.lower()
+
         # direct fnmatch (string-based)
-        if fnmatch.fnmatch(path, pattern):
+        if fnmatch.fnmatch(path_lower, pattern_lower):
             return True, pattern
 
         # pathlib match (more robust for **)
-        if p.match(pattern):
+        if p.match(pattern_lower):
             return True, pattern
 
     return False, ""
