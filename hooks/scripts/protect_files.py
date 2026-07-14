@@ -290,6 +290,28 @@ def expand_targets(targets: list[str]) -> list[str]:
     return expanded
 
 
+ENV_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)")
+
+
+def expand_env_vars(text: str) -> str:
+    """Resolve $VAR / ${VAR} against the hook process's own environment.
+
+    A target passed as a bare shell variable (e.g. `cat $SECRET_FILE`) is
+    left untouched by shlex — it stays the literal string "$SECRET_FILE",
+    which never matches a PROTECTED_PATTERNS glob. The shell resolves it to
+    the real path only after this check has already allowed the command.
+    Expanding here closes that gap for any variable actually set in this
+    process's environment; an unset/foreign variable is left as-is (same
+    behavior as before this fix — no new false negative introduced).
+    """
+
+    def repl(m: re.Match) -> str:
+        name = m.group(1) or m.group(2)
+        return os.environ.get(name, m.group(0))
+
+    return ENV_VAR_RE.sub(repl, text)
+
+
 def split_subcommands(command: str) -> list[str]:
     """Split a shell command string on pipe/list operators into subcommands."""
     protected = EXEC_TERMINATOR_RE.sub(lambda m: m.group(1) + "\x00", command)
@@ -509,13 +531,21 @@ def extract_file_targets(command: str) -> list[str]:
 
     # eval/xargs can smuggle a target through stdin or a nested string that the
     # per-subcommand tokenizer can't resolve (e.g. `echo .env | xargs cat`) —
-    # fall back to a whole-line keyword scan whenever either appears.
+    # fall back to a whole-line keyword scan whenever either appears. Tokenize
+    # with shlex first so quoted words (e.g. `echo '.env'`) get their quotes
+    # stripped before the keyword match — a raw \S+ split leaves the quotes
+    # attached, which then survives into normalize() as part of the filename
+    # and silently dodges every PROTECTED_PATTERNS glob.
     if re.search(r"\b(eval|xargs)\b", command):
-        for word in re.findall(r"\S+", command):
+        try:
+            words = shlex.split(command)
+        except ValueError:
+            words = command.split()
+        for word in words:
             if any(kw in word for kw in PROTECTED_KEYWORDS):
                 targets.append(word)
 
-    return targets
+    return [expand_env_vars(t) for t in targets]
 
 
 def deny(file_path: str, pattern: str, source: str) -> None:
@@ -605,7 +635,17 @@ def get_write_content(
         return get_by_key(tool_input, "new_string")
     try:
         return Path(file_path).read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
+    except UnicodeDecodeError:
+        # Non-UTF-8 content (UTF-16, latin-1, or a few stray bad bytes) must
+        # still reach the secret scanner — silently returning None here let
+        # any secret stored in a differently-encoded file skip detect-secrets
+        # entirely. errors="replace" degrades gracefully instead of losing
+        # the scan outright.
+        try:
+            return Path(file_path).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return None
+    except OSError:
         return None
 
 
