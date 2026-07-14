@@ -99,7 +99,7 @@
       "Bash(xargs:*)"
     ]
   },
-  "model": "haiku",
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": [
       {
