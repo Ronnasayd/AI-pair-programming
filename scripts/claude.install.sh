@@ -74,6 +74,20 @@ while read -r rule; do
     fi
 done < "$LOCAL/.rulesignore"
 
+if [ -d "$LOCAL/agents/instructions" ]; then
+    while IFS= read -r rule_file; do
+        rule=$(basename "$rule_file")
+        applyto=$(extract_applyto "$rule_file")
+
+        if [[ "$applyto" == "**/*" ]]; then
+            instructions+=$'\n'"$(extract_body "$rule_file")"
+        else
+            ln -sf "$rule_file" "$DEFAULT_FOLDER/instructions/$rule"
+            references+=$'\n'"- [$(basename "$rule_file" .md)]($DEFAULT_FOLDER/instructions/$rule) — applies to: \`$applyto\`"
+        fi
+    done < <(find "$LOCAL/agents/instructions" -maxdepth 1 -name "*.md" -type f)
+fi
+
 if [[ -n "$references" ]]; then
     instructions+=$'\n\n## Context-Specific Rules\n\nThe following rules apply to specific file types:'"$references"
 fi
@@ -119,7 +133,7 @@ fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do
     target=$(readlink "$link")
-    if [[ "$target" == "$SOURCE/skills/"* ]]; then
+    if [[ "$target" == "$SOURCE/skills/"* ]] || [[ "$target" == "$LOCAL/agents/skills/"* ]]; then
         rm "$link"
     fi
 done
@@ -135,15 +149,35 @@ find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     # Criar symlink
     ln -s "$skill_dir" "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
 done
+if [ -d "$LOCAL/agents/skills" ]; then
+    find "$LOCAL/agents/skills" -maxdepth 1 -mindepth 1 -type d | while read skill_dir; do
+        skill_name=$(basename "$skill_dir")
+        if [ -e "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name" ]; then
+            echo "ERROR: local skill '$skill_name' collides with an existing skill in $DEFAULT_FOLDER/skills" >&2
+            exit 1
+        fi
+        ln -s "$skill_dir" "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
+    done
+fi
 ########################################################################################
 mkdir -p $LOCAL/$DEFAULT_FOLDER/commands/
 find "$LOCAL/$DEFAULT_FOLDER/commands" -maxdepth 1 -type l | while read -r link; do
     target=$(readlink "$link")
-    if [[ "$target" == "$SOURCE/commands/"* ]]; then
+    if [[ "$target" == "$SOURCE/commands/"* ]] || [[ "$target" == "$LOCAL/agents/commands/"* ]]; then
         rm "$link"
     fi
 done
 ln -s "$SOURCE/commands/"* "$LOCAL/$DEFAULT_FOLDER/commands/"
+if [ -d "$LOCAL/agents/commands" ]; then
+    find "$LOCAL/agents/commands" -maxdepth 1 -mindepth 1 | while read cmd_file; do
+        cmd_name=$(basename "$cmd_file")
+        if [ -e "$LOCAL/$DEFAULT_FOLDER/commands/$cmd_name" ]; then
+            echo "ERROR: local command '$cmd_name' collides with an existing command in $DEFAULT_FOLDER/commands" >&2
+            exit 1
+        fi
+        ln -s "$cmd_file" "$LOCAL/$DEFAULT_FOLDER/commands/$cmd_name"
+    done
+fi
 ########################################################################################
 mkdir -p $LOCAL/$DEFAULT_FOLDER/hooks/
 find "$LOCAL/$DEFAULT_FOLDER/hooks" -maxdepth 1 -type l | while read -r link; do
@@ -157,11 +191,21 @@ ln -s "$SOURCE/hooks/"* "$LOCAL/$DEFAULT_FOLDER/hooks"
 mkdir -p $LOCAL/$DEFAULT_FOLDER/agents/
 find "$LOCAL/$DEFAULT_FOLDER/agents" -maxdepth 1 -type l | while read -r link; do
     target=$(readlink "$link")
-    if [[ "$target" == "$SOURCE/agents/"* ]]; then
+    if [[ "$target" == "$SOURCE/agents/"* ]] || [[ "$target" == "$LOCAL/agents/agents/"* ]]; then
         rm "$link"
     fi
 done
 ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
+if [ -d "$LOCAL/agents/agents" ]; then
+    find "$LOCAL/agents/agents" -maxdepth 1 -mindepth 1 -name "*.agent.md" | while read agent_file; do
+        agent_name=$(basename "$agent_file")
+        if [ -e "$LOCAL/$DEFAULT_FOLDER/agents/$agent_name" ]; then
+            echo "ERROR: local agent '$agent_name' collides with an existing agent in $DEFAULT_FOLDER/agents" >&2
+            exit 1
+        fi
+        ln -s "$agent_file" "$LOCAL/$DEFAULT_FOLDER/agents/$agent_name"
+    done
+fi
 ########################################################################################3
 ##########################################################################################
 if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
