@@ -9,6 +9,10 @@ applyTo: "**/*"
 - Python: use `pip` + `venv`.
 - Multi-language versions: use `asdf` when fit.
 
+## Rules
+
+- Before editing any file, read it first. Before modifying a function, grep for all callers. Research before you edit.
+
 ## Always Use Interactive Question Tools
 
 For every user question, use interactive question tool. No exceptions for context, type, or intent.
