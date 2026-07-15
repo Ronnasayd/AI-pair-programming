@@ -1110,7 +1110,12 @@
   },
   "tlc-execute-tasks": {
     "skill_md": "tlc-execute-tasks/SKILL.md",
-    "files": []
+    "files": [
+      "references/agent-prompts.md",
+      "references/examples.md",
+      "references/orchestrator-model.md",
+      "references/troubleshooting.md"
+    ]
   },
   "tlc-execute-tasks-adversarial": {
     "skill_md": "tlc-execute-tasks-adversarial/SKILL.md",

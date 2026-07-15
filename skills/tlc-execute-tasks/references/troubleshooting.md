@@ -1,0 +1,9 @@
+# Troubleshooting
+
+| Symptom                                                                                         | Cause                                                    | Fix                                                                                             |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Missing `.specs/features/{TAG}/design.md` or `spec.md` or `.taskmaster/execution/metadata.json` | Feature never went through spec/design/tasks phases      | Report exact missing path(s), do not proceed                                                    |
+| `set_task_status` returns success but tasks.json unchanged                                      | `tag` param omitted from the call                        | Always pass `tag` — required for both MCP backend and file write                                |
+| Wave N+1 subagents appear to start before wave N finishes                                       | Agent calls for wave N+1 fired in same message as wave N | Wait for all wave-N results before issuing any wave-N+1 Agent call                              |
+| Subagent reports failure with no clear cause                                                    | Task/spec/design context not fully passed                | Verify prompt included full spec.md + design.md + task JSON, not summaries                      |
+| User wants partial rollback after Abort                                                         | Abort only stops further waves                           | Summary reflects waves 0..N-1 only; already-applied changes from completed waves are not undone |
