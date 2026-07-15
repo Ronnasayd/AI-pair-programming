@@ -234,6 +234,10 @@
     "skill_md": "codebase-rules-extractor/SKILL.md",
     "files": []
   },
+  "compress-skill": {
+    "skill_md": "compress-skill/SKILL.md",
+    "files": []
+  },
   "context-map": {
     "skill_md": "context-map/SKILL.md",
     "files": []
@@ -1111,6 +1115,7 @@
   "tlc-execute-tasks-adversarial": {
     "skill_md": "tlc-execute-tasks-adversarial/SKILL.md",
     "files": [
+      "references/agent-prompts.md",
       "references/examples.md",
       "references/feature-verification-process-summary.md",
       "references/orchestrator-model.md",
