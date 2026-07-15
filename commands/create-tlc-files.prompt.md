@@ -1,10 +1,13 @@
 ---
 model: sonnet
 ---
-Read ths skill **tlc-spec-driven** and create the following files based on the plan:
 
-- Design.md
-- Specs.md
-- Tasks.md
+Read the skill **tlc-spec-driven**. Using the plan above as input (research + scope), run:
 
-After create the files, Ask the user if he wants to add the tasks to taskmaster. If he answer `yes` use the skill **tlc-tasks-to-taskmaster**
+1. Specify — write `.specs/features/[feature]/spec.md` (requirement IDs, acceptance criteria). Trigger Discuss if gray areas exist.
+2. Design — only if scope is Large/Complex (skip inline otherwise).
+3. Tasks — only if scope is Large/Complex (skip inline otherwise).
+
+Let the skill's auto-sizing decide which files actually get created — do not force all three.
+
+After the files exist, ask the user if he wants to add the tasks to taskmaster. If he answers `yes`, use the skill **tlc-tasks-to-taskmaster**.
