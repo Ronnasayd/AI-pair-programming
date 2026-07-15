@@ -1,6 +1,6 @@
 ---
 description: REST API design rules — resource-based routes, HTTP verbs over action verbs, kebab-case plural resource names, max 3 nesting levels, JSON payloads, status code table (200/201/422/500). Apply when designing or reviewing HTTP endpoints/routes/controllers. Do NOT use for non-HTTP code style (see code.instructions.md) or OpenAPI doc generation (see openapi.instructions.md).
-applyTo: "**/*"
+applyTo: "**/*.md"
 ---
 
 # HTTP API Standards
