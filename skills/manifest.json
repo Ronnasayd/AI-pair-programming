@@ -511,6 +511,14 @@
     "skill_md": "execute-task/SKILL.md",
     "files": []
   },
+  "extract-automation-candidates": {
+    "skill_md": "extract-automation-candidates/SKILL.md",
+    "files": [
+      "references/classify-and-write.md",
+      "scripts/dump_git_log.sh",
+      "scripts/extract_user_prompts.py"
+    ]
+  },
   "extract-software-requirements": {
     "skill_md": "extract-software-requirements/SKILL.md",
     "files": [

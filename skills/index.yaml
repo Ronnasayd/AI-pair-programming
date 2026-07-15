@@ -222,15 +222,15 @@ skills:
 - name:
   - tlc-execute-tasks-adversarial
   description: 'Orchestrates feature task execution by tag. Main agent filters pending
-    tasks from taskmaster, groups them into waves, and drives each task through the
-    adversarial-dev skill (executor + evaluator loop) within each wave, in parallel
-    (capped concurrency), respecting wave dependencies. Each task''s executor runs
-    tlc-spec-driven with the task + spec context it''s given; the evaluator grades
-    against the task''s own verification criteria. A task only counts as done at score
-    8+/10. Updates status via MCP after each wave completes. The user decides what
-    to do on failures/exhaustion. Use: ''execute feature <tag>'' or run tasks for
-    <tag>. Do not use for direct task management (taskmaster skill) or spec creation
-    (tlc-spec-driven).'
+    tasks from taskmaster, groups them into waves, and directly spawns/drives each
+    task''s own executor + evaluator agent pair (applying adversarial-dev''s loop
+    logic inline, not via a Skill call) within each wave, in parallel (capped concurrency),
+    respecting wave dependencies. Each task''s executor runs tlc-spec-driven with
+    the task + spec context it''s given; the evaluator grades against the task''s
+    own verification criteria. A task only counts as done at score 8+/10. Updates
+    status via MCP after each wave completes. The user decides what to do on failures/exhaustion.
+    Use: ''execute feature <tag>'' or run tasks for <tag>. Do not use for direct task
+    management (taskmaster skill) or spec creation (tlc-spec-driven).'
 - name:
   - integration-testing
   description: 'Expert guidance on Integration Testing in software engineering. Use
@@ -375,6 +375,19 @@ skills:
     Z", "show me all skills for [domain]", or when wanting to discover relevant skills
     before deciding to enable them. Different from skill-advisor: exploratory discovery
     across ALL skills with reasons why each matches.'
+- name:
+  - extract-automation-candidates
+  description: Mines a project's Claude Code session transcripts, git commit history,
+    and formal spec/PRD markdown files for recurring or high-cost manual workflows
+    that are worth turning into a reusable skill, slash command, or standing instruction
+    — then writes the actual artifact (SKILL.md, command markdown, or an AGENTS.md/CLAUDE.md
+    instruction line) instead of just describing it. Use when the user asks to "find
+    things worth automating", "extract skills from our sessions", "what should be
+    a command by now", "turn recurring patterns into skills", or wants a cross-source
+    audit of automation opportunities with traceability back to the conversations/commits/specs
+    that justified each one. Do NOT use for requirements extraction (use extract-software-requirements
+    instead), for scaffolding a skill the user has already fully specified (use skill-architect
+    instead), or for a one-off single-file edit with no recurring pattern behind it.
 - name:
   - safe-refactor
   description: 'Guide safe refactoring of complex, untested code using a multi-phase
