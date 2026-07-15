@@ -322,6 +322,7 @@
       }
     }
   },
+  "alwaysThinkingEnabled": false,
   "effortLevel": "low",
   "plansDirectory": "./docs/plans/",
   "voice": {
@@ -332,6 +333,5 @@
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "voiceEnabled": false,
-  "alwaysThinkingEnabled": false
+  "voiceEnabled": false
 }
