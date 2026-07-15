@@ -1,6 +1,6 @@
 ## CLAUDE
 DEFAULT_FOLDER=".claude"
-
+DEFAULT_LOCAL_AGENTS="agents"
 ############################################################################################
 replace_between() {
     local inicio="$1"
@@ -74,7 +74,7 @@ while read -r rule; do
     fi
 done < "$LOCAL/.rulesignore"
 
-if [ -d "$LOCAL/agents/instructions" ]; then
+if [ -d "$LOCAL/$DEFAULT_LOCAL_AGENTS/instructions" ]; then
     while IFS= read -r rule_file; do
         rule=$(basename "$rule_file")
         applyto=$(extract_applyto "$rule_file")
@@ -85,7 +85,7 @@ if [ -d "$LOCAL/agents/instructions" ]; then
             ln -sf "$rule_file" "$DEFAULT_FOLDER/instructions/$rule"
             references+=$'\n'"- [$(basename "$rule_file" .md)]($DEFAULT_FOLDER/instructions/$rule) — applies to: \`$applyto\`"
         fi
-    done < <(find "$LOCAL/agents/instructions" -maxdepth 1 -name "*.md" -type f)
+    done < <(find "$LOCAL/$DEFAULT_LOCAL_AGENTS/instructions" -maxdepth 1 -name "*.md" -type f)
 fi
 
 if [[ -n "$references" ]]; then
@@ -133,7 +133,7 @@ fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do
     target=$(readlink "$link")
-    if [[ "$target" == "$SOURCE/skills/"* ]] || [[ "$target" == "$LOCAL/agents/skills/"* ]]; then
+    if [[ "$target" == "$SOURCE/skills/"* ]] || [[ "$target" == "$LOCAL/$DEFAULT_LOCAL_AGENTS/skills/"* ]]; then
         rm "$link"
     fi
 done
@@ -149,8 +149,8 @@ find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     # Criar symlink
     ln -s "$skill_dir" "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
 done
-if [ -d "$LOCAL/agents/skills" ]; then
-    find "$LOCAL/agents/skills" -maxdepth 1 -mindepth 1 -type d | while read skill_dir; do
+if [ -d "$LOCAL/$DEFAULT_LOCAL_AGENTS/skills" ]; then
+    find "$LOCAL/$DEFAULT_LOCAL_AGENTS/skills" -maxdepth 1 -mindepth 1 -type d | while read skill_dir; do
         skill_name=$(basename "$skill_dir")
         if [ -e "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name" ]; then
             echo "ERROR: local skill '$skill_name' collides with an existing skill in $DEFAULT_FOLDER/skills" >&2
@@ -163,13 +163,13 @@ fi
 mkdir -p $LOCAL/$DEFAULT_FOLDER/commands/
 find "$LOCAL/$DEFAULT_FOLDER/commands" -maxdepth 1 -type l | while read -r link; do
     target=$(readlink "$link")
-    if [[ "$target" == "$SOURCE/commands/"* ]] || [[ "$target" == "$LOCAL/agents/commands/"* ]]; then
+    if [[ "$target" == "$SOURCE/commands/"* ]] || [[ "$target" == "$LOCAL/$DEFAULT_LOCAL_AGENTS/commands/"* ]]; then
         rm "$link"
     fi
 done
 ln -s "$SOURCE/commands/"* "$LOCAL/$DEFAULT_FOLDER/commands/"
-if [ -d "$LOCAL/agents/commands" ]; then
-    find "$LOCAL/agents/commands" -maxdepth 1 -mindepth 1 | while read cmd_file; do
+if [ -d "$LOCAL/$DEFAULT_LOCAL_AGENTS/commands" ]; then
+    find "$LOCAL/$DEFAULT_LOCAL_AGENTS/commands" -maxdepth 1 -mindepth 1 | while read cmd_file; do
         cmd_name=$(basename "$cmd_file")
         if [ -e "$LOCAL/$DEFAULT_FOLDER/commands/$cmd_name" ]; then
             echo "ERROR: local command '$cmd_name' collides with an existing command in $DEFAULT_FOLDER/commands" >&2
@@ -188,22 +188,22 @@ find "$LOCAL/$DEFAULT_FOLDER/hooks" -maxdepth 1 -type l | while read -r link; do
 done
 ln -s "$SOURCE/hooks/"* "$LOCAL/$DEFAULT_FOLDER/hooks"
 ########################################################################################
-mkdir -p $LOCAL/$DEFAULT_FOLDER/agents/
+mkdir -p $LOCAL/$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/
 find "$LOCAL/$DEFAULT_FOLDER/agents" -maxdepth 1 -type l | while read -r link; do
     target=$(readlink "$link")
-    if [[ "$target" == "$SOURCE/agents/"* ]] || [[ "$target" == "$LOCAL/agents/agents/"* ]]; then
+    if [[ "$target" == "$SOURCE/$DEFAULT_LOCAL_AGENTS/"* ]] || [[ "$target" == "$LOCAL/$DEFAULT_LOCAL_AGENTS/agents/"* ]]; then
         rm "$link"
     fi
 done
-ln -s "$SOURCE/agents/"* "$LOCAL/$DEFAULT_FOLDER/agents/"
-if [ -d "$LOCAL/agents/agents" ]; then
-    find "$LOCAL/agents/agents" -maxdepth 1 -mindepth 1 -name "*.agent.md" | while read agent_file; do
+ln -s "$SOURCE/$DEFAULT_LOCAL_AGENTS/"* "$LOCAL/$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/"
+if [ -d "$LOCAL/$DEFAULT_LOCAL_AGENTS/agents" ]; then
+    find "$LOCAL/$DEFAULT_LOCAL_AGENTS/agents" -maxdepth 1 -mindepth 1 -name "*.agent.md" | while read agent_file; do
         agent_name=$(basename "$agent_file")
-        if [ -e "$LOCAL/$DEFAULT_FOLDER/agents/$agent_name" ]; then
+        if [ -e "$LOCAL/$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/$agent_name" ]; then
             echo "ERROR: local agent '$agent_name' collides with an existing agent in $DEFAULT_FOLDER/agents" >&2
             exit 1
         fi
-        ln -s "$agent_file" "$LOCAL/$DEFAULT_FOLDER/agents/$agent_name"
+        ln -s "$agent_file" "$LOCAL/$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/$agent_name"
     done
 fi
 ########################################################################################3
@@ -223,8 +223,8 @@ fi
 if ! grep -qF "$DEFAULT_FOLDER/instructions/*" .gitignore; then
     echo "$DEFAULT_FOLDER/instructions/*" >> .gitignore
 fi
-if ! grep -qF "$DEFAULT_FOLDER/agents/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/agents/*" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" .gitignore; then
+    echo "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" >> .gitignore
 fi
 if ! grep -qF "$DEFAULT_FOLDER/hooks/*" .gitignore; then
     echo "$DEFAULT_FOLDER/hooks/*" >> .gitignore
