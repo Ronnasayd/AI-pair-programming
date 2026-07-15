@@ -198,6 +198,7 @@ if ! grep -qF ".mcp.json" .gitignore; then
     echo ".mcp.json" >> .gitignore
 fi
 ###########################################################################################
+export RTK_TELEMETRY_DISABLED=1
 rtk init -g
 ##########################################################################################
 source $SOURCE/scripts/ignores.sh

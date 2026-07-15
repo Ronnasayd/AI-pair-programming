@@ -19,6 +19,10 @@ model=$(echo "$input" | jq -r '.model.display_name')
 # Context window usage percentage (📚 = library/context)
 ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 ctx_pct_int=${ctx_pct%.*}
+cache_read=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_input_tokens // 0')
+cache_creation=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
+total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
+total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
 if [ "$ctx_pct_int" -ge 80 ] 2>/dev/null; then
     ctx_color="\033[31m"
 elif [ "$ctx_pct_int" -ge 50 ] 2>/dev/null; then
@@ -96,7 +100,7 @@ if [ -n "$cost" ]; then
     cost=$(LC_NUMERIC=C printf "%.3f" "$cost")
     cost_color="\033[32m"
     cost_info=" | 󰳴 ${cost_color}\$$cost${RESET}"
-    
+
 fi
 
 # Rate limit usage (session = 5-hour window, week = 7-day window)
@@ -166,4 +170,5 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
-echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info} | 󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET}${memory_status}${caveman_info}${cost_info}${rate_info}"
+echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${caveman_info}"
+echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} |  cache(r:${cache_read} c:${cache_creation}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
