@@ -329,6 +329,7 @@
     "enabled": false,
     "mode": "hold"
   },
+  "theme": "dark",
   "autoCompactEnabled": true,
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
