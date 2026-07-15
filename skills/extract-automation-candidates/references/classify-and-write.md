@@ -27,27 +27,11 @@ When a candidate sits on the boundary (e.g. a command that's grown a couple of c
 
 If `<workdir>/agents/skills` or `<workdir>/agents/commands` don't exist yet, create them — this is the first artifact for that project, not an error.
 
-## Traceability footer (required on every written artifact)
-
-Every skill/command file gets a closing section; every instruction bullet gets an inline reference. Format:
-
-```
-## Provenance
-
-Extracted by extract-automation-candidates on <date>. Evidence:
-- <source tag> <what was observed> (<session id / commit hash / doc path>)
-- ...
-```
-
-For an `AGENTS.md` instruction bullet (no room for a full section), append `(source: <tag+ref>, extracted <date>)` at the end of the bullet line.
-
-This lets a future run recognize "already captured" and skip re-proposing the same candidate.
-
 ## Updating an existing artifact instead of overwriting
 
 Before writing, check if a same-named (or clearly same-purpose) artifact already exists at the target path.
 
-- If yes: read it fully first. Merge new evidence into its Provenance section (append, don't replace prior entries) and only touch the instructional body if the new evidence reveals the existing artifact is wrong or incomplete — never blindly overwrite a working artifact just because it was found again.
+- If yes: read it fully first. Only touch the instructional body if the new evidence reveals the existing artifact is wrong or incomplete — never blindly overwrite a working artifact just because it was found again.
 - If no: write fresh, following the target-path convention above.
 
 ## What NOT to write
