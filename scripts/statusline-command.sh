@@ -19,6 +19,9 @@ model=$(echo "$input" | jq -r '.model.display_name')
 # Context window usage percentage (📚 = library/context)
 ctx_pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 ctx_pct_int=${ctx_pct%.*}
+ctx_size=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
+ctx_usage=$(( (ctx_pct_int * ctx_size) / 100 ))
+input_tokens=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
 cache_read=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_input_tokens // 0')
 cache_creation=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
 total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
@@ -171,4 +174,4 @@ fi
 
 # Output the complete status line
 echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${caveman_info}"
-echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} |  cache(r:${cache_read} c:${cache_creation}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
+echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
