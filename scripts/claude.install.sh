@@ -46,7 +46,7 @@ extract_applyto() {
 
 extract_body() {
     local file="$1"
-    awk '/^---$/{s++; next} s==2' "$file"
+    awk '/^---$/ && s<2 {s++; next} s>=2' "$file"
 }
 
 instructions=""
