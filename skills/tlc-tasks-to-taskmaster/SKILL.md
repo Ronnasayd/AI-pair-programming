@@ -3,274 +3,69 @@ name: tlc-tasks-to-taskmaster
 description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json for task list, .taskmaster/execution/metadata.json for strategy). Use when user says "convert tasks.md to taskmaster json", "transform tasks.md to .taskmaster format", "converta tasks.md em tasks.json", or wants to generate TaskMaster JSON from a tasks file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster conversions.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # tasks-md-to-taskmaster-json
 
-Converts a `tasks.md` specification file into a TaskMaster-compatible structure:
+Converts a `tasks.md` spec into two files: `.taskmaster/tasks/tasks.json` (TaskMaster-compatible task list, merge-safe) and `.taskmaster/execution/metadata.json` (execution strategy: waves, critical path, parallelization notes). Split keeps `tasks.json` TaskMaster-compatible while giving executor agents reasoning context without recomputing the graph.
 
-1. **`.taskmaster/tasks/tasks.json`** — task list with task-level metadata (wave, onCriticalPath)
-2. **`.taskmaster/execution/metadata.json`** — global execution strategy (waves, critical path, parallelization notes)
+## Steps
 
-This two-file approach keeps `tasks.json` TaskMaster-compatible while providing execution context for agents.
+| #   | Step                   | Action                                                                    | Output / Gate                                                                                                   |
+| --- | ---------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 0   | Resolve tag            | Ask user for root key tag (skip if given); default `"master"`             | tag stored for steps 6-7 — see [json-schemas.md](references/json-schemas.md) for wrapper shape                  |
+| 1   | Read tasks.md fully    | Read Execution Diagram, task tables, cross-checks before writing any JSON | diagram + cross-checks are source of truth, not just `Depends on` (which may omit transitive deps)              |
+| 2   | Build dependency graph | Directed edges: `task_id → [deps]`                                        | validate every dep against the ASCII diagram                                                                    |
+| 3   | Calculate waves (BFS)  | Wave 1 = no deps; Wave N+1 = deps all in waves ≤N                         | tasks in same wave have zero deps between each other — example in [json-schemas.md](references/json-schemas.md) |
+| 4   | Identify critical path | Bottom-up traversal: longest sequential dependency chain                  | determines minimum execution time                                                                               |
+| 5   | Map fields             | Task → JSON schema                                                        | field mapping table in [json-schemas.md](references/json-schemas.md)                                            |
+| 6   | Assemble output        | Build both files                                                          | schemas + examples in [json-schemas.md](references/json-schemas.md)                                             |
+| 7   | Create + validate      | Run scripts (below)                                                       | both files must pass validation before delivery                                                                 |
 
-## Instructions
-
-### Step 0 — Resolve the output tag
-
-Before reading or processing anything, determine the **tag** that will wrap the output JSON.
-
-- If the user explicitly provided a tag (e.g. `"use tag feature/auth"`), use it verbatim.
-- Otherwise, ask the user:
-
-  > What tag should be used as the root key in `tasks.json`? (default: `master`)
-
-- If the user does not answer or confirms the default, use `"master"`.
-
-The tag will be the root key in `.taskmaster/tasks/tasks.json`:
-
-```json
-{
-  "<tag>": {
-    "tasks": [...]
-  }
-}
-```
-
-Example with default tag:
-
-```json
-{
-  "master": {
-    "tasks": [...]
-  }
-}
-```
-
-(Global metadata goes in separate file `.taskmaster/execution/metadata.json` — see Step 6.)
-
-Store the resolved tag for use in Steps 6 and 7.
-
-### Step 1 — Read the entire tasks.md before writing anything
-
-Read `tasks.md` from start to finish. You need three sections before starting conversion:
-
-- **Execution Diagram** (the ASCII dependency graph)
-- **Tables for each task** (fields: What, Where, Depends on, Tests, Done when, Gate, Cmd)
-- **Cross-checks at the end** (diagram × definition validation)
-
-Do not generate any JSON before reading everything. The diagram and cross-checks are the source of truth for dependencies — not just the `Depends on` field, which sometimes omits transitive dependencies.
-
-### Step 2 — Build the dependency graph
-
-Construct a directed edge structure:
-
-```
-task_id → [dependencies]
-1  → []
-2  → [1]
-3  → [1]
-4  → [3]
-...
-```
-
-Validate against the ASCII diagram. If the `Depends on` field says `T02, T10, T08, T12, T16` for T18, confirm all 5 appear in the diagram downstream from T18's position.
-
-### Step 3 — Calculate execution waves (BFS / topological sort)
-
-Algorithm:
-
-1. Wave 1 = tasks with no dependencies
-2. Wave N+1 = tasks whose **all** dependencies are already in waves ≤ N
-3. Repeat until all tasks are assigned
-
-Example output:
-
-```
-Wave 1:  T01             (no deps)
-Wave 2:  T02, T03, T11, T26   (deps = {T01})
-Wave 3:  T04, T05, T07        (T04→{T03}, T05+T07→{T02})
-Wave 4:  T06, T09, T10, T14, T16
-Wave 5:  T08, T13, T15, T17, T19, T21
-Wave 6:  T12             (convergence bottleneck)
-Wave 7:  T18, T20
-Wave 8:  T22, T25
-Wave 9:  T23, T27
-Wave 10: T24, T28, T29
-```
-
-Tasks in the same wave must have zero dependencies between each other.
-
-### Step 4 — Identify the critical path
-
-The critical path is the longest chain of sequential dependencies — it determines minimum execution time.
-
-Traverse the graph bottom-up: for each task, add 1 to the maximum critical path length of its dependents.
-
-The critical path is the longest such chain, e.g.: `T01 → T02 → T05 → T06 → T08 → T12 → T20 → T22 → T23 → T24`.
-
-### Step 5 — Map each task to JSON schema
-
-| JSON field     | Source in tasks.md                                                                                     |
-| -------------- | ------------------------------------------------------------------------------------------------------ |
-| `id`           | Task number (T01 → 1, T26 → 26)                                                                        |
-| `title`        | Part after `—` in the section heading                                                                  |
-| `description`  | **What** field                                                                                         |
-| `status`       | Always `"pending"`                                                                                     |
-| `priority`     | `"high"` if on critical path or system-blocking; `"medium"` otherwise; `"low"` for optional/peripheral |
-| `dependencies` | **Depends on** field converted to array of ints                                                        |
-| `details`      | Combine: **Where** + **Done when** + **Gate** + **Cmd**                                                |
-| `testStrategy` | **Tests** field — describe test cases if present; `"none"` if absent                                   |
-| `subtasks`     | Always `[]`                                                                                            |
-| `metadata`     | Object with `wave` (number) and `onCriticalPath` (boolean)                                             |
-
-### Step 6 — Assemble the full output structure
-
-Generate **two files** with complementary data:
-
-#### File 1: `.taskmaster/tasks/tasks.json` (TaskMaster-compatible, merge-safe)
-
-Wrap `tasks` under the tag resolved in Step 0. **No global metadata**. Build the JSON structure:
-
-```json
-{
-  "<tag>": {
-    "tasks": [
-      {
-        "id": 1,
-        "title": "...",
-        "description": "...",
-        "status": "pending",
-        "priority": "...",
-        "dependencies": [],
-        "details": "...",
-        "testStrategy": "...",
-        "subtasks": [],
-        "metadata": {
-          "wave": 1,
-          "onCriticalPath": true
-        }
-      }
-    ]
-  }
-}
-```
-
-**IMPORTANT**: Do NOT overwrite this file directly. Use `scripts/merge-tasks.py` in Step 7 to preserve existing tags.
-
-#### File 2: `.taskmaster/execution/metadata.json` (Execution metadata)
-
-Global aggregated execution data:
-
-```json
-{
-  "projectName": "feature-name-from-tasks-md",
-  "version": "1.0.0",
-  "createdAt": "ISO-8601 date",
-  "updatedAt": "ISO-8601 date",
-  "description": "One-line summary from tasks.md header",
-  "source": "relative/path/to/tasks.md",
-  "testCommands": {
-    "unit": "yarn jest ...",
-    "integration": "yarn jest ..."
-  },
-  "executionWaves": {
-    "wave1_serial": [1],
-    "wave2_parallel": [2, 3, 11, 26],
-    "...": []
-  },
-  "criticalPath": [1, 2, 5, 6, 8, 12, 20, 22, 23, 24],
-  "parallelizationNotes": {
-    "wave2": "T02, T03, T11, T26 all depend only on T01 — safe to run in parallel",
-    "wave6": "T12 is a sequential bottleneck: first task needing both T08 and T04"
-  }
-}
-```
-
-**Purpose**: Global metadata is the reasoning memory — executor agent reads this for parallelization strategy without recalculating the graph. Task-level metadata keeps tasks.json TaskMaster-compatible.
-
-### Step 7 — Create files and validate
+### Step 7 commands
 
 ```bash
 mkdir -p .taskmaster/tasks .taskmaster/execution
+cp <skill-path>/index.html .taskmaster/index.html   # Kanban viewer, static asset
 
-# Copy the Kanban board viewer into .taskmaster (overwrite ok, static asset)
-cp <skill-path>/index.html .taskmaster/index.html
-
-# Merge new tasks into tasks.json (preserves existing tags)
 python3 <skill-path>/scripts/merge-tasks.py \
-  .taskmaster/tasks/tasks.json \
-  "<tag>" \
-  '<tasks_json_string>'
+  .taskmaster/tasks/tasks.json "<tag>" '<tasks_json_string>'
 
-# Write metadata.json (execution data) directly
-# (metadata.json is not merged — overwrite is safe since it's execution-wide)
+# metadata.json is execution-wide — direct overwrite is safe (no merge needed)
 
-# Validate both files using skill scripts
 python3 <skill-path>/scripts/validate-tasks.py tasks .taskmaster/tasks/tasks.json
 python3 <skill-path>/scripts/validate-tasks.py metadata .taskmaster/execution/metadata.json
 ```
 
-**Important**:
-
-- `merge-tasks.py`: Preserves all existing tags while adding/updating the new tag
-- `validate-tasks.py`: Checks structure and required fields for both file types
-- If validation fails, fix syntax errors and re-validate before presenting the result
-- Both files must be valid before confirming delivery
-- `index.html`: standalone Kanban board viewer, copied to `.taskmaster/index.html` for viewing tasks.json in browser
+- `merge-tasks.py` preserves all existing tags while adding/updating the new one.
+- If validation fails, fix and re-validate before confirming delivery.
 
 ## Final Checklist
 
-Before confirming delivery, verify:
+### tasks.json
 
-### `.taskmaster/tasks/tasks.json`
+- [ ] All tasks.md tasks present (count matches)
+- [ ] `dependencies` are integer ids, not `"T01"` strings
+- [ ] Same-wave tasks have zero deps between each other
+- [ ] `testStrategy` non-empty where tests exist
+- [ ] `priority: "high"` only for critical-path/system-blocking tasks
+- [ ] Each task has `metadata: { wave, onCriticalPath }`
+- [ ] Valid JSON (`validate-tasks.py tasks` passes)
+- [ ] New tag merged without overwriting existing tags
+- [ ] Root key = resolved tag (default `"master"`); `tasks` nested under it, no global metadata
 
-- [ ] All tasks from tasks.md have an entry (count must match)
-- [ ] `dependencies` for each task are **integer ids** (not strings like "T01")
-- [ ] Tasks in the same wave have zero dependencies between each other
-- [ ] `testStrategy` is non-empty for tasks with tests
-- [ ] `priority: "high"` only for critical path tasks or system-blocking tasks
-- [ ] **Each task has `metadata: { wave: N, onCriticalPath: boolean }`**
-- [ ] JSON is valid (`validate-tasks.py tasks` passes)
-- [ ] New tag was merged without overwriting existing tags (use `merge-tasks.py`)
-- [ ] Root key matches the resolved tag (default: `"master"`)
-- [ ] `tasks` nested under tag key — **no global metadata**
-- [ ] All tags in file are preserved from prior conversions
+### metadata.json
 
-### `.taskmaster/execution/metadata.json`
-
-- [ ] Critical path matches the longest chain in ASCII diagram
-- [ ] `executionWaves` keys use format `waveN_serial` or `waveN_parallel`
-- [ ] All task IDs in waves match tasks in tasks.json
-- [ ] `criticalPath` is array of integers
+- [ ] Critical path matches longest diagram chain
+- [ ] `executionWaves` keys use `waveN_serial` / `waveN_parallel`
+- [ ] All wave task IDs match tasks.json
+- [ ] `criticalPath` is array of ints
 - [ ] `parallelizationNotes` explains each wave bottleneck
 - [ ] `source` points to original tasks.md relative path
-- [ ] JSON is valid (`validate-tasks.py metadata` passes)
-- [ ] File exists at `.taskmaster/execution/metadata.json`
-- [ ] `createdAt` and `updatedAt` are ISO-8601 timestamps
+- [ ] Valid JSON (`validate-tasks.py metadata` passes), ISO-8601 timestamps
 
-## Example
+## Reference files
 
-**Input:** User says "transforme `.specs/features/auth-keycloak/tasks.md` em `.taskmaster/tasks/tasks.json`"
-
-**Actions:**
-
-1. Ask: "What tag should be used as the root key?" → user says `"master"` (or skips → default `"master"`)
-2. Read `.specs/features/auth-keycloak/tasks.md` completely
-3. Extract the ASCII execution diagram and all task tables
-4. Build dependency graph edges (T01→[], T02→[1], T03→[1], ...)
-5. Run BFS to assign waves: wave1=[1], wave2=[2,3,11,26], ...
-6. Identify critical path by traversing graph bottom-up
-7. Map each task to JSON fields following Step 5 table (include `metadata: { wave, onCriticalPath }`)
-8. Build two files:
-   - **`.taskmaster/tasks/tasks.json`** — TaskMaster structure (no global metadata)
-   - **`.taskmaster/execution/metadata.json`** — execution summary (waves, critical path, parallelization notes)
-9. Merge tasks.json using `scripts/merge-tasks.py` (preserves existing tags)
-10. Validate both files using `scripts/validate-tasks.py`
-
-**Result:**
-
-- `.taskmaster/tasks/tasks.json` — TaskMaster-compatible with task-level metadata, all prior tags preserved
-- `.taskmaster/execution/metadata.json` — executor can read global execution strategy without parsing individual tasks
-- **No data loss**: Multiple calls with different tags accumulate in tasks.json instead of overwriting
+- [references/json-schemas.md](references/json-schemas.md) — tag wrapper, field mapping table, wave/critical-path examples, full tasks.json + metadata.json schema examples
+- [references/walkthrough-example.md](references/walkthrough-example.md) — end-to-end worked example (input → actions → result)
