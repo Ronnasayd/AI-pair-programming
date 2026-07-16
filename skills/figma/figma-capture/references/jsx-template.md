@@ -11,10 +11,9 @@ Write `.figma/<outName>.jsx` with this structure. Code does NOT need to be 100% 
  * Captured: <date>
  * Fonts:   <list from design context>
  * Tokens:  <key design tokens>
- * ⚠ Image assets (figma.com/api/mcp/asset/...) expire in ~7 days.
  */
 
-// --- Image / icon constants ---
+// --- Image / icon constants (local copies in .figma/assets/, downloaded in Step 5) ---
 const IMAGES = { ... };
 
 // --- Reusable sub-components (pills, cells, rows, etc.) ---
