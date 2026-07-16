@@ -14,5 +14,5 @@ Agent({
 ```
 
 - PARALLEL wave: send one Agent call per task, all in the same message block, so they run concurrently.
-- SEQUENTIAL wave: call Agent once with the same prompt shape.
+- SEQUENTIAL wave: no Agent call — main agent executes the task directly.
 - `metadata.json` is orchestrator-only — never pass it to the subagent.
