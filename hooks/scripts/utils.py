@@ -165,8 +165,10 @@ def escape_regexp(value: str) -> str:
     return re.escape(value)
 
 
-def get_hooks_logger(name: str = "Hooks") -> logging.Logger:
-    LOG_FILE = "/tmp/hooks.log"
+def get_hooks_logger(
+    name: str = "Hooks", log_file: str = "/tmp/hooks.log"
+) -> logging.Logger:
+    LOG_FILE = log_file
     Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
 
     logger = logging.getLogger(name)
