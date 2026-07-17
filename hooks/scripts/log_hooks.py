@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import argparse
 import json
 import os
 import sys
@@ -8,12 +9,18 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import colorize_json, get_hooks_logger
+from utils import colorize_json, get_hooks_logger  # noqa: E402
 
-logger = get_hooks_logger("Hooks")
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--log-file", default="/tmp/hooks.log")
+    return parser.parse_args()
 
 
 def main():
+    args = parse_args()
+    logger = get_hooks_logger("Hooks", log_file=args.log_file)
     try:
         payload = json.load(sys.stdin)
 

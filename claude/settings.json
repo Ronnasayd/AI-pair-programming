@@ -276,6 +276,10 @@
           {
             "type": "command",
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+          },
+          {
+            "type": "command",
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
           }
         ]
       }
@@ -287,6 +291,10 @@
           {
             "type": "command",
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+          },
+          {
+            "type": "command",
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
           }
         ]
       }
