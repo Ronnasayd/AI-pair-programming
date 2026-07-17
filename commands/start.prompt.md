@@ -1,0 +1,2 @@
+- sempre crie subagents especifique que eles devem utilizar _caveman em modo full_
+- sempre que for criar um subagent para investigação, utilize _caveman:cavecrew-invetigator_
