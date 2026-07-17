@@ -3,99 +3,56 @@ name: pr-review
 description: Systematic PR review using GitHub MCP tools. Produces structured report with summary of changes, critical bugs, minor issues, code examples, and external references. Use when asked to "review PR", "analyze PR", "check PR", "give feedback on PR", or given a GitHub PR URL to evaluate. Works for any language or framework. Do NOT use for creating PRs or making code changes.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # PR Review
 
 Systematic pull request review using GitHub MCP tools. Produces a structured report covering what the PR does, critical bugs, minor issues, code fixes, external references, and merge recommendation.
 
-## Instructions
+## Steps
 
-### Step 1: Collect Basic Metadata (parallel)
+| #   | Step                | Action                                                               | Output / Gate                                                                       |
+| --- | ------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 1   | Metadata (parallel) | `pull_request_read method: get` + `method: get_files` simultaneously | title, description, author, base branch, file count, +/- lines, requested reviewers |
+| 2   | Full diff           | `pull_request_read method: get_diff`                                 | authoritative source for exact line numbers — `get_files` patches are truncated     |
+| 3   | Map files → layer   | Classify each changed file against layer table below                 | flag any file working outside its layer as 🟡 minimum                               |
+| 4   | Review each file    | Apply correctness/architecture/security/consistency checklist below  | list of findings per file                                                           |
+| 5   | Classify findings   | Severity table below                                                 | every finding tagged 🔴/🟡/⚪                                                       |
+| 6   | External references | `WebSearch` per 🔴 and significant 🟡, using query patterns below    | link per finding                                                                    |
+| 7   | Fix examples        | Write minimal surgical fix per 🔴/🟡 (format below)                  | code block per finding                                                              |
+| 8   | Deliver report      | Structured report (template below)                                   | done                                                                                |
 
-Call both simultaneously — they do not depend on each other:
+## Layer map (Step 3)
 
-```
-pull_request_read method: get       → title, description, author, base branch, file count, +/- lines
-pull_request_read method: get_files → file list with per-file patches
-```
+| Layer                                  | Expected responsibility                |
+| -------------------------------------- | -------------------------------------- |
+| Entry point (controller/handler/route) | Receive input, delegate, return output |
+| Service / use case                     | Business logic                         |
+| Worker / job / task / queue            | Isolated async processing              |
+| Model / entity / schema                | Data structure                         |
+| Repository / DAO                       | Data access                            |
+| Adapter / client                       | External communication                 |
+| Config / infra / scheduler             | Configuration, scheduling              |
 
-Extract from results:
+## Review checklist (Step 4)
 
-- What the PR claims to do (description)
-- Volume: files changed, additions, deletions
-- Requested reviewers
+- **Correctness**: vars used before init; null/empty/zero handled before use; return values checked; edge cases covered (empty list, zero, null)
+- **Architecture**: file only does its layer's job; deps injected not instantiated internally; no illegal cross-layer coupling
+- **Security**: external input validated/sanitized; no hardcoded secrets; no injection vectors (SQL/command/template); destructive ops permission-gated
+- **Consistency**: names correct across files; comments/docs match actual behavior; style matches surrounding code
 
-### Step 2: Get Full Diff
+## Severity (Step 5)
 
-```
-pull_request_read method: get_diff
-```
+| Symbol | Severity | Criterion                                                |
+| ------ | -------- | -------------------------------------------------------- |
+| 🔴     | Critical | Runtime failure, data loss, or security breach           |
+| 🟡     | Minor    | No immediate breakage, future risk or maintenance burden |
+| ⚪     | Debt     | Architectural/quality issue — separate task              |
 
-Use this for exact line numbers and adjacent context. `get_files` patches are truncated; `get_diff` is the source of truth for line-level findings.
+Rule: wrong behavior in production with no visible error → 🔴 automatically.
 
-### Step 3: Map Files to Architecture Layers
-
-Before reading code, classify each file by its expected responsibility:
-
-| Layer                                    | Expected Responsibility                |
-| ---------------------------------------- | -------------------------------------- |
-| Entry point (controller, handler, route) | Receive input, delegate, return output |
-| Service / use case                       | Business logic                         |
-| Worker / job / task / queue              | Isolated async processing              |
-| Model / entity / schema                  | Data structure                         |
-| Repository / DAO                         | Data access                            |
-| Adapter / client                         | External communication                 |
-| Config / infra / scheduler               | Configuration, scheduling              |
-
-Flag immediately any file doing work outside its layer — this is always at least a 🟡 finding.
-
-### Step 4: Review Each File
-
-Apply this checklist to every changed file:
-
-**Correctness**
-
-- Variables used before initialization
-- Null/empty/zero cases handled before use
-- Return values checked before consuming
-- Edge cases covered (empty list, zero value, null input)
-
-**Architecture**
-
-- File only does what its layer should do
-- Dependencies injected, not instantiated internally
-- No coupling between layers that should not know each other
-
-**Security**
-
-- External input validated/sanitized before use
-- No hardcoded credentials or secrets
-- No injection vectors (SQL, command, template)
-- Destructive operations gated by permission check
-
-**Consistency**
-
-- Method/variable names correct and consistent across files
-- Comments and docs match what the code actually does
-- Style consistent with the surrounding codebase
-
-### Step 5: Classify All Findings
-
-| Symbol | Severity | Criterion                                                           |
-| ------ | -------- | ------------------------------------------------------------------- |
-| 🔴     | Critical | Can cause runtime failure, data loss, or security breach            |
-| 🟡     | Minor    | No immediate breakage but creates future risk or maintenance burden |
-| ⚪     | Debt     | Architectural violation or quality issue — handle in separate task  |
-
-**Rule:** if a problem can produce wrong behavior in production with no visible error → 🔴 automatically.
-
-### Step 6: Find External References
-
-For each 🔴 and significant 🟡 finding, run a `WebSearch` to find supporting documentation.
-
-Query patterns by category:
+## WebSearch query patterns (Step 6)
 
 | Category              | Query pattern                              |
 | --------------------- | ------------------------------------------ |
@@ -105,11 +62,7 @@ Query patterns by category:
 | Performance           | `[operation] performance [db/runtime]`     |
 | Future breakage       | `[language] RFC [behavior] future version` |
 
-Use references to confirm the problem is real and to point to the canonical solution — not just opinion.
-
-### Step 7: Write Fix Examples
-
-For each 🔴 and 🟡 finding, produce:
+## Fix format (Step 7)
 
 ```
 File: path/to/file.ext — line N
@@ -121,13 +74,9 @@ File: path/to/file.ext — line N
 [corrected code — minimum necessary change]
 ```
 
-Rules:
+Rules: surgical fix only; larger refactors → ⚪ debt as separate task; never mix bug fix with style cleanup in one example.
 
-- Fix is surgical — only what is needed
-- Larger refactors → flag as ⚪ debt, suggest separate task
-- Never mix bug fix with style cleanup in the same example
-
-### Step 8: Deliver Structured Report
+## Report template (Step 8)
 
 ```markdown
 ## What the PR does
@@ -157,71 +106,7 @@ For each: **Cause** / **Impact** / **Fix** (code block) / **Reference** (link)
 One line: safe to merge / do not merge / merge after fixing X
 ```
 
-## Examples
+## Reference files
 
-### Example 1: PR with undefined variable
-
-User says: "review this PR https://github.com/org/repo/pull/42"
-
-Actions:
-
-1. `get` + `get_files` in parallel
-2. `get_diff` for line numbers
-3. Find in diff: variable used in loop body but never initialized before loop
-4. Classify: 🔴 — produces wrong output silently
-5. WebSearch: `[language] undefined variable runtime behavior`
-6. Write fix: add `variable = initial_value` before the loop
-7. Deliver report with finding, fix, and reference link
-
-Result: structured report, fix example with exact line, merge blocked until fixed.
-
----
-
-### Example 2: Architecture violation — wrong layer
-
-User says: "analyze PR #98 in LINGOPASS/lingo_digitalpass"
-
-Actions:
-
-1. Collect metadata + files in parallel
-2. Full diff
-3. Classify files: find Job file that instantiates a Controller internally
-4. 🔴 — Controller has HTTP request dependencies; running it in a queue worker context fails
-5. WebSearch: `[framework] job instantiate controller antipattern`
-6. Fix: extract logic to Service class, inject Service into Job's handle method
-7. Reference official queue docs + community article
-
-Result: report blocks merge, shows before/after refactor, links docs.
-
----
-
-### Example 3: Minor — doc/code mismatch
-
-User says: "check PR #15"
-
-Actions:
-1-3. Standard collect + diff 4. Find: comment says "runs at 23:00", scheduler sets "22:00" 5. Classify: 🟡 — no runtime impact, operational risk during incidents 6. No WebSearch needed for this finding 7. Fix: align comment with actual scheduled time
-
-Result: finding in minor table, one-line fix, no merge block.
-
-## Troubleshooting
-
-### No diff returned / empty patch
-
-Cause: PR may be a draft or have conflicts blocking diff generation.
-Solution: use `get_status` to check merge state; if `mergeable_state` is `dirty`, report conflicts first.
-
-### File patches truncated in get_files
-
-Cause: large files exceed per-file patch limit.
-Solution: always run `get_diff` in Step 2 — it is the authoritative source.
-
-### Cannot find exact line numbers
-
-Cause: relying on `get_files` patches only.
-Solution: cross-reference `get_diff` unified output where every `+` line has a line number in the new file.
-
-### get_diff or get_files output too large (persisted to protected file)
-
-Cause: output exceeds context limit and is saved to a path outside the project, which is blocked by file protection hooks.
-Solution: paginate `get_files` with `perPage: 5` and iterate pages until all files are retrieved. Never use `get_file_contents` with `ref: refs/pull/{N}/head` as a substitute — it returns the file at branch HEAD regardless of whether it was changed in the PR, leading to false findings on pre-existing code.
+- `references/examples.md` — three worked examples (undefined variable, architecture violation, doc/code mismatch)
+- `references/troubleshooting.md` — empty diff, truncated patches, missing line numbers, oversized output pagination

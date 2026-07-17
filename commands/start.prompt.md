@@ -1,2 +1,3 @@
-- sempre crie subagents especifique que eles devem utilizar _caveman em modo full_
-- sempre que for criar um subagent para investigação, utilize _caveman:cavecrew-invetigator_
+- Always create subagents and specify that they must use `caveman` in full mode.
+- Whenever creating a subagent for investigation, use `caveman:cavecrew-investigator`.
+- Avoid reading entire files unless necessary; prefer reading only relevant excerpts. Use `read` with `startLine` and `endLine` for this, or use `grep`.
