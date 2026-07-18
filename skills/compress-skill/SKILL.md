@@ -3,7 +3,7 @@ name: compress-skill
 description: "Compresses a verbose SKILL.md into a short, scannable core file by moving prose into tables, mermaid flowcharts, and reference files — without losing technical substance. Use when a SKILL.md has grown long (200+ lines of numbered prose, repeated Notes sections, verbatim templates inline) and the user asks to make it 'shorter but still effective', 'more direct', 'use tables/lists/graphs', 'split into reference files', or 'compress this skill'. Do NOT use for creating a new skill from scratch (use skill-creator/skill-architect) or for editing skill description-field triggering copy only (use skill-description-generator)."
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Compress Skill
@@ -31,6 +31,18 @@ Shrinks an existing `SKILL.md` into a short, decision-critical core, relocating 
 | Branching logic (if/else, retry/skip/abort)       | table (condition → action); use mermaid flowchart instead if branches loop/cycle     |
 | Verbatim templates (agent prompts, code payloads) | extract to dedicated reference file, one-line pointer left in main file              |
 | Notes/recap section restating the body            | delete — redundant content has zero compression floor, don't summarize it, remove it |
+| Wordy prose inside an already-tabular cell        | trim in place — see wording-tightening pass below; no restructure needed             |
+
+## Wording-tightening pass (already-tabular content)
+
+When a table/section already exists but cells are verbose, tighten wording without dropping substance:
+
+- Drop filler: "in order to" → "to", "make sure to" → drop, "you should" → drop, restated rationale already implied by a command.
+- Cut connective throat-clearing ("Also actually open...", "Note that...") — keep the instruction, drop the preamble.
+- Shorten to fragments: commands, thresholds, flags, and named tools stay verbatim; surrounding prose becomes clipped phrases.
+- Collapse repeated qualifiers ("don't X, and don't Y, and don't Z" → "don't X/Y/Z" or a short list).
+- Keep every number, flag, command, filename, and named exception — only the connective tissue is cut.
+- Apply per-cell, not per-file: a cell can be tightened even when the surrounding table structure is otherwise left alone.
 
 ## Rewrite checklist (Step 6)
 
