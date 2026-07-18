@@ -6,8 +6,29 @@ Usage:
 """
 
 import argparse
+import shutil
 
 from playwright.sync_api import sync_playwright
+
+# Fallback system browser binaries, checked in order, used only if the
+# bundled Playwright Chromium isn't installed.
+FALLBACK_BROWSERS = [
+    "google-chrome",
+    "google-chrome-stable",
+    "chromium",
+    "chromium-browser",
+    "microsoft-edge",
+    "microsoft-edge-stable",
+    "brave-browser",
+]
+
+
+def find_system_browser() -> str | None:
+    for name in FALLBACK_BROWSERS:
+        path = shutil.which(name)
+        if path:
+            return path
+    return None
 
 
 def render(
@@ -18,11 +39,20 @@ def render(
     executable_path: str | None,
 ) -> None:
     with sync_playwright() as p:
-        browser = (
-            p.chromium.launch(executable_path=executable_path)
-            if executable_path
-            else p.chromium.launch()
-        )
+        try:
+            browser = (
+                p.chromium.launch(executable_path=executable_path)
+                if executable_path
+                else p.chromium.launch()
+            )
+        except Exception:
+            if executable_path:
+                raise
+            fallback = find_system_browser()
+            if not fallback:
+                raise
+            print(f"Bundled Chromium unavailable, using system browser: {fallback}")
+            browser = p.chromium.launch(executable_path=fallback)
         page = browser.new_page(viewport={"width": width, "height": height})
         page.goto(f"file://{html_path}")
         page.screenshot(path=output_path)
