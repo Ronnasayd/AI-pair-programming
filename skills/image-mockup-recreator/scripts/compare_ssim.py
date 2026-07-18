@@ -22,7 +22,6 @@ from dataclasses import dataclass
 
 try:
     import cv2
-    import numpy as np
     from skimage.metrics import structural_similarity as ssim
 except ImportError:
     print("ERROR: Missing dependencies. Install with:")
@@ -58,14 +57,12 @@ def load_and_prepare_images(img1_path: str, img2_path: str):
     if img2 is None:
         raise FileNotFoundError(f"Could not load image: {img2_path}")
 
-    # Resize to match if dimensions differ
+    # Resize to match if dimensions differ (interpolate, don't zero-pad —
+    # padding injects artificial black regions that tank SSIM for reasons
+    # unrelated to actual visual mismatch)
     if img1.shape != img2.shape:
-        h, w = max(img1.shape[0], img2.shape[0]), max(img1.shape[1], img2.shape[1])
-        img1_resized = np.zeros((h, w, 3), dtype=img1.dtype)
-        img2_resized = np.zeros((h, w, 3), dtype=img2.dtype)
-        img1_resized[: img1.shape[0], : img1.shape[1]] = img1
-        img2_resized[: img2.shape[0], : img2.shape[1]] = img2
-        img1, img2 = img1_resized, img2_resized
+        h, w = img1.shape[0], img1.shape[1]
+        img2 = cv2.resize(img2, (w, h), interpolation=cv2.INTER_AREA)
 
     # Convert to grayscale for SSIM
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
@@ -108,15 +105,15 @@ def find_diff_regions(diff_map, threshold=200):
 
 def generate_verdict(score: float):
     """Generate verdict based on score."""
-    if score >= 0.9:
+    if score >= 0.95:
         return "PASS"
-    elif score >= 0.90:
+    elif score >= 0.85:
         return "REVIEW"
     else:
         return "FAIL"
 
 
-def create_visual_diff(img_color, diff_map, output_path: str = None):
+def create_visual_diff(img_color, diff_map, output_path: str | None = None):
     """Create a visual diff (overlay of differences on original image)."""
     # Create colored diff overlay
     overlay = img_color.copy()
@@ -133,7 +130,7 @@ def create_visual_diff(img_color, diff_map, output_path: str = None):
 
 
 def compare(
-    figma_path: str, component_path: str, output_diff: str = None
+    figma_path: str, component_path: str, output_diff: str | None = None
 ) -> ComparisonResult:
     """Main comparison function."""
     try:
@@ -152,7 +149,7 @@ def compare(
 
         return ComparisonResult(
             ssim_score=score,
-            is_match=score >= 0.9,
+            is_match=score >= 0.95,
             verdict=verdict,
             diff_regions=regions,
             message=message,
@@ -188,10 +185,10 @@ def main():
     if args.json:
         print(json.dumps(result.to_dict(), indent=2))
     else:
-        print(f"Figma vs Component Comparison")
+        print("Figma vs Component Comparison")
         print(f"SSIM Score: {result.ssim_score:.4f}")
         print(f"Verdict: {result.verdict}")
-        print(f"Match (>= 0.9): {'✓ YES' if result.is_match else '✗ NO'}")
+        print(f"Match (>= 0.95): {'✓ YES' if result.is_match else '✗ NO'}")
         if result.diff_regions:
             print(f"\nDifference Regions ({len(result.diff_regions)}):")
             for i, region in enumerate(result.diff_regions, 1):
