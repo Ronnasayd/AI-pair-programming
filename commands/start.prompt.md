@@ -1,3 +1,4 @@
 - Always create subagents and specify that they must use `caveman` in full mode.
 - Whenever creating a subagent for investigation, use `caveman:cavecrew-investigator`.
 - Avoid reading entire files unless necessary; prefer reading only relevant excerpts. Use `read` with `startLine` and `endLine` for this, or use `grep`.
+- Use `grilling` to ask the user for clarification when needed, and always use in `plan mode`.
