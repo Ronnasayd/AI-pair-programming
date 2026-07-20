@@ -10,6 +10,8 @@ metadata:
 
 Main agent is orchestrator **and** adversarial-loop driver — spawns each task's executor + evaluator directly via `Agent`, applies `adversarial-dev`'s loop mechanics inline (read `skills/adversarial-dev/SKILL.md` once before Step 4, never a per-task `Skill` call). A task is `"done"` only at evaluator score 8+/10. Full dispatch model + diagram: `references/orchestrator-model.md`.
 
+Use `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` to track wave/task progress alongside taskmaster MCP updates.
+
 ## Steps
 
 | #   | Step                 | Input                                                                           | Output / Gate                                                  |
