@@ -88,6 +88,14 @@ if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
     fi
 fi
 
+# Headroom proxy status
+headroom_info=""
+if [ -n "$ANTHROPIC_BASE_URL" ] && curl -s -o /dev/null -m 0.3 "http://127.0.0.1:8787/" 2>/dev/null; then
+    headroom_info=" | hr(🟢)"
+else
+    headroom_info=" | hr(🔴)"
+fi
+
 # AI Memory server status
 memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
@@ -173,5 +181,5 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
-echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${caveman_info}"
+echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${caveman_info}${headroom_info}"
 echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
