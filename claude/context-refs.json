@@ -4,35 +4,57 @@
   "rules": [
     {
       "glob": "*.ts,*.js,*.py,*.java,*.go,*.css,*.cpp,*.c,*.vue,*.jsx,*.tsx",
-      "refs": ["instructions/code.instructions.md"]
+      "refs": [
+        "instructions/code.instructions.md"
+      ]
     },
     {
       "glob": "*.ts,*.js,*.jsx,*.tsx",
-      "refs": ["instructions/jsdocs.instructions.md"]
+      "refs": [
+        "instructions/jsdocs.instructions.md"
+      ]
     },
     {
       "glob": "*.openapi.ts",
-      "refs": ["instructions/openapi.instructions.md"]
+      "refs": [
+        "instructions/openapi.instructions.md"
+      ]
     },
     {
       "glob": "*.jsx,*.tsx",
-      "refs": ["instructions/react.instructions.md"]
+      "refs": [
+        "instructions/react.instructions.md"
+      ]
     },
     {
       "glob": "*.test.ts,*.test.js,*.spec.ts,*.spec.js",
-      "refs": ["instructions/test.instructions.md"]
+      "refs": [
+        "instructions/test.instructions.md"
+      ]
+    },
+    {
+      "glob": "*.test.ts,*.test.js,*.spec.ts,*.spec.js",
+      "refs": [
+        "instructions/test-mutation.instructions.md"
+      ]
     },
     {
       "glob": "*.vue",
-      "refs": ["instructions/vue.instructions.md"]
+      "refs": [
+        "instructions/vue.instructions.md"
+      ]
     },
     {
       "glob": "*.py",
-      "refs": ["instructions/python.instructions.md"]
+      "refs": [
+        "instructions/python.instructions.md"
+      ]
     },
     {
       "glob": "*.py",
-      "refs": ["instructions/pydocs.instructions.md"]
+      "refs": [
+        "instructions/pydocs.instructions.md"
+      ]
     }
   ]
 }
