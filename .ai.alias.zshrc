@@ -34,3 +34,5 @@ alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=
 alias mia="mif && iai --claude"
 alias lintfix='uv run --with claude-agent-sdk /home/ronnas/develop/personal/AI-pair-programming/src/sdk/lint_fix_agent.py'
 alias codeburn="npx codeburn"
+alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 headroom wrap claude --1m"
+alias tksgi="echo '.tokensave/*' >> .gitignore && echo '.headroom*' >>.gitignore"

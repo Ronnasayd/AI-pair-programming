@@ -214,3 +214,5 @@ docs/plans/*
 .mcp.json
 !.mcp.json
 .figma/*
+.tokensave/*
+.headroom*
