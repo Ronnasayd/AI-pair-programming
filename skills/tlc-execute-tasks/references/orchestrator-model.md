@@ -4,12 +4,12 @@ Main agent is the orchestrator. It never delegates coordination to another skill
 
 ## Wave dispatch
 
-| Wave mode  | Trigger                                | Dispatch                                                                        |
-| ---------- | --------------------------------------- | -------------------------------------------------------------------------------|
-| PARALLEL   | 2+ independent tasks in wave           | One Agent call per task, all in one message block → true concurrency            |
-| SEQUENTIAL | 1 task, or tasks with no wave metadata | No subagent — main agent executes task directly inline (tlc-spec-driven logic) |
+| Wave mode  | Trigger                                | Dispatch                                                                                                                 |
+| ---------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| PARALLEL   | 2+ independent tasks in wave           | Batch ≤3 tasks concurrently — one Agent call per task, all in one message block per batch → true concurrency capped at 3 |
+| SEQUENTIAL | 1 task, or tasks with no wave metadata | No subagent — main agent executes task directly inline (tlc-spec-driven logic)                                           |
 
-Wave N+1 does not start until every wave-N task (subagent or inline) has finished.
+A wave with more than 3 tasks is split into sequential batches of ≤3 (e.g. 7 tasks → batches of 3, 3, 1). Wait for the whole batch before starting the next batch; wait for the whole wave before starting wave N+1.
 
 When ALL tasks across the whole run are sequential (no wave has 2+ tasks), skip subagent delegation entirely — main agent executes every task inline, one after another.
 
