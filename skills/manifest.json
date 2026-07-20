@@ -684,6 +684,12 @@
     "skill_md": "modular-monolith-decomposer/SKILL.md",
     "files": []
   },
+  "mutation-survivor-triage": {
+    "skill_md": "mutation-survivor-triage/SKILL.md",
+    "files": [
+      "references/example-and-troubleshooting.md"
+    ]
+  },
   "my-frontend-patterns": {
     "skill_md": "my-frontend-patterns/SKILL.md",
     "files": []
