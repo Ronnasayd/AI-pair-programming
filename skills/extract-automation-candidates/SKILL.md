@@ -1,9 +1,8 @@
 ---
 name: extract-automation-candidates
 description: Mines a project's Claude Code session transcripts, git commit history, and formal spec/PRD markdown files for recurring or high-cost manual workflows that are worth turning into a reusable skill, slash command, or standing instruction — then writes the actual artifact (SKILL.md, command markdown, or an AGENTS.md/CLAUDE.md instruction line) instead of just describing it. Use when the user asks to "find things worth automating", "extract skills from our sessions", "what should be a command by now", "turn recurring patterns into skills", or wants a cross-source audit of automation opportunities with traceability back to the conversations/commits/specs that justified each one. Do NOT use for requirements extraction (use extract-software-requirements instead), for scaffolding a skill the user has already fully specified (use skill-architect instead), or for a one-off single-file edit with no recurring pattern behind it.
-license: CC-BY-4.0
 metadata:
-  author: Ronnasayd
+  author: Ronnasayd Machado - github.com/Ronnasayd
   version: 1.0.0
 ---
 

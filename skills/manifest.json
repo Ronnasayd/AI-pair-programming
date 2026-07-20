@@ -250,6 +250,10 @@
     "skill_md": "copilot-sdk/SKILL.md",
     "files": []
   },
+  "coverage-gap-audit": {
+    "skill_md": "coverage-gap-audit/SKILL.md",
+    "files": []
+  },
   "create-task-spec": {
     "skill_md": "create-task-spec/SKILL.md",
     "files": []
@@ -534,7 +538,8 @@
   "figma-capture": {
     "skill_md": "figma/figma-capture/SKILL.md",
     "files": [
-      "index.html"
+      "index.html",
+      "references/jsx-template.md"
     ]
   },
   "figma-code-connect-components": {
@@ -622,8 +627,11 @@
   "image-mockup-recreator": {
     "skill_md": "image-mockup-recreator/SKILL.md",
     "files": [
+      "references/example-and-troubleshooting.md",
+      "scripts/compare_color.py",
       "scripts/compare_ssim.py",
       "scripts/grid_image.py",
+      "scripts/overlay_diff.py",
       "scripts/screenshot.py"
     ]
   },
@@ -694,7 +702,10 @@
   },
   "pr-review": {
     "skill_md": "pr-review/SKILL.md",
-    "files": []
+    "files": [
+      "references/examples.md",
+      "references/troubleshooting.md"
+    ]
   },
   "prd-from-codebase": {
     "skill_md": "prd-from-codebase/SKILL.md",
@@ -754,7 +765,10 @@
   },
   "skill-description-generator": {
     "skill_md": "skill-description-generator/SKILL.md",
-    "files": []
+    "files": [
+      "references/examples.md",
+      "references/troubleshooting.md"
+    ]
   },
   "skills-discovery": {
     "skill_md": "skills-discovery/SKILL.md",
@@ -1132,6 +1146,8 @@
     "skill_md": "tlc-tasks-to-taskmaster/SKILL.md",
     "files": [
       "index.html",
+      "references/json-schemas.md",
+      "references/walkthrough-example.md",
       "scripts/README.md",
       "scripts/merge-tasks.py",
       "scripts/validate-tasks.py",

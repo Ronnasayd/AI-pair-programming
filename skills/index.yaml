@@ -158,6 +158,16 @@ skills:
     clear docstrings, safe exception handling, small focused functions, and static
     typing for writing maintainable production-quality Python code.
 - name:
+  - coverage-gap-audit
+  description: Audit Jest test coverage to separate real testing gaps (business logic,
+    security paths) from false negatives (wiring, config, generated code) that shouldn't
+    count against coverage metrics. Use when the user says "audit test coverage",
+    "which files actually need tests", "reduce coverage noise", "why is coverage low",
+    "exclude files from coverage", or asks to review/clean up `collectCoverageFrom`.
+    Do NOT use for writing the missing tests themselves (that's a separate follow-up
+    step this skill hands off explicitly), and do NOT use for non-Jest runners (vitest/pytest/go
+    test) — this skill's commands are Jest-specific.
+- name:
   - domain-modeling
   description: Build and sharpen a project's domain model. Use when the user wants
     to pin down domain terminology or a ubiquitous language, record an architectural
