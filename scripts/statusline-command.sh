@@ -91,9 +91,9 @@ fi
 # Headroom proxy status
 headroom_info=""
 if [ -n "$ANTHROPIC_BASE_URL" ] && curl -s -o /dev/null -m 0.3 "http://127.0.0.1:8787/" 2>/dev/null; then
-    headroom_info=" | hr(🟢)"
+    headroom_info=" |  hr(🟢)"
 else
-    headroom_info=" | hr(🔴)"
+    headroom_info=" |  hr(🔴)"
 fi
 
 # AI Memory server status
