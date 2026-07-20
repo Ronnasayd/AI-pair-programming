@@ -36,3 +36,5 @@ alias lintfix='uv run --with claude-agent-sdk /home/ronnas/develop/personal/AI-p
 alias codeburn="npx codeburn"
 alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 headroom wrap claude --1m"
 alias tksgi="echo '.tokensave/*' >> .gitignore && echo '.headroom*' >>.gitignore"
+alias slt="bash /home/ronnas/develop/personal/AI-pair-programming/docker/litellm/start-litellm.sh"
+alias ocl="ANTHROPIC_MODEL=openrouter-nemotron-3-ultra-550b-a55b:free claude"
