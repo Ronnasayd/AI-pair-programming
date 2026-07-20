@@ -108,6 +108,7 @@ mermaid-erd
 mermaid-studio
 modular-decomposition
 modular-monolith-decomposer
+mutation-survivor-triage
 my-frontend-patterns
 my-golang-patterns
 my-golang-testing

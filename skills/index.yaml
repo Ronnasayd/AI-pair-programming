@@ -740,6 +740,19 @@ skills:
 
     '
 - name:
+  - mutation-survivor-triage
+  description: Triage Stryker mutation testing survivors (mutation-report.json) into
+    false negatives (log-only/metadata mutants with no observable behavior) vs real
+    coverage gaps (mutants affecting return values, thrown errors, persisted data,
+    or side-effecting branches). Produces a per-file consolidated table of gaps with
+    concrete test recommendations, and maps false negatives to Stryker's native suppression
+    mechanisms (disable comments, mutate globs). Use when the user says "triage mutation
+    survivors", "review Stryker report", "why did these mutants survive", "reduce
+    mutation testing false negatives", or shares a Stryker JSON/HTML report asking
+    what to fix. Do NOT use for writing tests from scratch (use tdd-workflow), for
+    non-Stryker mutation tools without adapting the jq queries first, or for general
+    test coverage gap analysis unrelated to mutation testing (use coverage-gap-audit).
+- name:
   - agent-creator
   description: Create new specialist agents, modify and improve existing agents, and
     validate agent behavior. Use when users want to create a custom agent from scratch,
