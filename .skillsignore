@@ -36,6 +36,7 @@ context-map
 context7-documentation-lookup
 copilot-sdk
 coupling-analysis
+coverage-gap-audit
 cpp-coding-standards
 cpp-testing
 create-adr
