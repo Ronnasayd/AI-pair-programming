@@ -1,3 +1,5 @@
+export AI_PROJECT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
+
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 alias iai="/usr/local/bin/init-ai" # AI context generator: initai
 alias mif="manage-ignore-files" # Manage ignore files: manage-ignore
@@ -32,9 +34,13 @@ alias cat-prtfiles='cat /tmp/hooks.log | grep -e "\[ProtectFiles\]" | bat --pagi
 alias cat-scr='cat /tmp/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=never -l log'
 alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log'
 alias mia="mif && iai --claude"
-alias lintfix='uv run --with claude-agent-sdk /home/ronnas/develop/personal/AI-pair-programming/src/sdk/lint_fix_agent.py'
+alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_DIR/src/sdk/lint_fix_agent.py'
 alias codeburn="npx codeburn"
 alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 headroom wrap claude --1m"
 alias tksgi="echo '.tokensave/*' >> .gitignore && echo '.headroom*' >>.gitignore"
-alias slt="bash /home/ronnas/develop/personal/AI-pair-programming/docker/litellm/start-litellm.sh"
+alias slt="bash $AI_PROJECT_DIR/docker/litellm/start-litellm.sh"
 alias ocl="ANTHROPIC_MODEL=openrouter-nemotron-3-ultra-550b-a55b:free claude"
+alias dms="$AI_PROJECT_DIR/scripts/disable-mcps-default.py"
+
+
+
