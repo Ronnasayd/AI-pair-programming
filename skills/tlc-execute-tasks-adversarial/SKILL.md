@@ -10,19 +10,17 @@ metadata:
 
 Main agent is orchestrator **and** adversarial-loop driver — spawns each task's executor + evaluator directly via `Agent`, applies `adversarial-dev`'s loop mechanics inline (read `skills/adversarial-dev/SKILL.md` once before Step 4, never a per-task `Skill` call). A task is `"done"` only at evaluator score 8+/10. Full dispatch model + diagram: `references/orchestrator-model.md`.
 
-Use `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` to track wave/task progress alongside taskmaster MCP updates.
-
 ## Steps
 
-| #   | Step                 | Input                                                                           | Output / Gate                                                  |
-| --- | -------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 1   | Validate & load      | `.specs/features/{TAG}/{spec,design}.md`, `.taskmaster/execution/metadata.json` | abort if any missing; else summary of what loads               |
-| 2   | Fetch pending tasks  | `mcp-manager call_tool(taskmaster-ai, get_tasks, {projectRoot, tag})`           | filter `status != completed`, sort by wave + deps              |
-| 3   | Show plan, confirm   | wave breakdown                                                                  | AskUserQuestion yes/no — no → abort                            |
-| 3.5 | Build wave groups    | `metadata.wave` per task                                                        | PARALLEL (2+ tasks/wave) vs SEQUENTIAL (1 task / no wave meta) |
-| 4   | Execute waves        | see below                                                                       | each task → done/cancelled/deferred/blocked                    |
-| 5   | Sync status per wave | `set_task_status(..., tag)` — **tag required or no-op**                         | taskmaster + tasks.json updated incrementally                  |
-| 6   | Summary              | per-wave results                                                                | user-directed next step                                        |
+| #   | Step                 | Input                                                                                                                      | Output / Gate                                                  |
+| --- | -------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 1   | Validate & load      | `.specs/features/{TAG}/{spec,design}.md`, `.taskmaster/execution/metadata.json`                                            | abort if any missing; else summary of what loads               |
+| 2   | Fetch pending tasks  | `mcp-manager call_tool(taskmaster-ai, get_tasks, {projectRoot, tag})`                                                      | filter `status != completed`, sort by wave + deps              |
+| 3   | Show plan, confirm   | wave breakdown                                                                                                             | AskUserQuestion yes/no — no → abort                            |
+| 3.5 | Build wave groups    | `metadata.wave` per task                                                                                                   | PARALLEL (2+ tasks/wave) vs SEQUENTIAL (1 task / no wave meta) |
+| 4   | Execute waves        | see below; use `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` to track wave/task progress alongside taskmaster MCP updates | each task → done/cancelled/deferred/blocked                    |
+| 5   | Sync status per wave | `set_task_status(..., tag)` — **tag required or no-op**                                                                    | taskmaster + tasks.json updated incrementally                  |
+| 6   | Summary              | per-wave results                                                                                                           | user-directed next step                                        |
 
 ## Step 4: per-wave execution
 
