@@ -2,12 +2,13 @@
 """
 Context-Refs Hook
 
-PreToolUse hook for Edit|Write. Points Claude to reference file locations that
-apply to the file about to be edited, without injecting their full contents.
+PreToolUse hook for Edit|Write. Auto-injects reference file contents into Claude
+context when a matched file is about to be edited.
 """
 
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
@@ -15,12 +16,34 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger, get_session_id_short  # noqa: E402
 
 logger = get_hooks_logger("ContextRefs")
 
 MAX_STDIN = 1024 * 1024
 CONFIG_FILE = ".claude/context-refs.json"
+DEFAULT_REFRESH_AFTER = 3
+GIT_CACHE_ROOT = Path("/tmp/context_refs_git_cache")
+
+
+def _cache_path(session_id: str) -> Path:
+    return Path(f"/tmp/context_refs_{session_id}.json")
+
+
+def _load_cache(cache_path: Path) -> dict:
+    if cache_path.exists():
+        try:
+            return json.loads(cache_path.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def _save_cache(cache_path: Path, cache: dict) -> None:
+    try:
+        cache_path.write_text(json.dumps(cache))
+    except OSError:
+        pass
 
 
 def _glob_match(file_path: str, glob: str) -> bool:
@@ -35,24 +58,75 @@ def _glob_match(file_path: str, glob: str) -> bool:
     return False
 
 
-def _extract_description(ref_path: Path) -> str:
-    """Read the `description` field from a ref file's YAML frontmatter."""
+def _git_cache_dir(repo_url: str) -> Path:
+    name = PurePosixPath(repo_url.rstrip("/")).name or "repo"
+    return GIT_CACHE_ROOT / name
+
+
+def _ensure_git_cache(repo_url: str) -> Path | None:
+    """Clone or update the cached bare mirror of the repo. Returns the cache dir on success."""
+    cache_dir = _git_cache_dir(repo_url)
     try:
-        text = ref_path.read_text()
-    except OSError:
-        return ""
+        if cache_dir.exists():
+            result = subprocess.run(
+                ["git", "--git-dir", str(cache_dir), "fetch", "--quiet", "origin"],
+                capture_output=True,
+                timeout=30,
+            )
+            return cache_dir if result.returncode == 0 else None
+        cache_dir.parent.mkdir(parents=True, exist_ok=True)
+        result = subprocess.run(
+            ["git", "clone", "--quiet", "--bare", repo_url, str(cache_dir)],
+            capture_output=True,
+            timeout=60,
+        )
+        return cache_dir if result.returncode == 0 else None
+    except (OSError, subprocess.SubprocessError):
+        return None
 
-    if not text.startswith("---"):
-        return ""
 
-    end = text.find("\n---", 3)
-    if end == -1:
-        return ""
+def _read_ref_from_git(ref: str, repo_url: str) -> str | None:
+    """Fetch a ref's content from the cached repo clone when the local file is missing."""
+    if not repo_url:
+        return None
+    rel_path = ref.replace("\\", "/")
+    cache_dir = _ensure_git_cache(repo_url)
+    if cache_dir is None:
+        return None
+    try:
+        result = subprocess.run(
+            ["git", "--git-dir", str(cache_dir), "show", f"HEAD:{rel_path}"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+        if result.returncode != 0:
+            return None
+        return result.stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
 
-    frontmatter = text[3:end]
-    for line in frontmatter.splitlines():
-        if line.startswith("description:"):
-            return line.split(":", 1)[1].strip().strip('"')
+
+def _normalize_path(path: str) -> str:
+    """Make path relative to cwd for consistent cache keys."""
+    try:
+        return str(Path(path).resolve().relative_to(Path.cwd()))
+    except ValueError:
+        return path
+
+
+def _extract_description(contents: str) -> str:
+    """Pull the `description:` field out of a file's YAML frontmatter."""
+    lines = contents.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return ""
+    for line in lines[1:]:
+        stripped = line.strip()
+        if stripped == "---":
+            break
+        if stripped.startswith("description:"):
+            value = stripped[len("description:") :].strip()
+            return value.strip('"').strip("'")
     return ""
 
 
@@ -104,12 +178,15 @@ def main() -> None:
         logger.debug("Failed to parse config %s, exiting.", CONFIG_FILE)
         sys.exit(0)
 
+    refresh_after = config.get("refresh_after", DEFAULT_REFRESH_AFTER)
+    git_repo_url = config.get("git_repo_url", "")
     rules = config.get("rules", [])
-    logger.debug("rules_count=%d", len(rules))
+    logger.debug("refresh_after=%d, rules_count=%d", refresh_after, len(rules))
 
-    # Build ordered deduplicated union of matching refs
+    # Build ordered deduplicated union of matching refs, keeping track of the glob(s)
+    # that matched each ref so we can report it as a "matcher".
     seen: set[str] = set()
-    matched_refs: list[str] = []
+    matched_refs: list[tuple[str, str]] = []
     for rule in rules:
         glob = rule.get("glob", "")
         if not glob:
@@ -121,7 +198,7 @@ def main() -> None:
         for ref in rule.get("refs", []):
             if ref not in seen:
                 seen.add(ref)
-                matched_refs.append(ref)
+                matched_refs.append((ref, glob))
 
     logger.debug("matched_refs=%s", matched_refs)
 
@@ -129,31 +206,103 @@ def main() -> None:
         logger.debug("No refs matched for %s, exiting.", rel_path)
         sys.exit(0)
 
-    refs_list_path = Path("/tmp/context-instructions")
-    lines = []
-    for ref in matched_refs:
-        description = _extract_description(Path(ref))
-        lines.append(f"{ref}: {description}" if description else ref)
-    try:
-        refs_list_path.write_text("\n".join(lines) + "\n")
-    except OSError:
-        logger.debug("Could not write refs list to %s", refs_list_path)
+    session_id = get_session_id_short(get_by_key(data, "session_id") or "")
+    cache_path = _cache_path(session_id)
+    logger.debug("session_id=%s cache_path=%s", session_id, cache_path)
+    cache = _load_cache(cache_path)
 
-    output = json.dumps(
-        {
-            "hookSpecificOutput": {
-                "hookEventName": "PreToolUse",
-                "additionalContext": (
-                    f"Reference instructions may apply to {rel_path}. "
-                    f"Check {refs_list_path} for a list of candidate reference "
-                    "files with their descriptions, then open only the ones "
-                    "relevant to this edit before proceeding."
-                ),
+    files: list[dict] = []
+    for ref, glob in matched_refs:
+        ref_key = _normalize_path(ref)
+        skip_count = cache.get(ref_key)
+        logger.debug(
+            "ref=%s skip_count=%s refresh_after=%d",
+            ref,
+            skip_count,
+            refresh_after,
+        )
+
+        if skip_count is None:
+            inject = True
+            cache[ref_key] = 0
+        elif skip_count < refresh_after:
+            inject = False
+            cache[ref_key] = skip_count + 1
+        else:
+            inject = True
+            cache[ref_key] = 0
+
+        logger.debug(
+            "ref=%s inject=%s new_skip_count=%s",
+            ref,
+            inject,
+            cache[ref_key],
+        )
+
+        if not inject:
+            continue
+
+        ref_path = Path(ref)
+        if not ref_path.is_absolute():
+            ref_path = Path.cwd() / ref_path
+
+        contents: str | None = None
+        if ref_path.exists():
+            try:
+                contents = ref_path.read_text()
+            except OSError:
+                logger.debug("Could not read ref: %s", ref)
+        else:
+            logger.debug("ref not found locally, trying git cache: %s", ref)
+            contents = _read_ref_from_git(ref, git_repo_url)
+            if contents is not None:
+                try:
+                    ref_path.parent.mkdir(parents=True, exist_ok=True)
+                    ref_path.write_text(contents)
+                    logger.debug("Saved fetched ref locally: %s", ref_path)
+                except OSError:
+                    logger.debug("Could not save ref locally: %s", ref_path)
+
+        if contents is None:
+            logger.debug("ref not found: %s", ref)
+            files.append(
+                {
+                    "matcher": glob,
+                    "description": f"WARNING: ref not found: {ref}",
+                    "location": str(ref_path),
+                }
+            )
+            continue
+
+        description = _extract_description(contents) or ref
+        logger.debug("ref=%s description=%s", ref, description)
+        files.append(
+            {
+                "matcher": glob,
+                "description": description,
+                "location": str(ref_path),
             }
-        }
-    )
-    logger.debug("Output: %s", output)
-    sys.stdout.write(output)
+        )
+
+    _save_cache(cache_path, cache)
+    logger.debug("Cache saved. files=%d.", len(files))
+
+    if files:
+        output = json.dumps(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "PreToolUse",
+                    "additionalContext": json.dumps(
+                        {
+                            "instructions": "These files contain rules. Follow rules when edit or create files of these types. Read file at `location` path for full content.",
+                            "files": files,
+                        }
+                    ),
+                }
+            }
+        )
+        logger.debug("Output: %s", output)
+        sys.stdout.write(output)
 
     sys.exit(0)
 
