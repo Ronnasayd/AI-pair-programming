@@ -765,6 +765,15 @@
     "skill_md": "semantic-commit-message/SKILL.md",
     "files": []
   },
+  "simplified-technical-english": {
+    "skill_md": "simplified-technical-english/SKILL.md",
+    "files": [
+      "reference/grammar-rules.md",
+      "reference/ste_dictionary.json",
+      "scripts/check_ste.py",
+      "scripts/extract_ste_dictionary.py"
+    ]
+  },
   "skill-advisor": {
     "skill_md": "skill-advisor/SKILL.md",
     "files": []
