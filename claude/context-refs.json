@@ -1,5 +1,5 @@
 {
-  "refresh_after": 20,
+  "refresh_after": 10,
   "git_repo_url": "https://github.com/Ronnasayd/AI-pair-programming.git",
   "rules": [
     {
