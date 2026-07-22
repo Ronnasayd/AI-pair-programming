@@ -35,6 +35,27 @@ def _glob_match(file_path: str, glob: str) -> bool:
     return False
 
 
+def _extract_description(ref_path: Path) -> str:
+    """Read the `description` field from a ref file's YAML frontmatter."""
+    try:
+        text = ref_path.read_text()
+    except OSError:
+        return ""
+
+    if not text.startswith("---"):
+        return ""
+
+    end = text.find("\n---", 3)
+    if end == -1:
+        return ""
+
+    frontmatter = text[3:end]
+    for line in frontmatter.splitlines():
+        if line.startswith("description:"):
+            return line.split(":", 1)[1].strip().strip('"')
+    return ""
+
+
 def main() -> None:
     stdin_data = ""
     try:
@@ -109,8 +130,12 @@ def main() -> None:
         sys.exit(0)
 
     refs_list_path = Path("/tmp/context-instructions")
+    lines = []
+    for ref in matched_refs:
+        description = _extract_description(Path(ref))
+        lines.append(f"{ref}: {description}" if description else ref)
     try:
-        refs_list_path.write_text("\n".join(matched_refs) + "\n")
+        refs_list_path.write_text("\n".join(lines) + "\n")
     except OSError:
         logger.debug("Could not write refs list to %s", refs_list_path)
 
@@ -120,8 +145,9 @@ def main() -> None:
                 "hookEventName": "PreToolUse",
                 "additionalContext": (
                     f"Reference instructions may apply to {rel_path}. "
-                    f"Check {refs_list_path} for the list of relevant reference "
-                    "files before editing or creating this file."
+                    f"Check {refs_list_path} for a list of candidate reference "
+                    "files with their descriptions, then open only the ones "
+                    "relevant to this edit before proceeding."
                 ),
             }
         }
