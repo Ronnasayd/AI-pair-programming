@@ -262,7 +262,7 @@
 ### **2026-05-21**
 
 - **[🧹 Chores]** Update .skillsignore to reorganize skills and remove commented entries ([a5e91e3](https://github.com/Ronnasayd/AI-pair-programming/commit/a5e91e3))
-- **[✨ Features]** Add figma-capture skill to capture screenshots and jsx from figma nodes ([5757859](https://github.com/Ronnasayd/AI-pair-programming/commit/5757859))
+- **[✨ Features]** Add figma-capture-mcp skill to capture screenshots and jsx from figma nodes ([5757859](https://github.com/Ronnasayd/AI-pair-programming/commit/5757859))
 - **[♻️ Refactoring]** Streamline symlink management for skills, commands, hooks, and agents in installation scripts ([6c2d2b2](https://github.com/Ronnasayd/AI-pair-programming/commit/6c2d2b2))
 - **[🧹 Chores]** Update symlink management for skills, prompts, hooks, agents, and instructions in copilot installation script ([37b45fe](https://github.com/Ronnasayd/AI-pair-programming/commit/37b45fe))
 - **[✨ Features]** Enable modular-monolith-decomposer in skills ignore list ([3e45331](https://github.com/Ronnasayd/AI-pair-programming/commit/3e45331))

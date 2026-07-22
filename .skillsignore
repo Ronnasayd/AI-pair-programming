@@ -63,7 +63,8 @@ exa-search
 execute-task
 extract-automation-candidates
 extract-software-requirements
-figma-capture
+figma-capture-mcp
+figma-capture-local
 figma-code-connect-components
 figma-design-system-to-tailwind
 figma-implement-design

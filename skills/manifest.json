@@ -535,8 +535,15 @@
       "scripts/extract_user_prompts.py"
     ]
   },
-  "figma-capture": {
-    "skill_md": "figma/figma-capture/SKILL.md",
+  "figma-capture-local": {
+    "skill_md": "figma/figma-capture-local/SKILL.md",
+    "files": [
+      "index.html",
+      "references/jsx-template.md"
+    ]
+  },
+  "figma-capture-mcp": {
+    "skill_md": "figma/figma-capture-mcp/SKILL.md",
     "files": [
       "index.html",
       "references/jsx-template.md"
