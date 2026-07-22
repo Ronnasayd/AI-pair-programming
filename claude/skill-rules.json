@@ -2454,11 +2454,11 @@
       ]
     },
     {
-      "skill": "figma-capture",
+      "skill": "figma-capture-mcp",
       "priority": "medium",
       "hint": "Captures a screenshot and reference JSX code from a Figma node URL and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`.",
       "keywords": [
-        "figma-capture",
+        "figma-capture-mcp",
         "capture",
         "figma",
         "screenshot",
@@ -2473,6 +2473,26 @@
         ".*figma.*",
         "(design|diagram|visualiz).*",
         "(architecture|ERD|flowchart)"
+      ]
+    },
+    {
+      "skill": "figma-capture-local",
+      "priority": "medium",
+      "hint": "Organizes a user-supplied reference image and reference code into `.figma/` for side-by-side viewing, without fetching from Figma MCP.",
+      "keywords": [
+        "figma-capture-local",
+        "reference",
+        "image",
+        "code",
+        "local",
+        "captura",
+        "referencia",
+        "imagem",
+        "organiza"
+      ],
+      "intentPatterns": [
+        "(reference|referencia).*(image|imagem|code|codigo)",
+        "(local).*(capture|captura|reference|referencia)"
       ]
     },
     {

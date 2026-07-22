@@ -1295,6 +1295,14 @@ skills:
     spacing, and components from Figma to a code-based Tailwind theme. Optimized for
     small-to-medium design systems (< 20 components) with complete token coverage.
 - name:
+  - figma-capture-mcp
+  description: Captures a screenshot and reference JSX code from a Figma node URL
+    and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the
+    user says "captura esse nó do figma", "salva a imagem e o código de [url figma]",
+    "usa o figma mcp para salvar [url]", "capture this figma node", or any variation
+    requesting to save a Figma design locally. Do NOT use for generating new designs,
+    syncing components, or code-connect mapping workflows.
+- name:
   - figma-mcp
   description: Provides instructions and workflows for using the Figma MCP (Model-Context-Protocol)
     server to interact with Figma and FigJam. Use this skill to generate designs from
@@ -1365,10 +1373,12 @@ skills:
 
     '
 - name:
-  - figma-capture
-  description: Captures a screenshot and reference JSX code from a Figma node URL
-    and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the
-    user says "captura esse nó do figma", "salva a imagem e o código de [url figma]",
-    "usa o figma mcp para salvar [url]", "capture this figma node", or any variation
-    requesting to save a Figma design locally. Do NOT use for generating new designs,
-    syncing components, or code-connect mapping workflows.
+  - figma-capture-local
+  description: Organizes a user-supplied reference image and reference code (any language/framework,
+    not fetched from Figma MCP) into `.figma/` as `<name>.png`/`<name>.jpg` and `<name>.jsx`/`<name>.<ext>`,
+    plus a JSX/preview wrapper when the source isn't already JSX. Use when the user
+    says "tenho uma imagem e um codigo de referencia", "captura isso localmente",
+    "salva essa referencia local", "organiza essa imagem e codigo como referencia",
+    "capture this local reference", or any variation providing a local reference image
+    + code pair (no Figma URL involved). Do NOT use when the source is a Figma node
+    URL — use figma-capture-mcp for that.
