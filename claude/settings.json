@@ -125,6 +125,15 @@
         ]
       },
       {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/large_file_read_warning.py"
+          }
+        ]
+      },
+      {
         "matcher": "",
         "hooks": [
           {
