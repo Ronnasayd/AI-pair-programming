@@ -18,8 +18,10 @@ ANTHROPIC_BASE_URL=http://localhost:4000
 sudo rm -f /tmp/litellm_env.sh
 echo "export ANTHROPIC_BASE_URL=$ANTHROPIC_BASE_URL" >> /tmp/litellm_env.sh
 echo "export ANTHROPIC_AUTH_TOKEN=$ANTHROPIC_AUTH_TOKEN" >> /tmp/litellm_env.sh
-echo "export ANTHROPIC_MODEL=$ANTHROPIC_MODEL" >> /tmp/litellm_env.sh
 echo "export CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1" >> /tmp/litellm_env.sh
+echo "export ANTHROPIC_DEFAULT_SONNET_MODEL=9router-high" >> /tmp/litellm_env.sh
+echo "export ANTHROPIC_DEFAULT_HAIKU_MODEL=9router-low" >> /tmp/litellm_env.sh
+echo "export ANTHROPIC_MODEL=$ANTHROPIC_MODEL" >> /tmp/litellm_env.sh
 echo "claude" >> /tmp/litellm_env.sh
 echo "✅ LiteLLM em http://$(hostname -I | awk '{print $1}'):4000"
 echo "Execute 'source /tmp/litellm_env.sh' to set environment variables for LiteLLM."
