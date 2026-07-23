@@ -39,7 +39,8 @@ alias codeburn="npx codeburn"
 alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 headroom wrap claude --1m"
 alias tksgi="echo '.tokensave/*' >> .gitignore && echo '.headroom*' >>.gitignore"
 alias slt="bash $AI_PROJECT_DIR/docker/litellm/start-litellm.sh"
-alias ocl="ANTHROPIC_MODEL=openrouter-nemotron-3-ultra-550b-a55b:free claude"
+alias 9cl="ANTHROPIC_MODEL=9router-low claude"
+alias 9ch="ANTHROPIC_MODEL=9router-high claude"
 alias dms="$AI_PROJECT_DIR/scripts/disable-mcps-default.py"
 
 
