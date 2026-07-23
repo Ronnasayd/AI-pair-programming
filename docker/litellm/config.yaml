@@ -14,6 +14,18 @@ model_list:
       model: openrouter/google/gemma-4-31b-it:free
       api_key: os.environ/OPENROUTER_API_KEY
 
+  - model_name: 9router-high
+    litellm_params:
+      model: openai/high
+      api_base: http://host.docker.internal:20128/v1
+      api_key: os.environ/NINE_ROUTER_API_KEY
+
+  - model_name: 9router-low
+    litellm_params:
+      model: openai/low
+      api_base: http://host.docker.internal:20128/v1
+      api_key: os.environ/NINE_ROUTER_API_KEY
+
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
 
