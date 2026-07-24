@@ -105,7 +105,7 @@ def run_jscpd(
 ) -> dict:
     """Run jscpd duplication check via npx. Returns {success, output, error, installed}."""
     cmd = f"npx jscpd --no-tips --exit-code 1 {str(resolved)}"
-    logger.info("[%s] Executing: %s (cwd=%s)", tag, cmd, project_root)
+    logger.debug("[%s] Executing: %s (cwd=%s)", tag, cmd, project_root)
     result = run_command_cwd(cmd, cwd=project_root)
     logger.debug("[%s] jscpd result: success=%s", tag, result["success"])
     if not result["success"]:

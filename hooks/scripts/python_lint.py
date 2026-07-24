@@ -68,11 +68,11 @@ def _run_mypy(resolved: Path, project_root: str) -> dict:
         return {"success": True, "output": "", "error": "", "installed": False}
 
     cmd = f"mypy {str(resolved)}"
-    logger.info("Executing: %s (cwd=%s)", cmd, project_root)
+    logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("mypy", [str(resolved)], cwd=project_root)
     logger.debug("mypy result: success=%s", result["success"])
     if result["success"]:
-        logger.info("mypy passed for %s", resolved)
+        logger.debug("mypy passed for %s", resolved)
     else:
         logger.warning(
             "mypy found type errors in %s:\n%s",
@@ -96,11 +96,11 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
         return {"success": True, "output": "", "error": "", "installed": False}
 
     cmd = f"ruff check {str(resolved)}"
-    logger.info("Executing: %s (cwd=%s)", cmd, project_root)
+    logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("ruff", ["check", str(resolved)], cwd=project_root)
     logger.debug("ruff result: success=%s", result["success"])
     if result["success"]:
-        logger.info("ruff passed for %s", resolved)
+        logger.debug("ruff passed for %s", resolved)
     else:
         logger.warning(
             "ruff found issues in %s:\n%s",

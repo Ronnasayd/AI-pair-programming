@@ -60,11 +60,11 @@ def _run_govet(resolved: Path, project_root: str) -> dict:
         return {"success": True, "output": "", "error": "", "installed": False}
 
     cmd = f"go vet {str(resolved)}"
-    logger.info("Executing: %s (cwd=%s)", cmd, project_root)
+    logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("go", ["vet", str(resolved)], cwd=project_root)
     logger.debug("go vet result: success=%s", result["success"])
     if result["success"]:
-        logger.info("go vet passed for %s", resolved)
+        logger.debug("go vet passed for %s", resolved)
     else:
         logger.warning(
             "go vet found issues in %s:\n%s",
@@ -88,11 +88,11 @@ def _run_golangci_lint(resolved: Path, project_root: str) -> dict:
         return {"success": True, "output": "", "error": "", "installed": False}
 
     cmd = f"golangci-lint run {str(resolved)}"
-    logger.info("Executing: %s (cwd=%s)", cmd, project_root)
+    logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("golangci-lint", ["run", str(resolved)], cwd=project_root)
     logger.debug("golangci-lint result: success=%s", result["success"])
     if result["success"]:
-        logger.info("golangci-lint passed for %s", resolved)
+        logger.debug("golangci-lint passed for %s", resolved)
     else:
         logger.warning(
             "golangci-lint found issues in %s:\n%s",
@@ -116,7 +116,7 @@ def _run_gofmt(resolved: Path, project_root: str) -> dict:
         return {"success": True, "output": "", "error": "", "installed": False}
 
     cmd = f"gofmt -l {str(resolved)}"
-    logger.info("Executing: %s (cwd=%s)", cmd, project_root)
+    logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("gofmt", ["-l", str(resolved)], cwd=project_root)
     # gofmt -l exits 0 even when files need formatting; non-empty output means unformatted.
     unformatted = bool(result.get("output", "").strip())
