@@ -667,8 +667,13 @@ def main():
     tool_input = get_by_key(payload, "tool_input")
 
     # ── 1. Direct file access (Read/Write/Edit/NotebookEdit tools)
-    file_path = get_by_key(tool_input, "file_path") or get_by_key(
-        tool_input, "notebook_path"
+    # Grep/Glob use "path" instead of "file_path" — without this, a search
+    # scoped to a protected file/dir (e.g. Grep pattern=".*" path=".env")
+    # never hits any check below and its contents leak straight through.
+    file_path = (
+        get_by_key(tool_input, "file_path")
+        or get_by_key(tool_input, "notebook_path")
+        or get_by_key(tool_input, "path")
     )
 
     if file_path:
