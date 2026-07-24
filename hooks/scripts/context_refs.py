@@ -244,7 +244,7 @@ def main() -> None:
 
         ref_path = Path(ref)
         if not ref_path.is_absolute():
-            ref_path = Path.cwd() / ref_path
+            ref_path = Path("/tmp") / ref_path
 
         contents: str | None = None
         if ref_path.exists():
