@@ -294,7 +294,7 @@ def main() -> None:
                     "hookEventName": "PreToolUse",
                     "additionalContext": json.dumps(
                         {
-                            "instructions": "These files contain rules. Follow rules when edit or create files of these types. Read file at `location` path for full content.",
+                            "instructions": "The following files contain instructions for matching file types. Before editing or creating a file, find all matching entries, read the rule file at `location`, and follow those rules.",
                             "files": files,
                         }
                     ),
