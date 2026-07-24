@@ -251,6 +251,12 @@
           },
           {
             "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
+            "timeout": 10,
+            "statusMessage": "Searching context7..."
+          },
+          {
+            "type": "command",
             "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\"",
             "timeout": 5,
             "statusMessage": "Tracking caveman mode..."
