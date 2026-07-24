@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger, read_file  # noqa: E402
+from utils import get_by_key, get_hooks_logger  # noqa: E402
 
 LOG = get_hooks_logger("QuestionToolEnforcer")
 
@@ -26,36 +26,6 @@ RULE = (
 )
 
 
-def _extract_text(content) -> str:
-    if isinstance(content, str):
-        return content
-    if isinstance(content, list):
-        return " ".join((c.get("text") or "") for c in content if isinstance(c, dict))
-    return ""
-
-
-def _last_assistant_message(transcript_path: str) -> str | None:
-    content = read_file(Path(transcript_path))
-    if not content:
-        return None
-
-    last_text = None
-    for line in content.split("\n"):
-        if not line.strip():
-            continue
-        try:
-            entry = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        if get_by_key(entry, "type") != "assistant":
-            continue
-        message = get_by_key(entry, "message") or {}
-        text = _extract_text(message.get("content"))
-        if text:
-            last_text = text
-    return last_text
-
-
 def main() -> None:
     try:
         payload = json.load(sys.stdin)
@@ -63,11 +33,7 @@ def main() -> None:
         LOG.debug(f"Failed to parse JSON: {e}")
         sys.exit(0)
 
-    transcript_path = get_by_key(payload, "transcript_path")
-    if not transcript_path:
-        sys.exit(0)
-
-    last_message = _last_assistant_message(transcript_path)
+    last_message = get_by_key(payload, "last_assistant_message")
     if not last_message or "?" not in last_message:
         sys.exit(0)
 

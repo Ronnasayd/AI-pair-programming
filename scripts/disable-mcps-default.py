@@ -21,7 +21,6 @@ disabled_mcp_servers = [
     "expo",
     "caveman-shrink",
     "mobile-mcp",
-    "context7",
     "figma",
     "github-L",
     "tokensave",
