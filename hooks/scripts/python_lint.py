@@ -62,25 +62,25 @@ def _run_mypy(resolved: Path, project_root: str) -> dict:
     """Run mypy type checking. Returns {success, output, error}."""
     if not _check_tool_installed("mypy", project_root):
         logger.debug(
-            "[PythonLint] mypy not installed, skipping type check for %s",
+            "mypy not installed, skipping type check for %s",
             resolved,
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
     cmd = f"mypy {str(resolved)}"
-    logger.info("[PythonLint] Executing: %s (cwd=%s)", cmd, project_root)
+    logger.info("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("mypy", [str(resolved)], cwd=project_root)
-    logger.debug("[PythonLint] mypy result: success=%s", result["success"])
+    logger.debug("mypy result: success=%s", result["success"])
     if result["success"]:
-        logger.info("[PythonLint] mypy passed for %s", resolved)
+        logger.info("mypy passed for %s", resolved)
     else:
         logger.warning(
-            "[PythonLint] mypy found type errors in %s:\n%s",
+            "mypy found type errors in %s:\n%s",
             resolved,
             result.get("output", ""),
         )
     if result.get("error"):
-        logger.warning("[PythonLint] mypy stderr: %s", result.get("error", ""))
+        logger.warning("mypy stderr: %s", result.get("error", ""))
     return {
         "success": result["success"],
         "output": result.get("output", ""),
@@ -92,23 +92,23 @@ def _run_mypy(resolved: Path, project_root: str) -> dict:
 def _run_ruff(resolved: Path, project_root: str) -> dict:
     """Run ruff linting. Returns {success, output, error}."""
     if not _check_tool_installed("ruff", project_root):
-        logger.debug("[PythonLint] ruff not installed, skipping lint for %s", resolved)
+        logger.debug("ruff not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
     cmd = f"ruff check {str(resolved)}"
-    logger.info("[PythonLint] Executing: %s (cwd=%s)", cmd, project_root)
+    logger.info("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("ruff", ["check", str(resolved)], cwd=project_root)
-    logger.debug("[PythonLint] ruff result: success=%s", result["success"])
+    logger.debug("ruff result: success=%s", result["success"])
     if result["success"]:
-        logger.info("[PythonLint] ruff passed for %s", resolved)
+        logger.info("ruff passed for %s", resolved)
     else:
         logger.warning(
-            "[PythonLint] ruff found issues in %s:\n%s",
+            "ruff found issues in %s:\n%s",
             resolved,
             result.get("output", ""),
         )
     if result.get("error"):
-        logger.warning("[PythonLint] ruff stderr: %s", result.get("error", ""))
+        logger.warning("ruff stderr: %s", result.get("error", ""))
     return {
         "success": result["success"],
         "output": result.get("output", ""),
@@ -134,21 +134,21 @@ def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | N
     }
 
     if not file_path:
-        logger.debug("[PythonLint] No file_path provided, skipping.")
+        logger.debug("No file_path provided, skipping.")
         return result
 
     resolved = Path(file_path).resolve()
     if not resolved.exists():
-        logger.debug("[PythonLint] File %s does not exist, skipping.", resolved)
+        logger.debug("File %s does not exist, skipping.", resolved)
         return result
 
     ext = resolved.suffix.lower()
     if ext not in _PY_EXTS:
-        logger.debug("[PythonLint] File %s not Python, skipping (%s).", resolved, ext)
+        logger.debug("File %s not Python, skipping (%s).", resolved, ext)
         return result
 
     project_root = find_project_root(str(resolved.parent))
-    logger.debug("[PythonLint] Project root for %s: %s", resolved, project_root)
+    logger.debug("Project root for %s: %s", resolved, project_root)
 
     result["mypy"] = _run_mypy(resolved, project_root)
     result["ruff"] = _run_ruff(resolved, project_root)
@@ -169,5 +169,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:  # pylint: disable=broad-exception-caught
-        logger.debug("[PythonLint] Error: %s", exc)
+        logger.debug("Error: %s", exc)
         sys.exit(0)
