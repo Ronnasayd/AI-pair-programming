@@ -33,6 +33,9 @@ def main() -> None:
         LOG.debug(f"Failed to parse JSON: {e}")
         sys.exit(0)
 
+    if get_by_key(payload, "stop_hook_active"):
+        sys.exit(0)
+
     last_message = get_by_key(payload, "last_assistant_message")
     if not last_message or "?" not in last_message:
         sys.exit(0)
