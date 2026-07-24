@@ -138,6 +138,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py"
+          },
+          {
+            "type": "command",
             "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
           },
           {
@@ -224,6 +228,10 @@
           {
             "type": "command",
             "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh"
+          },
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py"
           },
           {
             "type": "command",
