@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [[ -z "$GITHUB_PAT_TOKEN" ]]; then
+  echo "Error: GITHUB_PAT_TOKEN not defined." >&2
+  exit 1
+fi
+
 # ─── Utilitários ─────────────────────────────────────────────────────────────
 
 # Calcula o git blob SHA1 de um arquivo local

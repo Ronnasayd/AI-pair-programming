@@ -13,6 +13,7 @@ else
     sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/manage-ignore-files"
     echo "Use the command: iai"
+    exit 0
   fi
 fi
 
