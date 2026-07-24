@@ -1,19 +1,96 @@
 #!/usr/bin/python3
 import json
+import socket
+import subprocess
 import sys
+import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
 
+import numpy as np
+
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger
+from utils import get_by_key, get_hooks_logger, get_project_name
 
 LOG = get_hooks_logger("Context7Search")
 
 SEARCH_URL = "https://context7.com/api/search"
 MIN_BENCHMARK_SCORE = 70
+MIN_EMBEDDING_SIMILARITY = 0.4
 TOP_N = 3
 TIMEOUT_SECONDS = 5
+DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
+DAEMON_START_TIMEOUT = 90
+
+
+def getDaemonSocketPath() -> str:
+    return f"/tmp/embedding-daemon-{get_project_name()}.sock"
+
+
+def isDaemonRunning(sock_path: str) -> bool:
+    try:
+        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        conn.connect(sock_path)
+        conn.close()
+        return True
+    except (ConnectionRefusedError, FileNotFoundError, OSError):
+        return False
+
+
+def startDaemon(sock_path: str) -> None:
+    subprocess.Popen(
+        [sys.executable, str(DAEMON_SCRIPT)],
+        start_new_session=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    LOG.debug(f"Daemon started — socket={sock_path}")
+
+
+def waitForDaemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if isDaemonRunning(sock_path):
+            return True
+        time.sleep(0.2)
+    return False
+
+
+def encodeViaDaemon(text: str) -> np.ndarray | None:
+    sock_path = getDaemonSocketPath()
+    if not isDaemonRunning(sock_path):
+        LOG.debug("Daemon not running — starting")
+        startDaemon(sock_path)
+        if not waitForDaemon(sock_path):
+            LOG.warning("Daemon failed to start within timeout")
+            return None
+    try:
+        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        conn.connect(sock_path)
+        conn.sendall((json.dumps({"text": text}) + "\n").encode())
+        data = b""
+        while not data.endswith(b"\n"):
+            chunk = conn.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+        conn.close()
+        response = json.loads(data.decode())
+        if "error" in response:
+            LOG.warning(f"Daemon error: {response['error']}")
+            return None
+        return np.array(response["vector"], dtype=np.float32)
+    except Exception as e:
+        LOG.warning(f"Daemon communication failed: {e}")
+        return None
+
+
+def cosineSimilarity(a: np.ndarray, b: np.ndarray) -> float:
+    denom = np.linalg.norm(a) * np.linalg.norm(b)
+    if denom == 0:
+        return 0.0
+    return float(np.dot(a, b) / denom)
 
 
 def fetchResults(query: str) -> list[dict]:
@@ -24,13 +101,28 @@ def fetchResults(query: str) -> list[dict]:
     return get_by_key(payload, "results") or []
 
 
-def topResults(results: list[dict]) -> list[dict]:
+def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dict]:
     settings = [get_by_key(r, "settings") or r for r in results]
     filtered = [
         s
         for s in settings
         if (get_by_key(s, "queryBenchmarkScore") or 0) > MIN_BENCHMARK_SCORE
     ]
+
+    if query_vector is not None:
+        scored = []
+        for s in filtered:
+            description = get_by_key(s, "description") or ""
+            desc_vector = encodeViaDaemon(description) if description else None
+            similarity = (
+                cosineSimilarity(query_vector, desc_vector)
+                if desc_vector is not None
+                else 0.0
+            )
+            if similarity >= MIN_EMBEDDING_SIMILARITY:
+                scored.append(s)
+        filtered = scored
+
     filtered.sort(key=lambda s: get_by_key(s, "queryBenchmarkScore") or 0, reverse=True)
     return filtered[:TOP_N]
 
@@ -69,7 +161,11 @@ def main():
         LOG.warning(f"context7 search failed: {e}")
         sys.exit(0)
 
-    matches = topResults(results)
+    query_vector = encodeViaDaemon(prompt)
+    if query_vector is None:
+        LOG.warning("Failed to get prompt embedding — skipping similarity filter")
+
+    matches = topResults(results, query_vector)
     if not matches:
         LOG.debug("No context7 matches above benchmark threshold")
         sys.exit(0)
