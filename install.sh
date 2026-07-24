@@ -6,11 +6,13 @@ echo "Running install script: $SCRIPT_FILE"
 if [ -L "$SCRIPT_FILE" ]; then
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
 else
-  if [ ! -L "/usr/local/bin/init-ai" ]; then
+  if [ ! -L "/usr/local/bin/iai" ]; then
     bash "$(pwd)/scripts/update-external-tools.sh"
     python "$(pwd)/scripts/list_skills_agents.py"
-    sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/init-ai"
+    python "$(pwd)/scripts/build-skill-index.py"
+    sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/manage-ignore-files"
+    echo "Use the command: iai"
   fi
 fi
 

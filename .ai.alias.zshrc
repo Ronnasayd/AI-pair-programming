@@ -1,7 +1,6 @@
 export AI_PROJECT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
-alias iai="/usr/local/bin/init-ai" # AI context generator: initai
 alias mif="manage-ignore-files" # Manage ignore files: manage-ignore
 alias aims="docker run -d --name ai-memory \
     --restart unless-stopped \
