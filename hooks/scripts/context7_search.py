@@ -111,6 +111,7 @@ def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dic
 
     if query_vector is not None:
         scored = []
+        log_scores = []
         for s in filtered:
             description = get_by_key(s, "description") or ""
             desc_vector = encodeViaDaemon(description) if description else None
@@ -119,11 +120,23 @@ def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dic
                 if desc_vector is not None
                 else 0.0
             )
+            rank_score = (get_by_key(s, "queryBenchmarkScore") or 0) / 100 + similarity
+            log_scores.append((rank_score, get_by_key(s, "title")))
             if similarity >= MIN_EMBEDDING_SIMILARITY:
+                s["_rankScore"] = rank_score
                 scored.append(s)
         filtered = scored
+        log_scores.sort(key=lambda x: x[0], reverse=True)
+        LOG.debug(f"Scores: {log_scores}")
 
-    filtered.sort(key=lambda s: get_by_key(s, "queryBenchmarkScore") or 0, reverse=True)
+    filtered.sort(
+        key=lambda s: s.get(
+            "_rankScore", (get_by_key(s, "queryBenchmarkScore") or 0) / 100
+        ),
+        reverse=True,
+    )
+    for s in filtered:
+        s.pop("_rankScore", None)
     return filtered[:TOP_N]
 
 
