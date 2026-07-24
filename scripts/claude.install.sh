@@ -114,6 +114,7 @@ rm -rf $LOCAL/.mcp.json
 fi
 ln -s "$SOURCE/claude/.mcp.json" "$LOCAL/.mcp.json"
 ########################################################################################
+mkdir -p "$HOME/$DEFAULT_FOLDER"
 if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/settings.json" ]; then
 rm -rf $HOME/$DEFAULT_FOLDER/settings.json
 fi
@@ -126,7 +127,7 @@ if [ ! -f "$LOCAL_SETTINGS" ]; then
 fi
 jq --arg dir "$LOCAL" '.env.AI_PROJECT_DIR = $dir' "$LOCAL_SETTINGS" > "${LOCAL_SETTINGS}.tmp" && mv "${LOCAL_SETTINGS}.tmp" "$LOCAL_SETTINGS"
 ########################################################################################
-if ! [ -e "$LOCAL/$DEFAULT_FOLDER/context-refs.json" ]; then
+if ! [ -e "$LOCAL/$DEFAULT_FOLDER/context-refs.json" ] && ! [ -L "$LOCAL/$DEFAULT_FOLDER/context-refs.json" ]; then
 ln -s "$SOURCE/claude/context-refs.json" "$LOCAL/$DEFAULT_FOLDER/context-refs.json"
 fi
 ########################################################################################
@@ -208,6 +209,7 @@ if [ -d "$LOCAL/$DEFAULT_LOCAL_AGENTS/agents" ]; then
 fi
 ########################################################################################3
 ##########################################################################################
+mkdir -p "$HOME/.config/Code/User"
 if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
 rm $HOME/.config/Code/User/mcp.json
 fi
@@ -243,7 +245,11 @@ if ! grep -qF ".mcp.json" .gitignore; then
 fi
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
-rtk init -g
+if command -v rtk &>/dev/null; then
+  rtk init -g
+else
+  echo "Warning: rtk não encontrado no PATH, pulando 'rtk init -g'." >&2
+fi
 ##########################################################################################
 source $SOURCE/scripts/ignores.sh
 
