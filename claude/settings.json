@@ -1,4 +1,7 @@
 {
+  "toolSearch": {
+    "enabled": false
+  },
   "attribution": {
     "commit": "",
     "pr": ""
