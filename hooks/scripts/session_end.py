@@ -155,7 +155,7 @@ def extract_session_summary_claude(transcript_path: Path) -> dict | None:
 
     if parse_errors > 0:
         logger.debug(
-            "[SessionEnd] Skipped %d/%d unparseable transcript lines",
+            "Skipped %d/%d unparseable transcript lines",
             parse_errors,
             len(lines),
         )
@@ -270,7 +270,7 @@ def extract_session_summary_copilot(transcript_path: Path) -> dict | None:
 
     if parse_errors > 0:
         logger.debug(
-            "[SessionEnd] Skipped %d/%d unparseable transcript lines",
+            "Skipped %d/%d unparseable transcript lines",
             parse_errors,
             len(lines),
         )
@@ -515,7 +515,7 @@ def _update_existing_session(
         if merged:
             updated_content = merged
         else:
-            logger.debug("[SessionEnd] Failed to normalize header in %s", session_file)
+            logger.debug("Failed to normalize header in %s", session_file)
 
     if summary and updated_content:
         updated_content = _replace_summary_block(updated_content, summary)
@@ -523,7 +523,7 @@ def _update_existing_session(
     if updated_content:
         write_file(session_file, updated_content)
 
-    logger.debug("[SessionEnd] Updated session file: %s", session_file)
+    logger.debug("Updated session file: %s", session_file)
 
 
 def _create_new_session(
@@ -550,7 +550,7 @@ def _create_new_session(
     )
     template = f"{header}{SESSION_SEPARATOR}{summary_section}\n"
     write_file(session_file, template)
-    logger.debug("[SessionEnd] Created session file: %s", session_file)
+    logger.debug("Created session file: %s", session_file)
 
 
 # ---------------------------------------------------------------------------
@@ -564,7 +564,7 @@ def main() -> None:
     try:
         stdin_data = sys.stdin.read(MAX_STDIN)
     except OSError as exc:
-        logger.debug("[SessionEnd] Error reading stdin: %s", exc)
+        logger.debug("Error reading stdin: %s", exc)
 
     # Parse stdin JSON to get transcript_path
     data = {}
@@ -574,7 +574,7 @@ def main() -> None:
         if get_by_key(data, "transcript_path"):
             transcript_path = Path(get_by_key(data, "transcript_path"))
     except (json.JSONDecodeError, ValueError) as exc:
-        logger.debug("[SessionEnd] Error parsing stdin JSON: %s", exc)
+        logger.debug("Error parsing stdin JSON: %s", exc)
         # Fallback: env var for backwards compatibility
         env_path = os.environ.get("CLAUDE_TRANSCRIPT_PATH")
         if env_path:
@@ -599,7 +599,7 @@ def main() -> None:
         summary = extractor(transcript_path)
     elif transcript_path:
         transcript_path_str = str(transcript_path)
-        logger.debug("[SessionEnd] Transcript not found: %s", transcript_path)
+        logger.debug("Transcript not found: %s", transcript_path)
 
     if session_file.exists():
         _update_existing_session(
@@ -627,5 +627,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:  # pylint: disable=broad-exception-caught
-        logger.error("[SessionEnd] Error: %s", exc)
+        logger.error("Error: %s", exc)
         sys.exit(0)

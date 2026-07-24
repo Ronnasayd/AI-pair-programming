@@ -51,24 +51,22 @@ def _run_typescript(resolved: Path, project_root: str) -> dict:
     """Run TypeScript type checking. Returns {success, output, error}."""
     if not _check_tool_installed("tsc-files", project_root):
         logger.debug(
-            "[TypeScriptLint] tsc-files not installed, skipping type check for %s",
+            "t] tsc-files not installed, skipping type check for %s",
             resolved,
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
     tsc_files_bin = Path(project_root) / "node_modules" / ".bin" / "tsc-files"
     logger.debug(
-        "[TypeScriptLint] Running: %s --noEmit %s (cwd=%s)",
+        "t] Running: %s --noEmit %s (cwd=%s)",
         tsc_files_bin,
         resolved,
         project_root,
     )
     result = _exec(str(tsc_files_bin), ["--noEmit", str(resolved)], cwd=project_root)
-    logger.debug("[TypeScriptLint] tsc-files result for %s: %s", resolved, result)
+    logger.debug("t] tsc-files result for %s: %s", resolved, result)
     if not result["success"]:
-        logger.debug(
-            "[TypeScriptLint] Type errors in %s:\n%s", resolved, result.get("error", "")
-        )
+        logger.debug("t] Type errors in %s:\n%s", resolved, result.get("error", ""))
     return {
         "success": result["success"],
         "output": result.get("output", ""),
@@ -80,23 +78,21 @@ def _run_typescript(resolved: Path, project_root: str) -> dict:
 def _run_eslint(resolved: Path, project_root: str) -> dict:
     """Run ESLint checks. Returns {success, output, error}."""
     if not _check_tool_installed("eslint", project_root):
-        logger.debug(
-            "[TypeScriptLint] ESLint not installed, skipping lint for %s", resolved
-        )
+        logger.debug("t] ESLint not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
     eslint_bin = Path(project_root) / "node_modules" / ".bin" / "eslint"
     logger.debug(
-        "[TypeScriptLint] Running: %s --quiet %s (cwd=%s)",
+        "t] Running: %s --quiet %s (cwd=%s)",
         eslint_bin,
         resolved,
         project_root,
     )
     result = _exec(str(eslint_bin), ["--quiet", str(resolved)], cwd=project_root)
-    logger.debug("[TypeScriptLint] eslint result for %s: %s", resolved, result)
+    logger.debug("t] eslint result for %s: %s", resolved, result)
     if not result["success"]:
         logger.debug(
-            "[TypeScriptLint] Lint issues in %s:\n%s",
+            "t] Lint issues in %s:\n%s",
             resolved,
             result.get("output", ""),
         )
@@ -121,23 +117,21 @@ def maybe_run_typescript_lint(file_path: str | None) -> dict:
     result: dict[str, dict | None] = {"typescript": None, "eslint": None, "jscpd": None}
 
     if not file_path:
-        logger.debug("[TypeScriptLint] No file_path provided, skipping.")
+        logger.debug("t] No file_path provided, skipping.")
         return result
 
     resolved = Path(file_path).resolve()
     if not resolved.exists():
-        logger.debug("[TypeScriptLint] File %s does not exist, skipping.", resolved)
+        logger.debug("t] File %s does not exist, skipping.", resolved)
         return result
 
     ext = resolved.suffix.lower()
     if ext not in _TS_JS_EXTS:
-        logger.debug(
-            "[TypeScriptLint] File %s not JS/TS, skipping (%s).", resolved, ext
-        )
+        logger.debug("t] File %s not JS/TS, skipping (%s).", resolved, ext)
         return result
 
     project_root = find_project_root(str(resolved.parent))
-    logger.debug("[TypeScriptLint] Project root for %s: %s", resolved, project_root)
+    logger.debug("t] Project root for %s: %s", resolved, project_root)
 
     result["typescript"] = _run_typescript(resolved, project_root)
     result["eslint"] = _run_eslint(resolved, project_root)
@@ -158,5 +152,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:  # pylint: disable=broad-exception-caught
-        logger.debug("[TypeScriptLint] Error: %s", exc)
+        logger.debug("t] Error: %s", exc)
         sys.exit(0)
