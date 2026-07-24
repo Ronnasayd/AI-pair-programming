@@ -24,11 +24,12 @@ echo "export CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1" >> /tmp/litellm_env.s
 echo "export ANTHROPIC_DEFAULT_SONNET_MODEL=9router-high" >> /tmp/litellm_env.sh
 echo "export ANTHROPIC_DEFAULT_HAIKU_MODEL=9router-low" >> /tmp/litellm_env.sh
 echo "export ANTHROPIC_MODEL=$ANTHROPIC_MODEL" >> /tmp/litellm_env.sh
-echo "killall headroom && sleep 2" >> /tmp/litellm_env.sh
-echo "headroom proxy --port $HEADROOM_PORT --anthropic-api-url \$ANTHROPIC_TARGET_API_URL &" >> /tmp/litellm_env.sh
+echo "headroom proxy --port 8787 --anthropic-api-url \$ANTHROPIC_TARGET_API_URL > /dev/null 2>&1 &" >> /tmp/litellm_env.sh
 echo "sleep 1" >> /tmp/litellm_env.sh
 echo "claude" >> /tmp/litellm_env.sh
 echo "docker compose -f $DIR/docker-compose.yml down --remove-orphans" >> /tmp/litellm_env.sh
+echo "killall headroom" >> /tmp/litellm_env.sh
+echo "unset ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN ANTHROPIC_TARGET_API_URL CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_MODEL" >> /tmp/litellm_env.sh
 echo "✅ LiteLLM em http://$(hostname -I | awk '{print $1}'):4000"
 echo "✅ Headroom vai escutar em http://localhost:$HEADROOM_PORT (target: $LITELLM_BASE_URL)"
 echo "Execute 'source /tmp/litellm_env.sh' to set environment variables for LiteLLM + Headroom."
