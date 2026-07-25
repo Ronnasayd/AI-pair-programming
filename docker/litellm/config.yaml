@@ -20,6 +20,12 @@ model_list:
       api_base: http://host.docker.internal:20128/v1
       api_key: os.environ/NINE_ROUTER_API_KEY
 
+  - model_name: 9router-medium
+    litellm_params:
+      model: openai/medium
+      api_base: http://host.docker.internal:20128/v1
+      api_key: os.environ/NINE_ROUTER_API_KEY
+
   - model_name: 9router-low
     litellm_params:
       model: openai/low
