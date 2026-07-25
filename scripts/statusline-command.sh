@@ -104,6 +104,12 @@ else
     memory_status=" |  ai-mem(🔴)"
 fi
 
+if [ -f "rag-rat.toml" ] && [ ! -L "rag-rat.toml" ]; then
+    ragrat_status=" | 󱘶 rr(🟢)"
+else
+    ragrat_status=" | 󱘶 rr(🔴)"
+fi
+
 # Session cost
 cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
 cost_info=""
@@ -181,5 +187,5 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
-echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${caveman_info}${headroom_info}"
+echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${headroom_info}${ragrat_status}${caveman_info}"
 echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
