@@ -1,7 +1,4 @@
 {
-  "toolSearch": {
-    "enabled": false
-  },
   "attribution": {
     "commit": "",
     "pr": ""
@@ -357,13 +354,20 @@
     "command": "bash \"/home/ronnas/develop/personal/AI-pair-programming/scripts/statusline-command.sh\""
   },
   "enabledPlugins": {
-    "caveman@caveman": true
+    "caveman@caveman": true,
+    "rag-rat@rag-rat": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
       "source": {
         "source": "github",
         "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "rag-rat": {
+      "source": {
+        "source": "github",
+        "repo": "cq27-dev/rag-rat"
       }
     }
   },
@@ -379,5 +383,8 @@
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "voiceEnabled": false
+  "voiceEnabled": false,
+  "toolSearch": {
+    "enabled": false
+  }
 }
