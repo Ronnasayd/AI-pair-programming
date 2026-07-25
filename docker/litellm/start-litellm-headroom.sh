@@ -21,7 +21,8 @@ echo "export ANTHROPIC_BASE_URL=http://localhost:$HEADROOM_PORT" >> /tmp/litellm
 echo "export ANTHROPIC_AUTH_TOKEN=$ANTHROPIC_AUTH_TOKEN" >> /tmp/litellm_env.sh
 echo "export ANTHROPIC_TARGET_API_URL=$LITELLM_BASE_URL" >> /tmp/litellm_env.sh
 echo "export CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1" >> /tmp/litellm_env.sh
-echo "export ANTHROPIC_DEFAULT_SONNET_MODEL=9router-high" >> /tmp/litellm_env.sh
+echo "export ANTHROPIC_DEFAULT_OPUS_MODEL=9router-high" >> /tmp/litellm_env.sh
+echo "export ANTHROPIC_DEFAULT_SONNET_MODEL=9router-mediun" >> /tmp/litellm_env.sh
 echo "export ANTHROPIC_DEFAULT_HAIKU_MODEL=9router-low" >> /tmp/litellm_env.sh
 echo "export ANTHROPIC_MODEL=$ANTHROPIC_MODEL" >> /tmp/litellm_env.sh
 echo "headroom proxy --port 8787 --anthropic-api-url \$ANTHROPIC_TARGET_API_URL > /dev/null 2>&1 &" >> /tmp/litellm_env.sh
