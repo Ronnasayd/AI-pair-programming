@@ -14,7 +14,7 @@ from utils import get_hooks_logger, get_project_name  # noqa: E402
 
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 
-logger = get_hooks_logger("SessionStart")
+logger = get_hooks_logger("StartEmbedding")
 
 
 def prewarmEmbeddingDaemon() -> None:

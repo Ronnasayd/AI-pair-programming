@@ -209,7 +209,7 @@
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/session_start.py",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py",
             "timeout": 5
           }
         ]
