@@ -107,7 +107,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/ronnas/.claude/hooks/rtk-rewrite.sh"
+            "command": "/home/ronnas/.claude/hooks/rtk-rewrite.sh | tee /tmp/external-hooks.log"
           }
         ]
       },
@@ -146,7 +146,7 @@
           },
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh"
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee /tmp/external-hooks.log"
           },
           {
             "type": "command",
@@ -182,7 +182,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh"
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh | tee /tmp/external-hooks.log"
           },
           {
             "type": "command",
@@ -196,7 +196,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-activate.js\"",
+            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-activate.js\" | tee /tmp/external-hooks.log",
             "timeout": 5,
             "statusMessage": "Loading caveman mode..."
           },
@@ -216,7 +216,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh"
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | tee /tmp/external-hooks.log"
           }
         ]
       }
@@ -227,7 +227,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh"
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | tee /tmp/external-hooks.log"
           },
           {
             "type": "command",
@@ -257,7 +257,7 @@
           },
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\"",
+            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\" | tee /tmp/external-hooks.log",
             "timeout": 5,
             "statusMessage": "Tracking caveman mode..."
           },
@@ -272,7 +272,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh"
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh | tee /tmp/external-hooks.log"
           }
         ]
       }
@@ -283,7 +283,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh"
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh | tee /tmp/external-hooks.log"
           },
           {
             "type": "command",

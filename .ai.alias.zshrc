@@ -42,6 +42,6 @@ alias slth="bash $AI_PROJECT_DIR/docker/litellm/start-litellm-headroom.sh && kil
 alias 9cl="ANTHROPIC_MODEL=9router-low claude"
 alias 9ch="ANTHROPIC_MODEL=9router-high claude"
 alias dms="$AI_PROJECT_DIR/scripts/disable-mcps-default.py"
-
+alias rri="rag-rat init --yes && rag-rat hooks install"
 
 
