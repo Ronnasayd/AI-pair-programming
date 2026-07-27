@@ -1,0 +1,143 @@
+#!/usr/bin/python3
+"""
+Jest coverage report hook.
+
+After a JS/TS file is edited/created, if the project has jest and an existing
+coverage-summary.json, looks up that file's per-file coverage entry and
+surfaces it via additionalContext so the model sees current line/branch/
+function coverage for the file it just touched.
+
+Read-only: does not run jest, just reads whatever coverage data already
+exists on disk (populated by jest_coverage_incremental.py / session-end runs).
+"""
+
+import json
+import os
+import sys
+from pathlib import Path
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+
+from utils import (  # noqa: E402
+    find_last_coverage_dir,
+    find_project_root,
+    get_by_key,
+    get_hooks_logger,
+    jest_installed,
+)
+
+logger = get_hooks_logger("CoverageReport")
+
+_JS_TS_EXTS = {".js", ".jsx", ".ts", ".tsx"}
+
+
+def _load_summary_entry(
+    coverage_dir: str, resolved: Path, project_root: str
+) -> dict | None:
+    summary_file = Path(coverage_dir) / "coverage-summary.json"
+    if not summary_file.exists():
+        return None
+
+    try:
+        summary = json.loads(summary_file.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        logger.debug("Error reading %s: %s", summary_file, exc)
+        return None
+
+    candidates = {str(resolved), os.path.relpath(str(resolved), project_root)}
+    for key, entry in summary.items():
+        if key in candidates or key.endswith(str(resolved)):
+            logger.debug("Matched coverage entry for %s via key %s", resolved, key)
+            return entry
+    logger.debug("No coverage entry found for %s in %s", resolved, summary_file)
+    return None
+
+
+def _format_message(file_path: str, entry: dict) -> str:
+    lines_ = entry.get("lines", {})
+    stmts = entry.get("statements", {})
+    funcs = entry.get("functions", {})
+    branches = entry.get("branches", {})
+    return (
+        f"Jest coverage for {file_path}: "
+        f"lines {lines_.get('pct', '?')}% ({lines_.get('covered', '?')}/{lines_.get('total', '?')}), "
+        f"functions {funcs.get('pct', '?')}% ({funcs.get('covered', '?')}/{funcs.get('total', '?')}), "
+        f"branches {branches.get('pct', '?')}% ({branches.get('covered', '?')}/{branches.get('total', '?')}), "
+        f"statements {stmts.get('pct', '?')}% ({stmts.get('covered', '?')}/{stmts.get('total', '?')})."
+    )
+
+
+def build_coverage_context(file_path: str | None) -> str | None:
+    if not file_path:
+        logger.debug("No file_path in tool_input, skipping.")
+        return None
+
+    resolved = Path(file_path).resolve()
+    if not resolved.exists():
+        logger.debug("File does not exist: %s", resolved)
+        return None
+    if resolved.suffix.lower() not in _JS_TS_EXTS:
+        logger.debug("Not a JS/TS file, skipping: %s", resolved)
+        return None
+
+    project_root = find_project_root(str(resolved.parent))
+    logger.debug("Resolved project root: %s", project_root)
+    if not jest_installed(project_root):
+        logger.debug("Jest not installed in %s, skipping.", project_root)
+        return None
+
+    coverage_dir = find_last_coverage_dir(project_root)
+    logger.debug("Using coverage dir: %s", coverage_dir)
+    entry = _load_summary_entry(coverage_dir, resolved, project_root)
+    if not entry:
+        logger.debug("No coverage entry available for %s.", resolved)
+        return None
+
+    rel_path = os.path.relpath(str(resolved), project_root)
+    message = _format_message(rel_path, entry)
+    logger.debug("Built coverage context: %s", message)
+    return message
+
+
+def main() -> None:
+    max_stdin = 1024 * 1024
+    stdin_data = ""
+    try:
+        stdin_data = sys.stdin.read(max_stdin)
+    except OSError:
+        pass
+
+    try:
+        data = json.loads(stdin_data)
+        tool_input = get_by_key(data, "tool_input")
+        file_path = get_by_key(tool_input, "file_path") if tool_input else None
+        logger.debug("Received tool_input file_path: %s", file_path)
+        context = build_coverage_context(file_path)
+        if context:
+            logger.debug("Emitting additionalContext for %s", file_path)
+            print(
+                json.dumps(
+                    {
+                        "hookSpecificOutput": {
+                            "hookEventName": "PostToolUse",
+                            "additionalContext": context,
+                        }
+                    }
+                )
+            )
+        else:
+            logger.debug("No coverage context produced for %s", file_path)
+    except (json.JSONDecodeError, AttributeError) as exc:
+        logger.debug("Error parsing stdin: %s", exc)
+
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.debug("Error: %s", exc)
+        sys.exit(0)

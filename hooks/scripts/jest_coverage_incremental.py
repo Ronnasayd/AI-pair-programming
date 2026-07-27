@@ -22,6 +22,7 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
+    find_last_coverage_dir,
     find_project_root,
     get_by_key,
     get_hooks_logger,
@@ -33,16 +34,6 @@ from utils import (  # noqa: E402
 logger = get_hooks_logger("CoverageIncremental")
 
 _JS_TS_EXTS = {".js", ".jsx", ".ts", ".tsx"}
-
-
-def _find_last_coverage_dir(project_root: str) -> str:
-    """Return existing coverage dir if present, else default 'coverage'."""
-    default_dir = Path(project_root) / "coverage"
-    if default_dir.exists():
-        return str(default_dir)
-    for candidate in Path(project_root).glob("**/coverage-final.json"):
-        return str(candidate.parent)
-    return str(default_dir)
 
 
 def maybe_run_incremental_coverage(file_path: str | None) -> None:
@@ -62,7 +53,7 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
         logger.debug("Jest not installed in %s, skipping.", project_root)
         return
 
-    coverage_dir = _find_last_coverage_dir(project_root)
+    coverage_dir = find_last_coverage_dir(project_root)
     rel_path = os.path.relpath(str(resolved), project_root)
     tmp_dir = tmp_project_dir(project_root, "jest-coverage-incremental")
     partial_dir = str(tmp_dir / "partials" / rel_path.replace("/", "_"))
