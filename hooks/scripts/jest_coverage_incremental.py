@@ -89,7 +89,7 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
     partial_dir = str(tmp_dir / "partials" / rel_path.replace("/", "_"))
 
     jest_cmd = (
-        f"node_modules/.bin/jest {json.dumps(rel_path)} "
+        f"node_modules/.bin/jest --findRelatedTests {json.dumps(rel_path)} "
         f"--coverage --coverageDirectory={json.dumps(partial_dir)} "
         f"--collectCoverageFrom={json.dumps(rel_path)} --passWithNoTests"
     )
