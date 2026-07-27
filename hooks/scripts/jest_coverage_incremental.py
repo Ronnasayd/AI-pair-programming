@@ -5,8 +5,9 @@ Incremental Jest coverage hook.
 After a JS/TS file is edited, if the project has jest installed, spawns a
 detached background process that:
   1. runs jest --coverage scoped to the edited file into a partial dir
-  2. merges the partial coverage-final.json into the project's existing
-     coverage dir (via nyc merge) so total coverage stays up to date.
+  2. merges the partial coverage into the project's existing coverage dir
+     (coverage-final.json, coverage-summary.json, and the changed file's
+     lcov-report HTML page) so total coverage stays up to date.
 
 Fire-and-forget: does not block the PostToolUse hook response.
 """
@@ -95,7 +96,7 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
     )
     merge_cmd = (
         f"{json.dumps(sys.executable)} {json.dumps(str(Path(script_dir) / 'merge_coverage.py'))} "
-        f"{json.dumps(partial_dir)} {json.dumps(coverage_dir)}"
+        f"{json.dumps(partial_dir)} {json.dumps(coverage_dir)} {json.dumps(rel_path)}"
     )
 
     full_cmd = f"{jest_cmd}; {merge_cmd}"
