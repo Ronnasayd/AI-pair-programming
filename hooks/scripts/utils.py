@@ -1,9 +1,11 @@
+import hashlib
 import json
 import logging
 import os
 import re
 import subprocess
 import sys
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Mapping, Optional
@@ -270,6 +272,32 @@ def find_project_root(start_dir: str) -> str:
 
     _project_root_cache[start_dir] = start_dir
     return start_dir
+
+
+def jest_installed(project_root: str) -> bool:
+    """Check if jest binary exists in project's node_modules."""
+    return (Path(project_root) / "node_modules" / ".bin" / "jest").exists()
+
+
+def tmp_project_dir(project_root: str, namespace: str) -> Path:
+    """Per-project scratch dir under the OS tmp dir, keyed by project path hash."""
+    key = hashlib.sha1(project_root.encode()).hexdigest()[:12]
+    tmp_dir = Path(tempfile.gettempdir()) / namespace / key
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    return tmp_dir
+
+
+def spawn_background(cmd: str, cwd: str, log_path: Path) -> None:
+    """Detach a shell command so it survives after the calling process exits."""
+    with open(log_path, "ab") as log_file:
+        subprocess.Popen(
+            ["nohup", "bash", "-c", cmd],
+            cwd=cwd,
+            stdout=log_file,
+            stderr=log_file,
+            stdin=subprocess.DEVNULL,
+            start_new_session=True,
+        )
 
 
 def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
