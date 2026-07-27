@@ -143,8 +143,16 @@ def build_summary(merged_final: dict) -> dict:
 
 
 def _copy_html_report(partial_dir: Path, coverage_dir: Path, rel_path: str) -> None:
-    """Swap in the updated file's HTML page from the partial run's lcov-report."""
-    src = partial_dir / "lcov-report" / f"{rel_path}.html"
+    """Swap in the updated file's HTML page from the partial run's lcov-report.
+
+    The partial run's report only covers one file, so istanbul flattens its
+    lcov-report (no per-directory nesting) and names the page after the
+    basename only, e.g. lcov-report/AuthorizeActionMiddleware.ts.html. The
+    project's full coverage dir mirrors the source tree instead, e.g.
+    lcov-report/src/.../AuthorizeActionMiddleware.ts.html.
+    """
+    basename = Path(rel_path).name
+    src = partial_dir / "lcov-report" / f"{basename}.html"
     if not src.exists():
         return
     dst = coverage_dir / "lcov-report" / f"{rel_path}.html"
