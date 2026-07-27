@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 import os
 import sys
@@ -27,7 +28,15 @@ disabled_mcp_servers = [
     "ai-memory",
 ]
 
-config_path = Path.home() / ".claude.json"
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "config_path",
+    nargs="?",
+    default=str(Path.home() / ".claude.json"),
+    help="path to claude config json (default: ~/.claude.json)",
+)
+args = parser.parse_args()
+config_path = Path(args.config_path)
 
 with open(config_path, "r") as f:
     config = json.load(f)
