@@ -97,8 +97,12 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
         f"npx nyc merge {json.dumps(partial_dir)} {json.dumps(coverage_dir)}/coverage-final.json.tmp "
         f"&& mv {json.dumps(coverage_dir)}/coverage-final.json.tmp {json.dumps(coverage_dir)}/coverage-final.json"
     )
+    report_cmd = (
+        f"npx nyc report --temp-dir={json.dumps(coverage_dir)} "
+        f"--reporter=html --reporter=json --reporter=text-summary --report-dir={json.dumps(coverage_dir)}"
+    )
 
-    full_cmd = f"{jest_cmd}; {merge_cmd}"
+    full_cmd = f"{jest_cmd}; {merge_cmd} && {report_cmd}"
     logger.debug("Spawning background coverage update: %s", full_cmd)
     _spawn_background(full_cmd, project_root, tmp_dir)
 
