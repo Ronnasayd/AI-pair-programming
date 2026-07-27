@@ -43,5 +43,5 @@ alias 9cl="ANTHROPIC_MODEL=9router-low claude"
 alias 9ch="ANTHROPIC_MODEL=9router-high claude"
 alias dms="$AI_PROJECT_DIR/scripts/disable-mcps-default.py"
 alias rri="rag-rat init --yes && rag-rat hooks install"
-
-
+alias icl="export CLAUDE_CONFIG_DIR=~/.claude-L && ln -s $AI_PROJECT_DIR/claude/settings.json ~/.claude-L/settings.json"
+alias dmsl="$AI_PROJECT_DIR/scripts/disable-mcps-default.py ~/.claude-L/.claude.json"

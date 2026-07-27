@@ -89,6 +89,14 @@ if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
 fi
 
 # Headroom proxy status
+email_info=""
+if [ "$CLAUDE_CONFIG_DIR" == "$HOME/.claude-L" ] ; then
+    email_info=" $(cat $HOME/.claude-L/.claude.json | jq -r '.oauthAccount.emailAddress')"
+else
+    email_info=" $(cat $HOME/.claude.json | jq -r '.oauthAccount.emailAddress')"
+fi
+
+# Headroom proxy status
 headroom_info=""
 if [ -n "$ANTHROPIC_BASE_URL" ] && curl -s -o /dev/null -m 0.3 "http://127.0.0.1:8787/" 2>/dev/null; then
     headroom_info=" |  hr(🟢)"
@@ -187,5 +195,7 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
+echo -e "${email_info}"
 echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${headroom_info}${ragrat_status}${caveman_info}"
 echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
+
