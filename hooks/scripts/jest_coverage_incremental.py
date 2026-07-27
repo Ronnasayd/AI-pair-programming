@@ -93,15 +93,12 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
         f"--coverage --coverageDirectory={json.dumps(partial_dir)} "
         f"--collectCoverageFrom={json.dumps(rel_path)} --passWithNoTests"
     )
-    existing_coverage_file = str(Path(coverage_dir) / "coverage-final.json")
     merge_cmd = (
-        f"([ -f {json.dumps(existing_coverage_file)} ] && "
-        f"cp {json.dumps(existing_coverage_file)} {json.dumps(str(Path(partial_dir) / '__existing__.json'))} || true) "
-        f"&& npx nyc merge {json.dumps(partial_dir)} {json.dumps(coverage_dir)}/coverage-final.json.tmp "
+        f"npx nyc merge {json.dumps(partial_dir)} {json.dumps(coverage_dir)}/coverage-final.json.tmp "
         f"&& mv {json.dumps(coverage_dir)}/coverage-final.json.tmp {json.dumps(coverage_dir)}/coverage-final.json"
     )
     report_cmd = (
-        f"npx nyc report --temp-dir={json.dumps(coverage_dir)} "
+        f"npx nyc report --temp-dir={json.dumps(partial_dir)} "
         f"--reporter=html --reporter=json --reporter=text-summary --report-dir={json.dumps(coverage_dir)}"
     )
 
