@@ -287,6 +287,16 @@ def tmp_project_dir(project_root: str, namespace: str) -> Path:
     return tmp_dir
 
 
+def find_last_coverage_dir(project_root: str) -> str:
+    """Return existing coverage dir if present, else default 'coverage'."""
+    default_dir = Path(project_root) / "coverage"
+    if default_dir.exists():
+        return str(default_dir)
+    for candidate in Path(project_root).glob("**/coverage-final.json"):
+        return str(candidate.parent)
+    return str(default_dir)
+
+
 def spawn_background(cmd: str, cwd: str, log_path: Path) -> None:
     """Detach a shell command so it survives after the calling process exits."""
     with open(log_path, "ab") as log_file:
