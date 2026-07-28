@@ -7,6 +7,7 @@ if [ -L "$SCRIPT_FILE" ]; then
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
 else
   if [ ! -L "/usr/local/bin/iai" ]; then
+    pip install fastembed
     bash "$(pwd)/scripts/update-external-tools.sh"
     python "$(pwd)/scripts/list_skills_agents.py"
     python "$(pwd)/scripts/build-skill-index.py"
