@@ -8,10 +8,10 @@ cd "$DIR"
 docker compose down --remove-orphans
 docker compose up -d
 
-: "${AI_PROJECT_DIR:?AI_PROJECT_DIR não definida}"
+: "${AI_PROJECT_ROOT_DIR:?AI_PROJECT_ROOT_DIR não definida}"
 
 
-ANTHROPIC_MODEL="$(yq -r '.model_list[].model_name' "$AI_PROJECT_DIR/docker/litellm/config.yaml" | fzf)"
+ANTHROPIC_MODEL="$(yq -r '.model_list[].model_name' "$AI_PROJECT_ROOT_DIR/docker/litellm/config.yaml" | fzf)"
 ANTHROPIC_AUTH_TOKEN="$(grep LITELLM_MASTER_KEY "$DIR/.env" | cut -d '=' -f2 | tr -d '"')"
 ANTHROPIC_BASE_URL=http://localhost:4000
 

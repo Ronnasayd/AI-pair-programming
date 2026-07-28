@@ -370,7 +370,7 @@
   },
   "enabledPlugins": {
     "caveman@caveman": true,
-    "rag-rat@rag-rat": true
+    "rag-rat@rag-rat": false
   },
   "extraKnownMarketplaces": {
     "caveman": {
