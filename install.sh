@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 export ASDF_NODEJS_VERSION=23.11.1
 SCRIPT_FILE="${BASH_SOURCE[0]}"
-echo "Running install script: $SCRIPT_FILE"
+
 
 if [ -L "$SCRIPT_FILE" ]; then
+  echo "Script already installed: $SCRIPT_FILE"
+  echo "Building"
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
 else
   if [ ! -L "/usr/local/bin/iai" ]; then
+    echo "Running install script: $SCRIPT_FILE"
     pip install fastembed
     bash "$(pwd)/scripts/update-external-tools.sh"
     python "$(pwd)/scripts/list_skills_agents.py"
