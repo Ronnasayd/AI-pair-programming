@@ -90,6 +90,7 @@ fi
 
 # Headroom proxy status
 email_info=""
+email_color="\033[32m"
 if [ "$CLAUDE_CONFIG_DIR" == "$HOME/.claude-L" ] ; then
     email_info=" $(cat $HOME/.claude-L/.claude.json | jq -r '.oauthAccount.emailAddress')"
 else
@@ -195,7 +196,7 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
 fi
 
 # Output the complete status line
-echo -e "${email_info}"
+echo -e "${email_color}${email_info}${RESET}"
 echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${headroom_info}${ragrat_status}${caveman_info}"
 echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
 
