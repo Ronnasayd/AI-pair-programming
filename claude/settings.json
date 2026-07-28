@@ -45,7 +45,10 @@
       "Bash(jest:*)",
       "mcp__mcp-manager__list_servers",
       "mcp__mcp-manager__search_tools",
-      "mcp__mcp-manager__get_tool_schema"
+      "mcp__mcp-manager__get_tool_schema",
+      "mcp__plugin_rag-rat_rag-rat__semantic_search",
+      "mcp__context7__query-docs",
+      "mcp__context7__resolve-library-id"
     ],
     "deny": [
       "Bash(rm:*)",
