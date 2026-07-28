@@ -8,6 +8,7 @@ import signal
 import socket
 import sys
 import time
+import traceback
 from pathlib import Path
 
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -99,13 +100,22 @@ def main():
                     break
                 data += chunk
 
+            LOG.debug(f"Received {len(data)} bytes: {data!r}")
+
+            if not data:
+                LOG.warning(
+                    "Empty request — client closed connection before sending data"
+                )
+                continue
+
             request = json.loads(data.decode())
             text = request.get("text", "")
             vector = list(model.embed([text]))[0].tolist()
             response = json.dumps({"vector": vector}) + "\n"
             conn.sendall(response.encode())
         except Exception as e:
-            LOG.warning(f"Request error: {e}")
+            LOG.warning(f"Request error: {e} — raw data: {data!r}")
+            LOG.warning(traceback.format_exc())
             try:
                 conn.sendall((json.dumps({"error": str(e)}) + "\n").encode())
             except Exception:

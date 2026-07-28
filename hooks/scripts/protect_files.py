@@ -43,6 +43,7 @@ ALLOWED_PATTERNS = [
     f"{home_dir}/Desktop/*.md",
     f"{home_dir}/Desktop/*.png",
     f"{home_dir}/Desktop/*.jpeg",
+    f"{home_dir}/Desktop/*.json",
 ]
 
 PROTECTED_PATTERNS = [
