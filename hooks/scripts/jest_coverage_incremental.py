@@ -22,11 +22,13 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
+    acquire_lock,
     find_last_coverage_dir,
     find_project_root,
     get_by_key,
     get_hooks_logger,
     jest_installed,
+    lock_path_for,
     spawn_background,
     tmp_project_dir,
 )
@@ -56,6 +58,12 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
     coverage_dir = find_last_coverage_dir(project_root)
     rel_path = os.path.relpath(str(resolved), project_root)
     tmp_dir = tmp_project_dir(project_root, "jest-coverage-incremental")
+
+    lock_file = lock_path_for(tmp_dir, rel_path)
+    if not acquire_lock(lock_file):
+        logger.debug("Coverage run already in progress for %s, skipping.", rel_path)
+        return
+
     partial_dir = str(tmp_dir / "partials" / rel_path.replace("/", "_"))
 
     jest_cmd = (
@@ -68,7 +76,8 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
         f"{json.dumps(partial_dir)} {json.dumps(coverage_dir)} {json.dumps(rel_path)}"
     )
 
-    full_cmd = f"{jest_cmd}; {merge_cmd}"
+    release_cmd = f"rm -f {json.dumps(str(lock_file))}"
+    full_cmd = f"{jest_cmd}; {merge_cmd}; {release_cmd}"
     logger.debug("Spawning background coverage update: %s", full_cmd)
     spawn_background(full_cmd, project_root, tmp_dir / "coverage-incremental.log")
 
