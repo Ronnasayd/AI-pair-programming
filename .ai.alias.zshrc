@@ -1,4 +1,4 @@
-export AI_PROJECT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
+export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 alias mif="manage-ignore-files" # Manage ignore files: manage-ignore
@@ -33,15 +33,15 @@ alias cat-prtfiles='cat /tmp/hooks.log | grep -e "\[ProtectFiles\]" | bat --pagi
 alias cat-scr='cat /tmp/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=never -l log'
 alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log'
 alias mia="mif && iai --claude"
-alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_DIR/src/sdk/lint_fix_agent.py'
+alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py'
 alias codeburn="npx codeburn"
 alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 ENABLE_TOOL_SEARCH=false headroom wrap claude --1m && killall headroom"
 alias tksgi="echo '.tokensave/*' >> .gitignore && echo '.headroom*' >>.gitignore"
-alias slt="bash $AI_PROJECT_DIR/docker/litellm/start-litellm.sh"
-alias slth="bash $AI_PROJECT_DIR/docker/litellm/start-litellm-headroom.sh && killall headroom"
+alias slt="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm.sh"
+alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh && killall headroom"
 alias 9cl="ANTHROPIC_MODEL=9router-low claude"
 alias 9ch="ANTHROPIC_MODEL=9router-high claude"
-alias dms="$AI_PROJECT_DIR/scripts/disable-mcps-default.py"
+alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py"
 alias rri="rag-rat init --yes && rag-rat hooks install"
-alias icl="export CLAUDE_CONFIG_DIR=~/.claude-L && ln -s $AI_PROJECT_DIR/claude/settings.json ~/.claude-L/settings.json"
-alias dmsl="$AI_PROJECT_DIR/scripts/disable-mcps-default.py ~/.claude-L/.claude.json"
+alias icl="export CLAUDE_CONFIG_DIR=~/.claude-L && ln -s $AI_PROJECT_ROOT_DIR/claude/settings.json ~/.claude-L/settings.json"
+alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py ~/.claude-L/.claude.json"
