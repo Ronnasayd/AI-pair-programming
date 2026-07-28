@@ -26,6 +26,8 @@ from utils import (  # noqa: E402
     get_by_key,
     get_hooks_logger,
     jest_installed,
+    lock_path_for,
+    tmp_project_dir,
 )
 
 logger = get_hooks_logger("CoverageReport")
@@ -86,6 +88,16 @@ def build_coverage_context(file_path: str | None) -> str | None:
     logger.debug("Resolved project root: %s", project_root)
     if not jest_installed(project_root):
         logger.debug("Jest not installed in %s, skipping.", project_root)
+        return None
+
+    rel_path_for_lock = os.path.relpath(str(resolved), project_root)
+    tmp_dir = tmp_project_dir(project_root, "jest-coverage-incremental")
+    lock_file = lock_path_for(tmp_dir, rel_path_for_lock)
+    if lock_file.exists():
+        logger.debug(
+            "Incremental coverage run still in progress for %s, coverage may be stale.",
+            rel_path_for_lock,
+        )
         return None
 
     coverage_dir = find_last_coverage_dir(project_root)

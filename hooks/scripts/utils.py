@@ -310,6 +310,33 @@ def spawn_background(cmd: str, cwd: str, log_path: Path) -> None:
         )
 
 
+def lock_path_for(tmp_dir: Path, rel_path: str) -> Path:
+    """Lockfile path for a given project-relative file, under tmp_dir/locks."""
+    key = hashlib.sha1(rel_path.encode()).hexdigest()[:16]
+    return tmp_dir / "locks" / f"{key}.lock"
+
+
+def acquire_lock(lock_file: Path) -> bool:
+    """Create lock_file if absent or its owning PID is dead. Returns True if acquired."""
+    lock_file.parent.mkdir(parents=True, exist_ok=True)
+    if lock_file.exists():
+        try:
+            pid = int(lock_file.read_text().strip())
+            os.kill(pid, 0)
+            return False  # owner still alive
+        except (ValueError, OSError):
+            pass  # stale lock, PID dead or unreadable
+    lock_file.write_text(str(os.getpid()))
+    return True
+
+
+def release_lock(lock_file: Path) -> None:
+    try:
+        lock_file.unlink()
+    except OSError:
+        pass
+
+
 def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
     """
     Detect the formatter configured in the project.
