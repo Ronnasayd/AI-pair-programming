@@ -249,7 +249,7 @@ if command -v rtk &>/dev/null; then
   rtk init -g
 else
   echo "Warning: rtk não encontrado no PATH, pulando 'rtk init -g'." >&2
-  echo "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" >&2
+  echo "Use to install: curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" >&2
 fi
 ##########################################################################################
 source $SOURCE/scripts/ignores.sh
