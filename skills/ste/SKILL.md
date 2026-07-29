@@ -1,5 +1,5 @@
 ---
-name: simplified-technical-english
+name: ste
 description: >
   Rewrite, review, or check text against ASD-STE100 (Simplified Technical
   English), the aerospace/defense controlled-language specification. Use this
@@ -48,9 +48,9 @@ official PDF — it does not rely on the model's approximate memory of STE.
    the dictionary is the authority, not your training data.
 
    ```bash
-   python3 skills/simplified-technical-english/scripts/check_ste.py <file>
+   python3 skills/ste/scripts/check_ste.py <file>
    # or
-   echo "some text" | python3 skills/simplified-technical-english/scripts/check_ste.py -
+   echo "some text" | python3 skills/ste/scripts/check_ste.py -
    ```
 
 2. **Rewrite using suggested replacements**, but verify each substitution

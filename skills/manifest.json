@@ -772,8 +772,8 @@
     "skill_md": "semantic-commit-message/SKILL.md",
     "files": []
   },
-  "simplified-technical-english": {
-    "skill_md": "simplified-technical-english/SKILL.md",
+  "ste": {
+    "skill_md": "ste/SKILL.md",
     "files": [
       "reference/grammar-rules.md",
       "reference/ste_dictionary.json",
