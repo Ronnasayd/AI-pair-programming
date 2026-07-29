@@ -1,3 +1,9 @@
+if [ -f ~/.bashrc ] && ! grep -q "export PATH=$HOME/.local/bin:$PATH" ~/.bashrc; then
+  echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc
+fi
+if [ -f ~/.zshrc ] && ! grep -q "export PATH=$HOME/.local/bin:$PATH" ~/.zshrc; then
+  echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
+fi
 # Install uv/uvx
 curl -LsSf https://astral.sh/uv/install.sh | sh && echo "uv installation ok"
 
@@ -13,11 +19,10 @@ uv tool install  serena-agent && echo "serena installation ok"
 serena init
 
 # Install ai-memory
+mkdir -p ~/.local/bin
 curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory \
-    -o /usr/local/bin/ai-memory
-chmod +x /usr/local/bin/ai-memory
-ai-memory install-mcp   --client claude-code --apply
-ai-memory install-hooks --agent  claude-code --apply
+    -o ~/.local/bin/ai-memory
+chmod +x ~/.local/bin/ai-memory
 echo "ai-memory installation ok"
 
 
