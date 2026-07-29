@@ -9,6 +9,7 @@ if [ -L "$SCRIPT_FILE" ]; then
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
 else
   if [ ! -L "/usr/local/bin/iai" ]; then
+    SOURCE="$(dirname "$SCRIPT_FILE")"
     echo "Running install script: $SCRIPT_FILE"
     pip install fastembed
     bash "$(pwd)/scripts/update-external-tools.sh"
@@ -16,6 +17,8 @@ else
     python "$(pwd)/scripts/build-skill-index.py"
     sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/manage-ignore-files"
+    echo "add 'source $SOURCE/.ai.alias.zshrc' to your ~/.bashrc or ~/.zshrc"
+    echo "run '$SOURCE/scripts/build.sh' to add helper tools"
     echo "Use the command: iai --help"
     exit 0
   fi
@@ -26,6 +29,7 @@ export LOCAL="$(pwd)"
 # echo $SOURCE
 # echo $LOCAL
 chmod -R +x $SOURCE/hooks/scripts
+
 
 # Function to display help
 show_help() {
