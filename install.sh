@@ -17,8 +17,9 @@ else
     python "$(pwd)/scripts/build-skill-index.py"
     sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/manage-ignore-files"
-    echo "add 'source $SOURCE/.ai.alias.zshrc' to your ~/.bashrc or ~/.zshrc"
-    echo "run '$SOURCE/scripts/build.sh' to add helper tools"
+    echo "run: echo 'source $SOURCE/.ai.alias.zshrc' >> ~/.bashrc"
+    echo "run: echo 'source $SOURCE/.ai.alias.zshrc' >> ~/.zshrc"
+    echo "run: '$SOURCE/scripts/build.sh' to add helper tools"
     echo "Use the command: iai --help"
     exit 0
   fi
