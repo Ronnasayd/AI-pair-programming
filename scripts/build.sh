@@ -16,7 +16,11 @@ serena init
 curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory \
     -o /usr/local/bin/ai-memory
 chmod +x /usr/local/bin/ai-memory
-docker pull akitaonrails/ai-memory:latest
 ai-memory install-mcp   --client claude-code --apply
 ai-memory install-hooks --agent  claude-code --apply
 echo "ai-memory installation ok"
+
+
+# Install rtk
+curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh  && echo "rtk installation ok"
+rtk init -g
