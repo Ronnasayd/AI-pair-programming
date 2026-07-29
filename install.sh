@@ -11,14 +11,18 @@ else
   if [ ! -L "/usr/local/bin/iai" ]; then
     SOURCE="$(dirname "$SCRIPT_FILE")"
     echo "Running install script: $SCRIPT_FILE"
-    pip install fastembed
+    pip install fastembed 2>&1 > /dev/null && echo "fastembed ok"
     bash "$(pwd)/scripts/update-external-tools.sh"
     python "$(pwd)/scripts/list_skills_agents.py"
     python "$(pwd)/scripts/build-skill-index.py"
     sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/manage-ignore-files"
-    echo "run: echo 'source $SOURCE/.ai.alias.zshrc' >> ~/.bashrc"
-    echo "run: echo 'source $SOURCE/.ai.alias.zshrc' >> ~/.zshrc"
+    if ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo "alias at .bashrc"
+    fi
+    if ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo "alias at .zshrc"
+    fi
     echo "run: '$SOURCE/scripts/build.sh' to add helper tools"
     echo "Use the command: iai --help"
     exit 0
