@@ -11,16 +11,16 @@ else
   if [ ! -L "/usr/local/bin/iai" ]; then
     SOURCE="$(dirname "$SCRIPT_FILE")"
     echo "Running install script: $SCRIPT_FILE"
-    pip install fastembed 2>&1 > /dev/null && echo "fastembed ok"
+    pip install fastembed > /dev/null && echo "fastembed ok"
     bash "$(pwd)/scripts/update-external-tools.sh"
-    python "$(pwd)/scripts/list_skills_agents.py" 2>&1 > /dev/null && echo "list skills [ok]"
-    python "$(pwd)/scripts/build-skill-index.py" 2>&1 > /dev/null && echo "build skills [ok]"
+    python "$(pwd)/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
+    python "$(pwd)/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
     sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
-    if ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
+    if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
       echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo "alias at .bashrc"
     fi
-    if ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
+    if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
       echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo "alias at .zshrc"
     fi
     echo "run: '$SOURCE/scripts/build.sh' to add helper tools"
