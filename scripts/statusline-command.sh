@@ -97,9 +97,17 @@ else
     email_info=" $(cat $HOME/.claude.json | jq -r '.oauthAccount.emailAddress')"
 fi
 
+# Serena status
+serena_info=""
+if  pgrep -f "serena" > /dev/null; then
+    serena_info=" |  sr(🟢)"
+else
+    serena_info=" |  sr(🔴)"
+fi
+
 # Headroom proxy status
 headroom_info=""
-if [ -n "$ANTHROPIC_BASE_URL" ] && curl -s -o /dev/null -m 0.3 "http://127.0.0.1:8787/" 2>/dev/null; then
+if  pgrep -f "headroom.cli proxy" > /dev/null; then
     headroom_info=" |  hr(🟢)"
 else
     headroom_info=" |  hr(🔴)"
@@ -197,6 +205,6 @@ fi
 
 # Output the complete status line
 echo -e "${email_color}${email_info}${RESET}"
-echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${headroom_info}${ragrat_status}${caveman_info}"
+echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${serena_info}${headroom_info}${ragrat_status}${caveman_info}"
 echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
 
