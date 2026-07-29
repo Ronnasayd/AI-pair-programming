@@ -213,12 +213,16 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py",
+            "timeout": 5
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py",
-            "timeout": 5
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/start_context.py"
+          },
+          {
+            "type": "command",
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },

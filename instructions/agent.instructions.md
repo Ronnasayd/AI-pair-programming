@@ -24,6 +24,7 @@ Use this for clarifications, options, confirmations, preference checks, all user
 - **Fallback**: if no interactive tools exist, use labeled options (A, B, C... Z)
 
 If interactive tool exists, never ask plain-text question.
+If there are multiple questions, use the `grilling` skill.
 
 ## Task Tracking
 
