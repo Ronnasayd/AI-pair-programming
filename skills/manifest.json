@@ -772,15 +772,6 @@
     "skill_md": "semantic-commit-message/SKILL.md",
     "files": []
   },
-  "ste": {
-    "skill_md": "ste/SKILL.md",
-    "files": [
-      "reference/grammar-rules.md",
-      "reference/ste_dictionary.json",
-      "scripts/check_ste.py",
-      "scripts/extract_ste_dictionary.py"
-    ]
-  },
   "skill-advisor": {
     "skill_md": "skill-advisor/SKILL.md",
     "files": []
@@ -798,6 +789,19 @@
   },
   "srs-generator": {
     "skill_md": "srs-generator/SKILL.md",
+    "files": []
+  },
+  "ste": {
+    "skill_md": "ste/SKILL.md",
+    "files": [
+      "reference/grammar-rules.md",
+      "reference/ste_dictionary.json",
+      "scripts/check_ste.py",
+      "scripts/extract_ste_dictionary.py"
+    ]
+  },
+  "ste-pt": {
+    "skill_md": "ste-pt/SKILL.md",
     "files": []
   },
   "tailwind-config-conformance": {
