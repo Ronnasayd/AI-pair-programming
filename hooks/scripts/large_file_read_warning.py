@@ -79,7 +79,7 @@ def main() -> None:
                 "additionalContext": (
                     f"File {file_path} has {line_count} lines (>{LINE_THRESHOLD}). "
                     "Prefer reading only the relevant part via `offset`/`limit`, "
-                    "or use tools like Grep, rag-rat, serena to locate the section first instead of reading "
+                    "or use tools like Grep, rag-rat, serena to locate the sections instead of reading "
                     "the whole file."
                 ),
             }
