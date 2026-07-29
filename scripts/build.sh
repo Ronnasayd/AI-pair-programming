@@ -13,10 +13,9 @@ uv tool install  serena-agent && echo "serena installation ok"
 serena init
 
 # Install ai-memory
-mkdir -p ~/.local/bin
 curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory \
-    -o ~/.local/bin/ai-memory
-chmod +x ~/.local/bin/ai-memory
+    -o /usr/local/bin/ai-memory
+chmod +x /usr/local/bin/ai-memory
 docker pull akitaonrails/ai-memory:latest
 ai-memory install-mcp   --client claude-code --apply
 ai-memory install-hooks --agent  claude-code --apply
