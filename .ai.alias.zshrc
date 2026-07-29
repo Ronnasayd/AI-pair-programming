@@ -1,5 +1,3 @@
-export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
-
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 alias aims="docker run -d --name ai-memory \
     --restart unless-stopped \
@@ -45,3 +43,4 @@ alias rri="rag-rat init --yes && rag-rat hooks install"
 alias icl="export CLAUDE_CONFIG_DIR=~/.claude-L && ln -s $AI_PROJECT_ROOT_DIR/claude/settings.json ~/.claude-L/settings.json"
 alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py ~/.claude-L/.claude.json"
 alias sri="serena init"
+export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"

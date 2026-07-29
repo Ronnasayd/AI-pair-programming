@@ -9,19 +9,22 @@ if [ -L "$SCRIPT_FILE" ]; then
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
 else
   if [ ! -L "/usr/local/bin/iai" ]; then
-    SOURCE="$(dirname "$SCRIPT_FILE")"
     echo "Running install script: $SCRIPT_FILE"
+    SOURCE="$(pwd)"
+    if [ -f "$SOURCE/.ai.alias.zshrc" ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" $SOURCE/.ai.alias.zshrc; then
+      echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\""  >> $SOURCE/.ai.alias.zshrc && echo "alias add at .bashrc"
+    fi
     pip install fastembed > /dev/null && echo "fastembed ok"
-    bash "$(pwd)/scripts/update-external-tools.sh"
-    python "$(pwd)/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
-    python "$(pwd)/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
-    sudo ln -s "$(pwd)/$SCRIPT_FILE" "/usr/local/bin/iai"
-    sudo ln -s "$(pwd)/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
+    # bash "$(pwd)/scripts/update-external-tools.sh"
+    python "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
+    python "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
+    sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/iai"
+    sudo ln -s "$SOURCE/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
     if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo "alias at .bashrc"
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo "alias add at .bashrc"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo "alias at .zshrc"
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo "alias add at .zshrc"
     fi
     echo "run: '$SOURCE/scripts/build.sh' to add helper tools"
     echo "Use the command: iai --help"
