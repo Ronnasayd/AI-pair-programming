@@ -100,9 +100,9 @@ fi
 # Serena status
 serena_info=""
 if  pgrep -f "serena" > /dev/null; then
-    serena_info=" |  sr(🟢)"
+    serena_info=" | 󱁷 sr(🟢)"
 else
-    serena_info=" |  sr(🔴)"
+    serena_info=" | 󱁷 sr(🔴)"
 fi
 
 # Headroom proxy status
