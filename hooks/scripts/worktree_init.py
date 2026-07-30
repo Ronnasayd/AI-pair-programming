@@ -56,6 +56,9 @@ def main():
         LOG.warning("No worktree path in payload, skipping")
         sys.exit(0)
 
+    # WorktreeCreate contract: echo worktree path to stdout regardless of outcome
+    print(worktree_path)
+
     common_dir = git_common_dir(worktree_path)
     if not common_dir:
         LOG.warning("Could not resolve git common dir, skipping symlink")
