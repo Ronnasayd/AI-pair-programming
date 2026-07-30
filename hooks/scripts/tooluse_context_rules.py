@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-"""Generic PreToolUse hook: inject additionalContext when a rule's criteria match.
+"""Generic hook: inject additionalContext when a rule's `match(payload)` returns True.
 
-Each rule declares which tool_name it applies to and a regex tested against
-every string value found in tool_input (so it doesn't depend on knowing the
-exact field name a given tool uses, e.g. Skill's "command" field).
+Each rule gets the full raw hook payload, so matching logic isn't limited to
+a fixed set of fields (event/tool_name/tool_input/...) — add whatever check
+you need directly in the rule's `match` lambda/function.
 """
 
 import json
@@ -24,21 +24,6 @@ def read_file(filepath: str):
         return f.read()
 
 
-# Add new rules here. Each rule: tool_name to match, regex tested against any
-# tool_input value, and the additionalContext to inject when both match.
-RULES = [
-    {
-        "name": "tlc-execute-tasks",
-        "event": "PostToolUse",
-        "tool_name": "Skill",
-        "pattern": re.compile(r"^tlc-execute-tasks(-adversarial)?$"),
-        "additionalContext": read_file(
-            path.join(script_dir, "..", "markdown/TASKS.md")
-        ),
-    },
-]
-
-
 def iterStringValues(value):
     if isinstance(value, str):
         yield value
@@ -50,12 +35,44 @@ def iterStringValues(value):
             yield from iterStringValues(v)
 
 
-def matchRule(rule, hook_event_name, tool_name, tool_input):
-    if rule["event"] != hook_event_name:
-        return False
-    if tool_name != rule["tool_name"]:
-        return False
-    return any(rule["pattern"].search(v) for v in iterStringValues(tool_input))
+def toolInputMatches(payload, pattern: re.Pattern):
+    tool_input = get_by_key(payload, "tool_input") or {}
+    return any(pattern.search(v) for v in iterStringValues(tool_input))
+
+
+# Add new rules here. Each rule: a name, and a `match(payload)` predicate that
+# decides whether `additionalContext` gets injected for this hook call.
+RULES = [
+    {
+        "name": "tlc-execute-tasks",
+        "match": lambda payload: (
+            get_by_key(payload, "hook_event_name") == "PostToolUse"
+            and get_by_key(payload, "tool_name") == "Skill"
+            and toolInputMatches(
+                payload, re.compile(r"^tlc-execute-tasks(-adversarial)?$")
+            )
+        ),
+        "additionalContext": read_file(
+            path.join(script_dir, "..", "markdown/TASKS.md")
+        ),
+    },
+    {
+        "name": "plan-mode-ask-user-question-grilling",
+        "match": lambda payload: (
+            get_by_key(payload, "hook_event_name") == "PreToolUse"
+            and (
+                get_by_key(payload, "tool_name") == "AskUserQuestion"
+                or get_by_key(payload, "tool_name") == "UserPromptSubmit"
+            )
+            and get_by_key(payload, "permission_mode") == "plan"
+        ),
+        "additionalContext": (
+            "use the skill `grilling` for Grill the user relentlessly about "
+            "a plan or design. Use when the user wants to stress-test a plan "
+            "before building, or uses any 'grill' trigger phrases."
+        ),
+    },
+]
 
 
 def main():
@@ -67,19 +84,12 @@ def main():
 
     hook_event_name = get_by_key(payload, "hook_event_name")
     tool_name = get_by_key(payload, "tool_name")
-    tool_input = get_by_key(payload, "tool_input") or {}
     if not tool_name or not hook_event_name:
         sys.exit(0)
 
-    matched = [
-        rule
-        for rule in RULES
-        if matchRule(rule, hook_event_name, tool_name, tool_input)
-    ]
+    matched = [rule for rule in RULES if rule["match"](payload)]
     if not matched:
-        LOG.debug(
-            f"No rule matched event={hook_event_name!r} tool_name={tool_name!r} input={tool_input!r}"
-        )
+        # LOG.debug(f"No rule matched payload={payload!r}")
         sys.exit(0)
 
     contexts = [rule["additionalContext"] for rule in matched]
