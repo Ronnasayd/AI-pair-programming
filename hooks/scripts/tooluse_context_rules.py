@@ -16,7 +16,7 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 from utils import get_by_key, get_hooks_logger  # noqa: E402
 
-LOG = get_hooks_logger("PreToolUseContextRules")
+LOG = get_hooks_logger("ToolUseContextRules")
 
 
 def read_file(filepath: str):
@@ -29,6 +29,7 @@ def read_file(filepath: str):
 RULES = [
     {
         "name": "tlc-execute-tasks",
+        "event": "PostToolUse",
         "tool_name": "Skill",
         "pattern": re.compile(r"^tlc-execute-tasks(-adversarial)?$"),
         "additionalContext": read_file(
@@ -49,7 +50,9 @@ def iterStringValues(value):
             yield from iterStringValues(v)
 
 
-def matchRule(rule, tool_name, tool_input):
+def matchRule(rule, hook_event_name, tool_name, tool_input):
+    if rule["event"] != hook_event_name:
+        return False
     if tool_name != rule["tool_name"]:
         return False
     return any(rule["pattern"].search(v) for v in iterStringValues(tool_input))
@@ -62,14 +65,21 @@ def main():
         LOG.debug(f"Failed to parse JSON: {e}")
         sys.exit(0)
 
+    hook_event_name = get_by_key(payload, "hook_event_name")
     tool_name = get_by_key(payload, "tool_name")
     tool_input = get_by_key(payload, "tool_input") or {}
-    if not tool_name:
+    if not tool_name or not hook_event_name:
         sys.exit(0)
 
-    matched = [rule for rule in RULES if matchRule(rule, tool_name, tool_input)]
+    matched = [
+        rule
+        for rule in RULES
+        if matchRule(rule, hook_event_name, tool_name, tool_input)
+    ]
     if not matched:
-        LOG.debug(f"No rule matched tool_name={tool_name!r} input={tool_input!r}")
+        LOG.debug(
+            f"No rule matched event={hook_event_name!r} tool_name={tool_name!r} input={tool_input!r}"
+        )
         sys.exit(0)
 
     contexts = [rule["additionalContext"] for rule in matched]
@@ -77,7 +87,7 @@ def main():
 
     output = {
         "hookSpecificOutput": {
-            "hookEventName": "PreToolUse",
+            "hookEventName": hook_event_name,
             "additionalContext": "\n\n".join(contexts),
         }
     }
