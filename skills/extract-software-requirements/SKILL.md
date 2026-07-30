@@ -32,7 +32,7 @@ Phase 4's final consolidated document always saves to `docs/consolidated-require
 
 ## Examples
 
-**Single-source** — "extrai requisitos com base nos commits": Phase 2 only, dump log, read full, cluster, write, send. One file, no merge, Conflicts section limited to what's derivable from commits alone.
+**Single-source** — "extrai requisitos com base nos commits": Phase 2 only, dump log, read full, cluster, write, send. One file, no merge, Itens Abertos section limited to what's derivable from commits alone.
 
 **Full audit** — "quero um documento final cruzando specs, commits e transcrições, com conflitos": Phases 1→2→3→4 in order, each own file, Phase 4 consolidates per `references/merge-and-conflicts.md`. 4 files delivered (3 intermediate + final).
 
@@ -41,5 +41,5 @@ Phase 4's final consolidated document always saves to `docs/consolidated-require
 ## Reference files
 
 - `references/source-extraction-steps.md` — step tables for Phases 1-3 (transcript extraction script usage, commit dump verification, spec precedence rules)
-- `references/merge-and-conflicts.md` — Phase 4 precedence order, final doc structure (Requirements/Conflicts/Action checklist), RF-/RNF- ID numbering, status vocabulary (✅/🟡/❌), conflict-vs-stale-doc test, timestamp reconciliation
+- `references/merge-and-conflicts.md` — Phase 4 precedence order, final doc structure (header block + Legenda de Domínio + Requisitos/Itens Abertos/Notas de Contexto), RF-/RNF-/OPEN- ID numbering, status vocabulary (✅/🟡/❌), conflict-vs-stale-doc test, timestamp reconciliation
 - `references/troubleshooting.md` — commit/line count mismatch, `promptSource` schema drift, unorderable contradicting facts

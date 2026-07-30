@@ -8,33 +8,83 @@ Read this file when starting Phase 4 (consolidation), after Phases 1-3 have each
 
 Rationale: commits are ground truth of the currently implemented state (code that actually merged). Specs/PRD express design intent but can go stale relative to what shipped. Transcripts are the noisiest, least-reviewed signal.
 
-But **never resolve a disagreement by silently picking the higher-precedence source and discarding the other**. Every disagreement on a concrete fact (a number, a behavior, an endpoint, a threshold) goes in the Conflicts section (see below), even if precedence tells you which one is _probably_ right. Precedence only decides which side gets the "likely correct" label in the conflict entry — it does not delete the conflict.
+But **never resolve a disagreement by silently picking the higher-precedence source and discarding the other**. Every disagreement on a concrete fact (a number, a behavior, an endpoint, a threshold) goes in **2. Itens Abertos** as its own `OPEN-xx` row (see below), even if precedence tells you which one is _probably_ right. Precedence only decides which side gets the "likely correct" label in the `Decisão` column — it does not delete the item.
 
 ## Final document structure
 
-Use exactly two top-level content sections plus a checklist, never mix requirement rows with conflict prose in the same table:
+Fixed template, in this exact order. Never substitute alternate section names (no generic "Conflicts"/"Action checklist" headers):
 
-1. **Requirements (RF-xxx / RNF-xxx)** — grouped into short domain subsections (5-15 rows per table). Each row: `ID | one-line requirement | source tags (A/B/C) | status (✅ done / 🟡 partial-iterative / ❌ open)`. An ID whose status depends on an unresolved conflict gets 🟡 or ❌ and a cross-reference to the conflict entry, e.g. "ver conflito §3.2" — do not explain the conflict inline in this table.
-2. **Conflicts** — one self-contained entry per disagreement: name it, quote what each disagreeing source actually claims, state what decision/verification is still needed. Cross-reference back to the RF/RNF ID(s) it affects.
-3. **Action checklist** — one checkbox per conflict entry that implies a concrete next step. This section is a mechanical derivation of section 2; never add an item here that doesn't trace back to a conflict entry, and never let the two drift out of sync when either is edited later.
+```markdown
+# Requisitos Consolidados — <project-name>
+
+Fontes: (A) transcrições de sessão Claude Code, (B) histórico de commits, (C) specs formais/PRD (<list actual paths found>).
+
+Precedência em caso de conflito silencioso: **B (commits) > C (specs/PRD) > A (transcrições)**.
+
+Última atualização: <YYYY-MM-DD> (cobre commits até `<short-sha>` e spec `<spec-name>`).
+
+---
+
+## Legenda de Domínio
+
+| Código   | Domínio              |
+| -------- | -------------------- |
+| `<CODE>` | <domain description> |
+
+---
+
+## 1. Requisitos (RF + RNF)
+
+| ID     | Domínio  | Requisito            | Fontes              | Status                   |
+| ------ | -------- | -------------------- | ------------------- | ------------------------ |
+| RF-xxx | `<CODE>` | one-line requirement | C (...) · B (`sha`) | ✅/🟡/❌ — evidence note |
+
+---
+
+## 2. Itens Abertos
+
+| ID      | Domínio  | Descrição                     | Status           | Decisão                                |
+| ------- | -------- | ----------------------------- | ---------------- | -------------------------------------- |
+| OPEN-xx | `<CODE>` | what's unresolved/conflicting | Aberto/Resolvido | recommendation or resolution rationale |
+
+---
+
+## 3. Notas de Contexto
+
+| Nota          | Domínio  | Descrição                                                               |
+| ------------- | -------- | ----------------------------------------------------------------------- |
+| <short title> | `<CODE>` | context that isn't a requirement or open item but matters for reviewers |
+
+---
+
+_IDs seguem faixas por criação; domínio é a chave de leitura, não o ID._
+```
+
+Section rules:
+
+1. **Header block** — always present: Fontes line (list every source file/type actually used, don't include unused phases), Precedência line (fixed wording above), Última atualização line (real date + last commit sha + last spec name covered — not placeholder text).
+2. **Legenda de Domínio** — derive domain codes from the clusters found during extraction (e.g. `AUTH`, `PWD`, `SETUP`) before writing requirements; every row's Domínio column must use a code defined here.
+3. **1. Requisitos (RF + RNF)** — one row per requirement: `ID | Domínio | Requisito | Fontes | Status`. Genuine conflicts (see below) get their status cross-referenced to the matching `OPEN-xx` row instead of explained inline.
+4. **2. Itens Abertos** — replaces the old standalone "Conflicts" section. Every genuine conflict (see below) AND every unresolved decision/gap becomes one `OPEN-xx` row. Status column is `Aberto` or `Resolvido` — if `Resolvido`, the Decisão column states the resolution and why (not just "done").
+5. **3. Notas de Contexto** — non-requirement, non-conflict background a reviewer needs (e.g. migration side-effects, bootstrap mechanics) — never requirement rows or conflicts here.
 
 ## ID numbering scheme
 
-- Prefix `RF-` for functional requirements, `RNF-` for non-functional/quality requirements.
+- Prefix `RF-` for functional requirements, `RNF-` for non-functional/quality requirements, `OPEN-` for section 2 items.
 - Group ranges by subsystem/domain (e.g. `RF-040`-`RF-049` for one screen/feature area) so future insertions don't force a renumber.
-- If a source document already has its own formal IDs (`REQ-xxx`, `TASK-xxx`, `R-xx`), keep them visible inline next to the new RF/RNF ID for traceability — never discard an existing ID scheme by replacing it outright.
+- If a source document already has its own formal IDs (`REQ-xxx`, `TASK-xxx`, `R-xx`), keep them visible inline in the Fontes column next to the new RF/RNF ID for traceability — never discard an existing ID scheme by replacing it outright.
 
 ## Status vocabulary — keep exactly these three
 
 - ✅ **Implemented** — confirmed by at least one of: a commit that closes it, a spec marked done, explicit "resolved" language with no later contradiction.
-- 🟡 **Partial / iterative** — actively being tuned (e.g. a performance parameter with several follow-up commits and no final value), or status depends on an open conflict.
+- 🟡 **Partial / iterative** — actively being tuned (e.g. a performance parameter with several follow-up commits and no final value), or status depends on an open `OPEN-xx` item.
 - ❌ **Open** — reported (bug or requested feature) with no implementation evidence found in any source.
 
 Do not invent additional states — a requirement under active tuning is 🟡, not a fourth category.
 
 ## What counts as a genuine conflict (vs. just "old info")
 
-A **conflict** is two sources making a factual claim about the _same_ subject that cannot both be true at once (a threshold of 3 vs 5 attempts; portrait vs landscape; endpoint X vs endpoint Y). A **stale/superseded fact** (e.g. an old PRD documents an endpoint that was later migrated, and the migration spec + commits agree) is not a live conflict — resolve it as ✅ in the requirements table, but still note the stale document in the conflicts section as a documentation-hygiene item so someone updates it. Both belong in section 2, but phrase the second kind as "documental, not functional" so the reader doesn't waste time debating already-settled facts.
+A **conflict** is two sources making a factual claim about the _same_ subject that cannot both be true at once (a threshold of 3 vs 5 attempts; portrait vs landscape; endpoint X vs endpoint Y). A **stale/superseded fact** (e.g. an old PRD documents an endpoint that was later migrated, and the migration spec + commits agree) is not a live conflict — resolve it as ✅ in **1. Requisitos**, but still add an `OPEN-xx` row in **2. Itens Abertos** as a documentation-hygiene item so someone updates it, with `Status: Resolvido` and `Decisão` phrased as "documental, not functional" so the reader doesn't waste time debating an already-settled fact.
 
 ## Timestamp reconciliation
 
