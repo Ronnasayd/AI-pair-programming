@@ -100,7 +100,7 @@ def main():
                     break
                 data += chunk
 
-            LOG.debug(f"Received {len(data)} bytes: {data!r}")
+            # LOG.debug(f"Received {len(data)} bytes: {data!r}")
 
             if not data:
                 LOG.warning(
