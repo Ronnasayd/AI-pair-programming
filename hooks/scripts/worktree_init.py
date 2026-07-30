@@ -51,7 +51,13 @@ def main():
     except json.JSONDecodeError:
         sys.exit(0)  # erro no parse não bloqueia nada
 
-    worktree_path = get_by_key(payload, "cwd") or get_by_key(payload, "worktree_path")
+    LOG.debug("Raw payload: %s", json.dumps(payload))
+
+    worktree_path = (
+        get_by_key(payload, "worktree_path")
+        or get_by_key(payload, "path")
+        or get_by_key(payload, "cwd")
+    )
     if not worktree_path:
         LOG.warning("No worktree path in payload, skipping")
         sys.exit(0)
