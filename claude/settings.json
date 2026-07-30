@@ -107,6 +107,16 @@
   },
   "model": "haiku",
   "hooks": {
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/worktree_init.py"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
