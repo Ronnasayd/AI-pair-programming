@@ -110,7 +110,7 @@ def main():
 
             request = json.loads(data.decode())
             text = request.get("text", "")
-            LOG.debug(f"text:{text}")
+            # LOG.debug(f"text:{text}")
             vector = list(model.embed([text]))[0].tolist()
             response = json.dumps({"vector": vector}) + "\n"
             conn.sendall(response.encode())

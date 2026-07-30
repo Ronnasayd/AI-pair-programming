@@ -16,8 +16,8 @@ from utils import get_by_key, get_hooks_logger, get_project_name
 LOG = get_hooks_logger("Context7Search")
 
 SEARCH_URL = "https://context7.com/api/search"
-MIN_BENCHMARK_SCORE = 70
-MIN_EMBEDDING_SIMILARITY = 0.4
+MIN_BENCHMARK_SCORE = 80
+MIN_EMBEDDING_SIMILARITY = 0.45
 TOP_N = 3
 TIMEOUT_SECONDS = 5
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
@@ -121,7 +121,14 @@ def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dic
                 else 0.0
             )
             rank_score = (get_by_key(s, "queryBenchmarkScore") or 0) / 100 + similarity
-            log_scores.append((rank_score, get_by_key(s, "title")))
+            log_scores.append(
+                (
+                    rank_score,
+                    similarity,
+                    get_by_key(s, "queryBenchmarkScore") or 0,
+                    get_by_key(s, "title"),
+                )
+            )
             if similarity >= MIN_EMBEDDING_SIMILARITY:
                 s["_rankScore"] = rank_score
                 scored.append(s)
