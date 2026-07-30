@@ -141,6 +141,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/pretooluse_context_rules.py"
+          },
+          {
+            "type": "command",
             "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py"
           },
           {

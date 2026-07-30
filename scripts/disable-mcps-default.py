@@ -24,6 +24,7 @@ disabled_mcp_servers = [
     "mobile-mcp",
     "figma",
     "github-L",
+    "github",
     "tokensave",
     "ai-memory",
 ]
