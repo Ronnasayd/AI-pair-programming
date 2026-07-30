@@ -113,6 +113,10 @@
           {
             "type": "command",
             "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/worktree_init.py"
+          },
+          {
+            "type": "command",
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
