@@ -18,8 +18,8 @@ echo "Copying default Taskmaster reports..."
 cp -r "$SOURCE/taskmaster/reports" "$LOCAL/.taskmaster/reports"
 fi
 ############################################################################################
-## GITIGNORE
-if ! grep -q ".taskmaster/state.json" .gitignore; then
-    echo ".taskmaster/state.json" >> .gitignore
+## GIT/INFO/EXCLUDE
+if ! grep -q ".taskmaster/state.json" .git/info/exclude; then
+    echo ".taskmaster/state.json" >> .git/info/exclude
 fi
 ###########################################################################################

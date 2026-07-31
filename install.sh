@@ -167,11 +167,11 @@ for backend in "${BACKENDS[@]}"; do
 done
 
 
-if ! grep -qF ".agents/skills/*" .gitignore; then
-    echo ".agents/skills/*" >> .gitignore
+if ! grep -qF ".agents/skills/*" .git/info/exclude; then
+    echo ".agents/skills/*" >> .git/info/exclude
 fi
-if ! grep -qF "skills-lock.json" .gitignore; then
-    echo "skills-lock.json" >> .gitignore
+if ! grep -qF "skills-lock.json" .git/info/exclude; then
+    echo "skills-lock.json" >> .git/info/exclude
 fi
 
 # Copy configuration files

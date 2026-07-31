@@ -74,30 +74,30 @@ fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GITIGNORE
-if ! grep -q "$DEFAULT_FOLDER/skills/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/skills/*" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/skills/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/skills/*" >> .git/info/exclude
 fi
-if ! grep -q "$DEFAULT_FOLDER/prompts/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/prompts/*" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/prompts/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/prompts/*" >> .git/info/exclude
 fi
-if ! grep -q "$DEFAULT_FOLDER/instructions/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/instructions/*" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/instructions/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/instructions/*" >> .git/info/exclude
 fi
-if ! grep -q "$DEFAULT_FOLDER/agents/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/agents/*" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/agents/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/agents/*" >> .git/info/exclude
 fi
-if ! grep -q "$DEFAULT_FOLDER/hooks/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/hooks/*" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/hooks/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/hooks/*" >> .git/info/exclude
 fi
 ###########################################################################################
 
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
   npx -y skills add JuliusBrussee/caveman -a github-copilot --yes
-  if ! grep -q ".agents/skills/*" .gitignore; then
-      echo ".agents/skills/*" >> .gitignore
+  if ! grep -q ".agents/skills/*" .git/info/exclude; then
+      echo ".agents/skills/*" >> .git/info/exclude
   fi
-  if ! grep -q "skills-lock.json" .gitignore; then
-      echo "skills-lock.json" >> .gitignore
+  if ! grep -q "skills-lock.json" .git/info/exclude; then
+      echo "skills-lock.json" >> .git/info/exclude
   fi
 fi
 ###########################################################################################

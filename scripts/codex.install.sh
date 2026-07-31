@@ -31,11 +31,11 @@ done
 ln -s "$SOURCE/commands/"* "$HOME/.codex/prompts/"
 ###########################################################################################
 ## GITIGNORE
-if ! grep -q "AGENTS.md" .gitignore; then
-    echo "AGENTS.md" >> .gitignore
+if ! grep -q "AGENTS.md" .git/info/exclude; then
+    echo "AGENTS.md" >> .git/info/exclude
 fi
-# if ! grep -q ".codex/" .gitignore; then
-#     echo ".codex/" >> .gitignore
+# if ! grep -q ".codex/" .git/info/exclude; then
+#     echo ".codex/" >> .git/info/exclude
 # fi
 
 ###########################################################################################

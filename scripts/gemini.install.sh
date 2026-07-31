@@ -159,20 +159,20 @@ cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks"
 ########################################################################################
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
   npx -y skills add JuliusBrussee/caveman -a gemini-cli --yes
-  if ! grep -q ".agents/skills/*" .gitignore; then
-      echo ".agents/skills/*" >> .gitignore
+  if ! grep -q ".agents/skills/*" .git/info/exclude; then
+      echo ".agents/skills/*" >> .git/info/exclude
   fi
-  if ! grep -q "skills-lock.json" .gitignore; then
-      echo "skills-lock.json" >> .gitignore
+  if ! grep -q "skills-lock.json" .git/info/exclude; then
+      echo "skills-lock.json" >> .git/info/exclude
   fi
 fi
 ########################################################################################
 ## GITIGNORE
-if ! grep -q "GEMINI.md" .gitignore; then
-    echo "GEMINI.md" >> .gitignore
+if ! grep -q "GEMINI.md" .git/info/exclude; then
+    echo "GEMINI.md" >> .git/info/exclude
 fi
-if ! grep -q "$DEFAULT_FOLDER/" .gitignore; then
-    echo "$DEFAULT_FOLDER/" >> .gitignore
+if ! grep -q "$DEFAULT_FOLDER/" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/" >> .git/info/exclude
 fi
 ###########################################################################################
 
