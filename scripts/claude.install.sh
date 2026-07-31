@@ -216,32 +216,32 @@ fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GITIGNORE
-if ! grep -qF "$DEFAULT_FOLDER/skills/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/skills/*" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/skills/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/skills/*" >> .git/info/exclude
 fi
-if ! grep -qF "$DEFAULT_FOLDER/commands/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/commands/*" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/commands/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/commands/*" >> .git/info/exclude
 fi
-if ! grep -qF "$DEFAULT_FOLDER/instructions/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/instructions/*" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/instructions/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/instructions/*" >> .git/info/exclude
 fi
-if ! grep -qF "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" >> .git/info/exclude
 fi
-if ! grep -qF "$DEFAULT_FOLDER/hooks/*" .gitignore; then
-    echo "$DEFAULT_FOLDER/hooks/*" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/hooks/*" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/hooks/*" >> .git/info/exclude
 fi
-if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
-    echo "$DEFAULT_FOLDER/context-refs.json" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/context-refs.json" >> .git/info/exclude
 fi
-if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .gitignore; then
-    echo "$DEFAULT_FOLDER/context-refs.json" >> .gitignore
+if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .git/info/exclude; then
+    echo "$DEFAULT_FOLDER/context-refs.json" >> .git/info/exclude
 fi
-if ! grep -qF "skills.db" .gitignore; then
-    echo "skills.db" >> .gitignore
+if ! grep -qF "skills.db" .git/info/exclude; then
+    echo "skills.db" >> .git/info/exclude
 fi
-if ! grep -qF ".mcp.json" .gitignore; then
-    echo ".mcp.json" >> .gitignore
+if ! grep -qF ".mcp.json" .git/info/exclude; then
+    echo ".mcp.json" >> .git/info/exclude
 fi
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
@@ -257,19 +257,19 @@ source $SOURCE/scripts/ignores.sh
 ###########################################################################################
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
   npx -y skills add JuliusBrussee/caveman -a claude-code --yes
-  if ! grep -q ".agents/skills/*" .gitignore; then
-      echo ".agents/skills/*" >> .gitignore
+  if ! grep -q ".agents/skills/*" .git/info/exclude; then
+      echo ".agents/skills/*" >> .git/info/exclude
   fi
-  if ! grep -q "skills-lock.json" .gitignore; then
-      echo "skills-lock.json" >> .gitignore
+  if ! grep -q "skills-lock.json" .git/info/exclude; then
+      echo "skills-lock.json" >> .git/info/exclude
   fi
 fi
 ########################################################################################
 ## GITIGNORE
-# if ! grep -q "CLAUDE.md" .gitignore; then
-#     echo "CLAUDE.md" >> .gitignore
+# if ! grep -q "CLAUDE.md" .git/info/exclude; then
+#     echo "CLAUDE.md" >> .git/info/exclude
 # fi
-# if ! grep -q ".mcp.json" .gitignore; then
-#     echo ".mcp.json" >> .gitignore
+# if ! grep -q ".mcp.json" .git/info/exclude; then
+#     echo ".mcp.json" >> .git/info/exclude
 # fi
 ###########################################################################################

@@ -194,27 +194,3 @@ node_modules/
 *.sw?
 # OS specific
 .DS_Store
-
-.claude/skills/*
-.claude/commands/*
-.claude/instructions/*
-.claude/agents/*
-.claude/hooks/*
-.claude/context-refs.json
-.rulesignore
-.skillsignore
-.agentsignore
-.agents/skills/*
-skills.db
-skills-lock.json
-.specs/features/*
-.taskmaster/*
-docs/agents/*
-docs/plans/*
-.mcp.json
-!.mcp.json
-.figma/*
-.tokensave/*
-.headroom*
-rag-rat*
-.serena/*

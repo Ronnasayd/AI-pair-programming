@@ -367,10 +367,6 @@
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_session_end.py"
-          },
-          {
-            "type": "command",
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
