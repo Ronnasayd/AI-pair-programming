@@ -18,10 +18,12 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
+    acquire_lock,
     find_project_root,
     get_by_key,
     get_hooks_logger,
     jest_installed,
+    lock_path_for,
     spawn_background,
     tmp_project_dir,
 )
@@ -35,9 +37,17 @@ def maybe_run_full_coverage(project_root: str) -> None:
         return
 
     tmp_dir = tmp_project_dir(project_root, "jest-coverage-session-end")
+
+    lock_file = lock_path_for(tmp_dir, "full-coverage")
+    if not acquire_lock(lock_file):
+        logger.debug("Full coverage run already in progress for %s, skipping.", project_root)
+        return
+
+    release_cmd = f"rm -f {json.dumps(str(lock_file))}"
     jest_cmd = "node_modules/.bin/jest --coverage --passWithNoTests"
+    full_cmd = f"{jest_cmd}; {release_cmd}"
     logger.debug("Spawning background full coverage run: %s", jest_cmd)
-    spawn_background(jest_cmd, project_root, tmp_dir / "coverage-session-end.log")
+    spawn_background(full_cmd, project_root, tmp_dir / "coverage-session-end.log")
 
 
 def main() -> None:
