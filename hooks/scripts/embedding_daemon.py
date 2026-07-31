@@ -83,7 +83,9 @@ def main():
 
     while True:
         if time.monotonic() - last_activity > INACTIVITY_TIMEOUT:
-            LOG.debug("Inactivity timeout — exiting")
+            LOG.debug(
+                f"Inactivity timeout — exiting: {time.monotonic() - last_activity} > {INACTIVITY_TIMEOUT}"
+            )
             shutdown(None, None)
 
         try:
