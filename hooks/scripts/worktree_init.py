@@ -53,17 +53,14 @@ def main():
 
     LOG.debug("Raw payload: %s", json.dumps(payload))
 
+    tool_response = get_by_key(payload, "tool_response")
     worktree_path = (
-        get_by_key(payload, "worktree_path")
-        or get_by_key(payload, "path")
-        or get_by_key(payload, "cwd")
+        get_by_key(tool_response, "worktree_path") if tool_response else None
     )
-    if not worktree_path:
-        LOG.warning("No worktree path in payload, skipping")
-        sys.exit(0)
 
-    # WorktreeCreate contract: echo worktree path to stdout regardless of outcome
-    print(worktree_path)
+    if not worktree_path:
+        LOG.warning("No worktree_path in tool_response, skipping")
+        sys.exit(0)
 
     common_dir = git_common_dir(worktree_path)
     if not common_dir:
