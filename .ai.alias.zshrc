@@ -15,9 +15,9 @@ alias aimsllm='docker run -d --name ai-memory \
     -e AI_MEMORY_LLM_PROVIDER=anthropic-oauth \
     -e AI_MEMORY_AUTH_TOKEN=$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2) \
     -e CLAUDE_CODE_OAUTH_TOKEN=$(grep CLAUDE_CODE_OAUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2) \
-    akitaonrails/ai-memory:latest' # Start AI Memory container: ai-memory-start
-alias aimh='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp"  && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374"'
-alias aimhllm='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)" && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)"'
+    akitaonrails/ai-memory:latest' # Start AI Memory container using LLM-backed mode: ai-memory-start-llm
+alias aimh='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp"  && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374"' # Install AI Memory MCP + hooks into Claude Code: ai-memory-hooks
+alias aimhllm='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)" && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)"' # Install AI Memory MCP + hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias claude-yolo="claude --dangerously-skip-permissions" # Claude with no permission prompts: yolo
 alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills
@@ -25,29 +25,28 @@ alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesig
 alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'" # Show agents: show-agents
 alias clc="claude --model haiku -p 'Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made.'" # Commit message generator: commit-create
 alias lgh="touch /tmp/hooks.log && tail -f /tmp/hooks.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
-alias cat-pylint='cat /tmp/hooks.log | grep -e "\[PythonLint\]" | bat --paging=never -l log'
-alias cat-tslint='cat /tmp/hooks.log | grep -e "\[TypeScriptLint\]" | bat --paging=never -l log'
-alias cat-golint='cat /tmp/hooks.log | grep -e "\[GolangLint\]" | bat --paging=never -l log'
-alias cat-ctxrefs='cat /tmp/hooks.log | grep -e "\[ContextRefs\]" | bat --paging=never -l log'
-alias cat-prtfiles='cat /tmp/hooks.log | grep -e "\[ProtectFiles\]" | bat --paging=never -l log'
-alias cat-scr='cat /tmp/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=never -l log'
-alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log'
-alias mia="mif && iai --claude"
-alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py'
-alias codeburn="npx codeburn"
-alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 ENABLE_TOOL_SEARCH=false headroom wrap claude --1m -- "
-alias tksgi="echo '.tokensave/*' >> .git/info/exclude && echo '.headroom*' >> .git/info/exclude"
-alias slt="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm.sh"
-alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh"
-alias 9cl="ANTHROPIC_MODEL=9router-low claude"
-alias 9ch="ANTHROPIC_MODEL=9router-high claude"
-alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py"
-alias rri="rag-rat init --yes && rag-rat hooks install"
-alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py ~/.claude-L/.claude.json"
-alias sri="serena init"
-alias cfie="code .git/info/exclude"
-alias osd="xdg-open http://localhost:24282/dashboard/"
-alias afa="npx agent-flow-app"
-alias sca="select-account"
+alias cat-pylint='cat /tmp/hooks.log | grep -e "\[PythonLint\]" | bat --paging=never -l log' # Show PythonLint hook log lines: cat-pylint
+alias cat-tslint='cat /tmp/hooks.log | grep -e "\[TypeScriptLint\]" | bat --paging=never -l log' # Show TypeScriptLint hook log lines: cat-tslint
+alias cat-golint='cat /tmp/hooks.log | grep -e "\[GolangLint\]" | bat --paging=never -l log' # Show GolangLint hook log lines: cat-golint
+alias cat-ctxrefs='cat /tmp/hooks.log | grep -e "\[ContextRefs\]" | bat --paging=never -l log' # Show ContextRefs hook log lines: cat-ctxrefs
+alias cat-prtfiles='cat /tmp/hooks.log | grep -e "\[ProtectFiles\]" | bat --paging=never -l log' # Show ProtectFiles hook log lines: cat-prtfiles
+alias cat-scr='cat /tmp/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=never -l log' # Show SimilarCodeRef hook log lines: cat-scr
+alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log' # Show SkillActivation hook log lines: cat-sa
+alias mia="mif && iai --claude" # Run mif then launch iai with Claude backend: mif-iai-claude
+alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py' # Run AI lint-fix agent script: lint-fix
+alias codeburn="npx codeburn" # Run codeburn CLI via npx: codeburn
+alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 ENABLE_TOOL_SEARCH=false headroom wrap claude --1m -- " # Run Claude wrapped by headroom with 1M context, tool search disabled: headroom-wrap-claude
+alias tksgi="echo '.tokensave/*' >> .git/info/exclude && echo '.headroom*' >> .git/info/exclude" # Ignore tokensave/headroom artifacts locally: tokensave-gitignore
+alias slt="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm.sh" # Start local LiteLLM proxy: start-litellm
+alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh" # Start local LiteLLM proxy with headroom: start-litellm-headroom
+alias 9cl="ANTHROPIC_MODEL=9router-low claude" # Run Claude via 9router low-cost model tier: 9router-claude-low
+alias 9ch="ANTHROPIC_MODEL=9router-high claude" # Run Claude via 9router high-cost model tier: 9router-claude-high
+alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py" # Disable default MCP servers: disable-mcps
+alias rri="rag-rat init --yes && rag-rat hooks install" # Init rag-rat and install its hooks: rag-rat-init
+alias sri="serena init" # Init serena in current project: serena-init
+alias cfie="code .git/info/exclude" # Open git local exclude file in editor: code-info-exclude
+alias osd="xdg-open http://localhost:24282/dashboard/" # Open opencode-supervisor dashboard: opencode-supervisor-dashboard
+alias afa="npx agent-flow-app" # Run agent-flow-app via npx: agent-flow-app
+alias sca="select-account" # Shortcut for select-account function: select-account
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
