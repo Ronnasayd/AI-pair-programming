@@ -1,3 +1,6 @@
+select-account() {
+  $AI_PROJECT_ROOT_DIR/scripts/claude-oauth/set.py $(ls "$HOME/.claude/oauthAccounts" | fzf)
+}
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 alias aims="docker run -d --name ai-memory \
     --restart unless-stopped \
@@ -40,9 +43,11 @@ alias 9cl="ANTHROPIC_MODEL=9router-low claude"
 alias 9ch="ANTHROPIC_MODEL=9router-high claude"
 alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py"
 alias rri="rag-rat init --yes && rag-rat hooks install"
-alias icl="export CLAUDE_CONFIG_DIR=~/.claude-L && ln -s $AI_PROJECT_ROOT_DIR/claude/settings.json ~/.claude-L/settings.json"
 alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py ~/.claude-L/.claude.json"
 alias sri="serena init"
 alias cfie="code .git/info/exclude"
 alias osd="xdg-open http://localhost:24282/dashboard/"
+alias afa="npx agent-flow-app"
+alias sca="select-account"
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
+
