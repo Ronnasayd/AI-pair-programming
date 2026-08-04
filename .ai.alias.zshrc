@@ -44,4 +44,5 @@ alias icl="export CLAUDE_CONFIG_DIR=~/.claude-L && ln -s $AI_PROJECT_ROOT_DIR/cl
 alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py ~/.claude-L/.claude.json"
 alias sri="serena init"
 alias cfie="code .git/info/exclude"
+alias osd="xdg-open http://localhost:24282/dashboard/"
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
