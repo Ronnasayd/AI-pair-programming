@@ -1,7 +1,4 @@
 {
-  "worktree": {
-    "baseRef": "head"
-  },
   "attribution": {
     "commit": "",
     "pr": ""
@@ -163,6 +160,15 @@
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -220,6 +226,15 @@
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -254,6 +269,15 @@
             "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | tee /tmp/external-hooks.log"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "Stop": [
@@ -271,6 +295,15 @@
           {
             "type": "command",
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
           }
         ]
       }
@@ -340,6 +373,15 @@
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "SubagentStop": [
@@ -353,6 +395,15 @@
           {
             "type": "command",
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
           }
         ]
       }
@@ -370,6 +421,15 @@
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "InstructionsLoaded": [
@@ -382,7 +442,32 @@
           }
         ]
       }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "timeout": 2
+          }
+        ]
+      }
     ]
+  },
+  "worktree": {
+    "baseRef": "head"
   },
   "statusLine": {
     "type": "command",
@@ -407,7 +492,7 @@
     }
   },
   "alwaysThinkingEnabled": false,
-  "effortLevel": "low",
+  "effortLevel": "medium",
   "plansDirectory": "./docs/plans/",
   "voice": {
     "enabled": false,
