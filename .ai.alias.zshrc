@@ -32,10 +32,10 @@ alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=
 alias mia="mif && iai --claude"
 alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py'
 alias codeburn="npx codeburn"
-alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 ENABLE_TOOL_SEARCH=false headroom wrap claude --1m && killall headroom"
+alias hwc="ANTHROPIC_MODEL=claude-sonnet-5 ENABLE_TOOL_SEARCH=false headroom wrap claude --1m -- "
 alias tksgi="echo '.tokensave/*' >> .git/info/exclude && echo '.headroom*' >> .git/info/exclude"
 alias slt="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm.sh"
-alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh && killall headroom"
+alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh"
 alias 9cl="ANTHROPIC_MODEL=9router-low claude"
 alias 9ch="ANTHROPIC_MODEL=9router-high claude"
 alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py"
