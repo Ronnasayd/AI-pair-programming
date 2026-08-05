@@ -39,6 +39,7 @@ alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh" 
 alias 9cl="ANTHROPIC_MODEL=9router-low claude" # Run Claude via 9router low-cost model tier: 9router-claude-low
 alias 9ch="ANTHROPIC_MODEL=9router-high claude" # Run Claude via 9router high-cost model tier: 9router-claude-high
 alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py" # Disable default MCP servers: disable-mcps
+alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py $HOME/.claude-L/.claude.json" # Disable default MCP servers: disable-mcps
 alias rri="rag-rat init --yes && rag-rat hooks install" # Init rag-rat and install its hooks: rag-rat-init
 alias sri="serena init" # Init serena in current project: serena-init
 alias cfie="code .git/info/exclude" # Open git local exclude file in editor: code-info-exclude
