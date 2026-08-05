@@ -12,7 +12,42 @@ import traceback
 from pathlib import Path
 
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+SPACY_MODELS = {"pt": "pt_core_news_sm", "en": "en_core_web_sm"}
 INACTIVITY_TIMEOUT = 30 * 60  # 30 min
+
+
+def load_nlp(logger: logging.Logger) -> dict:
+    try:
+        import spacy
+
+        return {lang: spacy.load(name) for lang, name in SPACY_MODELS.items()}
+    except Exception as e:
+        logger.warning(f"spacy unavailable, skipping stopword removal: {e}")
+        return {}
+
+
+def clean_query(nlp: dict, text: str) -> str:
+    if not nlp or not text.strip():
+        return text
+
+    try:
+        from langdetect import detect
+
+        language = detect(text)
+    except Exception:
+        return text
+
+    model = nlp.get(language)
+    if model is None:
+        return text
+
+    doc = model(text)
+    tokens = [
+        token.lemma_.lower()
+        for token in doc
+        if not token.is_stop and not token.is_punct and not token.is_space
+    ]
+    return " ".join(tokens) or text
 
 
 def get_socket_path(project_name: str) -> str:
@@ -47,6 +82,8 @@ def main():
     except ImportError:
         LOG.error("fastembed not installed")
         sys.exit(1)
+
+    nlp = load_nlp(LOG)
 
     hf_cache = str(Path.home() / ".cache" / "huggingface" / "hub")
     model = TextEmbedding(MODEL_NAME, cache_dir=hf_cache)
@@ -111,8 +148,8 @@ def main():
                 continue
 
             request = json.loads(data.decode())
-            text = request.get("text", "")
-            # LOG.debug(f"text:{text}")
+            text = clean_query(nlp, request.get("text", ""))
+            LOG.debug(f"text:{text}")
             vector = list(model.embed([text]))[0].tolist()
             response = json.dumps({"vector": vector}) + "\n"
             conn.sendall(response.encode())
