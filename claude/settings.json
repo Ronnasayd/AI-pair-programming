@@ -100,9 +100,10 @@
       "Bash(docker exec:*)",
       "Bash(eval:*)",
       "Bash(xargs:*)"
-    ]
+    ],
+    "defaultMode": "default"
   },
-  "model": "haiku",
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": [
       {
@@ -499,6 +500,7 @@
     "mode": "hold"
   },
   "theme": "dark",
+  "verbose": false,
   "autoCompactEnabled": true,
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
