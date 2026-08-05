@@ -1,6 +1,3 @@
-select-account() {
-  $AI_PROJECT_ROOT_DIR/scripts/claude-oauth/set.py $(ls "$HOME/.claude/oauthAccounts" | fzf)
-}
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 alias aims="docker run -d --name ai-memory \
     --restart unless-stopped \
@@ -47,6 +44,7 @@ alias sri="serena init" # Init serena in current project: serena-init
 alias cfie="code .git/info/exclude" # Open git local exclude file in editor: code-info-exclude
 alias osd="xdg-open http://localhost:24282/dashboard/" # Open opencode-supervisor dashboard: opencode-supervisor-dashboard
 alias afa="npx agent-flow-app" # Run agent-flow-app via npx: agent-flow-app
-alias sca="select-account" # Shortcut for select-account function: select-account
+alias incl="rm -rf $HOME/.claude-L && cp -r $HOME/.claude $HOME/.claude-L && cp $HOME/.claude.json $HOME/.claude-L/.claude.json && echo 'Copied ~/.claude to ~/.claude-L'" # Copy ~/.claude to ~/.claude-L: copy-claude-config
+alias icl="export CLAUDE_CONFIG_DIR=$HOME/.claude-L && echo 'Set CLAUDE_CONFIG_DIR to ~/.claude-L'" # Set CLAUDE_CONFIG_DIR to ~/.claude-L: set-claude-config-dir
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
