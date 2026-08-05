@@ -10,11 +10,11 @@ Agent({
   isolation: "worktree",           // omit for SEQUENTIAL waves
   run_in_background: false,
   prompt: "Communicate in caveman-compressed style for your own prose — code/diffs/commits stay normal syntax.
-    Objective: run tlc-spec-driven mode=\"execute\" for task {TASK_ID} in feature tag \"{TAG}\".
-    Task: {task object as JSON}
-    Spec excerpt:\n{relevant spec.md section}
-    Design excerpt:\n{relevant design.md section}
-    Full file references: {spec.md path}, {design.md path}, {metadata.json path}
+    Objective: implement task {TASK_ID} in feature tag \"{TAG}\" per the execution conventions below (atomic commits, verification-criteria-driven). This context-map is everything you need — do not call any Skill tool yourself.
+    Task: {task object as JSON, from tasks.md section for this task}
+    Spec excerpt (scoped to this task):\n{relevant spec.md section}
+    Design excerpt (scoped to this task):\n{relevant design.md section}
+    Relevant source excerpts:\n{excerpts of files this task touches, located via grep/glob}
     Acceptance criteria: use the task's own verification criteria verbatim — do not invent new ones.
     Scoped test/lint command: {command from Step 4a} — use this exact command, never the full suite/module.
     Expected file paths: {file paths from Step 4a, if known} — use these instead of exploring to find them.

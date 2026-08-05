@@ -1,6 +1,20 @@
 # Orchestrator Model
 
-Main agent is the orchestrator. It never delegates coordination to another skill — spawns executors directly via the Agent tool, each in its own isolated worktree, and directly waits on/aggregates results.
+Main agent is the orchestrator. It reads `skills/tlc-spec-driven/SKILL.md` once (orchestrator-side, before dispatch — never a per-task `Skill` call) to know execution-phase conventions, and never delegates coordination to another skill — spawns executors directly via the Agent tool, each in its own isolated worktree, and directly waits on/aggregates results.
+
+## Per-task context-map
+
+Built by the orchestrator before dispatch, one per task — this is what actually goes into the executor's prompt, not the full spec files:
+
+| Field                 | Source                                                                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Task object           | this task's section of `tasks.md` + taskmaster (id, title, description, deps, verification criteria)                               |
+| spec.md excerpt       | only the section(s) covering this task's scope, not the full file                                                                  |
+| design.md excerpt     | only the section(s) covering this task's scope, not the full file                                                                  |
+| Source file excerpts  | relevant snippets of files the task will touch, located via grep/glob against paths named in design/tasks — not full file contents |
+| Verification criteria | task's own criteria verbatim, no invented additions                                                                                |
+
+`metadata.json` is orchestrator-only — never included in a context-map.
 
 ## Run branch setup
 
@@ -22,9 +36,9 @@ If the whole run has no wave metadata (all tasks wave 0 / sequential), every tas
 ## Per-task executor lifecycle
 
 1. `git worktree add <path> -b <task-branch> <run-branch>`
-2. Dispatch executor Agent into that worktree (see `agent-prompts.md`)
-3. Executor implements task, produces a diff (does not merge/push itself)
-4. On approval, orchestrator applies the diff onto the run branch: `git apply <diff>` in task order — conflicts go to `resolve-merge-conflicts` skill
+2. Dispatch executor Agent into that worktree with its context-map (see `agent-prompts.md`)
+3. Executor implements task, commits in its own worktree (does not merge/push itself)
+4. On approval, orchestrator merges the task branch onto the run branch: `git merge --no-ff <task-branch>` in task order — conflicts go to `resolve-merge-conflicts` skill
 5. Clean up: `git worktree remove <path>` + `git branch -D <task-branch>` — always, win or lose. Never `rm -rf` a worktree directly.
 
 ## Failure handling (Step 5b)
