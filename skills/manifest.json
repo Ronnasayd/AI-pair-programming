@@ -531,6 +531,8 @@
     "skill_md": "extract-software-requirements/SKILL.md",
     "files": [
       "references/merge-and-conflicts.md",
+      "references/source-extraction-steps.md",
+      "references/troubleshooting.md",
       "scripts/dump_git_log.sh",
       "scripts/extract_user_prompts.py"
     ]
@@ -644,6 +646,10 @@
   },
   "integration-testing": {
     "skill_md": "integration-testing/SKILL.md",
+    "files": []
+  },
+  "jira-to-todo": {
+    "skill_md": "jira-to-todo/SKILL.md",
     "files": []
   },
   "keycloak-docs-index": {
