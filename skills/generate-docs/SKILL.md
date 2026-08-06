@@ -15,9 +15,10 @@ description: >
   updates to existing docs based on a diff (update mode). Do NOT use for
   code generation, debugging, or non-documentation writing tasks.
 argument-hint: >
-  Optional {git_diff_command} (e.g. `git diff HEAD~1`, `git diff
-  main...feature/my-branch`, `cat patch.diff`) to force update mode and
-  scope it to a specific diff. Omit to let the skill auto-detect the mode.
+  Optional {change_source} — a diff command (e.g. `git diff HEAD~1`, `git diff
+  main...feature/my-branch`, `cat patch.diff`), a list of changed files, or
+  code snippets — to force update mode and scope it to specific changes. Omit
+  to let the skill auto-detect the mode.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"
