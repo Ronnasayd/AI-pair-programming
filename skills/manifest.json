@@ -582,25 +582,24 @@
       "scripts/compare_ssim.py"
     ]
   },
-  "generate-docs-init": {
-    "skill_md": "generate-docs-init/SKILL.md",
+  "generate-docs": {
+    "skill_md": "generate-docs/SKILL.md",
     "files": [
-      "templates/docs-SUMMARY.md",
-      "templates/docs-adr.md",
-      "templates/docs-architecture.md",
-      "templates/docs-contribution.md",
-      "templates/docs-endpoints.md",
-      "templates/docs-faq.md",
-      "templates/docs-models.md",
-      "templates/docs-modules.md",
-      "templates/docs-setup.md",
-      "templates/docs-techs.md",
-      "templates/docs-usage.md"
+      "references/create.md",
+      "references/shared.md",
+      "references/templates/docs-SUMMARY.md",
+      "references/templates/docs-adr.md",
+      "references/templates/docs-architecture.md",
+      "references/templates/docs-contribution.md",
+      "references/templates/docs-endpoints.md",
+      "references/templates/docs-faq.md",
+      "references/templates/docs-models.md",
+      "references/templates/docs-modules.md",
+      "references/templates/docs-setup.md",
+      "references/templates/docs-techs.md",
+      "references/templates/docs-usage.md",
+      "references/update.md"
     ]
-  },
-  "generate-docs-update": {
-    "skill_md": "generate-docs-update/SKILL.md",
-    "files": []
   },
   "generate-pr-description": {
     "skill_md": "generate-pr-description/SKILL.md",

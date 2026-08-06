@@ -1,13 +1,11 @@
-# adversarial-dev
-# codenavi
+# generate-docs
 # grilling
-# orchestrate
 # resolve-merge-conflicts
 # technical-decision-helper
-# tlc-execute-tasks
-# tlc-execute-tasks-adversarial
 # tlc-spec-driven
+# tlc-spec-driven-taskmaster
 # tlc-tasks-to-taskmaster
+adversarial-dev
 agent-architecture-audit
 agent-creator
 agent-harness-construction
@@ -29,6 +27,7 @@ code-review
 codebase-linguistic-analysis-to-csv-export
 codebase-onboarding
 codebase-rules-extractor
+codenavi
 coding-standards
 compress-skill
 content-hash-cache-pattern
@@ -63,8 +62,8 @@ exa-search
 execute-task
 extract-automation-candidates
 extract-software-requirements
-figma-capture-mcp
 figma-capture-local
+figma-capture-mcp
 figma-code-connect-components
 figma-design-system-to-tailwind
 figma-implement-design
@@ -77,8 +76,6 @@ frontend-blueprint
 frontend-design
 frontend-patterns
 gan-style-harness
-generate-docs-init
-generate-docs-update
 generate-pr-description
 gh-address-comments
 gh-fix-ci
@@ -97,6 +94,7 @@ image-mockup-recreator
 integration-testing
 jira-assistant
 jira-integration
+jira-to-todo
 keycloak-docs-index
 kubernetes-patterns
 leet-code-patterns
@@ -118,6 +116,7 @@ my-python-testing
 my-tdd-workflow
 mysql-patterns
 opencv
+orchestrate
 parallel-execution-optimizer
 pdf
 perf-web-optimization
@@ -148,13 +147,14 @@ security-review
 security-scan
 semantic-commit-message
 seo
-simplified-technical-english
 skill-advisor
 skill-architect
 skill-creator
 skill-description-generator
 skills-discovery
 srs-generator
+ste
+ste-pt
 subagent-creator
 tailwind-config-conformance
 tailwindcss

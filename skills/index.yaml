@@ -119,6 +119,22 @@ skills:
 
     '
 - name:
+  - generate-docs
+  description: 'Use this skill to generate, refactor, maintain, or update project
+    documentation from source code or a code diff. Triggers include: any request to
+    "document the project", "write docs", "create a README", "generate architecture
+    docs", "write a contribution guide", "create an ADR", "document this codebase",
+    "update the docs", "reflect these changes in the documentation", "sync the docs
+    with the latest diff", or "update the README after this PR". Also triggers when
+    asked to analyze folder/module structure and produce incremental documentation,
+    or when a git diff, patch, or modified file is provided and documentation needs
+    to be kept in sync. The skill auto-detects whether to scaffold a full docs/ hierarchy
+    from scratch (create mode) or preview and apply targeted updates to existing docs
+    based on a diff (update mode). Do NOT use for code generation, debugging, or non-documentation
+    writing tasks.
+
+    '
+- name:
   - plan-generator
   description: Generate structured plans for tasks and projects, saved as date-stamped
     markdown files in docs/agents/plans/. Use whenever the user wants to plan a project,
@@ -748,20 +764,6 @@ skills:
     copy following trigger rules. Do NOT use for entire SKILL.md files, architecture
     docs, or non-description content.
 - name:
-  - generate-docs-init
-  description: 'Use this skill to generate, refactor, or maintain comprehensive project
-    documentation from source code. Triggers include: any request to "document the
-    project", "write docs", "create a README", "generate architecture docs", "write
-    a contribution guide", "create an ADR", or "document this codebase". Also triggers
-    when asked to analyze folder/module structure and produce incremental documentation.
-    The skill autonomously walks the workspace tree, breaks it into modules and files,
-    and produces a full docs/ hierarchy (SUMMARY, architecture, setup, usage, modules,
-    contribution, ADRs, etc.) with Mermaid diagrams, tables, and navigable Markdown
-    links. Do NOT use for code generation, debugging, or non-documentation writing
-    tasks.
-
-    '
-- name:
   - mutation-survivor-triage
   description: Triage Stryker mutation testing survivors (mutation-report.json) into
     false negatives (log-only/metadata mutants with no observable behavior) vs real
@@ -813,18 +815,6 @@ skills:
     conventions", "analyze repo and save to memory", "gera regras da codebase", or
     "cria regras no ai memory". Do NOT use for one-off code questions, business-logic/architecture
     deep dives (use codenavi), or bug diagnosis (use diagnosing-bugs).
-- name:
-  - generate-docs-update
-  description: 'Use this skill to update existing project documentation based on code
-    changes. Triggers include: any request to "update the docs", "reflect these changes
-    in the documentation", "sync the docs with the latest diff", "update the README
-    after this PR", or any situation where a git diff, patch, or modified file is
-    provided and documentation needs to be kept in sync. The skill analyzes the diff
-    output, identifies which docs/ files are affected, previews every proposed change,
-    and only writes after explicit confirmation. Do NOT use for generating documentation
-    from scratch (use generate-docs-init instead) or for non-documentation tasks.
-
-    '
 - name:
   - mcp-manager-instructions
   description: Provide practical guidance for discovering available MCP tools, understanding
