@@ -17,7 +17,7 @@ LOG = get_hooks_logger("Context7Search")
 
 SEARCH_URL = "https://context7.com/api/search"
 MIN_BENCHMARK_SCORE = 80
-MIN_EMBEDDING_SIMILARITY = 0.45
+MIN_EMBEDDING_SIMILARITY = 0.5
 TOP_N = 3
 TIMEOUT_SECONDS = 5
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"

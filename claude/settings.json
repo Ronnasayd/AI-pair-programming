@@ -493,7 +493,7 @@
     }
   },
   "alwaysThinkingEnabled": false,
-  "effortLevel": "medium",
+  "effortLevel": "low",
   "plansDirectory": "./docs/plans/",
   "voice": {
     "enabled": false,

@@ -142,14 +142,14 @@ def main():
             # LOG.debug(f"Received {len(data)} bytes: {data!r}")
 
             if not data:
-                LOG.warning(
-                    "Empty request — client closed connection before sending data"
-                )
+                # LOG.debug(
+                #     "Empty request — likely a liveness probe (connect+close, no data)"
+                # )
                 continue
 
             request = json.loads(data.decode())
             text = clean_query(nlp, request.get("text", ""))
-            LOG.debug(f"text:{text}")
+            LOG.debug(f"text: {text}")
             vector = list(model.embed([text]))[0].tolist()
             response = json.dumps({"vector": vector}) + "\n"
             conn.sendall(response.encode())
