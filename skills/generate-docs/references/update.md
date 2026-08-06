@@ -2,7 +2,7 @@
 
 Diff-driven documentation sync. Selected when `docs/` already exists and the request references a diff, patch, or set of changes (see mode-selection table in [SKILL.md](../SKILL.md)).
 
-**Argument:** `{git_diff_command}` — a shell command (e.g. `git diff HEAD~1`, `git diff main...feature/my-branch`, `cat patch.diff`) or a raw diff/file whose output determines which documentation updates are required.
+**Argument:** `{change_source}` — how the changes are identified. Can be a shell command (e.g. `git diff HEAD~1`, `git diff main...feature/my-branch`, `cat patch.diff`), a raw diff/file, a list of changed file paths, or code snippets/excerpts the user points to — any form is fine as long as it lets you determine what changed and how it impacts documentation.
 
 Shared writing standards, anti-patterns, the module symlink rule, and the quality checklist live in [shared.md](shared.md) — read that alongside this file, don't duplicate it here.
 
@@ -20,15 +20,17 @@ Shared writing standards, anti-patterns, the module symlink rule, and the qualit
 
 ## Workflow
 
-### Phase 1 — Execute and Parse the Diff
+### Phase 1 — Gather and Understand the Changes
 
-1. Run the `{git_diff_command}` argument as a shell command (or read the provided file/patch) to obtain the diff output.
-2. Parse the diff to extract:
+1. Obtain the change source: run `{change_source}` if it's a shell command, read the provided file/patch, or take the given list of files/snippets directly.
+2. Parse the change source to extract:
    - Files added, removed, or modified.
    - Functions, classes, endpoints, models, or configuration keys that changed.
    - New dependencies or removed ones.
    - Renamed or moved modules.
    - Breaking changes vs. additive changes.
+3. **Use semantic search when available** — tools such as `serena`, `rag-rat`, or any other semantic/code-intelligence tool present in the environment. Use them to understand the full context of the changes (callers, related modules, downstream impact) beyond what the raw diff text shows — this matters especially when the change source is a file list or snippet rather than a full diff.
+4. If ambiguity remains after investigation (unclear module purpose, unclear target audience, or missing context no tool can resolve), use `/grilling` to ask the user targeted clarifying questions before proceeding.
 
 ### Phase 2 — Map Changes to Documentation Files
 
@@ -55,23 +57,16 @@ If no existing doc covers a new topic, note that a new file may be needed and in
 2. Read `docs/SUMMARY.md` (if present) to understand the current doc structure.
 3. Read each doc file identified in Phase 2 to understand its current content before proposing changes.
 
-### Phase 4 — Preview All Proposed Changes
+### Phase 4 — Explain Proposed Changes and Confirm
 
 For **each** documentation file that requires an update:
 
 1. State the file path.
-2. Describe in plain language **why** this file needs updating (link it explicitly to the diff).
-3. Show a diff-style preview of the exact text that will be added, changed, or removed:
-
-```diff
-- old line or section
-+ new line or section
-```
-
-4. **Ask the user to confirm** before writing anything.
+2. Describe in plain language **why** this file needs updating (link it explicitly to the identified change) and **what** will change — a clear summary is enough, no diff-style text required.
+3. **Ask the user to confirm** before writing anything.
 
 > Example prompt:
-> "I plan to make the following changes to [docs/endpoints.md](docs/endpoints.md). Shall I proceed?"
+> "I plan to update [docs/endpoints.md](docs/endpoints.md) to document the new `POST /users` endpoint. Shall I proceed?"
 
 ### Phase 5 — Apply Confirmed Changes
 
@@ -112,6 +107,8 @@ Apply these rules in order. Stop at the first match.
 
 5. **Test or tooling change only** — the diff only touches test files, CI configuration, or developer tooling with no user-facing impact.
    → **Do not update** (unless `docs/contribution.md` explicitly covers the changed workflow).
+
+6. **When in doubt, don't** — only touch documentation when there is **direct** impact from the identified change. Avoid speculative or "just in case" edits that aren't clearly relevant.
 
 ---
 
