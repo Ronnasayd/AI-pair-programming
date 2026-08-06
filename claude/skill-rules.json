@@ -1992,11 +1992,11 @@
       ]
     },
     {
-      "skill": "tlc-execute-tasks",
+      "skill": "tlc-spec-driven-taskmaster",
       "priority": "medium",
       "hint": "Executes feature tasks by tag, integrating spec files with tlc-spec-driven.",
       "keywords": [
-        "tlc-execute-tasks",
+        "tlc-spec-driven-taskmaster",
         "execute",
         "tasks",
         "tlc",

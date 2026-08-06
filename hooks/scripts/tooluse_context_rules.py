@@ -44,19 +44,6 @@ def toolInputMatches(payload, pattern: re.Pattern):
 # decides whether `additionalContext` gets injected for this hook call.
 RULES = [
     {
-        "name": "tlc-execute-tasks",
-        "match": lambda payload: (
-            get_by_key(payload, "hook_event_name") == "PostToolUse"
-            and get_by_key(payload, "tool_name") == "Skill"
-            and toolInputMatches(
-                payload, re.compile(r"^tlc-execute-tasks(-adversarial)?$")
-            )
-        ),
-        "additionalContext": read_file(
-            path.join(script_dir, "..", "markdown/TASKS.md")
-        ),
-    },
-    {
         "name": "plan-mode-ask-user-question-grilling",
         "match": lambda payload: (
             get_by_key(payload, "hook_event_name") == "PreToolUse"
