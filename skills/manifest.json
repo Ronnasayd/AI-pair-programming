@@ -1154,24 +1154,10 @@
     "skill_md": "tests/test-coverage-review/SKILL.md",
     "files": []
   },
-  "tlc-execute-tasks": {
-    "skill_md": "tlc-execute-tasks/SKILL.md",
+  "tlc-spec-driven-taskmaster": {
+    "skill_md": "tlc-spec-driven-taskmaster/SKILL.md",
     "files": [
-      "references/agent-prompts.md",
-      "references/examples.md",
-      "references/orchestrator-model.md",
       "references/troubleshooting.md"
-    ]
-  },
-  "tlc-execute-tasks-adversarial": {
-    "skill_md": "tlc-execute-tasks-adversarial/SKILL.md",
-    "files": [
-      "references/agent-prompts.md",
-      "references/examples.md",
-      "references/feature-verification-process-summary.md",
-      "references/orchestrator-model.md",
-      "references/troubleshooting.md",
-      "scripts/validate_tag.sh"
     ]
   },
   "tlc-tasks-to-taskmaster": {

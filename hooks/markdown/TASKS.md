@@ -1,4 +1,0 @@
-- tlc-execute-tasks enabled: process a group of pending - tasks in waves, respecting
-- dependencies, limiting concurrency to 3 sub-agents - per wave, and updating
-- status via the taskmaster MCP after each wave - completes.
-- Use `TaskCreate`/`TaskGet`/`TaskList`/`TaskUpdate` to track wave/task progress alongside taskmaster MCP updates
