@@ -29,7 +29,7 @@ Shared writing standards, anti-patterns, the module symlink rule, and the qualit
    - New dependencies or removed ones.
    - Renamed or moved modules.
    - Breaking changes vs. additive changes.
-3. **Use semantic search when available** — tools such as `serena`, `rag-rat`, or any other semantic/code-intelligence tool present in the environment. Use them to understand the full context of the changes (callers, related modules, downstream impact) beyond what the raw diff text shows — this matters especially when the change source is a file list or snippet rather than a full diff.
+3. **Use semantic search when available** — tools such as `serena`, `rag-rat`, `grep`, `Read` or any other semantic/code-intelligence tool present in the environment. Use them to understand the full context of the changes (callers, related modules, downstream impact) beyond what the raw diff text shows — this matters especially when the change source is a file list or snippet rather than a full diff.
 4. If ambiguity remains after investigation (unclear module purpose, unclear target audience, or missing context no tool can resolve), use `/grilling` to ask the user targeted clarifying questions before proceeding.
 
 ### Phase 2 — Map Changes to Documentation Files

@@ -23,7 +23,7 @@ Shared writing standards, anti-patterns, the module symlink rule, and the qualit
 
 1. Read the workspace tree (`ls -R`, `find`, or equivalent) to understand the full folder/file layout.
 2. Open and study key files: entry points, configuration, existing docs, package manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.).
-3. **Use semantic search when available** — tools such as `serena`, `rag-rat`, or any other semantic/code-intelligence tool present in the environment. Use them to locate symbols, trace usages, and analyze code relationships instead of relying only on raw file reads, to build a more robust and accurate mental model of the codebase.
+3. **Use semantic search when available** — tools such as `serena`, `rag-rat`, `grep`, `Read` or any other semantic/code-intelligence tool present in the environment. Use them to locate symbols, trace usages, and analyze code relationships instead of relying only on raw file reads, to build a more robust and accurate mental model of the codebase.
 4. Extract module names, responsibilities, dependencies, and data flows.
 5. Update your mental model as you gather more information.
 6. Note important commands, environment variables, and code snippets for later use in docs.
