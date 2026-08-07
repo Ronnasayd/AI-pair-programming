@@ -20,9 +20,10 @@ Each phase below is independent — run only what's requested. "Requirements fro
 | 1     | Session transcripts (`~/.claude/projects/<url-encoded-cwd>/*.jsonl`) | `references/source-extraction-steps.md` §Phase 1                                                                           |
 | 2     | Git commit history                                                   | `references/source-extraction-steps.md` §Phase 2                                                                           |
 | 3     | Formal spec/PRD `.md` files                                          | `references/source-extraction-steps.md` §Phase 3                                                                           |
+| 3.5   | Test files (only if a test suite exists in the repo)                 | `references/source-extraction-steps.md` §Phase 3.5                                                                         |
 | 4     | Consolidate ≥2 phase outputs                                         | `references/merge-and-conflicts.md` (precedence rule, doc structure, ID scheme, status vocabulary, conflict-vs-stale test) |
 
-Phase 4 only runs once at least two of Phases 1-3 have produced output — merging one source is meaningless.
+Phase 4 only runs once at least two of Phases 1-3.5 have produced output — merging one source is meaningless. Phase 3.5 is skipped entirely (not run, not flagged missing) when the repo has no test directory/files.
 
 ## Delivery (all phases)
 

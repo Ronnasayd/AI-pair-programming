@@ -39,3 +39,17 @@ Location: `~/.claude/projects/<url-encoded-cwd>/*.jsonl`, one file per session U
 | 7   | Cross-check every requirement against: other reqs in same doc, reqs in other specs on same subsystem, implementation facts already known from prior Phase 1/2 pass this session. Flag every disagreement explicitly, never silently pick a side                                         | conflicts flagged       |
 
 Output adds a "Conflicts / points of attention" closing section: every contradiction found, likely-authoritative source, implication (doc to update, or code drifted from spec).
+
+## Phase 3.5: Test files (only if a test suite exists)
+
+Purpose: mine test **descriptions** (`describe`/`it`/`test`/`test_*` names, docstrings) for behavior no other source (transcripts, commits, specs) already surfaced — not to re-verify requirements already found (that's the Phase 4 test-file downgrade check in `references/merge-and-conflicts.md`).
+
+| #   | Step                                                                                                                                                                                                   | Output/Gate             |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| 1   | Detect test dirs/files: `__tests__/`, `*.test.*`, `*.spec.*`, `test_*.py`, `tests/`, `spec/`. None found → skip phase entirely, don't emit an empty file or flag it missing                            | test-file inventory     |
+| 2   | Read test descriptions (`describe`/`it`/`test(...)` string args, `test_*` function names, docstrings) — not full test bodies unless a description is ambiguous about what behavior it's asserting      | classified descriptions |
+| 3   | Cross-reference each description against requirements already extracted in Phases 1-3 (same session). Keep only descriptions that assert behavior **not already covered** by an existing RF-/RNF- item | net-new candidates      |
+| 4   | Rephrase surviving candidates as requirements ("system must X when Y"), cluster into same domain taxonomy as other phases, assign RF-/RNF- IDs, tag source as test file path + test name               | net-new reqs            |
+| 5   | Open-items: skipped/`.skip`/`xit`/`TODO` tests describing unimplemented behavior — these are ❌ Open by definition, list explicitly                                                                    | open-items list         |
+
+This phase never downgrades or verifies existing requirement status — that check already exists in `references/merge-and-conflicts.md` (Status vocabulary, test-file check). Phase 3.5 only adds requirements that were otherwise invisible.
