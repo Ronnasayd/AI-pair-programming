@@ -1,12 +1,12 @@
 # Merge & Conflict Rules (Phase 4)
 
-Read this file when starting Phase 4 (consolidation), after Phases 1-3 have each produced their own intermediate document.
+Read this file when starting Phase 4 (consolidation), after Phases 1-3.5 have each produced their own intermediate document.
 
 ## Precedence order when sources disagree silently
 
-`commit history (B) > spec/PRD (C) > session transcripts (A)`
+`commit history (B) > spec/PRD (C) > test files (D) > session transcripts (A)`
 
-Rationale: commits are ground truth of the currently implemented state (code that actually merged). Specs/PRD express design intent but can go stale relative to what shipped. Transcripts are the noisiest, least-reviewed signal.
+Rationale: commits are ground truth of the currently implemented state (code that actually merged). Specs/PRD express design intent but can go stale relative to what shipped. Test files describe intended behavior but may lag implementation or be incomplete. Transcripts are the noisiest, least-reviewed signal.
 
 But **never resolve a disagreement by silently picking the higher-precedence source and discarding the other**. Every disagreement on a concrete fact (a number, a behavior, an endpoint, a threshold) goes in **2. Itens Abertos** as its own `OPEN-xx` row (see below), even if precedence tells you which one is _probably_ right. Precedence only decides which side gets the "likely correct" label in the `Decisão` column — it does not delete the item.
 
@@ -17,9 +17,9 @@ Fixed template, in this exact order. Never substitute alternate section names (n
 ```markdown
 # Requisitos Consolidados — <project-name>
 
-Fontes: (A) transcrições de sessão Claude Code, (B) histórico de commits, (C) specs formais/PRD (<list actual paths found>).
+Fontes: (A) transcrições de sessão Claude Code, (B) histórico de commits, (C) specs formais/PRD, (D) arquivos de teste (<list actual paths/sources found — omit letters for phases not run>).
 
-Precedência em caso de conflito silencioso: **B (commits) > C (specs/PRD) > A (transcrições)**.
+Precedência em caso de conflito silencioso: **B (commits) > C (specs/PRD) > D (testes) > A (transcrições)**.
 
 Última atualização: <YYYY-MM-DD> (cobre commits até `<short-sha>` e spec `<spec-name>`).
 
@@ -81,6 +81,8 @@ Section rules:
 - ❌ **Open** — reported (bug or requested feature) with no implementation evidence found in any source.
 
 Do not invent additional states — a requirement under active tuning is 🟡, not a fourth category.
+
+**Test-file check (when a test suite exists in the repo):** before marking a requirement ✅, check whether a test file covers it (search by feature/module name under the repo's test dirs, e.g. `*.test.*`, `*.spec.*`, `test_*.py`, `__tests__/`). If a commit claims implementation but no matching test is found, downgrade to 🟡 and note "sem teste encontrado" in the Status evidence note — don't silently keep ✅ on commit claim alone. If the repo has no test suite at all, skip this check (don't penalize projects without tests). This check verifies/downgrades requirements already found by Phases 1-3 — it's distinct from Phase 3.5, which mines test descriptions for net-new requirements no other source surfaced.
 
 ## What counts as a genuine conflict (vs. just "old info")
 
