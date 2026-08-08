@@ -26,8 +26,9 @@ PASSTHROUGH_VARS=(AI_PROJECT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC
 
 PROJECT_DIR=$(pwd)
 TEMP_HOSTS=$(mktemp /tmp/bwrap-hosts.XXXXXX)
+JAIL_TMP=$(mktemp -d /tmp/ai-jail-tmp.XXXXXX)
 
-trap 'rm -f "$TEMP_HOSTS"' EXIT
+trap 'rm -rf "$JAIL_TMP"; rm -f "$TEMP_HOSTS"' EXIT
 
 # ── Mise discovery ─────────────────────────────────────────────
 REAL_MISE_BIN=$(type -p mise 2>/dev/null || echo "")
@@ -169,7 +170,7 @@ bwrap \
   "${GPU_MOUNTS[@]}" \
   "${SHM_MOUNT[@]}" \
   --proc /proc \
-  --bind /tmp /tmp \
+  --bind "$JAIL_TMP" /tmp \
   --tmpfs /run \
   "${DOCKER_MOUNT[@]}" \
   "${DISPLAY_MOUNTS[@]}" \

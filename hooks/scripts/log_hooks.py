@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import sys
+from pathlib import Path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -14,7 +15,9 @@ from utils import colorize_json, get_hooks_logger  # noqa: E402
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--log-file", default="/tmp/hooks.log")
+    parser.add_argument(
+        "--log-file", default=str(Path.home() / ".claude" / "logs" / "hooks.log")
+    )
     return parser.parse_args()
 
 
