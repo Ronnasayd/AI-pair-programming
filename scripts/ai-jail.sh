@@ -125,6 +125,10 @@ done
 DOCKER_MOUNT=()
 [ -S /var/run/docker.sock ] && DOCKER_MOUNT+=("--bind" "/var/run/docker.sock" "/var/run/docker.sock")
 
+# ── DNS resolver (systemd-resolved stub, needed since /run is tmpfs'd) ──
+RESOLVE_MOUNT=()
+[ -d /run/systemd/resolve ] && RESOLVE_MOUNT+=("--ro-bind" "/run/systemd/resolve" "/run/systemd/resolve")
+
 # ── Shared memory (Chromium needs large /dev/shm) ───────────
 SHM_MOUNT=()
 [ -d /dev/shm ] && SHM_MOUNT+=("--dev-bind" "/dev/shm" "/dev/shm")
@@ -172,6 +176,7 @@ bwrap \
   --proc /proc \
   --bind "$JAIL_TMP" /tmp \
   --tmpfs /run \
+  "${RESOLVE_MOUNT[@]}" \
   "${DOCKER_MOUNT[@]}" \
   "${DISPLAY_MOUNTS[@]}" \
   --tmpfs "$HOME" \
