@@ -2,7 +2,8 @@
   "env": {
     "ENABLE_TOOL_SEARCH": "auto:15",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5[1m]",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5[1m]"
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5[1m]",
+    "ASDF_NODEJS_VERSION": "23.11.1"
   },
   "attribution": {
     "commit": "",
@@ -36,6 +37,8 @@
       "Bash(git tag:*)",
       "Bash(git ls-files:*)",
       "Bash(git rev-parse:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
       "Bash(docker ps:*)",
       "Bash(docker logs:*)",
       "Bash(docker images:*)",
@@ -56,11 +59,7 @@
       "mcp__context7__resolve-library-id"
     ],
     "deny": [
-      "Bash(rm:*)",
-      "Bash(rmdir:*)",
       "Bash(del:*)",
-      "Bash(rm -rf:*)",
-      "Bash(rm -r:*)",
       "Bash(sudo:*)",
       "Bash(su:*)",
       "Bash(doas:*)",
@@ -91,8 +90,6 @@
       "Bash(kubectl apply:*)"
     ],
     "ask": [
-      "Bash(git checkout:*)",
-      "Bash(git switch:*)",
       "Bash(curl:*)",
       "Bash(rtk curl:*)",
       "Bash(wget:*)",
@@ -104,7 +101,11 @@
       "Bash(docker run:*)",
       "Bash(docker exec:*)",
       "Bash(eval:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(rm:*)",
+      "Bash(rmdir:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -r:*)"
     ],
     "defaultMode": "default"
   },

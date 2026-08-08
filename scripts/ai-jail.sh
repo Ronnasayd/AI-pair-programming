@@ -8,6 +8,22 @@
 #        ai-jail claude
 #        ai-jail bash
 
+
+# ── Dotfile deny-list (never mounted — sensitive data) ─────────
+DOTDIR_DENY=(.gnupg .aws .mozilla .basilisk-dev .sparrow .ssh)
+
+# Subdirs of ~/.config to hide (tmpfs over rw config mount)
+CONFIG_DENY=(BraveSoftware Bitwarden)
+
+# Subdirs of ~/.cache to hide (sensitive browser/app caches)
+CACHE_DENY=(BraveSoftware basilisk-dev chromium spotify nvidia mesa_shader_cache)
+
+# Dotdirs requiring read-write access
+DOTDIR_RW=(.claude .crush .codex .aider .config .cargo .cache .docker .github)
+
+# ── Passthrough env vars (hooks + headroom need these inside jail) ──
+PASSTHROUGH_VARS=(AI_PROJECT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC_MODEL ANTHROPIC_API_KEY ENABLE_TOOL_SEARCH ASDF_NODEJS_VERSION)
+
 PROJECT_DIR=$(pwd)
 TEMP_HOSTS=$(mktemp /tmp/bwrap-hosts.XXXXXX)
 
@@ -43,17 +59,6 @@ else
     MISE_INIT="true"
 fi
 
-# ── Dotfile deny-list (never mounted — sensitive data) ─────────
-DOTDIR_DENY=(.gnupg .aws .mozilla .basilisk-dev .sparrow .ssh)
-
-# Subdirs of ~/.config to hide (tmpfs over rw config mount)
-CONFIG_DENY=(BraveSoftware Bitwarden)
-
-# Subdirs of ~/.cache to hide (sensitive browser/app caches)
-CACHE_DENY=(BraveSoftware basilisk-dev chromium spotify nvidia mesa_shader_cache)
-
-# Dotdirs requiring read-write access
-DOTDIR_RW=(.claude .crush .codex .aider .config .cargo .cache .docker .github)
 
 # ── Helper functions ───────────────────────────────────────────
 is_denied() {
@@ -104,9 +109,10 @@ done
 # ── Override ~/.local subdirs as rw (parent .local is ro) ──────
 LOCAL_OVERRIDES=()
 [ -d "$HOME/.local/state" ] && LOCAL_OVERRIDES+=("--bind" "$HOME/.local/state" "$HOME/.local/state")
-for rw_share in zoxide crush opencode atuin mise yarn flutter kotlin NuGet pipx ruby-advisory-db uv; do
+for rw_share in zoxide crush opencode atuin mise yarn flutter kotlin NuGet pipx ruby-advisory-db uv claude; do
     [ -d "$HOME/.local/share/$rw_share" ] && LOCAL_OVERRIDES+=("--bind" "$HOME/.local/share/$rw_share" "$HOME/.local/share/$rw_share")
 done
+[ -d "$HOME/.local/bin" ] && LOCAL_OVERRIDES+=("--bind" "$HOME/.local/bin" "$HOME/.local/bin")
 
 # ── GPU device mounts (NVIDIA + DRM) ─────────────────────────
 GPU_MOUNTS=()
@@ -129,7 +135,7 @@ DISPLAY_ENV=()
 # X11 / XWayland socket
 [ -d /tmp/.X11-unix ] && DISPLAY_MOUNTS+=("--bind" "/tmp/.X11-unix" "/tmp/.X11-unix")
 [ -n "${DISPLAY:-}" ] && DISPLAY_ENV+=("--setenv" "DISPLAY" "$DISPLAY")
-[ -n "${XAUTHORITY:-}" ] && {
+[ -n "${XAUTHORITY:-}" ] && [ -f "${XAUTHORITY:-}" ] && {
     DISPLAY_MOUNTS+=("--ro-bind" "$XAUTHORITY" "$XAUTHORITY")
     DISPLAY_ENV+=("--setenv" "XAUTHORITY" "$XAUTHORITY")
 }
@@ -140,6 +146,12 @@ if [ -n "${XDG_RUNTIME_DIR:-}" ] && [ -d "$XDG_RUNTIME_DIR" ]; then
     DISPLAY_ENV+=("--setenv" "XDG_RUNTIME_DIR" "$XDG_RUNTIME_DIR")
     [ -n "${WAYLAND_DISPLAY:-}" ] && DISPLAY_ENV+=("--setenv" "WAYLAND_DISPLAY" "$WAYLAND_DISPLAY")
 fi
+
+
+PASSTHROUGH_ENV=()
+for v in "${PASSTHROUGH_VARS[@]}"; do
+    [ -n "${!v:-}" ] && PASSTHROUGH_ENV+=("--setenv" "$v" "${!v}")
+done
 
 # ── Assemble and launch ───────────────────────────────────────
 echo "Jail Active: $PROJECT_DIR"
@@ -157,7 +169,7 @@ bwrap \
   "${GPU_MOUNTS[@]}" \
   "${SHM_MOUNT[@]}" \
   --proc /proc \
-  --tmpfs /tmp \
+  --bind /tmp /tmp \
   --tmpfs /run \
   "${DOCKER_MOUNT[@]}" \
   "${DISPLAY_MOUNTS[@]}" \
@@ -175,6 +187,8 @@ bwrap \
   --unshare-ipc \
   --hostname "ai-sandbox" \
   "${DISPLAY_ENV[@]}" \
+  "${PASSTHROUGH_ENV[@]}" \
   --setenv PS1 "(jail) \w \$ " \
   --setenv _ZO_DOCTOR 0 \
+  --setenv AI_JAIL 1 \
   bash -c "$MISE_INIT && ${*:-bash}"

@@ -74,6 +74,12 @@ if [ -n "$effort_level" ]; then
     effort_info=" |  ${effort_color}${effort_level}${RESET}"
 fi
 
+# ai-jail sandbox status
+jail_info=""
+if [ -n "$AI_JAIL" ]; then
+    jail_info=" | 󰌾 lock"
+fi
+
 # Caveman mode status
 caveman_info=""
 CAVEMAN_FLAG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.caveman-active"
@@ -107,7 +113,7 @@ fi
 
 # Headroom proxy status
 headroom_info=""
-if  pgrep -f "headroom.cli proxy" > /dev/null; then
+if curl -sS -m 1 "http://127.0.0.1:${HEADROOM_PORT:-8787}/health" 2>/dev/null | grep -q '"ready":true'; then
     headroom_info=" |  hr(🟢)"
 else
     headroom_info=" |  hr(🔴)"
@@ -205,6 +211,6 @@ fi
 
 # Output the complete status line
 echo -e "${email_color}${email_info}${RESET}"
-echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${serena_info}${headroom_info}${ragrat_status}${caveman_info}"
+echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${serena_info}${headroom_info}${ragrat_status}${caveman_info}${jail_info}"
 echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
 
