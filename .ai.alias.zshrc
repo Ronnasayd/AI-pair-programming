@@ -21,14 +21,14 @@ alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skills
 alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesignore not found'" # Show rules: show-rules
 alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'" # Show agents: show-agents
 alias clc="claude --model haiku -p 'Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made.'" # Commit message generator: commit-create
-alias lgh="touch /tmp/hooks.log && tail -f /tmp/hooks.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
-alias cat-pylint='cat /tmp/hooks.log | grep -e "\[PythonLint\]" | bat --paging=never -l log' # Show PythonLint hook log lines: cat-pylint
-alias cat-tslint='cat /tmp/hooks.log | grep -e "\[TypeScriptLint\]" | bat --paging=never -l log' # Show TypeScriptLint hook log lines: cat-tslint
-alias cat-golint='cat /tmp/hooks.log | grep -e "\[GolangLint\]" | bat --paging=never -l log' # Show GolangLint hook log lines: cat-golint
-alias cat-ctxrefs='cat /tmp/hooks.log | grep -e "\[ContextRefs\]" | bat --paging=never -l log' # Show ContextRefs hook log lines: cat-ctxrefs
-alias cat-prtfiles='cat /tmp/hooks.log | grep -e "\[ProtectFiles\]" | bat --paging=never -l log' # Show ProtectFiles hook log lines: cat-prtfiles
-alias cat-scr='cat /tmp/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=never -l log' # Show SimilarCodeRef hook log lines: cat-scr
-alias cat-sa='cat /tmp/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log' # Show SkillActivation hook log lines: cat-sa
+alias lgh="touch $HOME/.claude/logs/hooks.log && tail -f $HOME/.claude/logs/hooks.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
+alias cat-pylint='cat $HOME/.claude/logs/hooks.log | grep -e "\[PythonLint\]" | bat --paging=never -l log' # Show PythonLint hook log lines: cat-pylint
+alias cat-tslint='cat $HOME/.claude/logs/hooks.log | grep -e "\[TypeScriptLint\]" | bat --paging=never -l log' # Show TypeScriptLint hook log lines: cat-tslint
+alias cat-golint='cat $HOME/.claude/logs/hooks.log | grep -e "\[GolangLint\]" | bat --paging=never -l log' # Show GolangLint hook log lines: cat-golint
+alias cat-ctxrefs='cat $HOME/.claude/logs/hooks.log | grep -e "\[ContextRefs\]" | bat --paging=never -l log' # Show ContextRefs hook log lines: cat-ctxrefs
+alias cat-prtfiles='cat $HOME/.claude/logs/hooks.log | grep -e "\[ProtectFiles\]" | bat --paging=never -l log' # Show ProtectFiles hook log lines: cat-prtfiles
+alias cat-scr='cat $HOME/.claude/logs/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=never -l log' # Show SimilarCodeRef hook log lines: cat-scr
+alias cat-sa='cat $HOME/.claude/logs/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log' # Show SkillActivation hook log lines: cat-sa
 alias mia="mif && iai --claude" # Run mif then launch iai with Claude backend: mif-iai-claude
 alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py' # Run AI lint-fix agent script: lint-fix
 alias codeburn="npx codeburn" # Run codeburn CLI via npx: codeburn

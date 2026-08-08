@@ -61,7 +61,7 @@ def get_pid_path(project_name: str) -> str:
 def setup_logger() -> logging.Logger:
     logger = logging.getLogger("EmbeddingDaemon")
     logger.setLevel(logging.DEBUG)
-    handler = logging.FileHandler("/tmp/hooks.log")
+    handler = logging.FileHandler(str(Path.home() / ".claude" / "logs" / "hooks.log"))
     handler.setFormatter(
         logging.Formatter("%(asctime)s [%(levelname)s]-[%(name)s]: %(message)s")
     )
