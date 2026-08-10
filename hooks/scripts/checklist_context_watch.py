@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """PostToolUse hook: track the active skill's CHECKLIST.md and re-surface it
-every time total context usage crosses a new 10% bucket.
+every time total context usage crosses a new 5% bucket.
 """
 
 import json
@@ -100,7 +100,7 @@ def main() -> None:
     if pct is None:
         sys.exit(0)
 
-    bucket = int(pct) // 10
+    bucket = int(pct) // 5
     last_bucket = state.get("last_bucket", -1)
     LOG.debug(f"bucket={bucket} last_bucket={last_bucket}")
     if bucket <= last_bucket:
@@ -121,7 +121,7 @@ def main() -> None:
             "hookEventName": "PostToolUse",
             "additionalContext": json.dumps(
                 {
-                    "reason": f"context usage crossed {bucket * 10}%",
+                    "reason": f"context usage crossed {bucket * 5}%",
                     "checklist_path": checklist_path,
                     "checklist": checklist_content,
                 },
