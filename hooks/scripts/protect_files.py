@@ -37,6 +37,7 @@ home_dir = str(Path.home())
 
 ALLOWED_PATTERNS = [
     os.path.join(PROJECT_ROOT, ".claude", "**"),
+    os.path.join(PROJECT_ROOT, ".claude-L", "**"),
     "/tmp/**",
     f"{home_dir}/develop/personal/AI-pair-programming/skills/**",
     f"{home_dir}/develop/personal/AI-pair-programming/instructions/**",
