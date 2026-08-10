@@ -20,7 +20,7 @@ from utils import (
 LOG = get_hooks_logger("ChecklistContextWatch")
 
 STATUSLINE_PATH = Path.home() / ".claude" / "logs" / "claude_statusline.json"
-SKILLS_ROOT = Path(os.environ.get("AI_PROJECT_DIR", ".")) / "skills"
+SKILLS_ROOT = Path(os.environ.get("AI_PROJECT_DIR", ".claude")) / "skills"
 
 
 def state_path(session_id: str) -> Path:
@@ -74,11 +74,15 @@ def main() -> None:
     tool_name = get_by_key(payload, "tool_name") or ""
     path = state_path(session_id)
     state = load_state(path)
+    LOG.debug(
+        f"tool_name={tool_name!r} session={session_id!r} state_path={path} state={state}"
+    )
 
     if tool_name == "Skill":
         tool_input = get_by_key(payload, "tool_input") or {}
         skill_name = get_by_key(tool_input, "skill")
         checklist = find_checklist(skill_name)
+        LOG.debug(f"Skill invoked: skill_name={skill_name!r} checklist={checklist!r}")
         if checklist:
             state["checklist_path"] = checklist
             state.setdefault("last_bucket", -1)
@@ -88,19 +92,23 @@ def main() -> None:
 
     checklist_path = state.get("checklist_path")
     if not checklist_path:
+        LOG.debug("No checklist tracked for this session, skipping.")
         sys.exit(0)
 
     pct = read_context_pct()
+    LOG.debug(f"read_context_pct -> {pct!r} (statusline={STATUSLINE_PATH})")
     if pct is None:
         sys.exit(0)
 
     bucket = int(pct) // 10
     last_bucket = state.get("last_bucket", -1)
+    LOG.debug(f"bucket={bucket} last_bucket={last_bucket}")
     if bucket <= last_bucket:
         sys.exit(0)
 
     checklist_content = read_file(Path(checklist_path))
     if not checklist_content:
+        LOG.debug(f"checklist_path={checklist_path} unreadable/empty")
         state["last_bucket"] = bucket
         save_state(path, state)
         sys.exit(0)
@@ -121,6 +129,7 @@ def main() -> None:
             ),
         }
     }
+    LOG.debug(f"Output: {output}")
     print(json.dumps(output, ensure_ascii=False))
     sys.exit(0)
 
