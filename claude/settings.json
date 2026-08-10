@@ -223,7 +223,11 @@
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/quality_gate.py"
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/md_json_lint.py"
+          },
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/track_edited_files.py"
           },
           {
             "type": "command",
@@ -444,6 +448,10 @@
           {
             "type": "command",
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+          },
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/format_on_session_end.py"
           }
         ]
       },
