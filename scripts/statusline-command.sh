@@ -10,7 +10,7 @@
 # Read JSON input from stdin
 input=$(cat)
 
-echo $input > /tmp/claude_status_debug.json
+echo $input > $HOME/.claude/logs/claude_statusline.json
 
 # Extract basic information
 folder=$(basename "$(echo "$input" | jq -r '.workspace.current_dir')")
