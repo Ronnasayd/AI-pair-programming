@@ -12,7 +12,6 @@ TEST_DIR=$(mktemp -d)
 trap "rm -rf $TEST_DIR" EXIT
 
 TASKS_FILE="$TEST_DIR/tasks.json"
-METADATA_FILE="$TEST_DIR/metadata.json"
 
 echo "🧪 Testing merge-tasks.py and validate-tasks.py..."
 
@@ -59,32 +58,8 @@ else
   exit 1
 fi
 
-# Test 5: Create and validate metadata.json
-echo -n "Test 5: Create and validate metadata.json... "
-cat > "$METADATA_FILE" <<'EOF'
-{
-  "projectName": "test-project",
-  "version": "1.0.0",
-  "createdAt": "2026-06-16T00:00:00Z",
-  "updatedAt": "2026-06-16T00:00:00Z",
-  "description": "Test project",
-  "source": "tasks.md",
-  "testCommands": {"unit": "test"},
-  "executionWaves": {"wave1_serial": [1]},
-  "criticalPath": [1],
-  "parallelizationNotes": {"wave1": "Single task"}
-}
-EOF
-
-if python3 "$VALIDATE_SCRIPT" metadata "$METADATA_FILE"; then
-  echo "✓"
-else
-  echo "✗ Metadata validation failed"
-  exit 1
-fi
-
 echo ""
 echo "✅ All tests passed!"
 echo "   - Merge preserves existing tags"
-echo "   - Validation works for tasks.json and metadata.json"
+echo "   - Validation works for tasks.json"
 echo "   - Fixed scripts ready for use in SKILL execution"

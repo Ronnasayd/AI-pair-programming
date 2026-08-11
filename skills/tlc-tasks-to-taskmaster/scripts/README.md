@@ -45,7 +45,7 @@ python3 validate-tasks.py <file_type> <json_file>
 
 **Arguments:**
 
-- `file_type`: `"tasks"` or `"metadata"`
+- `file_type`: `"tasks"`
 - `json_file`: Path to JSON file
 
 **Validates tasks.json:**
@@ -55,17 +55,10 @@ python3 validate-tasks.py <file_type> <json_file>
 - Each task has required fields: `id`, `title`, `description`, `status`, `priority`, `dependencies`, `details`, `testStrategy`, `subtasks`, `metadata`
 - Each task has `metadata.wave` and `metadata.onCriticalPath`
 
-**Validates metadata.json:**
-
-- Required fields: `projectName`, `version`, `createdAt`, `updatedAt`, `description`, `source`, `testCommands`, `executionWaves`, `criticalPath`, `parallelizationNotes`
-- `executionWaves` is object
-- `criticalPath` is array
-
 **Example:**
 
 ```bash
 python3 validate-tasks.py tasks .taskmaster/tasks/tasks.json
-python3 validate-tasks.py metadata .taskmaster/execution/metadata.json
 ```
 
 **Returns:** 0 on valid, 1 on error
@@ -83,16 +76,14 @@ Tests verify:
 - ✅ Initial merge creates file
 - ✅ Validation passes valid structure
 - ✅ Merging second tag preserves first tag
-- ✅ Metadata validation works
 
 ## Integration with SKILL.md
 
 The SKILL.md Step 6–7 workflow:
 
-1. Build tasks JSON and metadata JSON in memory
+1. Build tasks JSON in memory
 2. Use `merge-tasks.py` to write tasks.json (preserves existing tags)
-3. Write metadata.json directly (no merge needed)
-4. Use `validate-tasks.py` to verify both files
+3. Use `validate-tasks.py` to verify the file
 
 This ensures:
 

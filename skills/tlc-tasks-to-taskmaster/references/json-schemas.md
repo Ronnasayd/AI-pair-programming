@@ -71,32 +71,3 @@ Critical path traversal example: `T01 → T02 → T05 → T06 → T08 → T12 �
 ```
 
 **IMPORTANT**: Do NOT overwrite `tasks.json` directly. Use `scripts/merge-tasks.py` to preserve existing tags.
-
-## metadata.json (execution metadata) example
-
-```json
-{
-  "projectName": "feature-name-from-tasks-md",
-  "version": "1.0.0",
-  "createdAt": "ISO-8601 date",
-  "updatedAt": "ISO-8601 date",
-  "description": "One-line summary from tasks.md header",
-  "source": "relative/path/to/tasks.md",
-  "testCommands": {
-    "unit": "yarn jest ...",
-    "integration": "yarn jest ..."
-  },
-  "executionWaves": {
-    "wave1_serial": [1],
-    "wave2_parallel": [2, 3, 11, 26],
-    "...": []
-  },
-  "criticalPath": [1, 2, 5, 6, 8, 12, 20, 22, 23, 24],
-  "parallelizationNotes": {
-    "wave2": "T02, T03, T11, T26 all depend only on T01 — safe to run in parallel",
-    "wave6": "T12 is a sequential bottleneck: first task needing both T08 and T04"
-  }
-}
-```
-
-**Purpose**: Global metadata is the reasoning memory — executor agent reads this for parallelization strategy without recalculating the graph. Task-level metadata keeps tasks.json TaskMaster-compatible.

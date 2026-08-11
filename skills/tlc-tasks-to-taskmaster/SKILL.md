@@ -1,6 +1,6 @@
 ---
 name: tlc-tasks-to-taskmaster
-description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json for task list, .taskmaster/execution/metadata.json for strategy). When only spec.md exists (no formal tasks.md, e.g. Small/Medium features where tlc-spec-driven's auto-sizing skipped the Tasks phase), derives one taskmaster task per requirement/acceptance-criterion from spec.md instead, purely for tracking/registry purposes. Use when user says "convert tasks.md to taskmaster json", "transform tasks.md to .taskmaster format", "converta tasks.md em tasks.json", "registra essa spec no taskmaster", or wants to generate TaskMaster JSON from a tasks or spec file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster conversions.
+description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json). When only spec.md exists (no formal tasks.md, e.g. Small/Medium features where tlc-spec-driven's auto-sizing skipped the Tasks phase), derives one taskmaster task per requirement/acceptance-criterion from spec.md instead, purely for tracking/registry purposes. Use when user says "convert tasks.md to taskmaster json", "transform tasks.md to .taskmaster format", "converta tasks.md em tasks.json", "registra essa spec no taskmaster", or wants to generate TaskMaster JSON from a tasks or spec file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster conversions.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: 1.2.0
@@ -8,7 +8,7 @@ metadata:
 
 # tasks-md-to-taskmaster-json
 
-Converts a `tasks.md` spec into two files: `.taskmaster/tasks/tasks.json` (TaskMaster-compatible task list, merge-safe) and `.taskmaster/execution/metadata.json` (execution strategy: waves, critical path, parallelization notes). Split keeps `tasks.json` TaskMaster-compatible while giving executor agents reasoning context without recomputing the graph.
+Converts a `tasks.md` spec into `.taskmaster/tasks/tasks.json` (TaskMaster-compatible task list, merge-safe).
 
 When the feature only has `spec.md` (no `tasks.md` -- tlc-spec-driven's auto-sizing decided the feature is Small/Medium and skipped the Tasks phase), this skill still registers it in taskmaster for tracking, via the spec-only fallback (Step 0.5) -- taskmaster stays a complete progress log regardless of feature size, even though execution itself stays inline and unbatched for these features.
 
@@ -23,8 +23,8 @@ When the feature only has `spec.md` (no `tasks.md` -- tlc-spec-driven's auto-siz
 | 3   | Calculate waves (BFS)  | Wave 1 = no deps; Wave N+1 = deps all in waves ≤N                                                     | tasks in same wave have zero deps between each other — example in [json-schemas.md](references/json-schemas.md) |
 | 4   | Identify critical path | Bottom-up traversal: longest sequential dependency chain                                              | determines minimum execution time                                                                               |
 | 5   | Map fields             | Task → JSON schema                                                                                    | field mapping table in [json-schemas.md](references/json-schemas.md)                                            |
-| 6   | Assemble output        | Build both files                                                                                      | schemas + examples in [json-schemas.md](references/json-schemas.md)                                             |
-| 7   | Create + validate      | Run scripts (below)                                                                                   | both files must pass validation before delivery                                                                 |
+| 6   | Assemble output        | Build tasks.json                                                                                      | schema + examples in [json-schemas.md](references/json-schemas.md)                                              |
+| 7   | Create + validate      | Run scripts (below)                                                                                   | file must pass validation before delivery                                                                       |
 
 ## Spec-only fallback (Step 0.5)
 
@@ -35,22 +35,18 @@ For Small/Medium features with only `spec.md`:
 3. All synthetic tasks go in `wave 1` with `dependencies: []` -- there is no real dependency graph to compute, this is a registry, not an execution plan.
 4. `metadata.onCriticalPath` = `false` for all (no critical path concept applies).
 5. `testStrategy` = `"none"` unless the AC itself specifies a test/verification method.
-6. `metadata.json`'s `executionWaves` becomes `{ "wave1_serial": [all ids] }`, `criticalPath` = `[]`, `parallelizationNotes` notes this is a spec-only registry, not a real execution plan.
-7. Proceed to Step 5 (field mapping is already done above) then Steps 6-7 unchanged.
+6. Proceed to Step 5 (field mapping is already done above) then Steps 6-7 unchanged.
 
 ### Step 7 commands
 
 ```bash
-mkdir -p .taskmaster/tasks .taskmaster/execution
+mkdir -p .taskmaster/tasks
 cp <skill-path>/index.html .taskmaster/index.html   # Kanban viewer, static asset
 
 python3 <skill-path>/scripts/merge-tasks.py \
   .taskmaster/tasks/tasks.json "<tag>" '<tasks_json_string>'
 
-# metadata.json is execution-wide — direct overwrite is safe (no merge needed)
-
 python3 <skill-path>/scripts/validate-tasks.py tasks .taskmaster/tasks/tasks.json
-python3 <skill-path>/scripts/validate-tasks.py metadata .taskmaster/execution/metadata.json
 ```
 
 - `merge-tasks.py` preserves all existing tags while adding/updating the new one.
@@ -70,17 +66,7 @@ python3 <skill-path>/scripts/validate-tasks.py metadata .taskmaster/execution/me
 - [ ] New tag merged without overwriting existing tags
 - [ ] Root key = resolved tag (default `"master"`); `tasks` nested under it, no global metadata
 
-### metadata.json
-
-- [ ] Critical path matches longest diagram chain -- or `[]` for spec-only fallback
-- [ ] `executionWaves` keys use `waveN_serial` / `waveN_parallel`
-- [ ] All wave task IDs match tasks.json
-- [ ] `criticalPath` is array of ints
-- [ ] `parallelizationNotes` explains each wave bottleneck -- or notes spec-only registry for fallback
-- [ ] `source` points to original tasks.md or spec.md relative path
-- [ ] Valid JSON (`validate-tasks.py metadata` passes), ISO-8601 timestamps
-
 ## Reference files
 
-- [references/json-schemas.md](references/json-schemas.md) — tag wrapper, field mapping table, wave/critical-path examples, full tasks.json + metadata.json schema examples
+- [references/json-schemas.md](references/json-schemas.md) — tag wrapper, field mapping table, wave/critical-path examples, full tasks.json schema example
 - [references/walkthrough-example.md](references/walkthrough-example.md) — end-to-end worked example (input → actions → result)
