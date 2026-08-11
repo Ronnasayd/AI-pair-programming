@@ -29,6 +29,7 @@ alias cat-ctxrefs='cat $HOME/.claude/logs/hooks.log | grep -e "\[ContextRefs\]" 
 alias cat-prtfiles='cat $HOME/.claude/logs/hooks.log | grep -e "\[ProtectFiles\]" | bat --paging=never -l log' # Show ProtectFiles hook log lines: cat-prtfiles
 alias cat-scr='cat $HOME/.claude/logs/hooks.log | grep -e "\[SimilarCodeRef\]" | bat --paging=never -l log' # Show SimilarCodeRef hook log lines: cat-scr
 alias cat-sa='cat $HOME/.claude/logs/hooks.log | grep -e "\[SkillActivation\]" | bat --paging=never -l log' # Show SkillActivation hook log lines: cat-sa
+alias cat-cw='cat $HOME/.claude/logs/hooks.log | grep -e "\[ChecklistContextWatch\]" | bat --paging=never -l log' # Show ChecklistContextWatch hook log lines: cat-cw
 alias mia="mif && iai --claude" # Run mif then launch iai with Claude backend: mif-iai-claude
 alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py' # Run AI lint-fix agent script: lint-fix
 alias codeburn="npx codeburn" # Run codeburn CLI via npx: codeburn

@@ -20,7 +20,8 @@ from utils import (
 LOG = get_hooks_logger("ChecklistContextWatch")
 
 STATUSLINE_PATH = Path.home() / ".claude" / "logs" / "claude_statusline.json"
-SKILLS_ROOT = Path(os.environ.get("AI_PROJECT_DIR", ".claude")) / "skills"
+_AI_PROJECT_DIR_RAW = os.environ.get("AI_PROJECT_DIR")
+SKILLS_ROOT = Path(_AI_PROJECT_DIR_RAW) / ".claude" / "skills" if _AI_PROJECT_DIR_RAW else Path(".claude") / "skills"
 
 
 def state_path(session_id: str) -> Path:
@@ -42,9 +43,16 @@ def save_state(path: Path, state: dict) -> None:
 
 
 def find_checklist(skill_name: str | None) -> str | None:
+    LOG.debug(
+        f"find_checklist: skill_name={skill_name!r} "
+        f"AI_PROJECT_DIR={_AI_PROJECT_DIR_RAW!r} SKILLS_ROOT={SKILLS_ROOT} "
+        f"SKILLS_ROOT.exists()={SKILLS_ROOT.exists()} cwd={Path.cwd()}"
+    )
     if not skill_name:
+        LOG.debug("find_checklist: no skill_name given, returning None")
         return None
     candidate = SKILLS_ROOT / skill_name / "CHECKLIST.md"
+    LOG.debug(f"find_checklist: candidate={candidate} exists={candidate.exists()}")
     if candidate.exists():
         return str(candidate)
     return None

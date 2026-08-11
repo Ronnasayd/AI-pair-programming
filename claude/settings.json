@@ -525,7 +525,7 @@
     }
   },
   "alwaysThinkingEnabled": false,
-  "effortLevel": "low",
+  "effortLevel": "medium",
   "plansDirectory": "./docs/plans/",
   "voice": {
     "enabled": false,
