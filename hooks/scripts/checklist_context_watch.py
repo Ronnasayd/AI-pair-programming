@@ -21,7 +21,11 @@ LOG = get_hooks_logger("ChecklistContextWatch")
 
 STATUSLINE_PATH = Path.home() / ".claude" / "logs" / "claude_statusline.json"
 _AI_PROJECT_DIR_RAW = os.environ.get("AI_PROJECT_DIR")
-SKILLS_ROOT = Path(_AI_PROJECT_DIR_RAW) / ".claude" / "skills" if _AI_PROJECT_DIR_RAW else Path(".claude") / "skills"
+SKILLS_ROOT = (
+    Path(_AI_PROJECT_DIR_RAW) / ".claude" / "skills"
+    if _AI_PROJECT_DIR_RAW
+    else Path(".claude") / "skills"
+)
 
 
 def state_path(session_id: str) -> Path:
