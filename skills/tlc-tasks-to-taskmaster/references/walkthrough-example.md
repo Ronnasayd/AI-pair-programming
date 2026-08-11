@@ -11,14 +11,11 @@
 5. Run BFS to assign waves: wave1=[1], wave2=[2,3,11,26], ...
 6. Identify critical path by traversing graph bottom-up
 7. Map each task to JSON fields (include `metadata: { wave, onCriticalPath }`)
-8. Build two files:
-   - **`.taskmaster/tasks/tasks.json`** — TaskMaster structure (no global metadata)
-   - **`.taskmaster/execution/metadata.json`** — execution summary (waves, critical path, parallelization notes)
+8. Build **`.taskmaster/tasks/tasks.json`** — TaskMaster structure
 9. Merge tasks.json using `scripts/merge-tasks.py` (preserves existing tags)
-10. Validate both files using `scripts/validate-tasks.py`
+10. Validate the file using `scripts/validate-tasks.py`
 
 **Result:**
 
 - `.taskmaster/tasks/tasks.json` — TaskMaster-compatible with task-level metadata, all prior tags preserved
-- `.taskmaster/execution/metadata.json` — executor can read global execution strategy without parsing individual tasks
 - **No data loss**: Multiple calls with different tags accumulate in tasks.json instead of overwriting

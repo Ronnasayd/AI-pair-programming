@@ -6,7 +6,7 @@ Usage:
   validate-tasks.py <file_type> <json_file>
 
 Args:
-  file_type: "tasks" or "metadata"
+  file_type: "tasks"
   json_file: Path to JSON file to validate
 
 Returns:
@@ -88,48 +88,9 @@ def validate_tasks_json(filepath):
     return True
 
 
-def validate_metadata_json(filepath):
-    """Validate .taskmaster/execution/metadata.json structure."""
-    try:
-        with open(filepath) as f:
-            data = json.load(f)
-    except json.JSONDecodeError as e:
-        print(f"ERROR: Invalid JSON syntax: {e}", file=sys.stderr)
-        return False
-
-    required_fields = [
-        "projectName",
-        "version",
-        "createdAt",
-        "updatedAt",
-        "description",
-        "source",
-        "testCommands",
-        "executionWaves",
-        "criticalPath",
-        "parallelizationNotes",
-    ]
-    for field in required_fields:
-        if field not in data:
-            print(f"ERROR: metadata.json missing field '{field}'", file=sys.stderr)
-            return False
-
-    # Validate executionWaves
-    if not isinstance(data["executionWaves"], dict):
-        print("ERROR: executionWaves must be object", file=sys.stderr)
-        return False
-
-    # Validate criticalPath
-    if not isinstance(data["criticalPath"], list):
-        print("ERROR: criticalPath must be array", file=sys.stderr)
-        return False
-
-    return True
-
-
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: validate-tasks.py <tasks|metadata> <json_file>", file=sys.stderr)
+        print("Usage: validate-tasks.py <tasks> <json_file>", file=sys.stderr)
         sys.exit(1)
 
     file_type = sys.argv[1]
@@ -141,11 +102,9 @@ if __name__ == "__main__":
 
     if file_type == "tasks":
         success = validate_tasks_json(json_file)
-    elif file_type == "metadata":
-        success = validate_metadata_json(json_file)
     else:
         print(
-            f"ERROR: Unknown file_type '{file_type}' (use 'tasks' or 'metadata')",
+            f"ERROR: Unknown file_type '{file_type}' (use 'tasks')",
             file=sys.stderr,
         )
         sys.exit(1)
