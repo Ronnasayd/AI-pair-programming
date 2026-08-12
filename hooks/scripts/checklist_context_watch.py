@@ -17,7 +17,7 @@ from utils import (
     write_file,
 )
 
-PERCENTAGE_BUCKET_SIZE = 10
+PERCENTAGE_BUCKET_SIZE = 5
 
 LOG = get_hooks_logger("ChecklistContextWatch")
 
