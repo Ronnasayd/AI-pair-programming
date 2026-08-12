@@ -1153,9 +1153,16 @@
     "skill_md": "tests/test-coverage-review/SKILL.md",
     "files": []
   },
+  "tlc-semantic-grilling": {
+    "skill_md": "tlc-semantic-grilling/SKILL.md",
+    "files": [
+      "CHECKLIST.md"
+    ]
+  },
   "tlc-spec-driven-taskmaster": {
     "skill_md": "tlc-spec-driven-taskmaster/SKILL.md",
     "files": [
+      "CHECKLIST.md",
       "references/troubleshooting.md"
     ]
   },
