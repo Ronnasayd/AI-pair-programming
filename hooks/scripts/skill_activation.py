@@ -245,7 +245,7 @@ def main():
                     ),
                 }
             }
-            LOG.debug(f"Output JSON: {json.dumps(output, ensure_ascii=False)}")
+            LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
             print(json.dumps(output, ensure_ascii=False))
         else:
             LOG.debug("No skill matches after dedup filter")

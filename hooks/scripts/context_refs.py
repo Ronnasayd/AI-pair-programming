@@ -301,7 +301,7 @@ def main() -> None:
                 }
             }
         )
-        logger.debug("Output: %s", output)
+        logger.debug("[additionalContext]: %s", output)
         sys.stdout.write(output)
 
     sys.exit(0)

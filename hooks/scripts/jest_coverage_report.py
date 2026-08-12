@@ -128,17 +128,16 @@ def main() -> None:
         logger.debug("Received tool_input file_path: %s", file_path)
         context = build_coverage_context(file_path)
         if context:
-            logger.debug("Emitting additionalContext for %s", file_path)
-            print(
-                json.dumps(
-                    {
-                        "hookSpecificOutput": {
-                            "hookEventName": "PostToolUse",
-                            "additionalContext": context,
-                        }
+            output = json.dumps(
+                {
+                    "hookSpecificOutput": {
+                        "hookEventName": "PostToolUse",
+                        "additionalContext": context,
                     }
-                )
+                }
             )
+            logger.debug(f"[additionalContext]: {output}")
+            print(output)
         else:
             logger.debug("No coverage context produced for %s", file_path)
     except (json.JSONDecodeError, AttributeError) as exc:

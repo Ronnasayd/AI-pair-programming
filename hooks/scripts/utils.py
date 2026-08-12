@@ -141,7 +141,7 @@ def run_lint_hook_main(tag: str, logger: logging.Logger, maybe_run_lint) -> None
         file_path = get_by_key(tool_input, "file_path") if tool_input else None
         logger.debug("[%s] Received file_path: %s", tag, file_path)
         lint_results = maybe_run_lint(file_path)
-        output_data = emit_lint_output(stdin_data, lint_results)
+        output_data = emit_lint_output(stdin_data, lint_results, logger)
     except (json.JSONDecodeError, AttributeError):
         pass
 
@@ -149,10 +149,12 @@ def run_lint_hook_main(tag: str, logger: logging.Logger, maybe_run_lint) -> None
     sys.exit(0)
 
 
-def emit_lint_output(stdin_data: str, lint_results: dict) -> str:
+def emit_lint_output(
+    stdin_data: str, lint_results: dict, logger: logging.Logger
+) -> str:
     """Build the hook stdout payload, wrapping lint_results if any check ran."""
     if any(lint_results.values()):
-        return json.dumps(
+        output = json.dumps(
             {
                 "hookSpecificOutput": {
                     "hookEventName": "PostToolUse",
@@ -160,6 +162,8 @@ def emit_lint_output(stdin_data: str, lint_results: dict) -> str:
                 }
             }
         )
+        logger.debug(f"[additionalContext]: {output}")
+        return output
     return stdin_data
 
 

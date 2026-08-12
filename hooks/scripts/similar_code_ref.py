@@ -334,17 +334,16 @@ def main() -> None:
 
     context = build_context(content, file_path)
     if context:
-        logger.debug("emitting additionalContext: %s", context)
-        print(
-            json.dumps(
-                {
-                    "hookSpecificOutput": {
-                        "hookEventName": "PreToolUse",
-                        "additionalContext": context,
-                    }
+        output = json.dumps(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "PreToolUse",
+                    "additionalContext": context,
                 }
-            )
+            }
         )
+        logger.debug(f"[additionalContext]: {output}")
+        print(output)
     else:
         logger.debug("no context found, emitting nothing")
 
