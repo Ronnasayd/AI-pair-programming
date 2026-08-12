@@ -143,7 +143,7 @@ def main() -> None:
             ),
         }
     }
-    LOG.debug(f"Output: {output}")
+    LOG.debug(f"[additionalContext]: {output}")
     print(json.dumps(output, ensure_ascii=False))
     sys.exit(0)
 

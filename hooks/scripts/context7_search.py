@@ -207,7 +207,7 @@ def main():
             ),
         }
     }
-    LOG.debug(f"Output: {json.dumps(output, ensure_ascii=False)}")
+    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
     print(json.dumps(output, ensure_ascii=False))
     sys.exit(0)
 
