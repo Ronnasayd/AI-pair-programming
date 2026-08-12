@@ -3,13 +3,15 @@
     "ENABLE_TOOL_SEARCH": "auto:15",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5[1m]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5[1m]",
-    "ASDF_NODEJS_VERSION": "23.11.1"
+    "ASDF_NODEJS_VERSION": "23.11.1",
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"
   },
   "attribution": {
     "commit": "",
     "pr": ""
   },
   "permissions": {
+    "defaultMode": "auto",
     "allow": [
       "Bash(cd:*)",
       "Bash(ls:*)",
@@ -106,8 +108,7 @@
       "Bash(rmdir:*)",
       "Bash(rm -rf:*)",
       "Bash(rm -r:*)"
-    ],
-    "defaultMode": "default"
+    ]
   },
   "model": "sonnet[1m]",
   "hooks": {
