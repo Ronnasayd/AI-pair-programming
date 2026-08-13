@@ -13,6 +13,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
+    detect_skill,
     get_by_key,
     get_hooks_logger,
     get_project_name,
@@ -203,11 +204,16 @@ def main():
             f"Candidates above sim={MIN_SIMILARITY}: {[(name, f'{sim:.3f}') for sim, name, _ in candidates]}"
         )
 
+        referenced_skill = detect_skill(prompt)
         matches = [
-            (name, hint) for _, name, hint in candidates if shouldSuggest(name, rec_log)
+            (name, hint)
+            for _, name, hint in candidates
+            if shouldSuggest(name, rec_log) and name != referenced_skill
         ]
         skipped = [
-            name for _, name, _ in candidates if not shouldSuggest(name, rec_log)
+            name
+            for _, name, _ in candidates
+            if not shouldSuggest(name, rec_log) or name == referenced_skill
         ]
         if skipped:
             LOG.debug(f"Skipped (dedup {DEDUP_HOURS}h): {skipped}")
