@@ -23,6 +23,8 @@ if script_dir not in sys.path:
 from utils import (  # noqa: E402
     find_project_root,
     get_hooks_logger,
+    parse_json_output,
+    parse_jsonlines_output,
     run_command_cwd,
     run_jscpd,
     run_lint_hook_main,
@@ -59,7 +61,12 @@ def _check_tool_installed(tool: str, project_root: str) -> bool:
 
 
 def _run_mypy(resolved: Path, project_root: str) -> dict:
-    """Run mypy type checking. Returns {success, output, error}."""
+    """Run mypy type checking. Returns {success, output, error}.
+
+    `output` is parsed from mypy's `--output json` jsonlines format (one
+    JSON object per error) since agents parse structured data far more
+    reliably than mypy's default text output.
+    """
     if not _check_tool_installed("mypy", project_root):
         logger.debug(
             "mypy not installed, skipping type check for %s",
@@ -67,51 +74,54 @@ def _run_mypy(resolved: Path, project_root: str) -> dict:
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"mypy {str(resolved)}"
+    cmd = f"mypy --output json {str(resolved)}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
-    result = _exec("mypy", [str(resolved)], cwd=project_root)
+    result = _exec("mypy", ["--output", "json", str(resolved)], cwd=project_root)
     logger.debug("mypy result: success=%s", result["success"])
+    output = parse_jsonlines_output(
+        result.get("output", ""), "PythonLint", "mypy", logger
+    )
     if result["success"]:
         logger.debug("mypy passed for %s", resolved)
     else:
-        logger.warning(
-            "mypy found type errors in %s:\n%s",
-            resolved,
-            result.get("output", ""),
-        )
+        logger.warning("mypy found type errors in %s:\n%s", resolved, output)
     if result.get("error"):
         logger.warning("mypy stderr: %s", result.get("error", ""))
     return {
         "success": result["success"],
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }
 
 
 def _run_ruff(resolved: Path, project_root: str) -> dict:
-    """Run ruff linting. Returns {success, output, error}."""
+    """Run ruff linting. Returns {success, output, error}.
+
+    `output` is parsed from ruff's `--output-format json` (structured
+    violations list) since agents parse structured data far more reliably
+    than the default text output.
+    """
     if not _check_tool_installed("ruff", project_root):
         logger.debug("ruff not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"ruff check {str(resolved)}"
+    cmd = f"ruff check --output-format json {str(resolved)}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
-    result = _exec("ruff", ["check", str(resolved)], cwd=project_root)
+    result = _exec(
+        "ruff", ["check", "--output-format", "json", str(resolved)], cwd=project_root
+    )
     logger.debug("ruff result: success=%s", result["success"])
+    output = parse_json_output(result.get("output", ""), "PythonLint", "ruff", logger)
     if result["success"]:
         logger.debug("ruff passed for %s", resolved)
     else:
-        logger.warning(
-            "ruff found issues in %s:\n%s",
-            resolved,
-            result.get("output", ""),
-        )
+        logger.warning("ruff found issues in %s:\n%s", resolved, output)
     if result.get("error"):
         logger.warning("ruff stderr: %s", result.get("error", ""))
     return {
         "success": result["success"],
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }

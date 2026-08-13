@@ -21,6 +21,7 @@ if script_dir not in sys.path:
 from utils import (  # noqa: E402
     find_project_root,
     get_hooks_logger,
+    parse_json_output,
     run_command_cwd,
     run_jscpd,
     run_lint_hook_main,
@@ -76,29 +77,37 @@ def _run_typescript(resolved: Path, project_root: str) -> dict:
 
 
 def _run_eslint(resolved: Path, project_root: str) -> dict:
-    """Run ESLint checks. Returns {success, output, error}."""
+    """Run ESLint checks. Returns {success, output, error}.
+
+    `output` is parsed from ESLint's `--format json` (structured messages
+    list) since agents parse structured data far more reliably than the
+    default text output.
+    """
     if not _check_tool_installed("eslint", project_root):
         logger.debug("t] ESLint not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
     eslint_bin = Path(project_root) / "node_modules" / ".bin" / "eslint"
     logger.debug(
-        "t] Running: %s --quiet %s (cwd=%s)",
+        "t] Running: %s --quiet --format json %s (cwd=%s)",
         eslint_bin,
         resolved,
         project_root,
     )
-    result = _exec(str(eslint_bin), ["--quiet", str(resolved)], cwd=project_root)
+    result = _exec(
+        str(eslint_bin),
+        ["--quiet", "--format", "json", str(resolved)],
+        cwd=project_root,
+    )
     logger.debug("t] eslint result for %s: %s", resolved, result)
+    output = parse_json_output(
+        result.get("output", ""), "TypeScriptLint", "eslint", logger
+    )
     if not result["success"]:
-        logger.debug(
-            "t] Lint issues in %s:\n%s",
-            resolved,
-            result.get("output", ""),
-        )
+        logger.debug("t] Lint issues in %s:\n%s", resolved, output)
     return {
         "success": result["success"],
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }

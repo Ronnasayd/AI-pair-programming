@@ -23,6 +23,7 @@ if script_dir not in sys.path:
 from utils import (  # noqa: E402
     find_project_root,
     get_hooks_logger,
+    parse_json_output,
     run_command_cwd,
     run_jscpd,
     run_lint_hook_main,
@@ -82,28 +83,36 @@ def _run_govet(resolved: Path, project_root: str) -> dict:
 
 
 def _run_golangci_lint(resolved: Path, project_root: str) -> dict:
-    """Run golangci-lint. Returns {success, output, error}."""
+    """Run golangci-lint. Returns {success, output, error}.
+
+    `output` is parsed from golangci-lint's `--out-format json` (structured
+    Issues list) since agents parse structured data far more reliably than
+    the default text output.
+    """
     if not _check_tool_installed("golangci-lint"):
         logger.debug("golangci-lint not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"golangci-lint run {str(resolved)}"
+    cmd = f"golangci-lint run --out-format json {str(resolved)}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
-    result = _exec("golangci-lint", ["run", str(resolved)], cwd=project_root)
+    result = _exec(
+        "golangci-lint",
+        ["run", "--out-format", "json", str(resolved)],
+        cwd=project_root,
+    )
     logger.debug("golangci-lint result: success=%s", result["success"])
+    output = parse_json_output(
+        result.get("output", ""), "GolangLint", "golangci-lint", logger
+    )
     if result["success"]:
         logger.debug("golangci-lint passed for %s", resolved)
     else:
-        logger.warning(
-            "golangci-lint found issues in %s:\n%s",
-            resolved,
-            result.get("output", ""),
-        )
+        logger.warning("golangci-lint found issues in %s:\n%s", resolved, output)
     if result.get("error"):
         logger.warning("golangci-lint stderr: %s", result.get("error", ""))
     return {
         "success": result["success"],
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }
