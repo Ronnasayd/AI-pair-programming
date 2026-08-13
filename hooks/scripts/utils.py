@@ -220,6 +220,28 @@ def get_by_key(data: Mapping[str, Any], target_key: str) -> Optional[Any]:
     return None
 
 
+def extract_query_text(payload: Mapping[str, Any]) -> Optional[str]:
+    """
+    Return text to embed/search for, from either a UserPromptSubmit
+    payload ("prompt") or a PostToolUse payload for AskUserQuestion
+    (question + selected answers from "tool_response").
+    """
+    prompt = get_by_key(payload, "prompt")
+    if prompt:
+        return prompt
+
+    tool_name = get_by_key(payload, "tool_name")
+    if tool_name != "AskUserQuestion":
+        return None
+
+    tool_response = get_by_key(payload, "tool_response") or {}
+    answers = get_by_key(tool_response, "answers") or {}
+    if not answers:
+        return None
+
+    return " ".join(f"{q} {a}" for q, a in answers.items())
+
+
 # ---------------------------------------------------------------------------
 # Inlined resolver helpers (ported from resolve_formatter.js)
 # ---------------------------------------------------------------------------

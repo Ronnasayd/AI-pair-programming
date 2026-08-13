@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger, get_project_name
+from utils import extract_query_text, get_by_key, get_hooks_logger, get_project_name
 
 LOG = get_hooks_logger("Context7Search")
 
@@ -170,9 +170,9 @@ def main():
         LOG.debug(f"Failed to parse stdin JSON: {e}")
         sys.exit(0)
 
-    prompt = get_by_key(payload, "prompt")
+    prompt = extract_query_text(payload)
     if not prompt:
-        LOG.debug("No prompt in payload — skipping")
+        LOG.debug("No prompt/answer text in payload — skipping")
         sys.exit(0)
 
     try:
@@ -190,9 +190,12 @@ def main():
         LOG.debug("No context7 matches above benchmark threshold")
         sys.exit(0)
 
+    hook_event_name = (
+        "PostToolUse" if get_by_key(payload, "tool_name") else "UserPromptSubmit"
+    )
     output = {
         "hookSpecificOutput": {
-            "hookEventName": "UserPromptSubmit",
+            "hookEventName": hook_event_name,
             "additionalContext": json.dumps(
                 {
                     "instruction": (
