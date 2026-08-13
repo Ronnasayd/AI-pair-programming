@@ -31,22 +31,24 @@ from utils import (  # noqa: E402
     get_hooks_logger,
     get_session_id_short,
     resolve_formatter_bin,
-    run_command_cwd,
+    spawn_background,
 )
 
 logger = get_hooks_logger("FormatOnSessionEnd")
 
 MAX_STDIN = 1024 * 1024  # 1 MB
 _JS_TS_JSON_MD_EXTS = {".ts", ".tsx", ".js", ".jsx", ".json", ".md"}
+_BG_LOG_PATH = Path("/tmp/format-on-session-end-bg.log")
 
 
 def tracked_files_path(session_id: str) -> Path:
     return Path(f"/tmp/edited-files-{get_session_id_short(session_id)}.json")
 
 
-def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
+def _exec(bin_: str, args: list[str], cwd: str | None = None) -> None:
     cmd = " ".join([bin_, *args])
-    return run_command_cwd(cmd, cwd=cwd)
+    logger.debug("Spawning background format command: %s (cwd=%s)", cmd, cwd)
+    spawn_background(cmd, cwd or str(Path.cwd()), _BG_LOG_PATH)
 
 
 def _format_js_ts_json_md(resolved: Path) -> None:
@@ -66,18 +68,15 @@ def _format_js_ts_json_md(resolved: Path) -> None:
     else:
         args = [*fmt_bin["prefix"], "--write", str(resolved)]
 
-    result = _exec(fmt_bin["bin"], args, cwd=project_root)
-    logger.debug("%s --write result for %s: %s", formatter, resolved, result)
+    _exec(fmt_bin["bin"], args, cwd=project_root)
 
 
 def _format_go(resolved: Path) -> None:
-    result = _exec("gofmt", ["-w", str(resolved)])
-    logger.debug("gofmt -w result for %s: %s", resolved, result)
+    _exec("gofmt", ["-w", str(resolved)])
 
 
 def _format_python(resolved: Path) -> None:
-    result = _exec("ruff", ["format", str(resolved)])
-    logger.debug("ruff format result for %s: %s", resolved, result)
+    _exec("ruff", ["format", str(resolved)])
 
 
 def format_file(file_path: str) -> None:
