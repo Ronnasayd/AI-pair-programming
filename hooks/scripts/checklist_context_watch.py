@@ -10,6 +10,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
+    detect_skill,
+    extract_query_text,
     get_by_key,
     get_hooks_logger,
     get_session_id_short,
@@ -97,6 +99,18 @@ def main() -> None:
         skill_name = get_by_key(tool_input, "skill")
         checklist = find_checklist(skill_name)
         LOG.debug(f"Skill invoked: skill_name={skill_name!r} checklist={checklist!r}")
+        if checklist:
+            state["checklist_path"] = checklist
+            state.setdefault("last_bucket", -1)
+            save_state(path, state)
+            LOG.debug(f"Tracking checklist for skill '{skill_name}': {checklist}")
+        sys.exit(0)
+
+    if not tool_name:
+        prompt = extract_query_text(payload) or ""
+        skill_name = detect_skill(prompt)
+        checklist = find_checklist(skill_name)
+        LOG.debug(f"Prompt referenced skill: skill_name={skill_name!r} checklist={checklist!r}")
         if checklist:
             state["checklist_path"] = checklist
             state.setdefault("last_bucket", -1)

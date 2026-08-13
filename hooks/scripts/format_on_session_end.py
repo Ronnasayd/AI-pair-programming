@@ -60,7 +60,9 @@ def _format_js_ts_json_md(resolved: Path) -> None:
 
     fmt_bin = resolve_formatter_bin(project_root, formatter, logger)
     if not fmt_bin:
-        logger.debug("%s configured but binary not found, skipping %s", formatter, resolved)
+        logger.debug(
+            "%s configured but binary not found, skipping %s", formatter, resolved
+        )
         return
 
     if formatter == "biome":
