@@ -102,6 +102,34 @@ def run_command_cwd(cmd: str, cwd: str | None = None, timeout: int = 30) -> dict
         return {"success": False, "output": "", "error": str(exc)}
 
 
+def parse_json_output(raw: str, tag: str, source: str, logger: logging.Logger) -> Any:
+    """Parse a linter's stdout as JSON, falling back to the raw string on failure."""
+    if not raw.strip():
+        return raw
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        logger.warning("[%s] Failed to parse %s JSON output", tag, source)
+        return raw
+
+
+def parse_jsonlines_output(
+    raw: str, tag: str, source: str, logger: logging.Logger
+) -> Any:
+    """Parse a linter's stdout as one JSON object per line (e.g. mypy --output json)."""
+    lines = [line for line in raw.splitlines() if line.strip()]
+    if not lines:
+        return raw
+    records = []
+    for line in lines:
+        try:
+            records.append(json.loads(line))
+        except json.JSONDecodeError:
+            logger.warning("[%s] Failed to parse %s JSON line: %s", tag, source, line)
+            return raw
+    return records
+
+
 def run_jscpd(
     resolved: Path, project_root: str, logger: logging.Logger, tag: str
 ) -> dict:
