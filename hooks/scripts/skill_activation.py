@@ -205,9 +205,10 @@ def main():
         )
 
         referenced_skill = detect_skill(prompt)
-        referenced_skill_local = referenced_skill is not None and Path(
-            f".claude/skills/{referenced_skill}"
-        ).exists()
+        referenced_skill_local = (
+            referenced_skill is not None
+            and Path(f".claude/skills/{referenced_skill}").exists()
+        )
         matches = [
             (name, hint)
             for _, name, hint in candidates
