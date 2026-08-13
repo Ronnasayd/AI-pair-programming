@@ -511,3 +511,9 @@ def colorize_json(payload, indent: int = 0) -> str:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def detect_skill(text: str) -> str | None:
+    """Return skill name referenced in text via /skill-name, if any."""
+    match = re.search(r"(?<!\S)/([a-zA-Z0-9_-]+)(?!\S)", text)
+    return match.group(1) if match else None
