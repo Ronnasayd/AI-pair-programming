@@ -110,7 +110,9 @@ def main() -> None:
         prompt = extract_query_text(payload) or ""
         skill_name = detect_skill(prompt)
         checklist = find_checklist(skill_name)
-        LOG.debug(f"Prompt referenced skill: skill_name={skill_name!r} checklist={checklist!r}")
+        LOG.debug(
+            f"Prompt referenced skill: skill_name={skill_name!r} checklist={checklist!r}"
+        )
         if checklist:
             state["checklist_path"] = checklist
             state.setdefault("last_bucket", -1)

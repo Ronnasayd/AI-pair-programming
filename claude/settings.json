@@ -1,6 +1,6 @@
 {
   "env": {
-    "ENABLE_TOOL_SEARCH": "auto:15",
+    "ENABLE_TOOL_SEARCH": "false",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5[1m]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5[1m]",
     "ASDF_NODEJS_VERSION": "23.11.1",
@@ -11,7 +11,6 @@
     "pr": ""
   },
   "permissions": {
-    "defaultMode": "auto",
     "allow": [
       "Bash(cd:*)",
       "Bash(ls:*)",
@@ -108,7 +107,8 @@
       "Bash(rmdir:*)",
       "Bash(rm -rf:*)",
       "Bash(rm -r:*)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "model": "sonnet[1m]",
   "hooks": {
@@ -544,7 +544,8 @@
   },
   "enabledPlugins": {
     "caveman@caveman": true,
-    "rag-rat@rag-rat": false
+    "rag-rat@rag-rat": false,
+    "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -557,6 +558,12 @@
       "source": {
         "source": "github",
         "repo": "cq27-dev/rag-rat"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
       }
     }
   },
