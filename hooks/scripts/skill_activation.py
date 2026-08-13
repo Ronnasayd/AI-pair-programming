@@ -241,7 +241,9 @@ def main():
                 for name, hint in matches
             ]
             hook_event_name = (
-                "PostToolUse" if get_by_key(payload, "tool_name") else "UserPromptSubmit"
+                "PostToolUse"
+                if get_by_key(payload, "tool_name")
+                else "UserPromptSubmit"
             )
             output = {
                 "hookSpecificOutput": {
