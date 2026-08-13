@@ -105,21 +105,37 @@ def run_command_cwd(cmd: str, cwd: str | None = None, timeout: int = 30) -> dict
 def run_jscpd(
     resolved: Path, project_root: str, logger: logging.Logger, tag: str
 ) -> dict:
-    """Run jscpd duplication check via npx. Returns {success, output, error, installed}."""
-    cmd = f"npx jscpd --no-tips --exit-code 1 {str(resolved)}"
+    """Run jscpd duplication check via npx. Returns {success, output, error, installed}.
+
+    `output` is the parsed jscpd-report.json (structured duplicates list) when
+    available, since agents parse structured data far more reliably than the
+    console reporter's text table.
+    """
+    report_dir = tmp_project_dir(project_root, "jscpd-reports") / tag
+    ensure_dir(report_dir)
+    cmd = (
+        f"npx jscpd --no-tips --exit-code 1 --reporters json "
+        f"--output {report_dir} {str(resolved)}"
+    )
     logger.debug("[%s] Executing: %s (cwd=%s)", tag, cmd, project_root)
     result = run_command_cwd(cmd, cwd=project_root)
     logger.debug("[%s] jscpd result: success=%s", tag, result["success"])
+
+    report_path = report_dir / "jscpd-report.json"
+    output: Any = result.get("output", "")
+    report = read_file(report_path)
+    if report:
+        try:
+            output = json.loads(report)
+        except json.JSONDecodeError:
+            logger.warning("[%s] Failed to parse jscpd report at %s", tag, report_path)
+
     if not result["success"]:
-        logger.warning(
-            "[%s] jscpd found issues in %s:\n%s",
-            tag,
-            resolved,
-            result.get("output", ""),
-        )
+        logger.warning("[%s] jscpd found issues in %s:\n%s", tag, resolved, output)
+
     return {
         "success": result["success"],
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }
