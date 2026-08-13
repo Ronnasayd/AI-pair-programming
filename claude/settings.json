@@ -380,6 +380,10 @@
           },
           {
             "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py"
+          },
+          {
+            "type": "command",
             "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
             "timeout": 10,
             "statusMessage": "Searching context7..."
