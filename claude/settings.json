@@ -190,6 +190,27 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
+            "timeout": 10,
+            "statusMessage": "Finding relevant skills..."
+          },
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
+            "timeout": 10,
+            "statusMessage": "Searching context7..."
+          },
+          {
+            "type": "command",
+            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+          }
+        ]
+      },
+      {
         "matcher": "EnterWorktree",
         "hooks": [
           {

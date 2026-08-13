@@ -14,6 +14,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
     detect_skill,
+    extract_query_text,
     get_by_key,
     get_hooks_logger,
     get_project_name,
@@ -176,9 +177,9 @@ def main():
         sys.exit(0)
 
     try:
-        prompt = get_by_key(payload, "prompt")
+        prompt = extract_query_text(payload)
         if not prompt:
-            LOG.debug("No prompt in payload — skipping")
+            LOG.debug("No prompt/answer text in payload — skipping")
             sys.exit(0)
 
         LOG.debug(f"Processing prompt ({len(prompt)} chars): {prompt[:80]!r}...")
@@ -239,9 +240,12 @@ def main():
                 }
                 for name, hint in matches
             ]
+            hook_event_name = (
+                "PostToolUse" if get_by_key(payload, "tool_name") else "UserPromptSubmit"
+            )
             output = {
                 "hookSpecificOutput": {
-                    "hookEventName": "UserPromptSubmit",
+                    "hookEventName": hook_event_name,
                     "additionalContext": json.dumps(
                         {
                             "instruction": (
