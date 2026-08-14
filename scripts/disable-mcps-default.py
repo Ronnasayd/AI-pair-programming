@@ -27,6 +27,7 @@ disabled_mcp_servers = [
     "github",
     "tokensave",
     "ai-memory",
+    "headroom"
 ]
 
 parser = argparse.ArgumentParser()
