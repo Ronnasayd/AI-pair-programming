@@ -35,8 +35,8 @@ alias cat-ac='cat $HOME/.claude/logs/hooks.log | grep -e "\[additionalContext\]"
 alias mia="mif && iai --claude" # Run mif then launch iai with Claude backend: mif-iai-claude
 alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py' # Run AI lint-fix agent script: lint-fix
 alias codeburn="npx codeburn" # Run codeburn CLI via npx: codeburn
-alias lhwc="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh ANTHROPIC_MODEL=claude-sonnet-5 ENABLE_TOOL_SEARCH=auto:15 headroom wrap claude --1m -- " # Run Claude wrapped by headroom with 1M context, tool search disabled with ai-jail:
-alias hwc="headroom wrap claude -- " # Run Claude wrapped by headroom with 1M context, tool search disabled: headroom-wrap-claude
+alias lhwc="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh headroom wrap claude -- " # Run Claude wrapped by headroom with 1M context, with ai-jail:
+alias hwc="headroom wrap claude -- " # Run Claude wrapped by headroom with 1M context: headroom-wrap-claude
 alias tksgi="echo '.tokensave/*' >> .git/info/exclude && echo '.headroom*' >> .git/info/exclude" # Ignore tokensave/headroom artifacts locally: tokensave-gitignore
 alias slt="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm.sh" # Start local LiteLLM proxy: start-litellm
 alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh" # Start local LiteLLM proxy with headroom: start-litellm-headroom
