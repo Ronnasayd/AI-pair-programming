@@ -4,6 +4,9 @@
 # Run every 10min: */10 * * * * /path/to/claude.warmup.sh >> /tmp/warmup.log 2>&1
 set -euo pipefail
 
+# Cron uses a minimal PATH and won't see ~/.local/bin (where `claude` lives) or jq.
+export PATH="$HOME/.local/bin:$PATH"
+
 CLAUDE_JSON="$HOME/.claude.json"
 CREDENTIALS_JSON="$HOME/.claude/.credentials.json"
 ACCOUNTS_DIR="$HOME/.claude/accounts"
