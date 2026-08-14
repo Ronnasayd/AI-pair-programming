@@ -110,7 +110,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "sonnet",
+  "model": "sonnet[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -308,6 +308,10 @@
           },
           {
             "type": "command",
+            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee $HOME/.claude/logs/external.log"
+          },
+          {
+            "type": "command",
             "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
@@ -393,6 +397,10 @@
             "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 5,
             "statusMessage": "Tracking caveman mode..."
+          },
+          {
+            "type": "command",
+            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee $HOME/.claude/logs/external.log"
           },
           {
             "type": "command",
