@@ -20,11 +20,33 @@ backup_file() {
     local f="$1"
     [ -f "$f" ] || return 0
     mkdir -p "$BACKUPS_DIR"
-    local ts dest
-    ts="$(date +%Y%m%d%H%M%S)"
-    dest="$BACKUPS_DIR/$(basename "$f").bak.${ts}"
+    local dest
+    dest="$BACKUPS_DIR/$(basename "$f").bak"
     cp -p "$f" "$dest"
     log "backup: $dest"
+}
+
+
+save_current_account() {
+    [ -f "$CLAUDE_JSON" ] || return 0
+    [ -f "$CREDENTIALS_JSON" ] || return 0
+
+    local oauth_account claude_ai_oauth email
+    oauth_account="$(jq -c '.oauthAccount' "$CLAUDE_JSON")"
+    claude_ai_oauth="$(jq -c '.claudeAiOauth' "$CREDENTIALS_JSON")"
+
+    [ "$oauth_account" = "null" ] && return 0
+    [ "$claude_ai_oauth" = "null" ] && return 0
+
+    email="$(jq -r '.emailAddress // .email // empty' <<<"$oauth_account")"
+    [ -n "$email" ] || return 0
+
+    local out="$ACCOUNTS_DIR/${email}.json"
+    jq -n --argjson oauthAccount "$oauth_account" --argjson claudeAiOauth "$claude_ai_oauth" \
+        '{oauthAccount: $oauthAccount, claudeAiOauth: $claudeAiOauth}' >"$out"
+    chmod 600 "$out"
+
+    log "saved current account state (latest refresh token): $out"
 }
 
 extract_mode() {
@@ -34,30 +56,14 @@ extract_mode() {
     log "running: claude auth login"
     claude auth login
 
-    [ -f "$CLAUDE_JSON" ] || die "$CLAUDE_JSON not found after login"
-    [ -f "$CREDENTIALS_JSON" ] || die "$CREDENTIALS_JSON not found after login"
-
-    local oauth_account claude_ai_oauth email
-    oauth_account="$(jq -c '.oauthAccount' "$CLAUDE_JSON")"
-    claude_ai_oauth="$(jq -c '.claudeAiOauth' "$CREDENTIALS_JSON")"
-
-    [ "$oauth_account" = "null" ] && die "oauthAccount missing in $CLAUDE_JSON"
-    [ "$claude_ai_oauth" = "null" ] && die "claudeAiOauth missing in $CREDENTIALS_JSON"
-
-    email="$(jq -r '.emailAddress // .email // empty' <<<"$oauth_account")"
-    [ -n "$email" ] || die "could not extract email from oauthAccount"
-
-    local out="$ACCOUNTS_DIR/${email}.json"
-    jq -n --argjson oauthAccount "$oauth_account" --argjson claudeAiOauth "$claude_ai_oauth" \
-        '{oauthAccount: $oauthAccount, claudeAiOauth: $claudeAiOauth}' >"$out"
-    chmod 600 "$out"
-
-    log "saved: $out"
+    save_current_account
 }
 
 choose_mode() {
     check_deps
     [ -d "$ACCOUNTS_DIR" ] || die "no accounts saved yet, run extract mode first"
+
+    save_current_account
 
     local selected
     selected="$(find "$ACCOUNTS_DIR" -maxdepth 1 -name '*.json' -printf '%f\n' 2>/dev/null | sort | fzf --prompt="account> ")"
