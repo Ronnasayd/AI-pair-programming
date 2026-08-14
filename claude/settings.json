@@ -182,7 +182,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -282,7 +282,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -329,7 +329,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -357,7 +357,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -451,7 +451,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -475,7 +475,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -487,7 +487,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh"
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh | tee $HOME/.claude/logs/external.log"
           },
           {
             "type": "command",
@@ -503,7 +503,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -525,7 +525,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
@@ -536,7 +536,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\"",
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
           }
         ]
