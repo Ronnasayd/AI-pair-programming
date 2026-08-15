@@ -10,8 +10,8 @@ apt install bat
 # Install uv/uvx
 curl -LsSf https://astral.sh/uv/install.sh | sh && echo "uv installation [ok]"
 
-# Install headroom
-uv tool install "headroom-ai[all]" && echo "headroom installation [ok]"
+# # Install headroom
+# uv tool install "headroom-ai[all]" && echo "headroom installation [ok]"
 
 # Install rag-rat
 sudo apt install cargo  && echo "cargo installation [ok]"

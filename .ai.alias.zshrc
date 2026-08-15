@@ -35,11 +35,8 @@ alias cat-ac='cat $HOME/.claude/logs/hooks.log | grep -e "\[additionalContext\]"
 alias mia="mif && iai --claude" # Run mif then launch iai with Claude backend: mif-iai-claude
 alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py' # Run AI lint-fix agent script: lint-fix
 alias codeburn="npx codeburn" # Run codeburn CLI via npx: codeburn
-alias lhwc="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh headroom wrap claude -- " # Run Claude wrapped by headroom with 1M context, with ai-jail:
-alias hwc="headroom wrap claude -- " # Run Claude wrapped by headroom with 1M context: headroom-wrap-claude
-alias tksgi="echo '.tokensave/*' >> .git/info/exclude && echo '.headroom*' >> .git/info/exclude" # Ignore tokensave/headroom artifacts locally: tokensave-gitignore
+alias tksgi="echo '.tokensave/*' >> .git/info/exclude" # Ignore tokensave artifacts locally: tokensave-gitignore
 alias slt="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm.sh" # Start local LiteLLM proxy: start-litellm
-alias slth="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm-headroom.sh" # Start local LiteLLM proxy with headroom: start-litellm-headroom
 alias 9cl="ANTHROPIC_MODEL=9router-low claude" # Run Claude via 9router low-cost model tier: 9router-claude-low
 alias 9ch="ANTHROPIC_MODEL=9router-high claude" # Run Claude via 9router high-cost model tier: 9router-claude-high
 alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py" # Disable default MCP servers: disable-mcps
