@@ -21,7 +21,7 @@ CACHE_DENY=(BraveSoftware basilisk-dev chromium spotify nvidia mesa_shader_cache
 # Dotdirs requiring read-write access
 DOTDIR_RW=(.claude .crush .codex .aider .config .cargo .cache .docker .github)
 
-# ── Passthrough env vars (hooks + headroom need these inside jail) ──
+# ── Passthrough env vars (hooks  need these inside jail) ──
 PASSTHROUGH_VARS=(AI_PROJECT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC_MODEL ANTHROPIC_API_KEY ENABLE_TOOL_SEARCH ASDF_NODEJS_VERSION)
 
 PROJECT_DIR=$(pwd)

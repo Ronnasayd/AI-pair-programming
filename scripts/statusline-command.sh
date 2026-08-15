@@ -94,7 +94,7 @@ if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
     fi
 fi
 
-# Headroom proxy status
+# email proxy status
 email_info=""
 email_color="\033[32m"
 if [ "$CLAUDE_CONFIG_DIR" == "$HOME/.claude-L" ] ; then
@@ -111,13 +111,7 @@ else
     serena_info=" | 󱁷 sr(🔴)"
 fi
 
-# Headroom proxy status
-headroom_info=""
-if curl -sS -m 1 "http://127.0.0.1:${HEADROOM_PORT:-8787}/health" 2>/dev/null | grep -q '"ready":true'; then
-    headroom_info=" |  hr(🟢)"
-else
-    headroom_info=" |  hr(🔴)"
-fi
+
 
 # AI Memory server status
 memory_status=""
@@ -211,6 +205,6 @@ fi
 
 # Output the complete status line
 echo -e "${email_color}${email_info}${RESET}"
-echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${serena_info}${headroom_info}${ragrat_status}${caveman_info}${jail_info}"
+echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}"
 echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
 
