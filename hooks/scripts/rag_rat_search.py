@@ -10,7 +10,7 @@ from utils import extract_query_text, get_by_key, get_hooks_logger  # noqa: E402
 
 LOG = get_hooks_logger("RagRatSearch")
 
-MIN_SCORE = 0.5
+MIN_SCORE = 0.65
 TOP_N = 3
 TIMEOUT_SECONDS = 10
 
