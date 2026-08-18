@@ -222,10 +222,21 @@ EXEC_TERMINATOR_RE = re.compile(r"(-exec\b(?:(?!\\;|;).)*?)(\\;|;)", re.DOTALL)
 # Shell keywords that are structural, not commands to scan for targets —
 # they appear as segments after splitting on ;/newlines inside for/while/if
 # blocks (e.g. "do", "done"). Ported from smart_approve.py.
-SHELL_KEYWORDS = frozenset({
-    "do", "done", "then", "else", "elif", "fi", "esac", "{", "}",
-    "break", "continue",
-})
+SHELL_KEYWORDS = frozenset(
+    {
+        "do",
+        "done",
+        "then",
+        "else",
+        "elif",
+        "fi",
+        "esac",
+        "{",
+        "}",
+        "break",
+        "continue",
+    }
+)
 
 # Compound statement headers (for/while/until/if/case/select) — control
 # flow, not executable commands with file targets of their own.
@@ -789,7 +800,8 @@ def extract_file_targets(command: str) -> list[str]:
         raw_commands.extend(split_on_operators(m.group(1)))
 
     raw_commands = [
-        c for c in raw_commands
+        c
+        for c in raw_commands
         if not is_shell_structural(c) and not is_standalone_assignment(c)
     ]
 

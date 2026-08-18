@@ -64,7 +64,6 @@
       "Bash(sudo:*)",
       "Bash(su:*)",
       "Bash(doas:*)",
-      "Bash(chmod:*)",
       "Bash(git reset --hard:*)",
       "Bash(git clean:*)",
       "Bash(git push --force:*)",
@@ -91,6 +90,7 @@
       "Bash(kubectl apply:*)"
     ],
     "ask": [
+      "Bash(chmod:*)",
       "Bash(curl:*)",
       "Bash(rtk curl:*)",
       "Bash(wget:*)",
@@ -123,6 +123,10 @@
           {
             "type": "command",
             "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/smart_approve.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/dev_server_tmux_check.py"
           }
         ]
       },
