@@ -209,17 +209,27 @@ INPUT_REDIRECT_OPERATORS = {"<", "<<"}
 
 SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";", "\n"}
 
-CMD_SUBSTITUTION_RE = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
-
 # bash process substitution: <(cmd) / >(cmd) — smuggles a command whose
 # output/input is a target file, bypassing normal tokenization entirely
 PROCESS_SUBSTITUTION_RE = re.compile(r"[<>]\(([^()]*)\)")
 
 # find's -exec ... ; terminator uses a bare/escaped semicolon that is NOT a
-# shell command separator — split_subcommands() must not cut here, or the
+# shell command separator — split_on_operators() must not cut here, or the
 # -exec argument list (and any protected target inside it) gets truncated
 # away, silently defeating the whole targets scan.
 EXEC_TERMINATOR_RE = re.compile(r"(-exec\b(?:(?!\\;|;).)*?)(\\;|;)", re.DOTALL)
+
+# Shell keywords that are structural, not commands to scan for targets —
+# they appear as segments after splitting on ;/newlines inside for/while/if
+# blocks (e.g. "do", "done"). Ported from smart_approve.py.
+SHELL_KEYWORDS = frozenset({
+    "do", "done", "then", "else", "elif", "fi", "esac", "{", "}",
+    "break", "continue",
+})
+
+# Compound statement headers (for/while/until/if/case/select) — control
+# flow, not executable commands with file targets of their own.
+_COMPOUND_HEADER_RE = re.compile(r"^(for|while|until|if|case|select)\b")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -316,21 +326,273 @@ def expand_env_vars(text: str) -> str:
     return ENV_VAR_RE.sub(repl, text)
 
 
-def split_subcommands(command: str) -> list[str]:
-    """Split a shell command string on pipe/list operators into subcommands."""
-    protected = EXEC_TERMINATOR_RE.sub(lambda m: m.group(1) + "\x00", command)
-    parts = re.split(r"\|\||&&|[|;\n]", protected)
-    return [p.replace("\x00", ";").strip() for p in parts if p.strip()]
+def strip_heredocs(command: str) -> str:
+    """Strip heredoc bodies, leaving just the <<DELIM marker.
+
+    Prevents heredoc content lines (which may legitimately mention protected
+    filenames as text, e.g. a doc example) from being treated as
+    sub-commands once split_on_operators() cuts on newlines. Ported from
+    smart_approve.py.
+    """
+    lines = command.split("\n")
+    result = []
+    heredoc_delim = None
+    i = 0
+
+    while i < len(lines):
+        if heredoc_delim is not None:
+            if lines[i].strip() == heredoc_delim:
+                heredoc_delim = None
+            i += 1
+            continue
+
+        m = re.search(r"<<-?\s*['\"]?(\w+)['\"]?", lines[i])
+        if m:
+            heredoc_delim = m.group(1)
+
+        result.append(lines[i])
+        i += 1
+
+    return "\n".join(result)
 
 
-def extract_substitutions(command: str) -> list[str]:
-    """Pull inner text out of $(...) / `...` so it gets scanned too."""
-    found = []
-    for m in CMD_SUBSTITUTION_RE.finditer(command):
-        inner = m.group(1) or m.group(2) or ""
-        if inner:
-            found.append(inner)
-    return found
+def split_on_operators(command: str) -> list[str]:
+    """Split a shell command string on &&, ||, ;, |, and newlines.
+
+    Quote- and $()-depth-aware (a `;` inside a quoted string or a subshell
+    is not a split point), unlike a plain regex split. Ported from
+    smart_approve.py, with protect_files' find -exec terminator protection
+    layered on top via EXEC_TERMINATOR_RE.
+    """
+    command = EXEC_TERMINATOR_RE.sub(lambda m: m.group(1) + "\x00", command)
+    command = strip_heredocs(command)
+    command = command.replace("\\\n", " ")
+
+    segments = []
+    current = []
+    i = 0
+    in_single_quote = False
+    in_double_quote = False
+    paren_depth = 0
+
+    while i < len(command):
+        ch = command[i]
+
+        if ch == "\\" and not in_single_quote and i + 1 < len(command):
+            current.append(ch)
+            current.append(command[i + 1])
+            i += 2
+            continue
+
+        if ch == "'" and not in_double_quote and paren_depth == 0:
+            in_single_quote = not in_single_quote
+            current.append(ch)
+            i += 1
+            continue
+        if ch == '"' and not in_single_quote and paren_depth == 0:
+            in_double_quote = not in_double_quote
+            current.append(ch)
+            i += 1
+            continue
+
+        if in_single_quote or in_double_quote:
+            current.append(ch)
+            i += 1
+            continue
+
+        if ch == "$" and i + 1 < len(command) and command[i + 1] == "(":
+            paren_depth += 1
+            current.append("$")
+            current.append("(")
+            i += 2
+            continue
+        if ch == "(" and paren_depth > 0:
+            paren_depth += 1
+            current.append(ch)
+            i += 1
+            continue
+        if ch == ")" and paren_depth > 0:
+            paren_depth -= 1
+            current.append(ch)
+            i += 1
+            continue
+
+        if paren_depth > 0:
+            current.append(ch)
+            i += 1
+            continue
+
+        if ch == "&" and i + 1 < len(command) and command[i + 1] == "&":
+            segments.append("".join(current))
+            current = []
+            i += 2
+            continue
+        if ch == "|" and i + 1 < len(command) and command[i + 1] == "|":
+            segments.append("".join(current))
+            current = []
+            i += 2
+            continue
+        if ch in (";", "|", "\n"):
+            segments.append("".join(current))
+            current = []
+            i += 1
+            continue
+
+        current.append(ch)
+        i += 1
+
+    segments.append("".join(current))
+    return [s.replace("\x00", ";").strip() for s in segments if s.strip()]
+
+
+def extract_subshells(command: str) -> list[str]:
+    """Pull inner text out of $(...) / `...`, recursively, so it gets
+    scanned too. Depth-tracked (unlike a single regex), and skips $((...))
+    arithmetic expansion. Ported from smart_approve.py."""
+    subshells = []
+
+    i = 0
+    while i < len(command):
+        if (
+            command[i] == "$"
+            and i + 1 < len(command)
+            and command[i + 1] == "("
+            and not (i + 2 < len(command) and command[i + 2] == "(")
+        ):
+            depth = 0
+            start = i + 2
+            j = i + 1
+            while j < len(command):
+                if command[j] == "(":
+                    depth += 1
+                elif command[j] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        content = command[start:j]
+                        subshells.append(content)
+                        subshells.extend(extract_subshells(content))
+                        break
+                j += 1
+            i = j + 1
+        else:
+            i += 1
+
+    parts = command.split("`")
+    for idx in range(1, len(parts), 2):
+        content = parts[idx]
+        if content.strip():
+            subshells.append(content)
+            subshells.extend(extract_subshells(content))
+
+    return subshells
+
+
+def neutralize_subshells(command: str) -> str:
+    """Replace each top-level $(...) / `...` span with a placeholder word.
+
+    Their contents are already scanned independently via extract_subshells()
+    — this just keeps shlex from mis-tokenizing the raw "$(...)" text when
+    splitting the outer command into argv (e.g. `cat $(echo .env)` would
+    otherwise shlex-split into the garbage tokens "$(echo" and ".env)").
+    """
+    result = []
+    i = 0
+    n = len(command)
+    while i < n:
+        if command[i] == "$" and i + 1 < n and command[i + 1] == "(":
+            depth = 0
+            j = i + 1
+            while j < n:
+                if command[j] == "(":
+                    depth += 1
+                elif command[j] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        j += 1
+                        break
+                j += 1
+            result.append("__SUBSHELL__")
+            i = j
+            continue
+        if command[i] == "`":
+            end = command.find("`", i + 1)
+            if end == -1:
+                result.append(command[i:])
+                break
+            result.append("__SUBSHELL__")
+            i = end + 1
+            continue
+        result.append(command[i])
+        i += 1
+    return "".join(result)
+
+
+def is_shell_structural(cmd: str) -> bool:
+    """True if cmd is a shell keyword or compound-statement header, not an
+    actual command with file targets. Ported from smart_approve.py."""
+    if cmd in SHELL_KEYWORDS:
+        return True
+    if _COMPOUND_HEADER_RE.match(cmd):
+        return True
+    return False
+
+
+def is_standalone_assignment(cmd: str) -> bool:
+    """True if cmd is purely a variable assignment (no command follows),
+    e.g. "FOO=bar" — its value is picked up via expand_env_vars/subshell
+    extraction elsewhere, so scanning the bare assignment is noise. Ported
+    from smart_approve.py."""
+    m = re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", cmd)
+    if not m:
+        return False
+    return _assignment_fully_consumed(cmd, m.end())
+
+
+def _assignment_fully_consumed(cmd: str, value_start: int) -> bool:
+    """Return True if the assignment value runs to end-of-string (no
+    trailing command)."""
+    i = value_start
+    n = len(cmd)
+
+    if i < n and cmd[i] == '"':
+        i += 1
+        while i < n and cmd[i] != '"':
+            if cmd[i] == "\\" and i + 1 < n:
+                i += 2
+            else:
+                i += 1
+        if i < n:
+            i += 1
+    elif i < n and cmd[i] == "'":
+        i += 1
+        while i < n and cmd[i] != "'":
+            i += 1
+        if i < n:
+            i += 1
+    else:
+        paren_depth = 0
+        while i < n:
+            ch = cmd[i]
+            if ch == "$" and i + 1 < n and cmd[i + 1] == "(":
+                paren_depth += 1
+                i += 2
+                continue
+            if ch == "(" and paren_depth > 0:
+                paren_depth += 1
+                i += 1
+                continue
+            if ch == ")" and paren_depth > 0:
+                paren_depth -= 1
+                i += 1
+                continue
+            if paren_depth > 0:
+                i += 1
+                continue
+            if ch in (" ", "\t"):
+                break
+            i += 1
+
+    return cmd[i:].strip() == ""
 
 
 def extract_upload_ref(arg: str) -> str | None:
@@ -520,17 +782,27 @@ def extract_file_targets(command: str) -> list[str]:
     subcommands and command substitutions ($(...) / `...`)."""
     targets = []
 
-    raw_commands = split_subcommands(command)
-    for sub in extract_substitutions(command):
-        raw_commands.extend(split_subcommands(sub))
+    raw_commands = split_on_operators(command)
+    for sub in extract_subshells(command):
+        raw_commands.extend(split_on_operators(sub))
     for m in PROCESS_SUBSTITUTION_RE.finditer(command):
-        raw_commands.extend(split_subcommands(m.group(1)))
+        raw_commands.extend(split_on_operators(m.group(1)))
+
+    raw_commands = [
+        c for c in raw_commands
+        if not is_shell_structural(c) and not is_standalone_assignment(c)
+    ]
 
     for sub in raw_commands:
+        # nested $(...) / `...` inside this segment are scanned separately
+        # via extract_subshells() above — neutralize them here so shlex
+        # doesn't choke tokenizing them as literal argument text (e.g.
+        # `cat $(echo .env)` shlex-splits into garbage tokens otherwise).
+        neutralized = neutralize_subshells(sub)
         try:
-            tokens = shlex.split(sub)
+            tokens = shlex.split(neutralized)
         except ValueError:
-            tokens = sub.split()
+            tokens = neutralized.split()
         targets.extend(extract_targets_from_tokens(tokens))
 
     # eval/xargs can smuggle a target through stdin or a nested string that the

@@ -556,6 +556,40 @@
       "tool_input": { "command": "cat ~/.local/share/fish/fish_history" },
       "expect": "deny",
       "expect_pattern": "fish_history"
+    },
+    {
+      "name": "bash_quoted_semicolon_cat_env_denied",
+      "tool_name": "Bash",
+      "tool_input": { "command": "echo \"a;b\" && cat .env" },
+      "expect": "deny",
+      "expect_pattern": ".env"
+    },
+    {
+      "name": "bash_heredoc_env_mention_allowed",
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "cat <<'EOF'\ncat .env\nid_rsa\nEOF"
+      },
+      "expect": "allow"
+    },
+    {
+      "name": "bash_for_loop_scaffolding_allowed",
+      "tool_name": "Bash",
+      "tool_input": { "command": "for f in a.txt b.txt; do cat $f; done" },
+      "expect": "allow"
+    },
+    {
+      "name": "bash_nested_paren_subshell_cat_env_denied",
+      "tool_name": "Bash",
+      "tool_input": { "command": "x=$(echo $(true) && cat .env)" },
+      "expect": "deny",
+      "expect_pattern": ".env"
+    },
+    {
+      "name": "bash_arithmetic_expansion_allowed",
+      "tool_name": "Bash",
+      "tool_input": { "command": "echo $((1 + 2))" },
+      "expect": "allow"
     }
   ]
 }

@@ -119,6 +119,10 @@
           {
             "type": "command",
             "command": "/home/ronnas/.claude/hooks/rtk-rewrite.sh | tee $HOME/.claude/logs/external.log"
+          },
+          {
+            "type": "command",
+            "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/smart_approve.py"
           }
         ]
       },
