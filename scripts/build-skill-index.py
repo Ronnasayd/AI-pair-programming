@@ -76,6 +76,7 @@ def main():
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(db_path)
     conn.execute("DROP TABLE IF EXISTS skills")
+    conn.execute("DROP TABLE IF EXISTS skills_fts")
     conn.execute("""
         CREATE TABLE skills (
             id          INTEGER PRIMARY KEY,
@@ -83,6 +84,11 @@ def main():
             description TEXT NOT NULL,
             hint        TEXT NOT NULL,
             embedding   BLOB NOT NULL
+        )
+    """)
+    conn.execute("""
+        CREATE VIRTUAL TABLE skills_fts USING fts5(
+            name, description, content='skills', content_rowid='id'
         )
     """)
 
@@ -95,10 +101,15 @@ def main():
         vector = list(model.embed([text]))[0].astype("float32")
         rows.append((name, desc, desc, vector.tobytes()))
 
-    conn.executemany(
-        "INSERT INTO skills (name, description, hint, embedding) VALUES (?, ?, ?, ?)",
-        rows,
-    )
+    for name, desc, hint, embedding in rows:
+        cur = conn.execute(
+            "INSERT INTO skills (name, description, hint, embedding) VALUES (?, ?, ?, ?)",
+            (name, desc, hint, embedding),
+        )
+        conn.execute(
+            "INSERT INTO skills_fts (rowid, name, description) VALUES (?, ?, ?)",
+            (cur.lastrowid, name, desc),
+        )
     conn.commit()
     conn.close()
 

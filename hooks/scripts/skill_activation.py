@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import json
 import os
+import re
 import socket
 import sqlite3
 import subprocess
@@ -143,17 +144,135 @@ def cosineSimilarity(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.dot(a, b) / denom)
 
 
-def findSkills(db_path: Path, query_vector: np.ndarray, min_sim: float, limit: int):
-    """Score all skills, return sorted [(sim, name, hint)]."""
-    skills = loadDbSkills(db_path)
-    scored = [
-        (cosineSimilarity(query_vector, emb), name, hint) for name, hint, emb in skills
+_FTS_TOKEN_RE = re.compile(r"[a-zA-Z0-9À-ÿ]+")
+MIN_BM25_TERM_OVERLAP = 2
+# Generic function words in en/pt that shouldn't count as a lexical match on
+# their own — without this filter, "how do I..." matches almost any skill.
+_BM25_STOPWORDS = {
+    "a",
+    "an",
+    "the",
+    "i",
+    "do",
+    "does",
+    "did",
+    "how",
+    "what",
+    "when",
+    "where",
+    "why",
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "to",
+    "of",
+    "in",
+    "on",
+    "for",
+    "with",
+    "and",
+    "or",
+    "my",
+    "me",
+    "it",
+    "this",
+    "that",
+    "can",
+    "you",
+    "eu",
+    "de",
+    "do",
+    "da",
+    "o",
+    "a",
+    "os",
+    "as",
+    "que",
+    "para",
+    "com",
+    "como",
+    "um",
+    "uma",
+    "e",
+    "ou",
+    "meu",
+    "minha",
+    "isso",
+    "esse",
+    "essa",
+}
+
+
+def bm25Search(db_path: Path, query: str, limit: int):
+    """Return skills ranked by FTS5 BM25, best first: [(name, hint)].
+
+    OR-joins query tokens (an AND-all match rarely fires on full prompts), then
+    requires >=MIN_BM25_TERM_OVERLAP tokens actually present in name+description —
+    a single incidental word overlap (e.g. "sandwich" in an unrelated hint) is
+    lexical noise, not a real match.
+    """
+    tokens = [
+        t for t in _FTS_TOKEN_RE.findall(query) if t.lower() not in _BM25_STOPWORDS
     ]
-    scored.sort(key=lambda x: x[0], reverse=True)
-    LOG.debug(
-        f"Top scored skills: {[(name, f'{sim:.3f}') for sim, name, _ in scored[:5]]}"
+    if len(tokens) < MIN_BM25_TERM_OVERLAP:
+        return []
+    fts_query = " OR ".join(f'"{t}"' for t in tokens)
+    token_set = {t.lower() for t in tokens}
+
+    conn = sqlite3.connect(db_path)
+    try:
+        rows = conn.execute(
+            "SELECT skills.name, skills.hint, skills.description FROM skills_fts "
+            "JOIN skills ON skills.id = skills_fts.rowid "
+            "WHERE skills_fts MATCH ? ORDER BY bm25(skills_fts) LIMIT ?",
+            (fts_query, limit * 3),
+        ).fetchall()
+    except sqlite3.OperationalError as e:
+        LOG.debug(f"BM25 query failed (likely FTS5 syntax): {e}")
+        return []
+    finally:
+        conn.close()
+
+    results = []
+    for name, hint, description in rows:
+        doc_tokens = {t.lower() for t in _FTS_TOKEN_RE.findall(f"{name} {description}")}
+        if len(token_set & doc_tokens) >= MIN_BM25_TERM_OVERLAP:
+            results.append((name, hint))
+    return results[:limit]
+
+
+def reciprocalRankFuse(*ranked_lists: list[str], k: int = 60) -> dict[str, float]:
+    """RRF-merge ranked name lists into a single {name: fused_score} map."""
+    fused: dict[str, float] = {}
+    for ranked in ranked_lists:
+        for rank, name in enumerate(ranked, start=1):
+            fused[name] = fused.get(name, 0.0) + 1.0 / (k + rank)
+    return fused
+
+
+def findSkills(
+    db_path: Path, query: str, query_vector: np.ndarray, min_sim: float, limit: int
+):
+    """Fuse cosine-similarity and BM25 rankings via RRF, return sorted [(score, name, hint)]."""
+    skills = loadDbSkills(db_path)
+    hints = {name: hint for name, hint, _emb in skills}
+    cosine_scored = sorted(
+        ((cosineSimilarity(query_vector, emb), name) for name, _hint, emb in skills),
+        key=lambda x: x[0],
+        reverse=True,
     )
-    return [(sim, name, hint) for sim, name, hint in scored if sim >= min_sim][:limit]
+    cosine_names = [name for sim, name in cosine_scored if sim >= min_sim]
+    bm25_names = [name for name, _hint in bm25Search(db_path, query, limit * 2)]
+
+    fused = reciprocalRankFuse(cosine_names, bm25_names)
+    ranked = sorted(fused.items(), key=lambda x: x[1], reverse=True)
+    LOG.debug(
+        f"Top fused skills: {[(name, f'{score:.4f}') for name, score in ranked[:5]]}"
+    )
+    return [(score, name, hints[name]) for name, score in ranked[:limit]]
 
 
 def main():
@@ -199,10 +318,10 @@ def main():
         LOG.debug(f"Loaded {len(skills_raw)} skills from DB")
 
         candidates = findSkills(
-            DB_PATH, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
+            DB_PATH, prompt, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
         )
         LOG.debug(
-            f"Candidates above sim={MIN_SIMILARITY}: {[(name, f'{sim:.3f}') for sim, name, _ in candidates]}"
+            f"Fused candidates: {[(name, f'{score:.4f}') for score, name, _ in candidates]}"
         )
 
         referenced_skill = detect_skill(prompt)
