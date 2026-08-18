@@ -145,7 +145,9 @@ def cosineSimilarity(a: np.ndarray, b: np.ndarray) -> float:
 
 
 _FTS_TOKEN_RE = re.compile(r"[a-zA-Z0-9À-ÿ]+")
-MIN_BM25_TERM_OVERLAP = 2
+MIN_BM25_TERM_OVERLAP = 3
+MAX_BM25_SCORE = -0.5
+BM25_RRF_WEIGHT = 0.5
 # Generic function words in en/pt that shouldn't count as a lexical match on
 # their own — without this filter, "how do I..." matches almost any skill.
 _BM25_STOPWORDS = {
@@ -225,8 +227,8 @@ def bm25Search(db_path: Path, query: str, limit: int):
     conn = sqlite3.connect(db_path)
     try:
         rows = conn.execute(
-            "SELECT skills.name, skills.hint, skills.description FROM skills_fts "
-            "JOIN skills ON skills.id = skills_fts.rowid "
+            "SELECT skills.name, skills.hint, skills.description, bm25(skills_fts) "
+            "FROM skills_fts JOIN skills ON skills.id = skills_fts.rowid "
             "WHERE skills_fts MATCH ? ORDER BY bm25(skills_fts) LIMIT ?",
             (fts_query, limit * 3),
         ).fetchall()
@@ -237,19 +239,30 @@ def bm25Search(db_path: Path, query: str, limit: int):
         conn.close()
 
     results = []
-    for name, hint, description in rows:
+    for name, hint, description, bm25_score in rows:
+        if bm25_score > MAX_BM25_SCORE:
+            continue
         doc_tokens = {t.lower() for t in _FTS_TOKEN_RE.findall(f"{name} {description}")}
         if len(token_set & doc_tokens) >= MIN_BM25_TERM_OVERLAP:
             results.append((name, hint))
     return results[:limit]
 
 
-def reciprocalRankFuse(*ranked_lists: list[str], k: int = 60) -> dict[str, float]:
-    """RRF-merge ranked name lists into a single {name: fused_score} map."""
+def reciprocalRankFuse(
+    *ranked_lists: list[str], k: int = 60, weights: list[float] | None = None
+) -> dict[str, float]:
+    """RRF-merge ranked name lists into a single {name: fused_score} map.
+
+    weights scales each list's contribution (default 1.0 each) — used to make
+    BM25 a tie-breaker/booster rather than cosine's equal, since lexical
+    overlap alone is a weaker relevance signal than semantic similarity.
+    """
+    if weights is None:
+        weights = [1.0] * len(ranked_lists)
     fused: dict[str, float] = {}
-    for ranked in ranked_lists:
+    for ranked, weight in zip(ranked_lists, weights):
         for rank, name in enumerate(ranked, start=1):
-            fused[name] = fused.get(name, 0.0) + 1.0 / (k + rank)
+            fused[name] = fused.get(name, 0.0) + weight / (k + rank)
     return fused
 
 
@@ -266,8 +279,10 @@ def findSkills(
     )
     cosine_names = [name for sim, name in cosine_scored if sim >= min_sim]
     bm25_names = [name for name, _hint in bm25Search(db_path, query, limit * 2)]
+    LOG.debug(f"cosine_names ({len(cosine_names)}): {cosine_names}")
+    LOG.debug(f"bm25_names ({len(bm25_names)}): {bm25_names}")
 
-    fused = reciprocalRankFuse(cosine_names, bm25_names)
+    fused = reciprocalRankFuse(cosine_names, bm25_names, weights=[1.0, BM25_RRF_WEIGHT])
     ranked = sorted(fused.items(), key=lambda x: x[1], reverse=True)
     LOG.debug(
         f"Top fused skills: {[(name, f'{score:.4f}') for name, score in ranked[:5]]}"
