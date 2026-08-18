@@ -49,5 +49,6 @@ alias afa="npx agent-flow-app" # Run agent-flow-app via npx: agent-flow-app
 alias aij="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh" # Run ai-jail sandbox script: ai-jail
 alias ca="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh"
 alias cacs="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh choose"
+alias lca="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude" # Run ai-jail sandbox script with claude
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 

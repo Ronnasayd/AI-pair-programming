@@ -22,7 +22,7 @@ CACHE_DENY=(BraveSoftware basilisk-dev chromium spotify nvidia mesa_shader_cache
 DOTDIR_RW=(.claude .crush .codex .aider .config .cargo .cache .docker .github)
 
 # ── Passthrough env vars (hooks  need these inside jail) ──
-PASSTHROUGH_VARS=(AI_PROJECT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC_MODEL ANTHROPIC_API_KEY ENABLE_TOOL_SEARCH ASDF_NODEJS_VERSION)
+PASSTHROUGH_VARS=(AI_PROJECT_DIR AI_PROJECT_ROOT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC_MODEL ANTHROPIC_API_KEY ENABLE_TOOL_SEARCH ASDF_NODEJS_VERSION)
 
 PROJECT_DIR=$(pwd)
 TEMP_HOSTS=$(mktemp /tmp/bwrap-hosts.XXXXXX)
@@ -125,6 +125,12 @@ done
 DOCKER_MOUNT=()
 [ -S /var/run/docker.sock ] && DOCKER_MOUNT+=("--bind" "/var/run/docker.sock" "/var/run/docker.sock")
 
+# ── AI_PROJECT_ROOT_DIR mount (hooks/statusline/skills live here via symlinks) ──
+AI_ROOT_MOUNT=()
+if [ -n "${AI_PROJECT_ROOT_DIR:-}" ] && [ -d "$AI_PROJECT_ROOT_DIR" ] && [ "$AI_PROJECT_ROOT_DIR" != "$PROJECT_DIR" ]; then
+    AI_ROOT_MOUNT+=("--ro-bind" "$AI_PROJECT_ROOT_DIR" "$AI_PROJECT_ROOT_DIR")
+fi
+
 # ── DNS resolver (systemd-resolved stub, needed since /run is tmpfs'd) ──
 RESOLVE_MOUNT=()
 [ -d /run/systemd/resolve ] && RESOLVE_MOUNT+=("--ro-bind" "/run/systemd/resolve" "/run/systemd/resolve")
@@ -185,6 +191,7 @@ bwrap \
   "${CACHE_HIDE_MOUNTS[@]}" \
   "${LOCAL_OVERRIDES[@]}" \
   "${EXTRA_MOUNTS[@]}" \
+  "${AI_ROOT_MOUNT[@]}" \
   --bind "$PROJECT_DIR" "$PROJECT_DIR" \
   --chdir "$PROJECT_DIR" \
   --die-with-parent \
