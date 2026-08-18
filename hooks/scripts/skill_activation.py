@@ -279,8 +279,12 @@ def findSkills(
     )
     cosine_names = [name for sim, name in cosine_scored if sim >= min_sim]
     bm25_names = [name for name, _hint in bm25Search(db_path, query, limit * 2)]
-    LOG.debug(f"cosine_names ({len(cosine_names)}): {cosine_names}")
-    LOG.debug(f"bm25_names ({len(bm25_names)}): {bm25_names}")
+    LOG.debug(
+        f"cosine_names ({len(cosine_names)}): {[(name, sim) for sim, name in cosine_scored if sim >= min_sim]}"
+    )
+    LOG.debug(
+        f"bm25_names ({len(bm25_names)}): {[(name, _hint) for name, _hint in bm25Search(db_path, query, limit * 2)]}"
+    )
 
     fused = reciprocalRankFuse(cosine_names, bm25_names, weights=[1.0, BM25_RRF_WEIGHT])
     ranked = sorted(fused.items(), key=lambda x: x[1], reverse=True)
