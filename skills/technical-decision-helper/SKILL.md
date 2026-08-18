@@ -4,282 +4,37 @@ description: Helps make informed technical decisions by presenting viable option
 argument-hint: Describe the technical problem or question, project context, constraints, and any relevant information about previously considered alternatives.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Technical Decision Helper
 
-## Purpose
+Presents 2-3 viable options with pros/cons, trade-offs, and project fit, then recommends one with a fallback. Every question to the user goes through an interactive question tool — never plain text.
 
-Help developers make informed technical decisions through:
+## Interaction rule
 
-- Structured identification of viable options
-- Clear analysis of pros and cons for each option
-- Context search (web, documentation, community)
-- Decomposition of complex problems into sub-problems
-- Recommendations based on technical analysis
-
-## Interaction Rules
-
-### Always Use Interactive Question Tools
-
-**For every question asked to the user** — regardless of context — always use the interactive question tools available in the environment. This rule applies universally: clarifications, option selections, confirmations, preference checks, and any other user interaction.
-
-- **VS Code (GitHub Copilot)**: Use `vscode_askQuestions`
-- **Other environments**: Use equivalent interactive question tools available in your context
-- **Fallback**: Only if no interactive tools are available, use the labeled option format (A, B, C… Z) described below
-
-Never ask questions as plain text when an interactive tool is available.
-
-### When in Doubt — Ask First
-
-Before proceeding with analysis, if **any essential context is missing or ambiguous**, stop and ask the user. Never assume; always clarify.
-
-**Use interactive question tools when available**: Always prefer using interactive question tools provided by the environment:
-
-- **VS Code (GitHub Copilot)**: Use `vscode_askQuestions` to create interactive questions with selectable options
-- **Other environments**: Use equivalent interactive question tools available in your context
-- **Fallback**: If no interactive tools are available, use the labeled option format below
-
-**Format for questions** — always present labeled options:
-
-```
-[Question text]
-
-A) [Option A]
-B) [Option B]
-C) [Option C]
-Z) Other — describe freely
-```
-
-- Use sequential letters (A, B, C, D…) for each option.
-- Always include a final option labeled **Z) Other — describe freely** so the user is never forced into a pre-defined choice.
-- Wait for the user's answer before proceeding to the next phase.
-- If multiple clarifications are needed, group them into a single question block to avoid back-and-forth overload.
-
-**Example using `vscode_askQuestions`**:
-
-```json
-{
-  "questions": [
-    {
-      "header": "use_case",
-      "question": "Qual é o principal caso de uso?",
-      "options": [
-        { "label": "Web application" },
-        { "label": "Mobile application" },
-        { "label": "Backend/API" },
-        { "label": "Data processing" }
-      ]
-    },
-    {
-      "header": "team_size",
-      "question": "Qual é o tamanho do time?",
-      "options": [
-        { "label": "1-2 pessoas", "recommended": true },
-        { "label": "3-5 pessoas" },
-        { "label": "6-10 pessoas" },
-        { "label": "10+ pessoas" }
-      ]
-    }
-  ]
-}
-```
-
----
+Always use the environment's interactive question tool (`vscode_askQuestions` in VS Code, or equivalent) for every clarification, option selection, or confirmation. If none available, fall back to labeled options (A/B/C…Z, Z always "Other — describe freely") — see `references/templates.md`. When any essential context is missing or ambiguous, stop and ask before analyzing; never assume.
 
 ## Workflow
 
-### Phase 1: Understand the Problem
+| Phase              | Action                                                                                                                                                                           | Gate                                                                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 1. Understand      | Gather decision, problem, constraints (perf/cost/time/compat), current stack, non-functional reqs. If complex → decompose into 2-3 sub-problems, solve independently, integrate. | All ambiguities resolved via interactive question tool before proceeding |
+| 2. Search context  | Search official docs for named techs; comparisons if multiple options; community patterns if novel problem. Check real open-source usage, benchmarks, community experience.      | Enough evidence to write pros/cons per option                            |
+| 3. Present options | One block per option: Description, Pros, Cons, Trade-offs, Project fit — see `references/templates.md`                                                                           | Min 2-3 viable options                                                   |
+| 4. Compare         | Matrix across: complexity, learning curve, performance, maintainability, community/support, architecture fit, cost, technical risk                                               | Matrix covers every option                                               |
+| 5. Recommend       | Recommended option + justification, implementation plan, success metrics, Plan B                                                                                                 | Output matches `references/templates.md` final structure                 |
 
-1. **Gather context**:
-   - What decision needs to be made?
-   - What is the specific problem to solve?
-   - Constraints (performance, cost, time, compatibility)?
-   - Current technologies/stack?
-   - Non-functional requirements?
+## When to use
 
-2. **Identify complexity**:
-   - If problem is complex → decompose into 2-3 smaller sub-problems
-   - Solve sub-problems independently
-   - Integrate solutions at the end
+✅ Choosing between 2+ techs/architectures · build vs external lib · trade-off evaluation · migration/refactor planning · pattern selection for recurring problems
 
-3. **Clarify ambiguities** (if any):
-   - List all unclear points before proceeding
-   - Present each clarification as a multiple-choice question (A, B, C… Z) Other)
-   - Resume analysis only after receiving the user's answers
+❌ Debugging specific code · tactical implementation · problems with an already-established project pattern
 
-### Phase 2: Search for Context
+## Usage tips
 
-1. **Information research**:
-   - If specific technologies are mentioned → search official documentation
-   - If decision involves multiple options → search comparisons
-   - If problem is new → search current patterns/practices in community
-   - Use `fetch_webpage` for articles, documentation, benchmarks
+Specific question + context = better analysis. Mention constraints (budget, deadline, team skill). Give examples from prior work. Complex ask → decompose. Treat the decision as an ongoing check, not one-shot.
 
-2. **Check real examples**:
-   - Open-source projects on GitHub using each option
-   - Comparative studies or benchmarks
-   - Experiences from companies/communities
+## Reference files
 
-### Phase 3: Present Options
-
-For each viable option:
-
-**Structured format**:
-
-```
-## Option X: [Name/Technology]
-
-### Description
-[What is it, when to use]
-
-### Pros
-- ✅ Pro 1
-- ✅ Pro 2
-- ✅ Pro 3
-
-### Cons
-- ❌ Con 1
-- ❌ Con 2
-- ❌ Con 3
-
-### Trade-offs
-[What is sacrificed/gained with this choice]
-
-### Project fit
-[How it aligns with constraints and requirements]
-```
-
-**Minimum 2-3 viable options** for meaningful comparison.
-
-### Phase 4: Comparative Analysis
-
-Create **comparison matrix** considering:
-
-- **Implementation complexity** (low/medium/high)
-- **Learning curve** for the team
-- **Performance** (if relevant)
-- **Long-term maintainability**
-- **Available community/support**
-- **Alignment** with current architecture
-- **Cost** (time, resources, tools)
-- **Technical risk**
-
-### Phase 5: Recommendation
-
-Present:
-
-1. **Recommended option** with clear justification
-2. **Implementation plan** (next steps)
-3. **Success metrics** (how to validate decision)
-4. **Viable alternative** (in case 1st option doesn't work)
-
-## Usage Example
-
-**Question**: "Should I use [lib A], [lib B], or [lib C] for state management in React?"
-
-**Workflow**:
-
-1. Search docs/comparisons for each lib
-2. Present 3 options with pros/cons
-3. Compare against project requirements
-4. Recommend + next steps
-
-**Expected output**:
-
-```
-## Analysis: State Management - React
-
-### Context
-- React app with 15+ components
-- Real-time collaboration required
-- Performance critical for mobile
-
-### Option 1: Redux
-[Description, pros, cons, fit]
-
-### Option 2: Zustand
-[Description, pros, cons, fit]
-
-### Option 3: Jotai
-[Description, pros, cons, fit]
-
-### Recommendation
-**Zustand** because: lightweight, low learning curve, excellent performance
-Next steps: [...]
-```
-
-## When to Use This Skill
-
-✅ **Use for**:
-
-- Choosing between 2+ technologies/architectures
-- Deciding whether to implement feature internally or use external lib
-- Evaluating trade-offs of different approaches
-- Planning migrations/refactors
-- Choosing pattern/approach for recurring problems
-
-❌ **Don't use for**:
-
-- Debugging specific code (use specialist agents)
-- Tactical implementation (use developer-specialist)
-- Problems that already have established patterns in the project
-
-## Output Structure
-
-```markdown
-# Technical Analysis: [Decision]
-
-## Problem
-
-[Summary of problem in 2-3 lines]
-
-## Context
-
-[Constraints, requirements, current stack]
-
-[If complex: sub-problems and solutions]
-
-## Option 1: [Name]
-
-[standard structure]
-
-## Option 2: [Name]
-
-[standard structure]
-
-## Option N: [Name]
-
-[standard structure]
-
-## Comparison Matrix
-
-| Criterion | Option 1 | Option 2 | Option N |
-| --------- | -------- | -------- | -------- |
-
-## Recommendation
-
-**[Option X]** because:
-
-- Reason 1
-- Reason 2
-
-### Next Steps
-
-1. [Action]
-2. [Action]
-3. [Action]
-
-### Plan B
-
-If [Option X] doesn't work → use [Option Y] because [...]
-```
-
-## Usage Tips
-
-1. **Be specific in your question**: The more context provided, the better the analysis
-2. **Mention constraints**: Budget, deadline, project size, team skill level
-3. **Provide examples**: "In project X we did it this way..."
-4. **If unsure**: Decompose - one big problem is N small problems
-5. **Validate decisions**: Implement decision-maker as ongoing reflection, not one-time
+- `references/templates.md` — question format, interactive-tool JSON example, option analysis block, final output structure, worked usage example
