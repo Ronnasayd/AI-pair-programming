@@ -145,7 +145,7 @@ def cosineSimilarity(a: np.ndarray, b: np.ndarray) -> float:
 
 
 _FTS_TOKEN_RE = re.compile(r"[a-zA-Z0-9À-ÿ]+")
-MIN_BM25_TERM_OVERLAP = 5
+MIN_BM25_TERM_OVERLAP = 3
 MAX_BM25_SCORE = -0.5
 BM25_RRF_WEIGHT = 0.5
 # Generic function words in en/pt that shouldn't count as a lexical match on
@@ -278,12 +278,17 @@ def findSkills(
         reverse=True,
     )
     cosine_names = [name for sim, name in cosine_scored if sim >= min_sim]
-    bm25_names = [name for name, _hint in bm25Search(db_path, query, limit * 2)]
+    cosine_name_set = set(cosine_names)
+    bm25_names = [
+        name
+        for name, _hint in bm25Search(db_path, query, limit * 2)
+        if name in cosine_name_set
+    ]
     LOG.debug(
         f"cosine_names ({len(cosine_names)}): {[(name, sim) for sim, name in cosine_scored if sim >= min_sim]}"
     )
     LOG.debug(
-        f"bm25_names ({len(bm25_names)}): {[(name, _hint) for name, _hint in bm25Search(db_path, query, limit * 2)]}"
+        f"bm25_names ({len(bm25_names)}, cosine-gated): {bm25_names}"
     )
 
     fused = reciprocalRankFuse(cosine_names, bm25_names, weights=[1.0, BM25_RRF_WEIGHT])
