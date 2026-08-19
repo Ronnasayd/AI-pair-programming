@@ -221,12 +221,6 @@
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/rag_rat_search.py",
-            "timeout": 10,
-            "statusMessage": "Searching rag-rat..."
-          },
-          {
-            "type": "command",
             "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
             "timeout": 10,
             "statusMessage": "Searching context7..."
