@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-lessons.py — deterministic bookkeeping for the tlc-spec-driven lessons layer.
+lessons.py - deterministic bookkeeping for the tlc-spec-driven lessons layer.
 
 The LLM supplies judgment (which failure happened, how to phrase the lesson, what
 signal grounds it). This script owns everything mechanical: IDs, distinct-feature
@@ -8,11 +8,13 @@ recurrence counting, candidate->confirmed promotion, pruning, demotion, and
 rendering the human/agent-readable playbook. Bookkeeping by hand is exactly what
 rots a lessons file, so it lives here, not in a prompt.
 
-Canonical state:  .specs/lessons.json   (machine-owned — do NOT hand-edit)
+Canonical state:  .specs/lessons.json   (machine-owned - do NOT hand-edit)
 Rendered view:    .specs/LESSONS.md      (regenerated on every write)
 
-Pure standard library. No dependencies. Run from the project root (the dir that
-contains .specs), or pass --root.
+Pure standard library. No dependencies. The script file lives in this skill's
+`scripts/` directory - invoke it as `python3 <skill-dir>/scripts/lessons.py ...`
+(never `python3 scripts/lessons.py` from a consuming project root). Run with
+cwd at the project root (the dir that contains .specs), or pass --root.
 
 Commands:
   add        Record a grounded lesson from a verification signal.
@@ -21,6 +23,7 @@ Commands:
   prune      Drop stale uncorroborated candidates (also runs automatically on add/list).
   status     Print counts (used by the self-check in validate.md).
   init       Create empty store + rendered file.
+  selftest   Run stdlib regressions (normalization).
 
 Exit codes: 0 ok, 2 usage/validation error (e.g. missing grounding).
 """
@@ -31,6 +34,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 
 STORE_REL = os.path.join(".specs", "lessons.json")
 RENDER_REL = os.path.join(".specs", "LESSONS.md")
@@ -95,13 +99,48 @@ def _save(root, data):
 
 
 def _norm(text):
-    """Normalized dedup key: lowercase, strip punctuation, collapse whitespace.
-    Exact-after-normalization only — no semantic matching (stdlib-only limitation).
-    Phrase lessons tersely and canonically so recurrences actually merge."""
-    t = text.lower().strip()
-    t = re.sub(r"[^a-z0-9\s]", " ", t)
+    """Normalized dedup key for lesson text.
+
+    - casefold + NFD, strip combining marks (so Portuguese diacritics match ASCII peers)
+    - keep characters where str.isalnum() is true (any script) and whitespace
+    - drop other punctuation, collapse whitespace
+
+    Exact-after-normalization only - no semantic matching (stdlib-only limitation).
+    Phrase lessons tersely and canonically so recurrences actually merge.
+    """
+    t = unicodedata.normalize("NFD", text.casefold())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    t = "".join(c if (c.isalnum() or c.isspace()) else " " for c in t)
     t = re.sub(r"\s+", " ", t).strip()
     return t
+
+
+def _selftest_norm():
+    """Regressions for #158: Portuguese diacritics + distinct non-Latin text."""
+    failures = []
+
+    def check(cond, msg):
+        if not cond:
+            failures.append(msg)
+
+    a = _norm("Não use datas locais")
+    b = _norm("Nao use datas locais")
+    check(a == b == "nao use datas locais", f"PT diacritics: {a!r} vs {b!r}")
+
+    jp1 = _norm("日本語の文です")
+    jp2 = _norm("別の日本語文")
+    check(jp1 != "", f"JP1 empty: {jp1!r}")
+    check(jp2 != "", f"JP2 empty: {jp2!r}")
+    check(jp1 != jp2, f"JP sentences collapsed: {jp1!r} == {jp2!r}")
+
+    check(_norm("café") == _norm("cafe") == "cafe", f"cafe: {_norm('café')!r}")
+
+    if failures:
+        for f in failures:
+            print(f"FAIL: {f}", file=sys.stderr)
+        return 1
+    print("selftest_norm: ok")
+    return 0
 
 
 def _key(signal, text):
@@ -136,7 +175,7 @@ def _find(data, signal, text):
 
 def _render(root, data):
     lines = []
-    lines.append("# LESSONS — auto-maintained by scripts/lessons.py")
+    lines.append("# LESSONS - auto-maintained by scripts/lessons.py")
     lines.append("")
     lines.append("> Machine-owned. Do NOT hand-edit. Changes are overwritten on the next `lessons.py` write.")
     lines.append("> Canonical state lives in `.specs/lessons.json`. Edit lessons only via the script.")
@@ -158,16 +197,16 @@ def _render(root, data):
             return out
         for l in sorted(items, key=lambda x: x["id"]):
             scope = f" · scope: `{l['scope']}`" if l.get("scope") else ""
-            out.append(f"### {l['id']} — {l['text']}")
+            out.append(f"### {l['id']} - {l['text']}")
             out.append(
                 f"- signal: `{l['signal']}` · recurrence: {l['recurrence']} feature(s){scope} · harmful: {l.get('harmful', 0)}"
             )
-            feats = ", ".join(l.get("features", [])) or "—"
+            feats = ", ".join(l.get("features", [])) or "-"
             out.append(f"- features: {feats}")
             ev = l.get("evidence", [])
             if ev:
                 out.append(f"- evidence: {ev[0]}" + (f" (+{len(ev) - 1} more)" if len(ev) > 1 else ""))
-            out.append(f"- last seen: {l.get('last_seen', '—')}")
+            out.append(f"- last seen: {l.get('last_seen', '-')}")
             out.append("")
         return out
 
@@ -177,12 +216,12 @@ def _render(root, data):
         "Corroborated across multiple features. Safe to apply as guidance.",
     )
     lines += block(
-        "Candidates (under observation — do NOT load as guidance yet)",
+        "Candidates (under observation - do NOT load as guidance yet)",
         by_status["candidate"],
         "Seen once or not yet corroborated. Tracked, not trusted.",
     )
     lines += block(
-        "Quarantined (failed when applied — ignore)",
+        "Quarantined (failed when applied - ignore)",
         by_status["quarantined"],
         "A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.",
     )
@@ -206,7 +245,7 @@ def cmd_add(root, args):
     text = (args.text or "").strip()
     feature = (args.feature or "").strip()
 
-    # Grounding is enforced here, deterministically — not left to the prompt.
+    # Grounding is enforced here, deterministically - not left to the prompt.
     if signal not in SIGNALS:
         print(f"ERROR: --signal must be one of {sorted(SIGNALS)}", file=sys.stderr)
         return 2
@@ -241,7 +280,7 @@ def cmd_add(root, args):
         _save(root, data)
         msg = f"UPDATED {existing['id']} (recurrence={existing['recurrence']}, status={existing['status']})"
         if promoted:
-            msg += " — PROMOTED to confirmed"
+            msg += " - PROMOTED to confirmed"
         print(msg)
     else:
         lid = f"L-{data['next_id']:03d}"
@@ -315,7 +354,7 @@ def cmd_prune(root, args):
     data = _load(root)
     dropped = _auto_prune(data)
     _save(root, data)
-    print(f"Pruned {len(dropped)} stale candidate(s): {', '.join(dropped) if dropped else '—'}")
+    print(f"Pruned {len(dropped)} stale candidate(s): {', '.join(dropped) if dropped else '-'}")
     return 0
 
 
@@ -360,6 +399,9 @@ def main(argv=None):
 
     sp = sub.add_parser("status", help="Print counts")
     sp.set_defaults(fn=cmd_status)
+
+    sp = sub.add_parser("selftest", help="Run stdlib regressions (normalization)")
+    sp.set_defaults(fn=lambda root, args: _selftest_norm())
 
     args = p.parse_args(argv)
     root = os.path.abspath(args.root)

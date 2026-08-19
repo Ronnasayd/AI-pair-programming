@@ -176,3 +176,7 @@ vite-patterns
 vue-patterns
 webapp-testing
 xlsx
+productivity/grilling
+engineering/diagnosing-bugs
+engineering/domain-modeling
+engineering/grill-with-docs
