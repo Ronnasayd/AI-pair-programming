@@ -3,6 +3,10 @@ name: tlc-semantic-grilling
 description: step-by-step to follow in generate a plan.
 ---
 
+# Steps
+
+Add the following steps as tasks using the `TaskCreate`, `TaskUpdate`, `TaskGet`, and `TaskList` tools. Update the status as you progress through each step to keep the user informed.
+
 1. Use `sequentialthinking` under `mcp-manager` to break down the feature request into sub-questions (scope, constraints, edge cases, dependencies).
 2. Next, use tools such as `rag-rat`, `serena`, `grep`, `Read`, or any other available tool to read files, perform a semantic search, and gather all necessary information from the codebase.
 3. Conduct a `/grilling` session until you have obtained all the required information and clarified any questions with the user. Check for implicit requirements that were not listed and potential undefined issues.

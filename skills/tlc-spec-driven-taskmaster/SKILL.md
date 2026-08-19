@@ -14,6 +14,8 @@ No wave-parallel dispatch, no worktree isolation, no adversarial per-task evalua
 
 ## Steps
 
+Add the following steps as tasks using the `TaskCreate`, `TaskUpdate`, `TaskGet`, and `TaskList` tools. Update the status as you progress through each step to keep the user informed.
+
 | #   | Step                                      | Action                                                                                                                                                                                                               | Output / Gate                                                                                                                                       |
 | --- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | Validate tag                              | Confirm `.specs/features/{TAG}/spec.md` exists (design.md/tasks.md optional per auto-sizing) and a matching tag exists in `.taskmaster/tasks/tasks.json`                                                             | Missing spec.md -> report, stop. Missing taskmaster tag -> tell user to run `tlc-tasks-to-taskmaster` first, or proceed without sync if they prefer |
