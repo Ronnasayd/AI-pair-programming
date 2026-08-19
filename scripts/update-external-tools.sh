@@ -264,3 +264,15 @@ for skill in "${SKILLS[@]}"; do
   grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
   echo ""
 done
+
+
+# awesome-claude-code-toolkit
+BASE_URL="https://github.com/rohitg00/awesome-claude-code-toolkit/tree/main/commands"
+COMMANDS=(
+  "security/dependency-audit.md"
+)
+for command in "${COMMANDS[@]}"; do
+  echo "━━━ ${command} ━━━"
+  gghget "${BASE_URL}/${command}" "commands/awesome-claude-code-toolkit/${command}"
+  echo ""
+done
