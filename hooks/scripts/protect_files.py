@@ -37,7 +37,6 @@ home_dir = str(Path.home())
 
 ALLOWED_PATTERNS = [
     os.path.join(PROJECT_ROOT, ".claude", "**"),
-    os.path.join(PROJECT_ROOT, ".claude-L", "**"),
     "/tmp/**",
     f"{home_dir}/develop/personal/AI-pair-programming/skills/**",
     f"{home_dir}/develop/personal/AI-pair-programming/instructions/**",
@@ -46,6 +45,16 @@ ALLOWED_PATTERNS = [
     f"{home_dir}/Desktop/*.jpeg",
     f"{home_dir}/Desktop/*.json",
 ]
+
+# User-controlled extension of ALLOWED_PATTERNS. Only takes effect if set in
+# the shell BEFORE launching Claude Code (e.g. in ~/.zshrc or exported prior
+# to `claude`), since this hook process only inherits env from its parent
+# (the Claude Code core process), never from a Bash tool subshell — a value
+# Claude sets via `export` inside a Bash call dies with that subprocess and
+# never reaches here. Colon-separated glob patterns.
+_extra_allowed = os.environ.get("PROTECT_FILES_EXTRA_ALLOWED", "")
+if _extra_allowed:
+    ALLOWED_PATTERNS.extend(p for p in _extra_allowed.split(":") if p)
 
 PROTECTED_PATTERNS = [
     ".env",
