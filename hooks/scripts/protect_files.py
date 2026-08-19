@@ -859,6 +859,48 @@ def deny(file_path: str, pattern: str, source: str) -> None:
 
 DETECT_SECRETS_BIN = shutil.which("detect-secrets")
 
+# Regex fallback used only when detect-secrets isn't installed, so content
+# scanning doesn't silently no-op on a machine without the binary. Ported
+# from the project's JS secret-scan hook.
+FALLBACK_SECRET_PATTERNS = [
+    ("AWS Access Key", re.compile(r"AKIA[0-9A-Z]{16}")),
+    (
+        "AWS Secret Key",
+        re.compile(
+            r"aws_secret_access_key\s*=\s*[\"']?[A-Za-z0-9/+=]{40}", re.IGNORECASE
+        ),
+    ),
+    ("GitHub Token", re.compile(r"(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}")),
+    (
+        "Private Key",
+        re.compile(r"-----BEGIN (RSA|EC|OPENSSH|PGP) PRIVATE KEY-----"),
+    ),
+    (
+        "Generic API Key",
+        re.compile(r"api[_-]?key\s*[:=]\s*[\"'][a-zA-Z0-9]{20,}[\"']", re.IGNORECASE),
+    ),
+    ("Slack Token", re.compile(r"xox[bpors]-[0-9a-zA-Z-]{10,}")),
+    (
+        "Database URL",
+        re.compile(r"(postgres|mysql|mongodb|redis)://[^:]+:[^@\s]+@"),
+    ),
+    (
+        "JWT Token",
+        re.compile(r"eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"),
+    ),
+]
+
+
+def scan_content_fallback(content: str) -> list[dict]:
+    """Regex-based secret scan used when detect-secrets isn't installed."""
+    findings = []
+    lines = content.split("\n")
+    for name, regex in FALLBACK_SECRET_PATTERNS:
+        for i, line in enumerate(lines):
+            if regex.search(line):
+                findings.append({"type": name, "line": i + 1})
+    return findings
+
 
 def deny_secret(file_path: str, findings: list[dict]) -> None:
     types = ", ".join(sorted({f["type"] for f in findings}))
@@ -883,7 +925,7 @@ def scan_content_for_secrets(content: str, file_path: str) -> list[dict]:
     scanning by absolute path silently yields empty results, since
     detect-secrets' filters key off a repo-relative path."""
     if not DETECT_SECRETS_BIN:
-        return []
+        return scan_content_fallback(content)
 
     suffix = Path(file_path).name or "scanned_file"
 
