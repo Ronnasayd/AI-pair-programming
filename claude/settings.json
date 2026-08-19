@@ -144,6 +144,15 @@
         ]
       },
       {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/md_location_check.py"
+          }
+        ]
+      },
+      {
         "matcher": "Read|Edit|Write",
         "hooks": [
           {
