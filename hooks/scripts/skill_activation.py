@@ -145,7 +145,7 @@ def cosineSimilarity(a: np.ndarray, b: np.ndarray) -> float:
 
 
 _FTS_TOKEN_RE = re.compile(r"[a-zA-Z0-9À-ÿ]+")
-MIN_BM25_TERM_OVERLAP = 3
+MIN_BM25_TERM_OVERLAP = 5
 MAX_BM25_SCORE = -0.5
 BM25_RRF_WEIGHT = 0.5
 # Generic function words in en/pt that shouldn't count as a lexical match on
