@@ -110,7 +110,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "sonnet[1m]",
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": [
       {
@@ -123,6 +123,10 @@
           {
             "type": "command",
             "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/smart_approve.py"
+          },
+          {
+            "type": "command",
+            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/protect_branches.py"
           },
           {
             "type": "command",
