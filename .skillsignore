@@ -2,10 +2,10 @@
 # grilling
 # resolve-merge-conflicts
 # technical-decision-helper
+# tlc-semantic-grilling
 # tlc-spec-driven
 # tlc-spec-driven-taskmaster
 # tlc-tasks-to-taskmaster
-# tlc-semantic-grilling
 adversarial-dev
 agent-architecture-audit
 agent-creator
@@ -87,6 +87,7 @@ golang-patterns
 golang-style-guide
 golang-testing
 grill-with-docs
+grilling
 gtm-engineering
 gtm-metrics
 handling-large-files

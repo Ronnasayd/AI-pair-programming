@@ -125,6 +125,73 @@ for e in entries:
   echo "Concluído → $OUTPUT_DIR"
 }
 
+# ─── Função gghget_file (arquivo único) ─────────────────────────────────────
+
+gghget_file() {
+  local URL="${1:?Usage: gghget_file <github-url> [output-dir]}"
+  local OUTPUT_DIR="${2:-.}"
+
+  URL="${URL%/}"
+  local stripped="${URL#https://github.com/}"
+
+  local OWNER REPO BRANCH FILE_PATH tree
+  OWNER="${stripped%%/*}";      stripped="${stripped#*/}"
+  REPO="${stripped%%/*}";       stripped="${stripped#*/}"
+  tree="${stripped%%/*}";       stripped="${stripped#*/}"
+  BRANCH="${stripped%%/*}";     stripped="${stripped#*/}"
+  FILE_PATH="$stripped"
+
+  if [[ -z "$OWNER" || -z "$REPO" || "$tree" != "tree" || -z "$BRANCH" || -z "$FILE_PATH" ]]; then
+    echo "Error: URL must be https://github.com/OWNER/REPO/tree/BRANCH/PATH/FILE" >&2
+    return 1
+  fi
+
+  local name="$(basename "$FILE_PATH")"
+  local local_file="${OUTPUT_DIR}/${name}"
+
+  local AUTH_HEADER=""
+  [[ -n "$GITHUB_PAT_TOKEN" ]] && AUTH_HEADER="Authorization: Bearer $GITHUB_PAT_TOKEN"
+
+  local curl_args=(-s -H "Accept: application/vnd.github+json")
+  [[ -n "$AUTH_HEADER" ]] && curl_args+=(-H "$AUTH_HEADER")
+
+  local response http_code
+  response=$(curl "${curl_args[@]}" -w $'\n%{http_code}' \
+    "https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}")
+  http_code="${response##*$'\n'}"
+  response="${response%$'\n'*}"
+
+  if [[ "$http_code" -ge 400 ]]; then
+    echo "  ✗ Erro ao buscar: ${FILE_PATH} (HTTP $http_code)" >&2
+    echo "$response" | python3 -c "import sys,json; d=json.loads(sys.stdin.read(), strict=False); print('    →', d.get('message',''))" 2>/dev/null >&2
+    return 1
+  fi
+
+  local dl_url remote_sha
+  read -r dl_url remote_sha <<< "$(echo "$response" | python3 -c "
+import sys, json
+d = json.loads(sys.stdin.read(), strict=False)
+print(d.get('download_url') or '', d.get('sha') or '')
+")"
+
+  mkdir -p "$OUTPUT_DIR"
+
+  if _is_unchanged "$local_file" "$remote_sha"; then
+    echo "  ✓ $local_file"
+    return 0
+  fi
+
+  local label="✚ Novo"
+  [[ -f "$local_file" ]] && label="↻ Atualizado"
+
+  if curl -sf -L -o "$local_file" "$dl_url"; then
+    echo "  $label: $local_file"
+  else
+    echo "  ✗ Erro: $local_file" >&2
+    return 1
+  fi
+}
+
 # ─── Lista de skills ──────────────────────────────────────────────────────────
 
 # Tech Leads Club
@@ -270,9 +337,11 @@ done
 BASE_URL="https://github.com/rohitg00/awesome-claude-code-toolkit/tree/main/commands"
 COMMANDS=(
   "security/dependency-audit.md"
+  "architecture/plan.md"
+  "architecture/migrate.md"
 )
 for command in "${COMMANDS[@]}"; do
   echo "━━━ ${command} ━━━"
-  gghget "${BASE_URL}/${command}" "commands/awesome-claude-code-toolkit/${command}"
+  gghget_file "${BASE_URL}/${command}" "commands/awesome-claude-code-toolkit/${command%/*}"
   echo ""
 done
