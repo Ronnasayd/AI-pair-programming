@@ -1,8 +1,8 @@
 """Tests for is_valid_model() and get_validated_model() in copilot_ollama."""
+
 import logging
 
-
-import copilot_ollama
+import src.backups.copilot.copilot_ollama as copilot_ollama
 
 
 class TestIsValidModel:

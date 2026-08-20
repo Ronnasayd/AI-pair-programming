@@ -11,16 +11,17 @@ Covers:
 - Empty models list is rejected
 - Duplicate model entries are deduplicated (set behaviour)
 """
+
 from unittest.mock import mock_open, patch
 
 import pytest
 
-import copilot_ollama
-
+import src.backups.copilot.copilot_ollama as copilot_ollama
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _load(yaml_content: str) -> None:
     """Call load_model_config() with the given YAML content mocked as file I/O."""
@@ -28,7 +29,9 @@ def _load(yaml_content: str) -> None:
         copilot_ollama.load_model_config()
 
 
-def _expect_exit(yaml_content: str | None = None, open_exc=None) -> "pytest.ExceptionInfo":
+def _expect_exit(
+    yaml_content: str | None = None, open_exc=None
+) -> "pytest.ExceptionInfo":
     """Assert that load_model_config raises SystemExit(1) for the given content."""
     if open_exc is not None:
         ctx = patch("builtins.open", side_effect=open_exc)
@@ -44,6 +47,7 @@ def _expect_exit(yaml_content: str | None = None, open_exc=None) -> "pytest.Exce
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 class TestValidConfig:
     def test_allowed_models_populated(self):

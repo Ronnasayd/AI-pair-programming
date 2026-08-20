@@ -4,8 +4,9 @@ import logging
 import os
 
 import requests
-from copilot_playwright import get_cookies
 from dotenv import load_dotenv
+
+from src.backups.copilot.copilot_playwright import get_cookies
 
 # Configure logging
 logging.basicConfig(
@@ -208,7 +209,7 @@ class CopilotAPI:
             f"CopilotAPI.chat called with message='{message}', references={references}, streaming={streaming}"
         )
         logger.info(
-            f"CopilotAPI.chat called with '{len(message)}' characters message. approximately {int(len(message)/4)} tokens"
+            f"CopilotAPI.chat called with '{len(message)}' characters message. approximately {int(len(message) / 4)} tokens"
         )
         if references is None:
             references = []

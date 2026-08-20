@@ -17,11 +17,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-from copilot import CopilotClient
-from copilot.session import PermissionHandler
+from colorama import Fore, init
 from copilot.generated.session_events import SessionEventType
-from colorama import init, Fore
+from copilot.session import PermissionHandler
 
+from src.backups.copilot import CopilotClient
 
 DEFAULT_GLOB = "**/*"
 MODEL = "claude-haiku-4.5"

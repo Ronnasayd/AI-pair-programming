@@ -41,7 +41,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "git+https://github.com/Ronnasayd/custom-mcps",
         "postgresql-mcp"
       ],
       "env": {
@@ -53,7 +53,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "git+https://github.com/Ronnasayd/custom-mcps",
         "mysql-mcp"
       ],
       "env": {
@@ -65,7 +65,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "git+https://github.com/Ronnasayd/custom-mcps",
         "mongodb-mcp"
       ],
       "env": {
@@ -78,7 +78,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/Ronnasayd/AI-pair-programming.git#subdirectory=src",
+        "git+https://github.com/Ronnasayd/custom-mcps",
         "sqlite-mcp"
       ],
       "env": {

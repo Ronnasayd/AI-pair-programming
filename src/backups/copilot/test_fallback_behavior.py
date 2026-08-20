@@ -1,9 +1,10 @@
 """Integration tests for API endpoint fallback behaviour."""
+
 from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
 
-import copilot_ollama
+import src.backups.copilot.copilot_ollama as copilot_ollama
 
 MOCK_COPILOT_RESPONSE = {"text": "Hello from Copilot"}
 
@@ -35,7 +36,10 @@ class TestChatEndpoint:
         body = {"messages": [{"role": "user", "content": "Hi"}], "stream": False}
         if model is not None:
             body["model"] = model
-        with patch("copilot_ollama.call_copilot", new=AsyncMock(return_value=MOCK_COPILOT_RESPONSE)):
+        with patch(
+            "copilot_ollama.call_copilot",
+            new=AsyncMock(return_value=MOCK_COPILOT_RESPONSE),
+        ):
             return client.post("/api/chat", json=body)
 
     def test_valid_model_succeeds(self):
@@ -64,7 +68,10 @@ class TestGenerateEndpoint:
         body = {"prompt": "Say hi", "stream": False}
         if model is not None:
             body["model"] = model
-        with patch("copilot_ollama.call_copilot", new=AsyncMock(return_value=MOCK_COPILOT_RESPONSE)):
+        with patch(
+            "copilot_ollama.call_copilot",
+            new=AsyncMock(return_value=MOCK_COPILOT_RESPONSE),
+        ):
             return client.post("/api/generate", json=body)
 
     def test_valid_model_succeeds(self):
@@ -86,7 +93,10 @@ class TestOpenAIChatCompletions:
         body = {"messages": [{"role": "user", "content": "Hello"}], "stream": False}
         if model is not None:
             body["model"] = model
-        with patch("copilot_ollama.call_copilot", new=AsyncMock(return_value=MOCK_COPILOT_RESPONSE)):
+        with patch(
+            "copilot_ollama.call_copilot",
+            new=AsyncMock(return_value=MOCK_COPILOT_RESPONSE),
+        ):
             return client.post("/v1/chat/completions", json=body)
 
     def test_valid_model_succeeds(self):
