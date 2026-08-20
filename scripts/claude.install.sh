@@ -243,6 +243,9 @@ fi
 if ! grep -qF ".mcp.json" .git/info/exclude; then
     echo ".mcp.json" >> .git/info/exclude
 fi
+if ! grep -qF ".serena/*" .git/info/exclude; then
+    echo ".serena/*" >> .git/info/exclude
+fi
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
 if command -v rtk &>/dev/null; then
