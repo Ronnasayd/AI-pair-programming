@@ -13,10 +13,11 @@ from datetime import datetime, timedelta
 
 import uvicorn
 import yaml
-from copilot_api import CopilotAPI
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+
+from src.backups.copilot.copilot_api import CopilotAPI
 
 LOG_SIZE = (
     200000  # Max characters to log for prompts and responses to prevent log flooding

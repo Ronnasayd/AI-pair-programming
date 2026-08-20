@@ -1,8 +1,10 @@
 import asyncio
 import sys
-from copilot import CopilotClient
-from copilot.session import PermissionHandler
+
 from copilot.generated.session_events import SessionEventType
+from copilot.session import PermissionHandler
+
+from src.backups.copilot import CopilotClient
 
 
 async def main():

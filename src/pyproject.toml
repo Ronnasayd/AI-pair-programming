@@ -8,15 +8,8 @@ packages = [{ include = "mcps" }]
 [tool.poetry.dependencies]
 python = "^3.11"
 fastmcp = "^2.0"
-pymongo = "^4.16.0"
-mysql-connector-python = "^9.6.0"
-psycopg2-binary = "^2.9.11"
 
 [tool.poetry.scripts]
-mongodb-mcp = "mcps.mongodb_mcp:main"
-mysql-mcp = "mcps.mysql_mcp:main"
-postgresql-mcp = "mcps.postgresql_mcp:main"
-sqlite-mcp = "mcps.sqlite_mcp:main"
 skill-loader-mcp = "mcps.skill_loader_mcp:main"
 
 [tool.pytest.ini_options]
