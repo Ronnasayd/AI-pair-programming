@@ -16,7 +16,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger, split_on_operators  # noqa: E402
 
 logger = get_hooks_logger("ProtectBranches")
 
@@ -38,59 +38,6 @@ PROTECTED_BRANCHES = get_protected_branches()
 # git subcommands that mutate branch history/refs and take the operation's
 # risk from "which branch is this?" rather than the subcommand alone.
 DESTRUCTIVE_PUSH_FLAGS = {"-f", "--force", "--force-with-lease", "--force-if-includes"}
-
-SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";", "\n"}
-
-
-def split_on_operators(command: str) -> list[str]:
-    """Split a shell command string on &&, ||, ;, |, and newlines (quote-aware)."""
-    segments = []
-    current = []
-    i = 0
-    in_single = False
-    in_double = False
-
-    while i < len(command):
-        ch = command[i]
-        if ch == "\\" and not in_single and i + 1 < len(command):
-            current.append(ch)
-            current.append(command[i + 1])
-            i += 2
-            continue
-        if ch == "'" and not in_double:
-            in_single = not in_single
-            current.append(ch)
-            i += 1
-            continue
-        if ch == '"' and not in_single:
-            in_double = not in_double
-            current.append(ch)
-            i += 1
-            continue
-        if in_single or in_double:
-            current.append(ch)
-            i += 1
-            continue
-        if ch == "&" and i + 1 < len(command) and command[i + 1] == "&":
-            segments.append("".join(current))
-            current = []
-            i += 2
-            continue
-        if ch == "|" and i + 1 < len(command) and command[i + 1] == "|":
-            segments.append("".join(current))
-            current = []
-            i += 2
-            continue
-        if ch in (";", "|", "\n"):
-            segments.append("".join(current))
-            current = []
-            i += 1
-            continue
-        current.append(ch)
-        i += 1
-
-    segments.append("".join(current))
-    return [s.strip() for s in segments if s.strip()]
 
 
 def current_branch() -> str | None:

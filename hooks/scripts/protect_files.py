@@ -19,7 +19,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger, split_on_operators  # noqa: E402
 
 logger = get_hooks_logger("ProtectFiles")
 
@@ -222,12 +222,6 @@ SHELL_OPERATORS = {"|", ">", ">>", "<", "&&", "||", ";", "\n"}
 # output/input is a target file, bypassing normal tokenization entirely
 PROCESS_SUBSTITUTION_RE = re.compile(r"[<>]\(([^()]*)\)")
 
-# find's -exec ... ; terminator uses a bare/escaped semicolon that is NOT a
-# shell command separator — split_on_operators() must not cut here, or the
-# -exec argument list (and any protected target inside it) gets truncated
-# away, silently defeating the whole targets scan.
-EXEC_TERMINATOR_RE = re.compile(r"(-exec\b(?:(?!\\;|;).)*?)(\\;|;)", re.DOTALL)
-
 # Shell keywords that are structural, not commands to scan for targets —
 # they appear as segments after splitting on ;/newlines inside for/while/if
 # blocks (e.g. "do", "done"). Ported from smart_approve.py.
@@ -344,125 +338,6 @@ def expand_env_vars(text: str) -> str:
         return os.environ.get(name, m.group(0))
 
     return ENV_VAR_RE.sub(repl, text)
-
-
-def strip_heredocs(command: str) -> str:
-    """Strip heredoc bodies, leaving just the <<DELIM marker.
-
-    Prevents heredoc content lines (which may legitimately mention protected
-    filenames as text, e.g. a doc example) from being treated as
-    sub-commands once split_on_operators() cuts on newlines. Ported from
-    smart_approve.py.
-    """
-    lines = command.split("\n")
-    result = []
-    heredoc_delim = None
-    i = 0
-
-    while i < len(lines):
-        if heredoc_delim is not None:
-            if lines[i].strip() == heredoc_delim:
-                heredoc_delim = None
-            i += 1
-            continue
-
-        m = re.search(r"<<-?\s*['\"]?(\w+)['\"]?", lines[i])
-        if m:
-            heredoc_delim = m.group(1)
-
-        result.append(lines[i])
-        i += 1
-
-    return "\n".join(result)
-
-
-def split_on_operators(command: str) -> list[str]:
-    """Split a shell command string on &&, ||, ;, |, and newlines.
-
-    Quote- and $()-depth-aware (a `;` inside a quoted string or a subshell
-    is not a split point), unlike a plain regex split. Ported from
-    smart_approve.py, with protect_files' find -exec terminator protection
-    layered on top via EXEC_TERMINATOR_RE.
-    """
-    command = EXEC_TERMINATOR_RE.sub(lambda m: m.group(1) + "\x00", command)
-    command = strip_heredocs(command)
-    command = command.replace("\\\n", " ")
-
-    segments = []
-    current = []
-    i = 0
-    in_single_quote = False
-    in_double_quote = False
-    paren_depth = 0
-
-    while i < len(command):
-        ch = command[i]
-
-        if ch == "\\" and not in_single_quote and i + 1 < len(command):
-            current.append(ch)
-            current.append(command[i + 1])
-            i += 2
-            continue
-
-        if ch == "'" and not in_double_quote and paren_depth == 0:
-            in_single_quote = not in_single_quote
-            current.append(ch)
-            i += 1
-            continue
-        if ch == '"' and not in_single_quote and paren_depth == 0:
-            in_double_quote = not in_double_quote
-            current.append(ch)
-            i += 1
-            continue
-
-        if in_single_quote or in_double_quote:
-            current.append(ch)
-            i += 1
-            continue
-
-        if ch == "$" and i + 1 < len(command) and command[i + 1] == "(":
-            paren_depth += 1
-            current.append("$")
-            current.append("(")
-            i += 2
-            continue
-        if ch == "(" and paren_depth > 0:
-            paren_depth += 1
-            current.append(ch)
-            i += 1
-            continue
-        if ch == ")" and paren_depth > 0:
-            paren_depth -= 1
-            current.append(ch)
-            i += 1
-            continue
-
-        if paren_depth > 0:
-            current.append(ch)
-            i += 1
-            continue
-
-        if ch == "&" and i + 1 < len(command) and command[i + 1] == "&":
-            segments.append("".join(current))
-            current = []
-            i += 2
-            continue
-        if ch == "|" and i + 1 < len(command) and command[i + 1] == "|":
-            segments.append("".join(current))
-            current = []
-            i += 2
-            continue
-        if ch in (";", "|", "\n"):
-            segments.append("".join(current))
-            current = []
-            i += 1
-            continue
-
-        current.append(ch)
-        i += 1
-
-    segments.append("".join(current))
-    return [s.replace("\x00", ";").strip() for s in segments if s.strip()]
 
 
 def extract_subshells(command: str) -> list[str]:
@@ -802,11 +677,11 @@ def extract_file_targets(command: str) -> list[str]:
     subcommands and command substitutions ($(...) / `...`)."""
     targets = []
 
-    raw_commands = split_on_operators(command)
+    raw_commands = split_on_operators(command, protect_exec=True)
     for sub in extract_subshells(command):
-        raw_commands.extend(split_on_operators(sub))
+        raw_commands.extend(split_on_operators(sub, protect_exec=True))
     for m in PROCESS_SUBSTITUTION_RE.finditer(command):
-        raw_commands.extend(split_on_operators(m.group(1)))
+        raw_commands.extend(split_on_operators(m.group(1), protect_exec=True))
 
     raw_commands = [
         c
