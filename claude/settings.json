@@ -110,7 +110,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "sonnet",
+  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -412,12 +412,6 @@
             "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
             "timeout": 10,
             "statusMessage": "Searching context7..."
-          },
-          {
-            "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/rag_rat_search.py",
-            "timeout": 10,
-            "statusMessage": "Searching rag-rat..."
           },
           {
             "type": "command",
