@@ -603,7 +603,7 @@
     }
   },
   "alwaysThinkingEnabled": false,
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "plansDirectory": "./docs/plans/",
   "voice": {
     "enabled": false,
