@@ -17,6 +17,12 @@ import os
 import re
 import sys
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+
+from utils import split_on_operators  # noqa: E402
+
 
 def load_settings(path=None):
     """Load and return the permissions dict from settings.json."""
@@ -176,139 +182,6 @@ def extract_subshells(command):
             subshells.extend(extract_subshells(content))
 
     return subshells
-
-
-def strip_heredocs(command):
-    """Strip heredoc bodies from a command, leaving just the <<DELIM marker.
-
-    Heredocs like <<'EOF'\\n...\\nEOF are replaced with the marker only
-    (body removed).  This prevents heredoc content lines from being treated
-    as sub-commands when we split on newlines.
-    """
-    lines = command.split("\n")
-    result = []
-    heredoc_delim = None
-    i = 0
-
-    while i < len(lines):
-        if heredoc_delim is not None:
-            # Inside heredoc body — look for the terminator line
-            if lines[i].strip() == heredoc_delim:
-                heredoc_delim = None
-            i += 1
-            continue
-
-        # Check for heredoc marker: <<[-]?['"]?WORD['"]?
-        m = re.search(r'<<-?\s*[\'"]?(\w+)[\'"]?', lines[i])
-        if m:
-            heredoc_delim = m.group(1)
-
-        result.append(lines[i])
-        i += 1
-
-    return "\n".join(result)
-
-
-def split_on_operators(command):
-    """Split a command string on &&, ||, ;, |, and newlines.
-
-    Respects quoted strings and $() subshells (doesn't split inside them).
-    Returns the top-level command segments.
-    """
-    # Strip heredoc bodies so their lines aren't treated as commands
-    command = strip_heredocs(command)
-    # Collapse backslash-newline continuations before parsing
-    command = command.replace("\\\n", " ")
-
-    segments = []
-    current = []
-    i = 0
-    in_single_quote = False
-    in_double_quote = False
-    paren_depth = 0
-
-    while i < len(command):
-        ch = command[i]
-
-        # Handle backslash escaping (not inside single quotes, where \ is literal)
-        if ch == "\\" and not in_single_quote and i + 1 < len(command):
-            current.append(ch)
-            current.append(command[i + 1])
-            i += 2
-            continue
-
-        # Track quoting
-        if ch == "'" and not in_double_quote and paren_depth == 0:
-            in_single_quote = not in_single_quote
-            current.append(ch)
-            i += 1
-            continue
-        if ch == '"' and not in_single_quote and paren_depth == 0:
-            in_double_quote = not in_double_quote
-            current.append(ch)
-            i += 1
-            continue
-
-        if in_single_quote or in_double_quote:
-            current.append(ch)
-            i += 1
-            continue
-
-        # Track $() subshell depth — consume $( as a single token
-        if ch == "$" and i + 1 < len(command) and command[i + 1] == "(":
-            paren_depth += 1
-            current.append("$")
-            current.append("(")
-            i += 2
-            continue
-        if ch == "(" and paren_depth > 0:
-            paren_depth += 1
-            current.append(ch)
-            i += 1
-            continue
-        if ch == ")" and paren_depth > 0:
-            paren_depth -= 1
-            current.append(ch)
-            i += 1
-            continue
-
-        if paren_depth > 0:
-            current.append(ch)
-            i += 1
-            continue
-
-        # Split on operators at top level
-        if ch == "&" and i + 1 < len(command) and command[i + 1] == "&":
-            segments.append("".join(current))
-            current = []
-            i += 2
-            continue
-        if ch == "|" and i + 1 < len(command) and command[i + 1] == "|":
-            segments.append("".join(current))
-            current = []
-            i += 2
-            continue
-        if ch == ";":
-            segments.append("".join(current))
-            current = []
-            i += 1
-            continue
-        if ch == "|":
-            segments.append("".join(current))
-            current = []
-            i += 1
-            continue
-        if ch == "\n":
-            segments.append("".join(current))
-            current = []
-            i += 1
-            continue
-
-        current.append(ch)
-        i += 1
-
-    segments.append("".join(current))
-    return [s.strip() for s in segments if s.strip()]
 
 
 def _skip_shell_value(cmd, i):

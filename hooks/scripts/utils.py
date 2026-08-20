@@ -583,3 +583,133 @@ def detect_skill(text: str) -> str | None:
     """Return skill name referenced in text via /skill-name, if any."""
     match = re.search(r"(?<!\S)/([a-zA-Z0-9_-]+)(?!\S)", text)
     return match.group(1) if match else None
+
+
+# find's -exec ... ; terminator uses a bare/escaped semicolon that is NOT a
+# shell command separator — splitting there truncates the -exec argument list
+# (and any protected target inside it), silently defeating a targets scan.
+EXEC_TERMINATOR_RE = re.compile(r"(-exec\b(?:(?!\\;|;).)*?)(\\;|;)", re.DOTALL)
+
+
+def strip_heredocs(command: str) -> str:
+    """Strip heredoc bodies, leaving just the <<DELIM marker.
+
+    Prevents heredoc content lines (which may legitimately mention protected
+    filenames as text, e.g. a doc example) from being treated as sub-commands
+    once split_on_operators() cuts on newlines.
+    """
+    lines = command.split("\n")
+    result = []
+    heredoc_delim = None
+    i = 0
+
+    while i < len(lines):
+        if heredoc_delim is not None:
+            if lines[i].strip() == heredoc_delim:
+                heredoc_delim = None
+            i += 1
+            continue
+
+        m = re.search(r"<<-?\s*['\"]?(\w+)['\"]?", lines[i])
+        if m:
+            heredoc_delim = m.group(1)
+
+        result.append(lines[i])
+        i += 1
+
+    return "\n".join(result)
+
+
+def split_on_operators(command: str, protect_exec: bool = False) -> list[str]:
+    """Split a shell command string on &&, ||, ;, |, and newlines.
+
+    Quote- and $()-depth-aware (a `;` inside a quoted string or a subshell is
+    not a split point), unlike a plain regex split. Heredoc bodies are stripped
+    and backslash-newline continuations collapsed before parsing.
+
+    protect_exec=True additionally shields `find -exec ... ;` terminators from
+    being treated as command separators.
+    """
+    if protect_exec:
+        command = EXEC_TERMINATOR_RE.sub(lambda m: m.group(1) + "\x00", command)
+    command = strip_heredocs(command)
+    command = command.replace("\\\n", " ")
+
+    segments = []
+    current = []
+    i = 0
+    in_single_quote = False
+    in_double_quote = False
+    paren_depth = 0
+
+    while i < len(command):
+        ch = command[i]
+
+        # Backslash escaping (not inside single quotes, where \ is literal)
+        if ch == "\\" and not in_single_quote and i + 1 < len(command):
+            current.append(ch)
+            current.append(command[i + 1])
+            i += 2
+            continue
+
+        if ch == "'" and not in_double_quote and paren_depth == 0:
+            in_single_quote = not in_single_quote
+            current.append(ch)
+            i += 1
+            continue
+        if ch == '"' and not in_single_quote and paren_depth == 0:
+            in_double_quote = not in_double_quote
+            current.append(ch)
+            i += 1
+            continue
+
+        if in_single_quote or in_double_quote:
+            current.append(ch)
+            i += 1
+            continue
+
+        # $() subshell depth — consume $( as a single token
+        if ch == "$" and i + 1 < len(command) and command[i + 1] == "(":
+            paren_depth += 1
+            current.append("$")
+            current.append("(")
+            i += 2
+            continue
+        if ch == "(" and paren_depth > 0:
+            paren_depth += 1
+            current.append(ch)
+            i += 1
+            continue
+        if ch == ")" and paren_depth > 0:
+            paren_depth -= 1
+            current.append(ch)
+            i += 1
+            continue
+
+        if paren_depth > 0:
+            current.append(ch)
+            i += 1
+            continue
+
+        # Split on operators at top level
+        if ch == "&" and i + 1 < len(command) and command[i + 1] == "&":
+            segments.append("".join(current))
+            current = []
+            i += 2
+            continue
+        if ch == "|" and i + 1 < len(command) and command[i + 1] == "|":
+            segments.append("".join(current))
+            current = []
+            i += 2
+            continue
+        if ch in (";", "|", "\n"):
+            segments.append("".join(current))
+            current = []
+            i += 1
+            continue
+
+        current.append(ch)
+        i += 1
+
+    segments.append("".join(current))
+    return [s.replace("\x00", ";").strip() for s in segments if s.strip()]
