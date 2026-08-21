@@ -16,8 +16,8 @@ else
     fi
     uv sync --project "$SOURCE" > /dev/null && echo "fastembed ok"
     # bash "$(pwd)/scripts/update-external-tools.sh"
-    python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
-    python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
+    uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
+    uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
     sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$SOURCE/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
     if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
