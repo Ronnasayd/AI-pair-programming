@@ -1,0 +1,33 @@
+{
+  "hook": "scripts/md_location_check.py",
+  "mode": "stdout",
+  "description": "Eval cases for md_location_check.py (PreToolUse Write hook, warn on stray .md files)",
+  "cases": [
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "non_md_file_no_output",
+      "input": { "tool_input": { "file_path": "src/foo.py" } },
+      "expect_output": false
+    },
+    {
+      "name": "md_in_docs_dir_no_output",
+      "input": { "tool_input": { "file_path": "docs/design.md" } },
+      "expect_output": false
+    },
+    {
+      "name": "claude_md_allowed_no_output",
+      "input": { "tool_input": { "file_path": "CLAUDE.md" } },
+      "expect_output": false
+    },
+    {
+      "name": "stray_md_at_repo_root_warned",
+      "input": { "tool_input": { "file_path": "NOTES.md" } },
+      "expect_output": true,
+      "expect_pattern": "NOTES.md"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "hook": "scripts/large_file_read_warning.py",
+  "mode": "stdout",
+  "description": "Eval cases for large_file_read_warning.py (PreToolUse Read hook, warn on >500-line reads without offset/limit)",
+  "cases": [
+    {
+      "name": "non_read_tool_no_output",
+      "input": { "tool_name": "Write", "tool_input": {} },
+      "expect_output": false
+    },
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "no_file_path_no_output",
+      "input": { "tool_name": "Read", "tool_input": {} },
+      "expect_output": false
+    },
+    {
+      "name": "nonexistent_file_no_output",
+      "input": {
+        "tool_name": "Read",
+        "tool_input": { "file_path": "/tmp/does-not-exist-eval.txt" }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "offset_given_skips_warning",
+      "input": {
+        "tool_name": "Read",
+        "tool_input": {
+          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/evals/protect_files.json",
+          "offset": 1
+        }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "large_file_full_read_warned",
+      "input": {
+        "tool_name": "Read",
+        "tool_input": {
+          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/evals/protect_files.json"
+        }
+      },
+      "expect_output": true,
+      "expect_pattern": "500"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "hook": "scripts/dir_context_refs.py",
+  "mode": "stdout",
+  "description": "Eval cases for dir_context_refs.py (PreToolUse Read|Edit|Write hook, surface CONTEXT/CLAUDE/AGENTS.md refs)",
+  "cases": [
+    {
+      "name": "non_matching_tool_no_output",
+      "input": { "tool_name": "Bash", "tool_input": { "command": "ls" } },
+      "expect_output": false
+    },
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "no_file_path_no_output",
+      "input": { "tool_name": "Read", "tool_input": {} },
+      "expect_output": false
+    },
+    {
+      "name": "read_under_hooks_finds_agents_md",
+      "input": {
+        "tool_name": "Read",
+        "session_id": "evaldircontext01",
+        "cwd": "/home/ronnas/develop/personal",
+        "tool_input": {
+          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
+        }
+      },
+      "expect_output": true,
+      "expect_pattern": "AGENTS.md",
+      "cache_files": ["/tmp/dir_context_refs_evaldirc.json"]
+    },
+    {
+      "name": "dedup_suppresses_repeat_within_window",
+      "input": {
+        "tool_name": "Read",
+        "session_id": "evaldircontext01",
+        "cwd": "/home/ronnas/develop/personal",
+        "tool_input": {
+          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
+        }
+      },
+      "expect_output": false,
+      "cache_files": []
+    }
+  ]
+}
