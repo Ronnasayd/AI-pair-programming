@@ -16,12 +16,14 @@ dependencies = [
     { name = "fastembed" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastembed" },
     { name = "numpy" },
+    { name = "pyyaml" },
 ]
 
 [[package]]
