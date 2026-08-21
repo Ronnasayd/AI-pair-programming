@@ -66,7 +66,10 @@ def run_exit_code_case(hook_path: Path, case: dict) -> tuple[bool, str]:
 
     pattern = case.get("expect_pattern")
     if pattern and pattern not in proc.stderr:
-        return False, f"expected stderr to contain {pattern!r}, got {proc.stderr.strip()!r}"
+        return (
+            False,
+            f"expected stderr to contain {pattern!r}, got {proc.stderr.strip()!r}",
+        )
 
     return True, ""
 
@@ -95,13 +98,19 @@ def run_stdout_case(hook_path: Path, case: dict) -> tuple[bool, str]:
         return False, "TIMEOUT"
 
     if proc.returncode != 0:
-        return False, f"expected exit 0, got {proc.returncode} (stderr={proc.stderr.strip()!r})"
+        return (
+            False,
+            f"expected exit 0, got {proc.returncode} (stderr={proc.stderr.strip()!r})",
+        )
 
     stdout = proc.stdout.strip()
     expect_output = case.get("expect_output", False)
 
     if expect_output and not stdout:
-        return False, f"expected non-empty stdout, got empty (stderr={proc.stderr.strip()!r})"
+        return (
+            False,
+            f"expected non-empty stdout, got empty (stderr={proc.stderr.strip()!r})",
+        )
     if not expect_output and stdout:
         return False, f"expected empty stdout, got {stdout!r}"
 
@@ -143,7 +152,9 @@ def run_eval_file(eval_path: Path) -> tuple[int, int]:
 
 def main() -> None:
     args = sys.argv[1:]
-    eval_files = sorted(EVALS_DIR.glob("*.json")) if not args else [Path(a) for a in args]
+    eval_files = (
+        sorted(EVALS_DIR.glob("*.json")) if not args else [Path(a) for a in args]
+    )
 
     if not eval_files:
         print("No eval files found.")
