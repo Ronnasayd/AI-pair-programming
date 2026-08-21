@@ -122,15 +122,15 @@
           },
           {
             "type": "command",
-            "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/smart_approve.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/smart_approve.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/protect_branches.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/protect_branches.py"
           },
           {
             "type": "command",
-            "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/dev_server_tmux_check.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/dev_server_tmux_check.py"
           }
         ]
       },
@@ -139,11 +139,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context_refs.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/context_refs.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/similar_code_ref.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/similar_code_ref.py"
           }
         ]
       },
@@ -152,7 +152,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 $AI_PROJECT_DIR/.claude/hooks/scripts/md_location_check.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/md_location_check.py"
           }
         ]
       },
@@ -161,7 +161,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/dir_context_refs.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/dir_context_refs.py"
           }
         ]
       },
@@ -170,7 +170,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/large_file_read_warning.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/large_file_read_warning.py"
           }
         ]
       },
@@ -179,15 +179,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
           },
           {
             "type": "command",
@@ -195,7 +195,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -215,19 +215,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
             "timeout": 10,
             "statusMessage": "Finding relevant skills..."
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
             "timeout": 10,
             "statusMessage": "Searching context7..."
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -236,7 +236,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/worktree_init.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/worktree_init.py"
           }
         ]
       },
@@ -245,7 +245,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py"
           }
         ]
       },
@@ -254,31 +254,31 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/typescript_lint.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/typescript_lint.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/python_lint.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/python_lint.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/golang_lint.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/golang_lint.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/md_json_lint.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/md_json_lint.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/track_edited_files.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/track_edited_files.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_incremental.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_incremental.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_report.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_report.py"
           }
         ]
       },
@@ -287,7 +287,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
           },
           {
             "type": "command",
@@ -295,7 +295,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -320,12 +320,12 @@
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py",
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py",
             "timeout": 5
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/start_context.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/start_context.py"
           },
           {
             "type": "command",
@@ -333,7 +333,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -366,11 +366,11 @@
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py"
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -389,7 +389,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -399,17 +399,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
             "timeout": 10,
             "statusMessage": "Finding relevant skills..."
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
             "timeout": 10,
             "statusMessage": "Searching context7..."
           },
@@ -425,7 +425,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
@@ -449,7 +449,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
@@ -460,11 +460,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
           }
         ]
       },
@@ -484,11 +484,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
           }
         ]
       },
@@ -512,11 +512,11 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           },
           {
             "type": "command",
-            "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/format_on_session_end.py"
+            "command": "uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/format_on_session_end.py"
           }
         ]
       },
@@ -536,7 +536,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       }
