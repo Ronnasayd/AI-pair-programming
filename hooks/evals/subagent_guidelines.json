@@ -1,0 +1,29 @@
+{
+  "hook": "scripts/subagent_guidelines.py",
+  "mode": "stdout",
+  "description": "Eval cases for subagent_guidelines.py (PreToolUse hook, inject guidelines when a subagent tool is used)",
+  "cases": [
+    {
+      "name": "non_agent_tool_no_output",
+      "input": { "tool_name": "Bash" },
+      "expect_output": false
+    },
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "agent_tool_injects_guidelines",
+      "input": { "tool_name": "Agent" },
+      "expect_output": true,
+      "expect_pattern": "caveman full"
+    },
+    {
+      "name": "task_tool_case_insensitive_injects_guidelines",
+      "input": { "tool_name": "task" },
+      "expect_output": true,
+      "expect_pattern": "caveman full"
+    }
+  ]
+}

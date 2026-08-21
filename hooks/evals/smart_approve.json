@@ -1,0 +1,45 @@
+{
+  "hook": "scripts/smart_approve.py",
+  "mode": "stdout",
+  "description": "Eval cases for smart_approve.py (PreToolUse Bash hook, decides via allow/deny patterns in settings.json)",
+  "cases": [
+    {
+      "name": "non_bash_tool_no_output",
+      "input": { "tool_name": "Read", "tool_input": { "file_path": "x" } },
+      "expect_output": false
+    },
+    {
+      "name": "empty_command_no_output",
+      "input": { "tool_name": "Bash", "tool_input": { "command": "" } },
+      "expect_output": false
+    },
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "empty_stdin_no_output",
+      "raw_stdin": "",
+      "expect_output": false
+    },
+    {
+      "name": "denied_pattern_yields_deny",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "git push --force" }
+      },
+      "expect_output": true,
+      "expect_pattern": "\"permissionDecision\": \"deny\""
+    },
+    {
+      "name": "allowed_pattern_yields_allow",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "git status" }
+      },
+      "expect_output": true,
+      "expect_pattern": "\"permissionDecision\": \"allow\""
+    }
+  ]
+}

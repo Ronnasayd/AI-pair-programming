@@ -1,0 +1,53 @@
+{
+  "hook": "scripts/dev_server_tmux_check.py",
+  "mode": "stdout",
+  "description": "Eval cases for dev_server_tmux_check.py (PreToolUse Bash hook, deny dev servers outside tmux/screen)",
+  "cases": [
+    {
+      "name": "non_bash_tool_no_output",
+      "input": { "tool_name": "Read", "tool_input": {} },
+      "expect_output": false
+    },
+    {
+      "name": "malformed_json_no_output",
+      "raw_stdin": "{not valid json",
+      "expect_output": false
+    },
+    {
+      "name": "non_dev_server_command_no_output",
+      "input": { "tool_name": "Bash", "tool_input": { "command": "ls -la" } },
+      "expect_output": false
+    },
+    {
+      "name": "quoted_mention_not_triggered",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "git commit -m \"npm run dev\"" }
+      },
+      "expect_output": false
+    },
+    {
+      "name": "npm_run_dev_outside_tmux_denied",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "npm run dev" }
+      },
+      "expect_output": true,
+      "expect_pattern": "\"permissionDecision\": \"deny\""
+    },
+    {
+      "name": "vite_word_boundary_denied",
+      "input": { "tool_name": "Bash", "tool_input": { "command": "vite" } },
+      "expect_output": true,
+      "expect_pattern": "tmux"
+    },
+    {
+      "name": "invite_word_not_falsely_matched",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "echo invite the team" }
+      },
+      "expect_output": false
+    }
+  ]
+}

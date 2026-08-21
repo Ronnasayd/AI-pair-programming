@@ -1,0 +1,68 @@
+{
+  "hook": "scripts/protect_branches.py",
+  "mode": "exit_code",
+  "description": "Eval cases for protect_branches.py (PreToolUse Bash hook, deny mutations on protected branches)",
+  "cases": [
+    {
+      "name": "push_no_force_on_master_denied",
+      "tool_name": "Bash",
+      "tool_input": { "command": "git push" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "deny",
+      "expect_pattern": "protected branch"
+    },
+    {
+      "name": "push_force_flag_on_master_denied",
+      "tool_name": "Bash",
+      "tool_input": { "command": "git push --force origin master" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "deny",
+      "expect_pattern": "force-push"
+    },
+    {
+      "name": "branch_delete_master_denied",
+      "tool_name": "Bash",
+      "tool_input": { "command": "git branch -D master" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "deny",
+      "expect_pattern": "delete of protected branch"
+    },
+    {
+      "name": "commit_on_master_denied",
+      "tool_name": "Bash",
+      "tool_input": { "command": "git commit -m x" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "deny",
+      "expect_pattern": "direct commit"
+    },
+    {
+      "name": "reset_hard_on_master_denied",
+      "tool_name": "Bash",
+      "tool_input": { "command": "git reset --hard HEAD~1" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "deny",
+      "expect_pattern": "hard reset"
+    },
+    {
+      "name": "non_git_command_allowed",
+      "tool_name": "Bash",
+      "tool_input": { "command": "ls -la" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "allow"
+    },
+    {
+      "name": "git_status_on_master_allowed",
+      "tool_name": "Bash",
+      "tool_input": { "command": "git status" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "allow"
+    },
+    {
+      "name": "empty_command_allowed",
+      "tool_name": "Bash",
+      "tool_input": { "command": "" },
+      "cwd": "/home/ronnas/develop/personal/AI-pair-programming",
+      "expect": "allow"
+    }
+  ]
+}
