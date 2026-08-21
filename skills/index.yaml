@@ -196,9 +196,8 @@ skills:
     test) — this skill's commands are Jest-specific.
 - name:
   - domain-modeling
-  description: Build and sharpen a project's domain model. Use when the user wants
-    to pin down domain terminology or a ubiquitous language, record an architectural
-    decision, or when another skill needs to maintain the domain model.
+  description: Build and sharpen a project's domain model. Use when discussing codebase
+    terminology, writing or editing a CONTEXT.md, or recording or editing an ADR.
 - name:
   - diagnosing-bugs
   description: Diagnosis loop for hard bugs and performance regressions. Use when
@@ -209,8 +208,8 @@ skills:
     docs (ADR's and glossary) as we go.
 - name:
   - grilling
-  description: Grill the user relentlessly about a plan or design. Use when the user
-    wants to stress-test a plan before building, or uses any 'grill' trigger phrases.
+  description: Grill the user relentlessly about a plan, decision, or idea. Use when
+    the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
 - name:
   - document-summarizer
   description: Extract and condense key information from any document or text while
@@ -351,20 +350,21 @@ skills:
 - name:
   - docx
   description: 'Use this skill whenever the user wants to create, read, edit, or manipulate
-    Word documents (.docx files). Triggers include: any mention of ''Word doc'', ''word
-    document'', ''.docx'', or requests to produce professional documents with formatting
-    like tables of contents, headings, page numbers, or letterheads. Also use when
-    extracting or reorganizing content from .docx files, inserting or replacing images
-    in documents, performing find-and-replace in Word files, working with tracked
-    changes or comments, or converting content into a polished Word document. If the
-    user asks for a ''report'', ''memo'', ''letter'', ''template'', or similar deliverable
-    as a Word or .docx file, use this skill. Do NOT use for PDFs, spreadsheets, Google
-    Docs, or general coding tasks unrelated to document generation.'
+    Word documents (.docx files) or Word templates (.dotx files). Triggers include:
+    any mention of ''Word doc'', ''word document'', ''.docx'', ''.dotx'', or requests
+    to produce professional documents with formatting like tables of contents, headings,
+    page numbers, or letterheads. Also use when extracting or reorganizing content
+    from .docx or .dotx files, inserting or replacing images in documents, performing
+    find-and-replace in Word files, working with tracked changes or comments, or converting
+    content into a polished Word document. If the user asks for a ''report'', ''memo'',
+    ''letter'', ''template'', or similar deliverable as a Word or .docx file, use
+    this skill. Do NOT use for PDFs, spreadsheets, Google Docs, or general coding
+    tasks unrelated to document generation.'
 - name:
   - xlsx
   description: 'Use this skill any time a spreadsheet file is the primary input or
     output. This means any task where the user wants to: open, read, edit, or fix
-    an existing .xlsx, .xlsm, .csv, or .tsv file (e.g., adding columns, computing
+    an existing .xlsx, .xlsm, .xltx, .csv, or .tsv file (e.g., adding columns, computing
     formulas, formatting, charting, cleaning messy data); create a new spreadsheet
     from scratch or from other data sources; or convert between tabular file formats.
     Trigger especially when the user references a spreadsheet file by name or path
@@ -502,18 +502,18 @@ skills:
     for backend logic, API design, database schemas, or non-visual code tasks.
 - name:
   - tlc-spec-driven
-  description: Feature planning and implementation with 4 adaptive phases — Specify,
-    Design, Tasks, Execute. Auto-sizes depth by complexity. Creates atomic tasks with
-    verification criteria, atomic git commits, and requirement traceability. Features
-    an independent Verifier (author != verifier, evidence-or-zero), persistent decision
-    log (STATE.md), and test-coverage-matrix-driven tests, plus a self-improving lessons
-    layer that turns verification failures into reusable project-local guidance. Stack-agnostic.
-    Use when (1) Planning features (requirements, design, task breakdown), (2) Implementing
-    with verification and atomic commits, (3) Validating or verifying an implementation
-    against a spec. Triggers on "specify feature", "discuss feature", "design", "tasks",
-    "implement", "validate", "verify work", "UAT", "record decision", "pause work",
-    "resume work". Do NOT use for architecture decomposition analysis (use architecture
-    skills) or technical design docs (use create-technical-design-doc).
+  description: Feature planning and implementation with 4 adaptive phases (Specify,
+    Design, Tasks, Execute). Auto-sizes depth by complexity. Writes testable requirements
+    in EARS notation, atomic tasks, atomic Conventional Commits, and requirement traceability.
+    Ships deterministic Python validation scripts so structural gates are enforced
+    by code, not memory. Features an independent Verifier (author != verifier, evidence-or-zero),
+    a discrimination sensor, a decision log (STATE.md), a test-coverage matrix, and
+    a self-improving lessons layer. Stack-agnostic and tool-agnostic. Use when (1)
+    planning features, (2) implementing with verification and atomic commits, (3)
+    validating an implementation against a spec. Triggers on "specify feature", "discuss
+    feature", "design", "tasks", "implement", "validate", "verify work", "UAT", "record
+    decision", "pause work", "resume work". Do NOT use for pure architecture decomposition
+    analysis or standalone technical design documents.
 - name:
   - figma-implement-design
   description: Translate Figma nodes into production-ready code with 1:1 visual fidelity
@@ -593,7 +593,8 @@ skills:
     to play devil's advocate, run a pre-mortem, red team, stress test assumptions,
     audit evidence quality, or find blind spots before committing. Do NOT use for
     building plans, making decisions, or generating solutions — this skill only challenges
-    and critiques.
+    and critiques. For a multi-agent panel that challenges and then commits to a verdict,
+    use the-jury.
 - name:
   - jira-assistant
   description: Manage Jira issues via Atlassian MCP — search, create, update, transition
@@ -1003,16 +1004,20 @@ skills:
   - production-audit
   description: Local-evidence production readiness audit for shipped apps, pre-launch
     reviews, post-merge checks, and "what breaks in prod?" questions without sending
-    repo data to an external audit service.
+    repo data to an external audit service. Use when auditing production readiness
+    before launch, after a merge, or when asked what breaks in prod.
 - name:
   - redis-patterns
   description: Redis data structure patterns, caching strategies, distributed locks,
     rate limiting, pub/sub, and connection management for production applications.
+    Use when adding caching, a distributed lock, rate limiting, or pub/sub with Redis,
+    or when key design needs review.
 - name:
   - vue-patterns
   description: Vue.js 3 Composition API patterns, component architecture, reactivity
     best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns.
-    Activates for Vue, Nuxt, Vite, or Pinia projects.
+    Activates for Vue, Nuxt, Vite, or Pinia projects. Use when building or reviewing
+    Vue 3, Nuxt, or Pinia code — Composition API, reactivity, or router navigation.
 - name:
   - agent-self-evaluation
   description: Use after completing any non-trivial task. The agent self-rates its
@@ -1023,7 +1028,8 @@ skills:
   - database-migrations
   description: Database migration best practices for schema changes, data migrations,
     rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common
-    ORMs (Prisma, Drizzle, Kysely, Django, TypeORM, golang-migrate).
+    ORMs (Prisma, Drizzle, Kysely, Django, TypeORM, golang-migrate). Use when writing
+    a schema or data migration, planning a rollback, or aiming for zero-downtime deployment.
 - name:
   - browser-qa
   description: Use this skill to automate visual testing and UI interaction verification
@@ -1031,11 +1037,13 @@ skills:
 - name:
   - postgres-patterns
   description: PostgreSQL database patterns for query optimization, schema design,
-    indexing, and security. Based on Supabase best practices.
+    indexing, and security. Based on Supabase best practices. Use when designing PostgreSQL
+    schemas, indexes, or RLS policies, or when a query is too slow.
 - name:
   - mysql-patterns
   description: MySQL and MariaDB schema, query, indexing, transaction, replication,
-    and connection-pool patterns for production backends.
+    and connection-pool patterns for production backends. Use when designing MySQL
+    or MariaDB schemas and indexes, or when a query, transaction, or replica lags.
 - name:
   - frontend-a11y
   description: 'Accessibility patterns for React and Next.js — semantic HTML, ARIA
@@ -1054,19 +1062,23 @@ skills:
   - git-workflow
   description: Git workflow patterns including branching strategies, commit conventions,
     merge vs rebase, conflict resolution, and collaborative development best practices
-    for teams of all sizes.
+    for teams of all sizes. Use when choosing a branching strategy, writing commit
+    conventions, deciding merge versus rebase, or resolving conflicts.
 - name:
   - python-patterns
   description: Pythonic idioms, PEP 8 standards, type hints, and best practices for
-    building robust, efficient, and maintainable Python applications.
+    building robust, efficient, and maintainable Python applications. Use when writing
+    or reviewing Python code and idiomatic structure, typing, or PEP 8 is in question.
 - name:
   - python-testing
   description: Python testing strategies using pytest, TDD methodology, fixtures,
-    mocking, parametrization, and coverage requirements.
+    mocking, parametrization, and coverage requirements. Use when writing pytest tests
+    — fixtures, mocks, parametrization, or coverage.
 - name:
   - backend-patterns
   description: Backend architecture patterns, API design, database optimization, and
-    server-side best practices for Node.js, Express, and Next.js API routes.
+    server-side best practices for Node.js, Express, and Next.js API routes. Use when
+    building or reviewing Node.js, Express, or Next.js API routes and their data access.
 - name:
   - jira-integration
   description: Use this skill when retrieving Jira tickets, analyzing requirements,
@@ -1081,7 +1093,8 @@ skills:
   - deployment-patterns
   description: Deployment workflows, CI/CD pipeline patterns, Docker containerization,
     health checks, rollback strategies, and production readiness checklists for web
-    applications.
+    applications. Use when setting up CI/CD, containerizing an app, or checking production
+    readiness before a release.
 - name:
   - react-native-patterns
   description: React Native and Expo app patterns — Expo Router navigation, state
@@ -1091,8 +1104,11 @@ skills:
     or data layers.
 - name:
   - docker-patterns
-  description: Docker and Docker Compose patterns for local development, container
-    security, networking, volume strategies, and multi-service orchestration.
+  description: Docker and Docker Compose patterns for local development, hardened
+    CLI installer harnesses, container security, networking, volumes, and multi-service
+    orchestration. Use when creating or reviewing Dockerfiles and Compose services,
+    testing installers across Linux distributions, or planning accurate native macOS
+    and Windows validation.
 - name:
   - exa-search
   description: Neural search via Exa MCP for web, code, and company research. Use
@@ -1111,18 +1127,24 @@ skills:
     agent stack for wrapper regression, memory pollution, tool discipline failures,
     hidden repair loops, and rendering corruption. Produces severity-ranked findings
     with code-first fixes. Essential for developers building agent applications, autonomous
-    loops, or any LLM-powered feature.
+    loops, or any LLM-powered feature. Use when an agent or LLM feature misbehaves
+    and the failing layer is unknown, or before shipping an agent stack.
 - name:
   - api-design
   description: REST API design patterns including resource naming, status codes, pagination,
     filtering, error responses, versioning, and rate limiting for production APIs.
+    Use when designing or reviewing REST endpoints, resource names, status codes,
+    pagination, or versioning.
 - name:
   - team-builder
-  description: Interactive agent picker for composing and dispatching parallel teams
+  description: Interactive agent picker for composing and dispatching parallel teams.
+    Use when composing and dispatching a parallel team of agents for a task.
 - name:
   - kubernetes-patterns
   description: Kubernetes workload patterns, resource management, RBAC, probes, autoscaling,
     ConfigMap/Secret handling, and kubectl debugging for production-grade deployments.
+    Use when writing or reviewing Kubernetes manifests, or debugging probes, RBAC,
+    autoscaling, or resource limits.
 - name:
   - agent-harness-construction
   description: Design and optimize AI agent action spaces, tool definitions, and observation
@@ -1131,7 +1153,8 @@ skills:
   - security-bounty-hunter
   description: Hunt for exploitable, bounty-worthy security issues in repositories.
     Focuses on remotely reachable vulnerabilities that qualify for real reports instead
-    of noisy local-only findings.
+    of noisy local-only findings. Use when hunting reportable, remotely reachable
+    vulnerabilities in a repository.
 - name:
   - deep-research
   description: Multi-source deep research using firecrawl and exa MCPs. Searches the
@@ -1153,11 +1176,14 @@ skills:
   - gan-style-harness
   description: GAN-inspired Generator-Evaluator agent harness for building high-quality
     applications autonomously. Based on Anthropic's March 2026 harness design paper.
+    Use when a feature should be built autonomously through generator and evaluator
+    iteration until it clears a quality bar.
 - name:
   - error-handling
   description: Patterns for robust error handling across TypeScript, Python, and Go.
     Covers typed errors, error boundaries, retries, circuit breakers, and user-facing
-    error messages.
+    error messages. Use when designing error types, retries, circuit breakers, or
+    user-facing failure messages in TypeScript, Python, or Go.
 - name:
   - tdd-workflow
   description: Use this skill when writing new features, fixing bugs, or refactoring
@@ -1199,32 +1225,41 @@ skills:
   - security-scan
   description: Scan your Claude Code configuration (.claude/ directory) for security
     vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks
-    CLAUDE.md, settings.json, MCP servers, hooks, and agent definitions.
+    CLAUDE.md, settings.json, MCP servers, hooks, and agent definitions. Use when
+    auditing a .claude/ directory — CLAUDE.md, settings.json, MCP servers, hooks,
+    or agent definitions.
 - name:
   - coding-standards
   description: Baseline cross-project coding conventions for naming, readability,
     immutability, and code-quality review. Use detailed frontend or backend skills
-    for framework-specific patterns.
+    for framework-specific patterns. Use when reviewing code quality or naming with
+    no framework-specific skill that applies.
 - name:
   - ai-regression-testing
   description: Regression testing strategies for AI-assisted development. Sandbox-mode
     API testing without database dependencies, automated bug-check workflows, and
     patterns to catch AI blind spots where the same model writes and reviews code.
+    Use when adding regression coverage to AI-assisted code, or when the same model
+    both wrote and reviewed a change.
 - name:
   - hexagonal-architecture
   description: Design, implement, and refactor Ports & Adapters systems with clear
     domain boundaries, dependency inversion, and testable use-case orchestration across
-    TypeScript, Java, Kotlin, and Go services.
+    TypeScript, Java, Kotlin, and Go services. Use when introducing or refactoring
+    toward Ports and Adapters, or when domain logic has become entangled with I/O.
 - name:
   - e2e-testing
   description: Playwright E2E testing patterns, Page Object Model, configuration,
-    CI/CD integration, artifact management, and flaky test strategies.
+    CI/CD integration, artifact management, and flaky test strategies. Use when writing
+    Playwright tests, structuring page objects, or fixing flaky E2E runs in CI.
 - name:
   - prisma-patterns
   description: Prisma ORM patterns for TypeScript backends — schema design, query
     optimization, transactions, pagination, and critical traps like updateMany returning
     count not records, $transaction timeouts, migrate dev resetting the DB, @updatedAt
-    skipped on bulk writes, and serverless connection exhaustion.
+    skipped on bulk writes, and serverless connection exhaustion. Use when writing
+    a Prisma schema or query, or debugging transactions, migrations, or serverless
+    connection limits.
 - name:
   - architecture-decision-records
   description: Capture architectural decisions made during Claude Code sessions as
@@ -1239,12 +1274,16 @@ skills:
     a repo.
 - name:
   - autonomous-loops
-  description: Patterns and architectures for autonomous Claude Code loops — from
-    simple sequential pipelines to RFC-driven multi-agent DAG systems.
+  description: 'Patterns and architectures for autonomous Claude Code loops — from
+    simple sequential pipelines to RFC-driven multi-agent DAG systems. Retained for
+    compatibility only: when new autonomous loop guidance is needed, use continuous-agent-loop
+    instead.'
 - name:
   - golang-testing
   description: Go testing patterns including table-driven tests, subtests, benchmarks,
     fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
+    Use when writing Go tests — table-driven cases, subtests, benchmarks, fuzzing,
+    or coverage.
 - name:
   - react-patterns
   description: React 18/19 patterns including hooks discipline, server/client component
@@ -1255,15 +1294,18 @@ skills:
   - mcp-server-patterns
   description: Build MCP servers with Node/TypeScript SDK — tools, resources, prompts,
     Zod validation, stdio vs Streamable HTTP. Use Context7 or official MCP docs for
-    latest API.
+    latest API. Use when building or debugging an MCP server — tools, resources, prompts,
+    validation, or transport choice.
 - name:
   - frontend-patterns
   description: Frontend development patterns for React, Next.js, state management,
-    performance optimization, and UI best practices.
+    performance optimization, and UI best practices. Use when building or reviewing
+    React or Next.js components, state, or render performance.
 - name:
   - golang-patterns
   description: Idiomatic Go patterns, best practices, and conventions for building
-    robust, efficient, and maintainable Go applications.
+    robust, efficient, and maintainable Go applications. Use when writing or reviewing
+    Go code and idiomatic structure or conventions are in question.
 - name:
   - vite-patterns
   description: Vite build tool patterns including config, plugins, HMR, env variables,
@@ -1277,11 +1319,14 @@ skills:
 - name:
   - content-hash-cache-pattern
   description: Cache expensive file processing results using SHA-256 content hashes
-    — path-independent, auto-invalidating, with service layer separation.
+    — path-independent, auto-invalidating, with service layer separation. Use when
+    repeated file processing is slow and results should be cached and invalidated
+    by content rather than path.
 - name:
   - agent-introspection-debugging
   description: Structured self-debugging workflow for AI agent failures using capture,
-    diagnosis, contained recovery, and introspection reports.
+    diagnosis, contained recovery, and introspection reports. Use when an agent run
+    fails and you need a reproducible diagnosis instead of a retry.
 - name:
   - cpp-testing
   description: Use only when writing/updating/fixing C++ tests, configuring GoogleTest/CTest,
