@@ -14,7 +14,7 @@ else
     if [ -f "$SOURCE/.ai.alias.zshrc" ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" $SOURCE/.ai.alias.zshrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\""  >> $SOURCE/.ai.alias.zshrc && echo "alias add at .bashrc"
     fi
-    pip install fastembed > /dev/null && echo "fastembed ok"
+    uv sync --project "$SOURCE" > /dev/null && echo "fastembed ok"
     # bash "$(pwd)/scripts/update-external-tools.sh"
     python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
