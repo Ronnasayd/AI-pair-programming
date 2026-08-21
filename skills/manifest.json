@@ -26,8 +26,12 @@
       "scripts/__init__.py",
       "scripts/accept_changes.py",
       "scripts/comment.py",
+      "scripts/merge_runs.py",
       "scripts/office/helpers/__init__.py",
       "scripts/office/helpers/merge_runs.py",
+      "scripts/office/helpers/pptx_chart.py",
+      "scripts/office/helpers/pptx_slide.py",
+      "scripts/office/helpers/pptx_theme.py",
       "scripts/office/helpers/simplify_redlines.py",
       "scripts/office/pack.py",
       "scripts/office/schemas/ISO-IEC29500-4_2016/dml-chart.xsd",
@@ -158,6 +162,9 @@
       "LICENSE.txt",
       "scripts/office/helpers/__init__.py",
       "scripts/office/helpers/merge_runs.py",
+      "scripts/office/helpers/pptx_chart.py",
+      "scripts/office/helpers/pptx_slide.py",
+      "scripts/office/helpers/pptx_theme.py",
       "scripts/office/helpers/simplify_redlines.py",
       "scripts/office/pack.py",
       "scripts/office/schemas/ISO-IEC29500-4_2016/dml-chart.xsd",
@@ -662,6 +669,7 @@
   "diagnosing-bugs": {
     "skill_md": "mattpocock/engineering/diagnosing-bugs/SKILL.md",
     "files": [
+      "agents/openai.yaml",
       "scripts/hitl-loop.template.sh"
     ]
   },
@@ -669,16 +677,21 @@
     "skill_md": "mattpocock/engineering/domain-modeling/SKILL.md",
     "files": [
       "ADR-FORMAT.md",
-      "CONTEXT-FORMAT.md"
+      "CONTEXT-FORMAT.md",
+      "agents/openai.yaml"
     ]
   },
   "grill-with-docs": {
     "skill_md": "mattpocock/engineering/grill-with-docs/SKILL.md",
-    "files": []
+    "files": [
+      "agents/openai.yaml"
+    ]
   },
   "grilling": {
     "skill_md": "mattpocock/productivity/grilling/SKILL.md",
-    "files": []
+    "files": [
+      "agents/openai.yaml"
+    ]
   },
   "mcp-manager-instructions": {
     "skill_md": "mcp-manager-instructions/SKILL.md",
@@ -1134,12 +1147,18 @@
       "references/sub-agents.md",
       "references/tasks.md",
       "references/validate.md",
-      "scripts/lessons.py"
+      "scripts/check_commit.py",
+      "scripts/lessons.py",
+      "scripts/validate_spec.py",
+      "scripts/validate_state.py",
+      "scripts/validate_tasks.py"
     ]
   },
   "technical-decision-helper": {
     "skill_md": "technical-decision-helper/SKILL.md",
-    "files": []
+    "files": [
+      "references/templates.md"
+    ]
   },
   "my-tdd-workflow": {
     "skill_md": "tests/my-tdd-workflow/SKILL.md",
