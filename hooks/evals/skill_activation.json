@@ -1,26 +1,44 @@
 {
   "hook": "scripts/skill_activation.py",
+  "mode": "stdout",
   "description": "Eval cases for skill_activation.py (UserPromptSubmit skill-suggestion hook)",
   "cases": [
     {
       "name": "no_prompt_key_no_output",
-      "input": { "session_id": "evalnop1" },
-      "expect_output": false
+      "input": {
+        "session_id": "evalnop1"
+      },
+      "expect_output": false,
+      "cache_files": [
+        "/tmp/skill-rec-log-{short_id}.json"
+      ]
     },
     {
       "name": "empty_prompt_no_output",
-      "input": { "prompt": "", "session_id": "evalnop2" },
-      "expect_output": false
+      "input": {
+        "prompt": "",
+        "session_id": "evalnop2"
+      },
+      "expect_output": false,
+      "cache_files": [
+        "/tmp/skill-rec-log-{short_id}.json"
+      ]
     },
     {
       "name": "malformed_json_no_output",
       "raw_stdin": "{not valid json",
-      "expect_output": false
+      "expect_output": false,
+      "cache_files": [
+        "/tmp/skill-rec-log-{short_id}.json"
+      ]
     },
     {
       "name": "empty_stdin_no_output",
       "raw_stdin": "",
-      "expect_output": false
+      "expect_output": false,
+      "cache_files": [
+        "/tmp/skill-rec-log-{short_id}.json"
+      ]
     },
     {
       "name": "merge_conflict_prompt_matches_skill",
@@ -29,7 +47,10 @@
         "session_id": "evalmerge"
       },
       "expect_output": true,
-      "expect_pattern": "resolve-merge-conflicts"
+      "expect_pattern": "resolve-merge-conflicts",
+      "cache_files": [
+        "/tmp/skill-rec-log-{short_id}.json"
+      ]
     },
     {
       "name": "unrelated_gibberish_prompt_no_output",
@@ -37,7 +58,10 @@
         "prompt": "purple elephant quantum sandwich yesterday",
         "session_id": "evalgib1"
       },
-      "expect_output": false
+      "expect_output": false,
+      "cache_files": [
+        "/tmp/skill-rec-log-{short_id}.json"
+      ]
     },
     {
       "name": "dedup_suppresses_repeat_within_window",
@@ -45,8 +69,7 @@
         "prompt": "how do I resolve git merge conflicts",
         "session_id": "evalmerge"
       },
-      "expect_output": false,
-      "reset_rec_log": false
+      "expect_output": false
     }
   ]
 }

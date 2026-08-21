@@ -1,5 +1,6 @@
 {
   "hook": "scripts/similar_code_ref.py",
+  "mode": "stdout",
   "description": "Eval cases for similar_code_ref.py (PreToolUse Edit|Write ref-injection hook)",
   "cases": [
     {
