@@ -524,6 +524,10 @@
           },
           {
             "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_session_end.py"
+          },
+          {
+            "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/format_on_session_end.py"
           }
         ]
