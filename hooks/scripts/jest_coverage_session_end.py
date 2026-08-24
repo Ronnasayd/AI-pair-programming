@@ -40,11 +40,13 @@ def maybe_run_full_coverage(project_root: str) -> None:
 
     lock_file = lock_path_for(tmp_dir, "full-coverage")
     if not acquire_lock(lock_file):
-        logger.debug("Full coverage run already in progress for %s, skipping.", project_root)
+        logger.debug(
+            "Full coverage run already in progress for %s, skipping.", project_root
+        )
         return
 
     release_cmd = f"rm -f {json.dumps(str(lock_file))}"
-    jest_cmd = "node_modules/.bin/jest --coverage --passWithNoTests --maxWorkers=25%"
+    jest_cmd = "node_modules/.bin/jest --coverage --passWithNoTests --runInBand"
     full_cmd = f"{jest_cmd}; {release_cmd}"
     logger.debug("Spawning background full coverage run: %s", jest_cmd)
     spawn_background(full_cmd, project_root, tmp_dir / "coverage-session-end.log")
