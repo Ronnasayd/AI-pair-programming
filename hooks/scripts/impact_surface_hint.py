@@ -44,17 +44,33 @@ def is_rag_rat_available(cwd: str) -> bool:
     return shutil.which("rag-rat") is not None and (Path(cwd) / "rag-rat.toml").exists()
 
 
-def changed_symbols_from_diff(file_path: str, cwd: str) -> list[str]:
-    """Symbol names whose def line falls inside a changed hunk (working tree vs HEAD)."""
-    result = subprocess.run(
-        ["git", "diff", "-U0", "--no-color", "--", file_path],
-        capture_output=True,
-        text=True,
-        cwd=cwd,
-        timeout=10,
-    )
-    if result.returncode != 0 or not result.stdout:
+def _enclosing_symbol(file_text: str, old_string: str) -> str | None:
+    """Nearest DEF_RE match at or before old_string's position in file_text."""
+    offset = file_text.find(old_string)
+    if offset == -1:
+        return None
+    last = None
+    for m in DEF_RE.finditer(file_text, 0, offset + len(old_string)):
+        if m.start() <= offset + len(old_string):
+            last = m
+    return last.group(1) if last else None
+
+
+def changed_symbols_from_payload(tool_name: str, tool_input: dict, file_path: str) -> list[str]:
+    """Symbol names touched by this edit, read straight from the hook payload.
+
+    Prefers a def line inside new_string (covers renames/new functions); falls
+    back to the nearest enclosing def found in the current file content around
+    old_string (covers comment-only / body-only edits).
+    """
+    edits = tool_input.get("edits") if tool_name == "MultiEdit" else [tool_input]
+    if not edits:
         return []
+
+    try:
+        file_text = Path(file_path).read_text()
+    except OSError:
+        file_text = ""
 
     names: list[str] = []
 
@@ -62,15 +78,16 @@ def changed_symbols_from_diff(file_path: str, cwd: str) -> list[str]:
         if name and name not in names and not name.startswith("_"):
             names.append(name)
 
-    for line in result.stdout.splitlines():
-        if line.startswith("@@"):
-            # hunk header carries the enclosing function/class git found, e.g.
-            # "@@ -22,0 +23 @@ def strip_ansi(text: str) -> str:"
-            m = DEF_RE.search(line.split("@@")[-1])
-            add(m.group(1) if m else None)
-        elif line.startswith("+") and not line.startswith("+++"):
-            m = DEF_RE.match(line[1:])
-            add(m.group(1) if m else None)
+    for edit in edits:
+        new_string = edit.get("new_string") or ""
+        m = DEF_RE.search(new_string)
+        if m:
+            add(m.group(1))
+            continue
+        old_string = edit.get("old_string") or ""
+        if file_text and old_string:
+            add(_enclosing_symbol(file_text, old_string))
+
     return names[:MAX_SYMBOLS]
 
 
@@ -237,7 +254,7 @@ def main():
         if not file_path or Path(file_path).suffix not in SOURCE_SUFFIXES:
             sys.exit(0)
 
-        symbols = changed_symbols_from_diff(file_path, cwd)
+        symbols = changed_symbols_from_payload(tool_name, tool_input, file_path)
         if not symbols:
             LOG.debug(f"No public top-level symbols found in {file_path}")
             sys.exit(0)
