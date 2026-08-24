@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -700,6 +701,103 @@ def resolve_formatter_bin(
         f"[resolve_formatter_bin] Using package manager runner for {formatter}: {result}"
     )
     return result
+
+
+# ---------------------------------------------------------------------------
+# rag-rat MCP (raw JSON-RPC over stdio)
+# ---------------------------------------------------------------------------
+
+
+def is_rag_rat_available(cwd: str) -> bool:
+    return shutil.which("rag-rat") is not None and (Path(cwd) / "rag-rat.toml").exists()
+
+
+def call_rag_rat_tool(
+    tool_name: str,
+    arguments: dict,
+    cwd: str,
+    logger: logging.Logger,
+    timeout: int = 15,
+) -> str | None:
+    """Call one rag-rat MCP tool via a throwaway `rag-rat mcp` subprocess.
+    Returns the first content block's text, or None on any failure."""
+    try:
+        proc = subprocess.Popen(
+            ["rag-rat", "mcp"],
+            cwd=cwd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+        )
+    except OSError as e:
+        logger.warning(f"Failed to spawn rag-rat mcp: {e}")
+        return None
+
+    try:
+        _rag_rat_send(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "hooks", "version": "0.0.1"},
+                },
+            },
+        )
+        _rag_rat_recv(proc, timeout)
+
+        _rag_rat_send(proc, {"jsonrpc": "2.0", "method": "notifications/initialized"})
+
+        _rag_rat_send(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "tools/call",
+                "params": {"name": tool_name, "arguments": arguments},
+            },
+        )
+        resp = _rag_rat_recv(proc, timeout)
+    except (TimeoutError, EOFError, json.JSONDecodeError) as e:
+        logger.warning(f"rag-rat {tool_name} call failed: {e}")
+        return None
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+
+    if "error" in resp:
+        logger.debug(f"rag-rat {tool_name} error: {resp['error']}")
+        return None
+    content = resp.get("result", {}).get("content", [])
+    return content[0]["text"] if content else None
+
+
+def _rag_rat_send(proc: subprocess.Popen, msg: dict) -> None:
+    assert proc.stdin is not None
+    proc.stdin.write(json.dumps(msg) + "\n")
+    proc.stdin.flush()
+
+
+def _rag_rat_recv(proc: subprocess.Popen, timeout: int) -> dict:
+    import select
+
+    assert proc.stdout is not None
+    ready, _, _ = select.select([proc.stdout], [], [], timeout)
+    if not ready:
+        raise TimeoutError("no response from rag-rat mcp")
+    line = proc.stdout.readline()
+    if not line:
+        stderr = proc.stderr.read()[:500] if proc.stderr else ""
+        raise EOFError("rag-rat mcp closed: " + stderr)
+    return json.loads(line)
 
 
 def rgb_to_ansi(r, g, b):

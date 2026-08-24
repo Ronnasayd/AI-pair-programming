@@ -66,19 +66,19 @@
       "expect_output": false
     },
     {
-      "name": "py_import_matches_existing_usage",
+      "name": "py_snippet_matches_existing_usage_rag_rat",
       "input": {
         "tool_name": "Write",
         "tool_input": {
           "file_path": "hooks/scripts/dummy_new.py",
-          "content": "import numpy as np\n"
+          "content": "def is_rag_rat_available(cwd: str) -> bool:\n    return shutil.which(\"rag-rat\") is not None\n"
         }
       },
       "expect_output": true,
-      "expect_pattern": "existing usage of 'numpy'"
+      "expect_pattern": "semantically similar code in"
     },
     {
-      "name": "py_import_matches_existing_usage",
+      "name": "py_def_matches_existing_usage_rag_rat",
       "input": {
         "tool_name": "Write",
         "tool_input": {
@@ -87,7 +87,7 @@
         }
       },
       "expect_output": true,
-      "expect_pattern": "existing usage of 'extract_terms'"
+      "expect_pattern": "semantically similar code in"
     }
   ]
 }

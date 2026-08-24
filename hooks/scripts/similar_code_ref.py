@@ -3,31 +3,28 @@
 Similar-Code-Ref Hook (POC)
 
 PreToolUse hook for Edit|Write. Extracts imports/symbols from the content
-being written, greps the repo for existing usages via ripgrep (cheap,
-no index), then — if the project's embedding daemon is already running —
-ranks candidates by cosine similarity against the new content and keeps
-only the ones that are actually close. Falls back to raw rg results if
-the daemon isn't up; never starts it (would add latency to every edit).
+being written and looks for similar existing code: rag-rat's semantic_search
+when the project has a rag-rat index, falling back to plain ripgrep term
+search otherwise.
 """
 
 import json
 import os
-import socket
+import re
 import subprocess
 import sys
 from pathlib import Path
-
-import numpy as np
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
+    call_rag_rat_tool,
     extract_code_info,
     get_by_key,
     get_hooks_logger,
-    get_project_name,
+    is_rag_rat_available,
 )
 
 logger = get_hooks_logger("SimilarCodeRef")
@@ -38,8 +35,8 @@ MAX_FILES_PER_TERM = 5
 CONTEXT_LINES = 2
 MAX_SNIPPET_CHARS = 800
 MAX_EMBED_CHARS = 4000
-MIN_SIMILARITY = 0.5
 MAX_RESULTS = 3
+SEMANTIC_SEARCH_TIMEOUT = 10
 
 # Trivial terms that would create noise (too common to be a useful signal)
 DENYLIST = {
@@ -158,99 +155,55 @@ def rg_snippet(term: str, file_path: str) -> str:
     return out
 
 
-def daemon_socket_path() -> str:
-    return f"/tmp/embedding-daemon-{get_project_name()}.sock"
+# Each hit is a "  - chunk_id: ...\n    path: ...\n    ...\n    summary: \"...\"\n" block.
+PATH_RE = re.compile(r'^\s*path:\s*"?([^"\n]+)"?', re.MULTILINE)
+SUMMARY_RE = re.compile(r'^\s*summary:\s*"(.*?)"\s*$', re.MULTILINE)
 
 
-def is_daemon_running(sock_path: str) -> bool:
-    try:
-        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        conn.settimeout(1)
-        conn.connect(sock_path)
-        conn.close()
-        logger.debug("daemon running at %s", sock_path)
-        return True
-    except (ConnectionRefusedError, FileNotFoundError, OSError) as exc:
-        logger.debug("daemon not running at %s: %s", sock_path, exc)
-        return False
-
-
-def encode_via_daemon(text: str, sock_path: str) -> np.ndarray | None:
-    """Best-effort embed via the already-running daemon. Never starts it —
-    a cold start (~seconds to load the model) would stall every Edit/Write."""
-    try:
-        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        conn.settimeout(3)
-        conn.connect(sock_path)
-        conn.sendall((json.dumps({"text": text}) + "\n").encode())
-        data = b""
-        while not data.endswith(b"\n"):
-            chunk = conn.recv(4096)
-            if not chunk:
-                break
-            data += chunk
-        conn.close()
-        response = json.loads(data.decode())
-        if "error" in response:
-            logger.debug("daemon error: %s", response["error"])
-            return None
-        vec = np.array(response["vector"], dtype=np.float32)
-        logger.debug("encode_via_daemon ok, vec shape=%s", vec.shape)
-        return vec
-    except Exception as exc:
-        logger.debug("daemon communication failed: %s", exc)
+def semantic_search_blocks(content: str, target_file: str, cwd: str) -> list[str] | None:
+    """Query rag-rat's semantic_search with the new code as the query text.
+    Returns formatted blocks, or None if rag-rat is unavailable/errors (caller
+    should fall back to plain rg)."""
+    query = content[:MAX_EMBED_CHARS]
+    text = call_rag_rat_tool(
+        "semantic_search",
+        {"query": query, "limit": MAX_RESULTS},
+        cwd,
+        logger,
+        timeout=SEMANTIC_SEARCH_TIMEOUT,
+    )
+    if not text:
         return None
 
-
-def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
-    denom = np.linalg.norm(a) * np.linalg.norm(b)
-    if denom == 0:
-        return 0.0
-    return float(np.dot(a, b) / denom)
-
-
-def rank_by_similarity(
-    content: str, candidates: list[tuple[str, str, str]]
-) -> list[tuple[str, str, str]]:
-    """Filter+sort (term, file, snippet) candidates by cosine similarity to
-    `content`. Returns candidates unranked if the embedding daemon isn't up."""
-    sock_path = daemon_socket_path()
-    if not is_daemon_running(sock_path):
-        logger.debug("embedding daemon not running, skipping similarity rank")
-        return candidates[:MAX_RESULTS]
-
-    new_vec = encode_via_daemon(content[:MAX_EMBED_CHARS], sock_path)
-    if new_vec is None:
-        logger.debug("could not encode new content, skipping similarity rank")
-        return candidates[:MAX_RESULTS]
-
-    scored: list[tuple[float, tuple[str, str, str]]] = []
-    for candidate in candidates:
-        _, _, snippet = candidate
-        vec = encode_via_daemon(snippet, sock_path)
-        if vec is None:
-            logger.debug("could not encode candidate=%s, skipping", candidate[1])
+    blocks = []
+    for hit in re.split(r"^  - chunk_id:", text, flags=re.MULTILINE)[1:]:
+        path_m = PATH_RE.search(hit)
+        path = path_m.group(1) if path_m else None
+        summary_m = SUMMARY_RE.search(hit)
+        snippet = summary_m.group(1) if summary_m else ""
+        if not path or not snippet:
             continue
-        sim = cosine_similarity(new_vec, vec)
-        logger.debug("similarity=%.3f candidate=%s", sim, candidate[1])
-        if sim >= MIN_SIMILARITY:
-            scored.append((sim, candidate))
-        else:
-            logger.debug(
-                "similarity=%.3f below threshold=%.3f, dropping candidate=%s",
-                sim,
-                MIN_SIMILARITY,
-                candidate[1],
-            )
+        if Path(path).resolve() == Path(target_file).resolve():
+            continue
+        snippet = snippet.replace("\\n", "\n").replace('\\"', '"')
+        blocks.append(f"=== semantically similar code in {path} ===\n{snippet}")
+        if len(blocks) >= MAX_RESULTS:
+            break
 
-    scored.sort(key=lambda x: -x[0])
-    logger.debug(
-        "rank_by_similarity kept=%d of %d candidates", len(scored), len(candidates)
-    )
-    return [c for _, c in scored[:MAX_RESULTS]]
+    return blocks
 
 
-def build_context(content: str, target_file: str) -> str:
+def build_context(content: str, target_file: str, cwd: str) -> str:
+    if is_rag_rat_available(cwd):
+        blocks = semantic_search_blocks(content, target_file, cwd)
+        if blocks:
+            logger.debug("build_context: %d blocks from rag-rat semantic_search", len(blocks))
+            return "\n\n".join(blocks)
+        if blocks is not None:
+            # rag-rat answered but found nothing relevant — no need for rg fallback
+            return ""
+        logger.debug("rag-rat semantic_search failed, falling back to rg")
+
     ext = Path(target_file).suffix.lower()
     rg_type = EXT_TO_RG_TYPE.get(ext)
 
@@ -260,7 +213,7 @@ def build_context(content: str, target_file: str) -> str:
         logger.debug("no terms extracted, skipping build_context")
         return ""
 
-    candidates: list[tuple[str, str, str]] = []
+    blocks = []
     for term in terms:
         files = rg_search(term, rg_type, target_file)
         for f in files:
@@ -268,18 +221,11 @@ def build_context(content: str, target_file: str) -> str:
             if not snippet:
                 logger.debug("empty snippet for term=%s file=%s, skipping", term, f)
                 continue
-            candidates.append((term, f, snippet))
+            blocks.append(f"=== existing usage of '{term}' in {f} ===\n{snippet}")
+            if len(blocks) >= MAX_RESULTS:
+                break
 
-    logger.debug("collected %d candidates before ranking", len(candidates))
-    if not candidates:
-        return ""
-
-    ranked = rank_by_similarity(content, candidates)
-    logger.debug("build_context returning %d ranked blocks", len(ranked))
-    blocks = [
-        f"=== existing usage of '{term}' in {f} ===\n{snippet}"
-        for term, f, snippet in ranked
-    ]
+    logger.debug("build_context (rg fallback) returning %d blocks", len(blocks))
     return "\n\n".join(blocks)
 
 
@@ -315,7 +261,12 @@ def main() -> None:
         logger.debug("skipping: missing file_path or content")
         sys.exit(0)
 
-    context = build_context(content, file_path)
+    if Path(file_path).suffix.lower() not in EXT_TO_RG_TYPE:
+        logger.debug("skipping: %s is not a source file", file_path)
+        sys.exit(0)
+
+    cwd = get_by_key(data, "cwd") or "."
+    context = build_context(content, file_path, cwd)
     if context:
         output = json.dumps(
             {
