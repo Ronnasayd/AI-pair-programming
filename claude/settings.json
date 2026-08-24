@@ -329,6 +329,10 @@
           },
           {
             "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/taskmaster_next_task.py"
+          },
+          {
+            "type": "command",
             "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee $HOME/.claude/logs/external.log"
           },
           {
