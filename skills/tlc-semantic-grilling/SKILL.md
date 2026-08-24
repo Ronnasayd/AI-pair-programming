@@ -1,16 +1,18 @@
 ---
 name: tlc-semantic-grilling
-description: step-by-step to follow in generate a plan.
+description: step-by-step guide to generating a plan.
 ---
 
 # Steps
 
 Add the following steps as tasks using the `TaskCreate`, `TaskUpdate`, `TaskGet`, and `TaskList` tools. Update the status as you progress through each step to keep the user informed.
 
-1. Use `sequentialthinking` under `mcp-manager` to break down the feature request into sub-questions (scope, constraints, edge cases, dependencies).
-2. Next, use tools such as `rag-rat`, `serena`, `grep`, `Read`, or any other available tool to read files, perform a semantic search, and gather all necessary information from the codebase.
-3. Conduct a `/grilling` session until you have obtained all the required information and clarified any questions with the user. Check for implicit requirements that were not listed and potential undefined issues.
-4. Repeat steps 1 through 3 until you have a complete understanding of the problem and how it fits into the current context.
-5. Execute the `/tlc-spec-driven` command for generate a plan.
-6. Once `/tlc-spec-driven` finishes execution and the files have been generated, ask the user if they wish to register the feature in _taskmaster_. If the answer is "yes," use the `/tlc-tasks-to-taskmaster` skill—this derives tasks from the `tasks.md` file (if present) or, if the task generation step was skipped, creates a task for each requirement/acceptance criterion (AC) defined in `spec.md`.
-7. Check the definitions in [docs-adr](.claude/skills/generate-docs/references/templates/docs-adr.md) and consider offering to create an ADR when the criteria are met.
+1. Repeat this steps until you have a complete understanding of the problem and how it fits into the current context.
+
+   1.1. Use `sequentialthinking` in `mcp-manager` to break down the feature request into sub-questions (scope, constraints, edge cases, dependencies).
+   1.2. Next, use tools such as `rag-rat`, `serena`, `grep`, `Read`, or any other available tool to read files, perform a semantic search, and gather all necessary information from the codebase.
+   1.3. Conduct a `/grilling` session until you have obtained all necessary information and clarified any doubts with the user. Check for unlisted implicit requirements and potential undefined issues.
+
+2. Execute the `/tlc-spec-driven` skill to generate a plan based on the described problem.
+3. Once planning is complete, ask the user if they wish to register the feature in _taskmaster_. If the answer is "yes," use the `/tlc-tasks-to-taskmaster` skill.
+4. Check the definitions in [docs-adr](.claude/skills/generate-docs/references/templates/docs-adr.md) and consider offering to create an ADR when the criteria are met.
