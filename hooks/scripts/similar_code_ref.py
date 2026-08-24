@@ -160,7 +160,9 @@ PATH_RE = re.compile(r'^\s*path:\s*"?([^"\n]+)"?', re.MULTILINE)
 SUMMARY_RE = re.compile(r'^\s*summary:\s*"(.*?)"\s*$', re.MULTILINE)
 
 
-def semantic_search_blocks(content: str, target_file: str, cwd: str) -> list[str] | None:
+def semantic_search_blocks(
+    content: str, target_file: str, cwd: str
+) -> list[str] | None:
     """Query rag-rat's semantic_search with the new code as the query text.
     Returns formatted blocks, or None if rag-rat is unavailable/errors (caller
     should fall back to plain rg)."""
@@ -197,7 +199,9 @@ def build_context(content: str, target_file: str, cwd: str) -> str:
     if is_rag_rat_available(cwd):
         blocks = semantic_search_blocks(content, target_file, cwd)
         if blocks:
-            logger.debug("build_context: %d blocks from rag-rat semantic_search", len(blocks))
+            logger.debug(
+                "build_context: %d blocks from rag-rat semantic_search", len(blocks)
+            )
             return "\n\n".join(blocks)
         if blocks is not None:
             # rag-rat answered but found nothing relevant — no need for rg fallback

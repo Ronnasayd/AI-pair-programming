@@ -69,7 +69,7 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
     jest_cmd = (
         f"node_modules/.bin/jest --findRelatedTests {json.dumps(rel_path)} "
         f"--coverage --coverageDirectory={json.dumps(partial_dir)} "
-        f"--collectCoverageFrom={json.dumps(rel_path)} --passWithNoTests"
+        f"--collectCoverageFrom={json.dumps(rel_path)} --passWithNoTests --maxWorkers=25%"
     )
     merge_cmd = (
         f"{json.dumps(sys.executable)} {json.dumps(str(Path(script_dir) / 'merge_coverage.py'))} "

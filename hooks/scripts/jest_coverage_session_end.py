@@ -44,7 +44,7 @@ def maybe_run_full_coverage(project_root: str) -> None:
         return
 
     release_cmd = f"rm -f {json.dumps(str(lock_file))}"
-    jest_cmd = "node_modules/.bin/jest --coverage --passWithNoTests"
+    jest_cmd = "node_modules/.bin/jest --coverage --passWithNoTests --maxWorkers=25%"
     full_cmd = f"{jest_cmd}; {release_cmd}"
     logger.debug("Spawning background full coverage run: %s", jest_cmd)
     spawn_background(full_cmd, project_root, tmp_dir / "coverage-session-end.log")
