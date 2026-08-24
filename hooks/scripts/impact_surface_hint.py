@@ -13,7 +13,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import (  # noqa: E402
+    enclosing_def_name,
+    extract_code_info,
+    get_by_key,
+    get_hooks_logger,
+)
 
 LOG = get_hooks_logger("ImpactSurfaceHint")
 
@@ -25,35 +30,12 @@ SOURCE_SUFFIXES = {
     ".tsx",
     ".js",
     ".jsx",
-    ".rs",
     ".go",
-    ".kt",
-    ".swift",
-    ".c",
-    ".cpp",
-    ".h",
 }
-
-DEF_RE = re.compile(
-    r"^\s*(?:pub\s+|export\s+)?(?:async\s+)?(?:def|class|fn|func)\s+([A-Za-z_][A-Za-z0-9_]*)",
-    re.MULTILINE,
-)
 
 
 def is_rag_rat_available(cwd: str) -> bool:
     return shutil.which("rag-rat") is not None and (Path(cwd) / "rag-rat.toml").exists()
-
-
-def _enclosing_symbol(file_text: str, old_string: str) -> str | None:
-    """Nearest DEF_RE match at or before old_string's position in file_text."""
-    offset = file_text.find(old_string)
-    if offset == -1:
-        return None
-    last = None
-    for m in DEF_RE.finditer(file_text, 0, offset + len(old_string)):
-        if m.start() <= offset + len(old_string):
-            last = m
-    return last.group(1) if last else None
 
 
 def changed_symbols_from_payload(
@@ -61,11 +43,11 @@ def changed_symbols_from_payload(
 ) -> list[str]:
     """Symbol names touched by this edit, read straight from the hook payload.
 
-    Prefers a def line inside new_string (covers renames/new functions); falls
-    back to the nearest enclosing def found in the current (post-edit) file
-    content around new_string (covers comment-only / body-only edits). The
-    hook runs after the edit lands, so file_text no longer contains
-    old_string — only new_string is searchable.
+    Prefers a def/class found inside new_string (covers renames/new
+    functions); falls back to the nearest enclosing def in the current
+    (post-edit) file content around new_string (covers comment-only / body-
+    only edits). The hook runs after the edit lands, so file_text no longer
+    contains old_string — only new_string is searchable.
     """
     edits = tool_input.get("edits") if tool_name == "MultiEdit" else [tool_input]
     if not edits:
@@ -84,13 +66,15 @@ def changed_symbols_from_payload(
 
     for edit in edits:
         new_string = edit.get("new_string") or ""
-        m = DEF_RE.search(new_string)
-        if m:
-            add(m.group(1))
+        for name in extract_code_info(new_string, file_path)["defs"]:
+            add(name)
+        if names:
             continue
         anchor = new_string or edit.get("old_string") or ""
         if file_text and anchor:
-            add(_enclosing_symbol(file_text, anchor))
+            offset = file_text.find(anchor)
+            if offset != -1:
+                add(enclosing_def_name(file_text, file_path, offset + len(anchor)))
 
     return names[:MAX_SYMBOLS]
 
