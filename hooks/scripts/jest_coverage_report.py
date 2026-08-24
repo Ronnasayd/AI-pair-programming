@@ -57,18 +57,73 @@ def _load_summary_entry(
     return None
 
 
-def _format_message(file_path: str, entry: dict) -> str:
+def _format_line_ranges(lines: list[int]) -> str:
+    if not lines:
+        return ""
+    lines = sorted(set(lines))
+    ranges = []
+    start = prev = lines[0]
+    for n in lines[1:]:
+        if n == prev + 1:
+            prev = n
+            continue
+        ranges.append(str(start) if start == prev else f"{start}-{prev}")
+        start = prev = n
+    ranges.append(str(start) if start == prev else f"{start}-{prev}")
+    return ",".join(ranges)
+
+
+def _load_uncovered_lines(
+    coverage_dir: str, resolved: Path, project_root: str
+) -> list[int] | None:
+    final_file = Path(coverage_dir) / "coverage-final.json"
+    if not final_file.exists():
+        return None
+
+    try:
+        final = json.loads(final_file.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        logger.debug("Error reading %s: %s", final_file, exc)
+        return None
+
+    candidates = {str(resolved), os.path.relpath(str(resolved), project_root)}
+    file_entry = None
+    for key, entry in final.items():
+        if key in candidates or key.endswith(str(resolved)):
+            file_entry = entry
+            break
+    if not file_entry:
+        return None
+
+    statement_map = file_entry.get("statementMap", {})
+    hits = file_entry.get("s", {})
+    uncovered = []
+    for stmt_id, count in hits.items():
+        if count:
+            continue
+        stmt = statement_map.get(stmt_id)
+        if stmt:
+            uncovered.append(stmt["start"]["line"])
+    return uncovered
+
+
+def _format_message(
+    file_path: str, entry: dict, uncovered_lines: list[int] | None
+) -> str:
     lines_ = entry.get("lines", {})
     stmts = entry.get("statements", {})
     funcs = entry.get("functions", {})
     branches = entry.get("branches", {})
-    return (
+    message = (
         f"Jest coverage for {file_path}: "
         f"lines {lines_.get('pct', '?')}% ({lines_.get('covered', '?')}/{lines_.get('total', '?')}), "
         f"functions {funcs.get('pct', '?')}% ({funcs.get('covered', '?')}/{funcs.get('total', '?')}), "
         f"branches {branches.get('pct', '?')}% ({branches.get('covered', '?')}/{branches.get('total', '?')}), "
         f"statements {stmts.get('pct', '?')}% ({stmts.get('covered', '?')}/{stmts.get('total', '?')})."
     )
+    if uncovered_lines:
+        message += f" Uncovered lines: {_format_line_ranges(uncovered_lines)}."
+    return message
 
 
 def build_coverage_context(file_path: str | None) -> str | None:
@@ -107,8 +162,9 @@ def build_coverage_context(file_path: str | None) -> str | None:
         logger.debug("No coverage entry available for %s.", resolved)
         return None
 
+    uncovered_lines = _load_uncovered_lines(coverage_dir, resolved, project_root)
     rel_path = os.path.relpath(str(resolved), project_root)
-    message = _format_message(rel_path, entry)
+    message = _format_message(rel_path, entry, uncovered_lines)
     logger.debug("Built coverage context: %s", message)
     return message
 
