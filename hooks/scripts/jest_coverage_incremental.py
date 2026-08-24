@@ -66,18 +66,15 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
 
     partial_dir = str(tmp_dir / "partials" / rel_path.replace("/", "_"))
 
-    custom_cmd = os.environ.get("JEST_COVERAGE_CMD_INCREMENTAL")
-    if custom_cmd:
-        jest_cmd = custom_cmd.format(
-            rel_path=json.dumps(rel_path),
-            coverage_dir=json.dumps(partial_dir),
-        )
-    else:
-        jest_cmd = (
-            f"NODE_ENV=test node_modules/.bin/jest --findRelatedTests {json.dumps(rel_path)} "
-            f"--coverage --coverageDirectory={json.dumps(partial_dir)} "
-            f"--collectCoverageFrom={json.dumps(rel_path)} --passWithNoTests --runInBand"
-        )
+    base_cmd = os.environ.get(
+        "JEST_COVERAGE_CMD_INCREMENTAL",
+        "NODE_ENV=test node_modules/.bin/jest --passWithNoTests --runInBand",
+    )
+    jest_cmd = (
+        f"{base_cmd} --findRelatedTests {json.dumps(rel_path)} "
+        f"--coverage --coverageDirectory={json.dumps(partial_dir)} "
+        f"--collectCoverageFrom={json.dumps(rel_path)}"
+    )
     merge_cmd = (
         f"{json.dumps(sys.executable)} {json.dumps(str(Path(script_dir) / 'merge_coverage.py'))} "
         f"{json.dumps(partial_dir)} {json.dumps(coverage_dir)} {json.dumps(rel_path)}"
