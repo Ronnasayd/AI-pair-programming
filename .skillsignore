@@ -1,3 +1,4 @@
+# dynamic-programming-analysis
 # generate-docs
 # grilling
 # resolve-merge-conflicts
@@ -55,8 +56,10 @@ document-summarizer
 docx
 domain-analysis
 domain-modeling
-dynamic-programming-analysis
 e2e-testing
+engineering/diagnosing-bugs
+engineering/domain-modeling
+engineering/grill-with-docs
 error-handling
 event-storming
 exa-search
@@ -130,6 +133,7 @@ prd-generator
 prd-get-implicit-requirements
 prisma-patterns
 production-audit
+productivity/grilling
 python-patterns
 python-style-guide
 python-testing
@@ -177,7 +181,3 @@ vite-patterns
 vue-patterns
 webapp-testing
 xlsx
-productivity/grilling
-engineering/diagnosing-bugs
-engineering/domain-modeling
-engineering/grill-with-docs
