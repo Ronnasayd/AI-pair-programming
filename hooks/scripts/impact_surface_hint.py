@@ -56,12 +56,16 @@ def _enclosing_symbol(file_text: str, old_string: str) -> str | None:
     return last.group(1) if last else None
 
 
-def changed_symbols_from_payload(tool_name: str, tool_input: dict, file_path: str) -> list[str]:
+def changed_symbols_from_payload(
+    tool_name: str, tool_input: dict, file_path: str
+) -> list[str]:
     """Symbol names touched by this edit, read straight from the hook payload.
 
     Prefers a def line inside new_string (covers renames/new functions); falls
-    back to the nearest enclosing def found in the current file content around
-    old_string (covers comment-only / body-only edits).
+    back to the nearest enclosing def found in the current (post-edit) file
+    content around new_string (covers comment-only / body-only edits). The
+    hook runs after the edit lands, so file_text no longer contains
+    old_string — only new_string is searchable.
     """
     edits = tool_input.get("edits") if tool_name == "MultiEdit" else [tool_input]
     if not edits:
@@ -84,9 +88,9 @@ def changed_symbols_from_payload(tool_name: str, tool_input: dict, file_path: st
         if m:
             add(m.group(1))
             continue
-        old_string = edit.get("old_string") or ""
-        if file_text and old_string:
-            add(_enclosing_symbol(file_text, old_string))
+        anchor = new_string or edit.get("old_string") or ""
+        if file_text and anchor:
+            add(_enclosing_symbol(file_text, anchor))
 
     return names[:MAX_SYMBOLS]
 
