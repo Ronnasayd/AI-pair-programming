@@ -12,7 +12,6 @@ the daemon isn't up; never starts it (would add latency to every edit).
 
 import json
 import os
-import re
 import socket
 import subprocess
 import sys
@@ -24,7 +23,12 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_by_key, get_hooks_logger, get_project_name  # noqa: E402
+from utils import (  # noqa: E402
+    extract_code_info,
+    get_by_key,
+    get_hooks_logger,
+    get_project_name,
+)
 
 logger = get_hooks_logger("SimilarCodeRef")
 
@@ -66,46 +70,25 @@ EXT_TO_RG_TYPE = {
     ".go": "go",
 }
 
-IMPORT_PATTERNS = [
-    re.compile(r"^\s*import\s+.*?\s+from\s+['\"](.+?)['\"]", re.MULTILINE),  # JS/TS
-    re.compile(r"^\s*import\s+['\"](.+?)['\"]", re.MULTILINE),  # JS side-effect import
-    re.compile(r"^\s*from\s+([\w.]+)\s+import\s+", re.MULTILINE),  # Python
-    re.compile(
-        r"^\s*import\s+([\w.,\s]+)", re.MULTILINE
-    ),  # Python (incl. multi-import)
-    re.compile(r"require\(['\"](.+?)['\"]\)"),  # CJS
-    re.compile(r'^\s*(?:\w+\s+)?"([\w./-]+)"\s*$', re.MULTILINE),  # Go import line
-]
 
-SYMBOL_PATTERNS = [
-    re.compile(r"^\s*(?:export\s+)?(?:async\s+)?function\s+(\w+)", re.MULTILINE),
-    re.compile(r"^\s*(?:export\s+)?class\s+(\w+)", re.MULTILINE),
-    re.compile(r"^\s*def\s+(\w+)", re.MULTILINE),
-    re.compile(r"^\s*class\s+(\w+)", re.MULTILINE),
-    re.compile(r"^\s*func\s+(?:\([^)]*\)\s*)?(\w+)", re.MULTILINE),  # Go
-    re.compile(r"^\s*type\s+(\w+)\s+(?:struct|interface)\b", re.MULTILINE),  # Go
-]
-
-
-def extract_terms(content: str) -> list[str]:
+def extract_terms(content: str, file_path: str) -> list[str]:
     """Pull candidate library/symbol names out of new code, filtering noise."""
+    info = extract_code_info(content, file_path)
+    raw_terms = info["imports"] + info["defs"]
+
     terms: list[str] = []
     seen: set[str] = set()
-
-    for pattern in IMPORT_PATTERNS + SYMBOL_PATTERNS:
-        for match in pattern.finditer(content):
-            raw = match.group(1)
-            for part in raw.split(","):
-                term = part.strip().split(".")[-1].split("/")[-1]
-                term_norm = term.lower()
-                if not term or term_norm in DENYLIST or len(term) < 3:
-                    continue
-                if term_norm in seen:
-                    continue
-                seen.add(term_norm)
-                terms.append(term)
-                if len(terms) >= MAX_TERMS:
-                    return terms
+    for raw in raw_terms:
+        term = raw.split(".")[-1].split("/")[-1]
+        term_norm = term.lower()
+        if not term or term_norm in DENYLIST or len(term) < 3:
+            continue
+        if term_norm in seen:
+            continue
+        seen.add(term_norm)
+        terms.append(term)
+        if len(terms) >= MAX_TERMS:
+            break
 
     return terms
 
@@ -271,7 +254,7 @@ def build_context(content: str, target_file: str) -> str:
     ext = Path(target_file).suffix.lower()
     rg_type = EXT_TO_RG_TYPE.get(ext)
 
-    terms = extract_terms(content)
+    terms = extract_terms(content, target_file)
     logger.debug("target=%s ext=%s terms=%s", target_file, ext, terms)
     if not terms:
         logger.debug("no terms extracted, skipping build_context")

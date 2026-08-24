@@ -215,6 +215,165 @@ def escape_regexp(value: str) -> str:
     return re.escape(value)
 
 
+# ---------------------------------------------------------------------------
+# AST-based code info (tree-sitter)
+# ---------------------------------------------------------------------------
+
+_EXT_TO_TS_LANG = {
+    ".py": "python",
+    ".ts": "typescript",
+    ".tsx": "tsx",
+    ".js": "javascript",
+    ".jsx": "javascript",
+    ".go": "go",
+}
+
+_DEF_NODE_TYPES = {
+    "function_definition",  # python
+    "class_definition",  # python
+    "function_declaration",  # ts/js/go
+    "class_declaration",  # ts/js
+    "type_declaration",  # go (type X struct/interface)
+    "method_declaration",  # go
+}
+
+_IMPORT_NODE_TYPES = {
+    "import_statement",  # python, ts/js
+    "import_from_statement",  # python
+    "import_declaration",  # go
+}
+
+_STRING_NODE_TYPES = {"string", "interpreted_string_literal", "string_fragment"}
+
+_ts_parser_cache: dict[str, Any] = {}
+
+
+def _get_ts_parser(lang: str):
+    if lang in _ts_parser_cache:
+        return _ts_parser_cache[lang]
+    try:
+        from tree_sitter_language_pack import get_parser  # type: ignore[import-not-found]
+
+        parser = get_parser(lang)
+    except Exception:
+        parser = None
+    _ts_parser_cache[lang] = parser
+    return parser
+
+
+def _collect_defs(node, out: list[str]) -> None:
+    if node.type in _DEF_NODE_TYPES:
+        name_node = node.child_by_field_name("name")
+        if name_node is not None:
+            out.append(name_node.text.decode("utf-8", errors="ignore"))
+    for child in node.children:
+        _collect_defs(child, out)
+
+
+def _collect_import_strings(node, out: list[str]) -> None:
+    if node.type in _STRING_NODE_TYPES and node.type != "string_fragment":
+        text = node.text.decode("utf-8", errors="ignore").strip("\"'")
+        if text:
+            out.append(text)
+        return  # don't descend into string internals
+    for child in node.children:
+        _collect_import_strings(child, out)
+
+
+def _collect_dotted_names(node, out: list[str]) -> None:
+    if node.type == "dotted_name":
+        out.append(node.text.decode("utf-8", errors="ignore"))
+        return  # don't descend into a dotted_name's own identifier/./ children
+    for child in node.children:
+        _collect_dotted_names(child, out)
+
+
+def _collect_imports(node, out: list[str]) -> None:
+    if node.type == "import_from_statement":
+        # python: from <dotted_name> import ... — first dotted_name is the module
+        module = node.child_by_field_name("module_name")
+        if module is not None:
+            out.append(module.text.decode("utf-8", errors="ignore"))
+        return
+    if node.type == "import_statement":
+        # python: import a, b.c as d — dotted_name may be wrapped in aliased_import
+        _collect_dotted_names(node, out)
+        _collect_import_strings(node, out)  # ts/js string-based imports
+        return
+    if node.type == "import_declaration":  # go
+        _collect_import_strings(node, out)
+        return
+    for child in node.children:
+        _collect_imports(child, out)
+
+
+def extract_code_info(content: str, file_path: str) -> dict[str, list[str]]:
+    """Extract top-level def/class names and imported module paths from source
+    text via tree-sitter. Tolerates partial/invalid syntax (tree-sitter parses
+    incrementally and still yields well-formed sibling nodes around an error);
+    returns empty lists on unsupported extension or any parse failure.
+    """
+    empty: dict[str, list[str]] = {"defs": [], "imports": []}
+
+    lang = _EXT_TO_TS_LANG.get(Path(file_path).suffix)
+    if not lang or not content.strip():
+        return empty
+
+    parser = _get_ts_parser(lang)
+    if parser is None:
+        return empty
+
+    try:
+        tree = parser.parse(content.encode("utf-8", errors="ignore"))
+    except Exception:
+        return empty
+
+    defs: list[str] = []
+    imports: list[str] = []
+    try:
+        _collect_defs(tree.root_node, defs)
+        _collect_imports(tree.root_node, imports)
+    except Exception:
+        return empty
+
+    return {"defs": _dedupe(defs), "imports": _dedupe(imports)}
+
+
+def _dedupe(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    result = []
+    for item in items:
+        if item not in seen:
+            seen.add(item)
+            result.append(item)
+    return result
+
+
+def enclosing_def_name(content: str, file_path: str, offset: int) -> str | None:
+    """Name of the innermost def/class node whose byte range contains `offset`."""
+    lang = _EXT_TO_TS_LANG.get(Path(file_path).suffix)
+    if not lang:
+        return None
+    parser = _get_ts_parser(lang)
+    if parser is None:
+        return None
+
+    try:
+        tree = parser.parse(content.encode("utf-8", errors="ignore"))
+    except Exception:
+        return None
+
+    byte_offset = len(content[:offset].encode("utf-8", errors="ignore"))
+    node = tree.root_node.descendant_for_byte_range(byte_offset, byte_offset)
+    while node is not None:
+        if node.type in _DEF_NODE_TYPES:
+            name_node = node.child_by_field_name("name")
+            if name_node is not None:
+                return name_node.text.decode("utf-8", errors="ignore")
+        node = node.parent
+    return None
+
+
 def get_hooks_logger(
     name: str = "Hooks",
     log_file: str = str(Path.home() / ".claude" / "logs" / "hooks.log"),

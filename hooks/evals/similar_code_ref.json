@@ -75,7 +75,7 @@
         }
       },
       "expect_output": true,
-      "expect_pattern": "existing usage of 'numpy as np'"
+      "expect_pattern": "existing usage of 'numpy'"
     },
     {
       "name": "py_import_matches_existing_usage",
