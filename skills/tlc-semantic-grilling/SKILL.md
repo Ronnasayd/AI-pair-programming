@@ -15,4 +15,4 @@ Add the following steps as tasks using the `TaskCreate`, `TaskUpdate`, `TaskGet`
 
 2. Execute the `/tlc-spec-driven` skill to generate a plan based on the described problem.
 3. Once planning is complete, ask the user if they wish to register the feature in _taskmaster_. If the answer is "yes," use the `/tlc-tasks-to-taskmaster` skill.
-4. Check the definitions in [docs-adr](.claude/skills/generate-docs/references/templates/docs-adr.md) and consider offering to create an ADR when the criteria are met.
+4. Check the definitions in [docs-adr](./references/docs-adr.md) and consider offering to create an ADR when the criteria are met.
