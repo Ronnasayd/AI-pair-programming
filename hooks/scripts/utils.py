@@ -518,6 +518,101 @@ def tmp_project_dir(project_root: str, namespace: str) -> Path:
     return tmp_dir
 
 
+def _coverage_pct(covered: int, total: int) -> float:
+    if total == 0:
+        return 100
+    return round((covered / total) * 10000) / 100
+
+
+def _coverage_line_hits(file_coverage: dict) -> dict:
+    """Collapse statement hits onto their starting line (istanbul's 'lines' metric)."""
+    statement_map = file_coverage.get("statementMap", {})
+    statement_hits = file_coverage.get("s", {})
+    line_hits: dict[int, int] = {}
+    for stmt_id, loc in statement_map.items():
+        line = loc["start"]["line"]
+        hits = statement_hits.get(stmt_id, 0)
+        line_hits[line] = max(line_hits.get(line, 0), hits)
+    return line_hits
+
+
+def _coverage_file_summary(file_coverage: dict) -> dict:
+    line_hits = _coverage_line_hits(file_coverage)
+    lines_total = len(line_hits)
+    lines_covered = sum(1 for hits in line_hits.values() if hits > 0)
+
+    statement_hits = file_coverage.get("s", {})
+    statements_total = len(statement_hits)
+    statements_covered = sum(1 for hits in statement_hits.values() if hits > 0)
+
+    fn_hits = file_coverage.get("f", {})
+    functions_total = len(fn_hits)
+    functions_covered = sum(1 for hits in fn_hits.values() if hits > 0)
+
+    branch_hits = file_coverage.get("b", {})
+    branches_total = sum(len(counts) for counts in branch_hits.values())
+    branches_covered = sum(
+        sum(1 for hit in counts if hit > 0) for counts in branch_hits.values()
+    )
+
+    return {
+        "lines": {
+            "total": lines_total,
+            "covered": lines_covered,
+            "skipped": 0,
+            "pct": _coverage_pct(lines_covered, lines_total),
+        },
+        "statements": {
+            "total": statements_total,
+            "covered": statements_covered,
+            "skipped": 0,
+            "pct": _coverage_pct(statements_covered, statements_total),
+        },
+        "functions": {
+            "total": functions_total,
+            "covered": functions_covered,
+            "skipped": 0,
+            "pct": _coverage_pct(functions_covered, functions_total),
+        },
+        "branches": {
+            "total": branches_total,
+            "covered": branches_covered,
+            "skipped": 0,
+            "pct": _coverage_pct(branches_covered, branches_total),
+        },
+    }
+
+
+def build_coverage_summary(merged_final: dict) -> dict:
+    """Compute Istanbul coverage-summary.json shape from a coverage-final.json dict."""
+    summary = {}
+    totals = {
+        "lines": [0, 0],
+        "statements": [0, 0],
+        "functions": [0, 0],
+        "branches": [0, 0],
+    }
+    for file_path, file_coverage in merged_final.items():
+        file_summary = _coverage_file_summary(file_coverage)
+        summary[file_path] = file_summary
+        for metric, (total, covered) in totals.items():
+            totals[metric] = [
+                total + file_summary[metric]["total"],
+                covered + file_summary[metric]["covered"],
+            ]
+
+    summary["total"] = {
+        metric: {
+            "total": total,
+            "covered": covered,
+            "skipped": 0,
+            "pct": _coverage_pct(covered, total),
+        }
+        for metric, (total, covered) in totals.items()
+    }
+    return summary
+
+
 def find_last_coverage_dir(project_root: str) -> str:
     """Return existing coverage dir if present, else default 'coverage'."""
     default_dir = Path(project_root) / "coverage"
