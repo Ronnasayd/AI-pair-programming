@@ -47,9 +47,7 @@ def _load_final_json(coverage_dir: str) -> dict | None:
         return None
 
 
-def _load_summary_entry(
-    final: dict, resolved: Path, project_root: str
-) -> dict | None:
+def _load_summary_entry(final: dict, resolved: Path, project_root: str) -> dict | None:
     candidates = {str(resolved), os.path.relpath(str(resolved), project_root)}
     for key, file_coverage in final.items():
         if key in candidates or key.endswith(str(resolved)):
