@@ -610,6 +610,11 @@
   },
   "alwaysThinkingEnabled": false,
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "high"
+    }
+  },
   "plansDirectory": "./docs/plans/",
   "voice": {
     "enabled": false,

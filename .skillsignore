@@ -1,6 +1,7 @@
 # dynamic-programming-analysis
 # generate-docs
 # grilling
+# pr-review
 # resolve-merge-conflicts
 # technical-decision-helper
 # tlc-semantic-grilling
@@ -127,7 +128,6 @@ pdf
 perf-web-optimization
 plan-generator
 postgres-patterns
-pr-review
 prd-from-codebase
 prd-generator
 prd-get-implicit-requirements

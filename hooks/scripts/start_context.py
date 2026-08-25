@@ -91,7 +91,7 @@ def find_config_files(payload):
     if not cwd:
         return ""
 
-    ignored_dirs = {".git", "node_modules", ".venv", "__pycache__"}
+    ignored_dirs = {".git", "node_modules", ".venv", "__pycache__", ".stryker"}
     glob_hits = []
     for root, dirs, files in os.walk(cwd):
         dirs[:] = [d for d in dirs if d not in ignored_dirs]
@@ -101,8 +101,7 @@ def find_config_files(payload):
     glob_hits.sort()
 
     known_hits = sorted(
-        name for name in KNOWN_CONFIG_FILES
-        if os.path.exists(os.path.join(cwd, name))
+        name for name in KNOWN_CONFIG_FILES if os.path.exists(os.path.join(cwd, name))
     )
 
     if not glob_hits and not known_hits:
