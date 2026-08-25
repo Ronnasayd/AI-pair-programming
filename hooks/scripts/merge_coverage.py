@@ -8,8 +8,16 @@ per-file HTML page(s) from the partial run's lcov-report.
 """
 
 import json
+import os
 import sys
 from pathlib import Path
+
+
+def _write_json_atomic(path: Path, data: object, **dump_kwargs) -> None:
+    """Write via temp file + os.replace so concurrent readers never see a partial write."""
+    tmp = path.with_suffix(path.suffix + f".tmp{os.getpid()}")
+    tmp.write_text(json.dumps(data, **dump_kwargs))
+    os.replace(tmp, path)
 
 
 def _merge_counter_map(base: dict, partial: dict) -> dict:
@@ -158,12 +166,12 @@ def main() -> None:
     base = json.loads(coverage_file.read_text()) if coverage_file.exists() else {}
 
     merged = merge_coverage(base, partial)
-    coverage_file.write_text(json.dumps(merged))
+    _write_json_atomic(coverage_file, merged)
 
     summary_dir = coverage_dir / "summary"
     summary_dir.mkdir(parents=True, exist_ok=True)
     summary_file = summary_dir / "coverage-summary.json"
-    summary_file.write_text(json.dumps(build_summary(merged), indent=2))
+    _write_json_atomic(summary_file, build_summary(merged), indent=2)
 
 
 
