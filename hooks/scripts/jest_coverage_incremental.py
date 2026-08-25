@@ -33,6 +33,15 @@ from utils import (  # noqa: E402
     tmp_project_dir,
 )
 
+def _nyc_report_cmd(project_root: str, coverage_dir: str) -> str:
+    """Prefer the local nyc binary (skips npx's resolve overhead); fall back to npx."""
+    local_nyc = Path(project_root) / "node_modules" / ".bin" / "nyc"
+    nyc_bin = str(local_nyc) if local_nyc.exists() else "npx nyc"
+    return (
+        f"{nyc_bin} report --temp-dir={json.dumps(coverage_dir)} "
+        f"--reporter=html --report-dir={json.dumps(coverage_dir + '/lcov-report')}"
+    )
+
 logger = get_hooks_logger("CoverageIncremental")
 
 _JS_TS_EXTS = {".js", ".jsx", ".ts", ".tsx"}
@@ -79,9 +88,10 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
         f"{json.dumps(sys.executable)} {json.dumps(str(Path(script_dir) / 'merge_coverage.py'))} "
         f"{json.dumps(partial_dir)} {json.dumps(coverage_dir)} {json.dumps(rel_path)}"
     )
+    nyc_report_cmd = _nyc_report_cmd(project_root, coverage_dir)
 
     release_cmd = f"rm -f {json.dumps(str(lock_file))}"
-    full_cmd = f"{jest_cmd}; {merge_cmd}; {release_cmd}"
+    full_cmd = f"{jest_cmd}; {merge_cmd}; {nyc_report_cmd}; {release_cmd}"
     logger.debug("Spawning background coverage update: %s", full_cmd)
     spawn_background(full_cmd, project_root, tmp_dir / "coverage-incremental.log")
 
