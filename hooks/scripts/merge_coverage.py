@@ -160,7 +160,9 @@ def main() -> None:
     merged = merge_coverage(base, partial)
     coverage_file.write_text(json.dumps(merged))
 
-    summary_file = coverage_dir / "coverage-summary.json"
+    summary_dir = coverage_dir / "summary"
+    summary_dir.mkdir(parents=True, exist_ok=True)
+    summary_file = summary_dir / "coverage-summary.json"
     summary_file.write_text(json.dumps(build_summary(merged), indent=2))
 
 

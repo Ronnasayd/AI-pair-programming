@@ -38,7 +38,7 @@ _JS_TS_EXTS = {".js", ".jsx", ".ts", ".tsx"}
 def _load_summary_entry(
     coverage_dir: str, resolved: Path, project_root: str
 ) -> dict | None:
-    summary_file = Path(coverage_dir) / "coverage-summary.json"
+    summary_file = Path(coverage_dir) / "summary" / "coverage-summary.json"
     if not summary_file.exists():
         return None
 
