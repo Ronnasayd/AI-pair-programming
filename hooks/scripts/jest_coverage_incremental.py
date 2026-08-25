@@ -34,6 +34,7 @@ from utils import (  # noqa: E402
     tmp_project_dir,
 )
 
+
 def _nyc_report_cmd(project_root: str, coverage_dir: str) -> str:
     """Prefer the local nyc binary (skips npx's resolve overhead); fall back to npx."""
     local_nyc = Path(project_root) / "node_modules" / ".bin" / "nyc"
@@ -42,6 +43,7 @@ def _nyc_report_cmd(project_root: str, coverage_dir: str) -> str:
         f"{nyc_bin} report --temp-dir={json.dumps(coverage_dir)} "
         f"--reporter=html --report-dir={json.dumps(coverage_dir + '/lcov-report')}"
     )
+
 
 logger = get_hooks_logger("CoverageIncremental")
 

@@ -282,6 +282,10 @@
           },
           {
             "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/jest_related_files_report.py"
+          },
+          {
+            "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/impact_surface_hint.py"
           }
         ]
