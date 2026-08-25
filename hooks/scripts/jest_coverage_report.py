@@ -3,7 +3,7 @@
 Jest coverage report hook.
 
 After a JS/TS file is edited/created, if the project has jest and an existing
-coverage-summary.json, looks up that file's per-file coverage entry and
+coverage-final.json, computes that file's per-file coverage summary and
 surfaces it via additionalContext so the model sees current line/branch/
 function coverage for the file it just touched.
 
@@ -21,6 +21,7 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
+    build_coverage_summary,
     find_last_coverage_dir,
     find_project_root,
     get_by_key,
@@ -35,25 +36,26 @@ logger = get_hooks_logger("CoverageReport")
 _JS_TS_EXTS = {".js", ".jsx", ".ts", ".tsx"}
 
 
-def _load_summary_entry(
-    coverage_dir: str, resolved: Path, project_root: str
-) -> dict | None:
-    summary_file = Path(coverage_dir) / "summary" / "coverage-summary.json"
-    if not summary_file.exists():
+def _load_final_json(coverage_dir: str) -> dict | None:
+    final_file = Path(coverage_dir) / "coverage-final.json"
+    if not final_file.exists():
         return None
-
     try:
-        summary = json.loads(summary_file.read_text())
+        return json.loads(final_file.read_text())
     except (json.JSONDecodeError, OSError) as exc:
-        logger.debug("Error reading %s: %s", summary_file, exc)
+        logger.debug("Error reading %s: %s", final_file, exc)
         return None
 
+
+def _load_summary_entry(
+    final: dict, resolved: Path, project_root: str
+) -> dict | None:
     candidates = {str(resolved), os.path.relpath(str(resolved), project_root)}
-    for key, entry in summary.items():
+    for key, file_coverage in final.items():
         if key in candidates or key.endswith(str(resolved)):
             logger.debug("Matched coverage entry for %s via key %s", resolved, key)
-            return entry
-    logger.debug("No coverage entry found for %s in %s", resolved, summary_file)
+            return build_coverage_summary({key: file_coverage})[key]
+    logger.debug("No coverage entry found for %s", resolved)
     return None
 
 
@@ -74,18 +76,8 @@ def _format_line_ranges(lines: list[int]) -> str:
 
 
 def _load_uncovered_lines(
-    coverage_dir: str, resolved: Path, project_root: str
+    final: dict, resolved: Path, project_root: str
 ) -> list[int] | None:
-    final_file = Path(coverage_dir) / "coverage-final.json"
-    if not final_file.exists():
-        return None
-
-    try:
-        final = json.loads(final_file.read_text())
-    except (json.JSONDecodeError, OSError) as exc:
-        logger.debug("Error reading %s: %s", final_file, exc)
-        return None
-
     candidates = {str(resolved), os.path.relpath(str(resolved), project_root)}
     file_entry = None
     for key, entry in final.items():
@@ -157,12 +149,17 @@ def build_coverage_context(file_path: str | None) -> str | None:
 
     coverage_dir = find_last_coverage_dir(project_root)
     logger.debug("Using coverage dir: %s", coverage_dir)
-    entry = _load_summary_entry(coverage_dir, resolved, project_root)
+    final = _load_final_json(coverage_dir)
+    if not final:
+        logger.debug("No coverage-final.json available in %s.", coverage_dir)
+        return None
+
+    entry = _load_summary_entry(final, resolved, project_root)
     if not entry:
         logger.debug("No coverage entry available for %s.", resolved)
         return None
 
-    uncovered_lines = _load_uncovered_lines(coverage_dir, resolved, project_root)
+    uncovered_lines = _load_uncovered_lines(final, resolved, project_root)
     rel_path = os.path.relpath(str(resolved), project_root)
     message = _format_message(rel_path, entry, uncovered_lines)
     logger.debug("Built coverage context: %s", message)

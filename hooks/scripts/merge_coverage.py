@@ -2,9 +2,12 @@
 """Merge a partial Istanbul coverage run into a project's coverage dir.
 
 Replaces nyc merge/report: merges coverage-final.json (sum s/f/b counters,
-keep statementMap/fnMap/branchMap from whichever side has them), recomputes
-coverage-summary.json from the merged final json, and swaps in the updated
-per-file HTML page(s) from the partial run's lcov-report.
+keep statementMap/fnMap/branchMap from whichever side has them) and swaps in
+the updated per-file HTML page(s) from the partial run's lcov-report.
+
+coverage-summary.json is NOT written here — jest_coverage_report.py builds it
+on demand from coverage-final.json. Writing it from this background process
+raced against that read (report could see a half-written file).
 """
 
 import json
@@ -55,101 +58,6 @@ def merge_coverage(base: dict, partial: dict) -> dict:
     return merged
 
 
-def _pct(covered: int, total: int) -> float:
-    if total == 0:
-        return 100
-    return round((covered / total) * 10000) / 100
-
-
-def _line_hits(file_coverage: dict) -> dict:
-    """Collapse statement hits onto their starting line (istanbul's 'lines' metric)."""
-    statement_map = file_coverage.get("statementMap", {})
-    statement_hits = file_coverage.get("s", {})
-    line_hits: dict[int, int] = {}
-    for stmt_id, loc in statement_map.items():
-        line = loc["start"]["line"]
-        hits = statement_hits.get(stmt_id, 0)
-        line_hits[line] = max(line_hits.get(line, 0), hits)
-    return line_hits
-
-
-def _file_summary(file_coverage: dict) -> dict:
-    line_hits = _line_hits(file_coverage)
-    lines_total = len(line_hits)
-    lines_covered = sum(1 for hits in line_hits.values() if hits > 0)
-
-    statement_hits = file_coverage.get("s", {})
-    statements_total = len(statement_hits)
-    statements_covered = sum(1 for hits in statement_hits.values() if hits > 0)
-
-    fn_hits = file_coverage.get("f", {})
-    functions_total = len(fn_hits)
-    functions_covered = sum(1 for hits in fn_hits.values() if hits > 0)
-
-    branch_hits = file_coverage.get("b", {})
-    branches_total = sum(len(counts) for counts in branch_hits.values())
-    branches_covered = sum(
-        sum(1 for hit in counts if hit > 0) for counts in branch_hits.values()
-    )
-
-    return {
-        "lines": {
-            "total": lines_total,
-            "covered": lines_covered,
-            "skipped": 0,
-            "pct": _pct(lines_covered, lines_total),
-        },
-        "statements": {
-            "total": statements_total,
-            "covered": statements_covered,
-            "skipped": 0,
-            "pct": _pct(statements_covered, statements_total),
-        },
-        "functions": {
-            "total": functions_total,
-            "covered": functions_covered,
-            "skipped": 0,
-            "pct": _pct(functions_covered, functions_total),
-        },
-        "branches": {
-            "total": branches_total,
-            "covered": branches_covered,
-            "skipped": 0,
-            "pct": _pct(branches_covered, branches_total),
-        },
-    }
-
-
-def build_summary(merged_final: dict) -> dict:
-    summary = {}
-    totals = {
-        "lines": [0, 0],
-        "statements": [0, 0],
-        "functions": [0, 0],
-        "branches": [0, 0],
-    }
-    for file_path, file_coverage in merged_final.items():
-        file_summary = _file_summary(file_coverage)
-        summary[file_path] = file_summary
-        for metric, [total, covered] in totals.items():
-            totals[metric] = [
-                total + file_summary[metric]["total"],
-                covered + file_summary[metric]["covered"],
-            ]
-
-    summary["total"] = {
-        metric: {
-            "total": total,
-            "covered": covered,
-            "skipped": 0,
-            "pct": _pct(covered, total),
-        }
-        for metric, (total, covered) in totals.items()
-    }
-    return summary
-
-
-
 def main() -> None:
     partial_dir = Path(sys.argv[1])
     coverage_dir = Path(sys.argv[2])
@@ -167,12 +75,6 @@ def main() -> None:
 
     merged = merge_coverage(base, partial)
     _write_json_atomic(coverage_file, merged)
-
-    summary_dir = coverage_dir / "summary"
-    summary_dir.mkdir(parents=True, exist_ok=True)
-    summary_file = summary_dir / "coverage-summary.json"
-    _write_json_atomic(summary_file, build_summary(merged), indent=2)
-
 
 
 if __name__ == "__main__":
