@@ -15,6 +15,8 @@ else
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\""  >> $SOURCE/.ai.alias.zshrc && echo "alias add at .bashrc"
     fi
     uv sync --project "$SOURCE" > /dev/null && echo "fastembed ok"
+    uv run --project "$SOURCE" python3 -m spacy download pt_core_news_sm > /dev/null && echo "spacy pt model ok"
+    uv run --project "$SOURCE" python3 -m spacy download en_core_web_sm > /dev/null && echo "spacy en model ok"
     # bash "$(pwd)/scripts/update-external-tools.sh"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
