@@ -139,6 +139,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/hooks/scripts/md_language_check.py"
+          },
+          {
+            "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/context_refs.py"
           },
           {
@@ -287,10 +291,6 @@
           {
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/impact_surface_hint.py"
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/hooks/scripts/md_language_check.py"
           }
         ]
       },
