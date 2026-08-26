@@ -41,12 +41,12 @@ def load_merged_settings(global_path=None):
 
     Loads up to three sources and merges their permissions.allow/deny arrays:
       1. Global:        ~/.claude/settings.json (or $CLAUDE_SETTINGS_PATH)
-      2. Project:       $CLAUDE_PROJECT_DIR/.claude/settings.json (committed)
-      3. Project-local: $CLAUDE_PROJECT_DIR/.claude/settings.local.json (gitignored)
+      2. Project:       $AI_PROJECT_DIR/.claude/settings.json (committed)
+      3. Project-local: $AI_PROJECT_DIR/.claude/settings.local.json (gitignored)
     """
     settings = load_settings(global_path)
 
-    project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
+    project_dir = os.environ.get("AI_PROJECT_DIR")
     if not project_dir:
         return settings
 

@@ -20,7 +20,7 @@ from utils import get_by_key, get_hooks_logger, split_on_operators  # noqa: E402
 
 logger = get_hooks_logger("ProtectBranches")
 
-PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
+PROJECT_ROOT = os.environ.get("AI_PROJECT_DIR", os.getcwd())
 
 DEFAULT_PROTECTED_BRANCHES = {"main", "master", "develop", "homolog"}
 
@@ -96,12 +96,18 @@ def check_git_segment(tokens: list[str]) -> None:
                 if has_force:
                     deny(" ".join(tokens), "force-push to protected branch", ref_branch)
                 if has_delete:
-                    deny(" ".join(tokens), "delete of protected branch (remote)", ref_branch)
+                    deny(
+                        " ".join(tokens),
+                        "delete of protected branch (remote)",
+                        ref_branch,
+                    )
 
         # `git push` / `git push origin` with no explicit ref, force-pushing
         # while HEAD is on a protected branch
-        if has_force and branch in PROTECTED_BRANCHES and not any(
-            r in PROTECTED_BRANCHES for r in refs
+        if (
+            has_force
+            and branch in PROTECTED_BRANCHES
+            and not any(r in PROTECTED_BRANCHES for r in refs)
         ):
             deny(" ".join(tokens), "force-push while on protected branch", branch)
 
@@ -134,7 +140,11 @@ def check_git_segment(tokens: list[str]) -> None:
         if "-B" in args:
             idx = args.index("-B")
             if idx + 1 < len(args) and args[idx + 1] in PROTECTED_BRANCHES:
-                deny(" ".join(tokens), "force-recreate protected branch (checkout -B)", args[idx + 1])
+                deny(
+                    " ".join(tokens),
+                    "force-recreate protected branch (checkout -B)",
+                    args[idx + 1],
+                )
         return
 
     if subcmd == "commit":
