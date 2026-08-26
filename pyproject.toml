@@ -2,7 +2,7 @@
 name = "ai-pair-programming-hooks"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["numpy", "fastembed", "pyyaml", "tree-sitter-language-pack"]
+dependencies = ["numpy", "fastembed", "pyyaml", "tree-sitter-language-pack", "spacy", "langdetect"]
 
 [tool.uv]
 package = false
