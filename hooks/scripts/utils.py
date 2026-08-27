@@ -135,7 +135,6 @@ def parse_jsonlines_output(
 # and reporting it every write is pure noise. Override via env.
 JSCPD_THRESHOLD = float(os.environ.get("JSCPD_THRESHOLD", "10"))
 JSCPD_MIN_LINES = int(os.environ.get("JSCPD_MIN_LINES", "15"))
-JSCPD_MIN_TOKENS = int(os.environ.get("JSCPD_MIN_TOKENS", "100"))
 
 
 def run_jscpd(
@@ -153,8 +152,7 @@ def run_jscpd(
     ensure_dir(report_dir)
     cmd = (
         f"npx jscpd --no-tips --exit-code 1 --reporters json "
-        f"--threshold {JSCPD_THRESHOLD} "
-        f"--min-lines {JSCPD_MIN_LINES} --min-tokens {JSCPD_MIN_TOKENS} "
+        f"--threshold {JSCPD_THRESHOLD} --min-lines {JSCPD_MIN_LINES} "
         f"--output {report_dir} {str(resolved)}"
     )
     logger.debug("[%s] Executing: %s (cwd=%s)", tag, cmd, project_root)
