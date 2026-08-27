@@ -23,7 +23,8 @@ RULE = (
     "- **Fallback**: if no interactive tools exist, use labeled options "
     "(A, B, C... Z)\n\n"
     "If an interactive tool exists, never ask a plain-text question.\n\n"
-    "If there are multiple questions, use the `grilling` skill."
+    "If there are multiple questions, use the `grilling` skill.\n"
+    "Ask questions using clear, technical language.\n"
 )
 
 
