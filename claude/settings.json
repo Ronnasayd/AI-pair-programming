@@ -4,7 +4,8 @@
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5[1m]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5[1m]",
     "ASDF_NODEJS_VERSION": "23.11.1",
-    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"
   },
   "attribution": {
     "commit": "",
@@ -139,7 +140,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/hooks/scripts/md_language_check.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/md_language_check.py"
           },
           {
             "type": "command",
@@ -271,10 +272,6 @@
           {
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/md_json_lint.py"
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/track_edited_files.py"
           },
           {
             "type": "command",
@@ -533,10 +530,6 @@
           {
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_session_end.py"
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/format_on_session_end.py"
           }
         ]
       },

@@ -215,6 +215,26 @@ rm $HOME/.config/Code/User/mcp.json
 fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
+## GIT HOOKS (formatter on pre-commit). Symlink git-hooks/* into .git/hooks/,
+## skipping any name already taken by another tool (e.g. rag-rat's post-*).
+if [ -d "$LOCAL/.git" ]; then
+  mkdir -p "$LOCAL/.git/hooks"
+  for hook in "$SOURCE/git-hooks/"*; do
+    name=$(basename "$hook")
+    dest="$LOCAL/.git/hooks/$name"
+    if [ -L "$dest" ]; then
+      case "$(readlink "$dest")" in
+        "$SOURCE/git-hooks/"*) ln -sf "$hook" "$dest" ;;
+        *) echo "WARN: $dest is a symlink owned by another tool, skipping" >&2 ;;
+      esac
+    elif [ -e "$dest" ]; then
+      echo "WARN: $dest already exists (not a symlink), skipping" >&2
+    else
+      ln -s "$hook" "$dest"
+    fi
+  done
+fi
+###########################################################################################
 ## GITIGNORE
 if ! grep -qF "$DEFAULT_FOLDER/skills/*" .git/info/exclude; then
     echo "$DEFAULT_FOLDER/skills/*" >> .git/info/exclude

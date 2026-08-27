@@ -33,6 +33,13 @@ find "$LOCAL/$DEFAULT_FOLDER/hooks" -maxdepth 1 -type l 2>/dev/null | while read
     fi
 done
 ########################################################################################
+find "$LOCAL/.git/hooks" -maxdepth 1 -type l 2>/dev/null | while read -r link; do
+    target=$(readlink "$link")
+    if [[ "$target" == "$SOURCE/git-hooks/"* ]]; then
+        rm "$link"
+    fi
+done
+########################################################################################
 find "$LOCAL/$DEFAULT_FOLDER/agents" -maxdepth 1 -type l 2>/dev/null | while read -r link; do
     target=$(readlink "$link")
     if [[ "$target" == "$SOURCE/agents/"* ]]; then

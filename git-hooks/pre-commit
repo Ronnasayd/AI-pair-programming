@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""git pre-commit hook: format staged files in place and re-stage them.
+
+Symlinked into each project's .git/hooks/pre-commit by scripts/claude.install.sh.
+Delegates to format_staged.py living beside this file.
+"""
+
+import runpy
+import sys
+from pathlib import Path
+
+_here = Path(__file__).resolve().parent
+sys.argv = ["format_staged"]
+runpy.run_path(str(_here / "format_staged.py"), run_name="__main__")
