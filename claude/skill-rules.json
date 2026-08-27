@@ -16,9 +16,7 @@
         "cheat",
         "learn"
       ],
-      "intentPatterns": [
-        ".*git.*"
-      ]
+      "intentPatterns": [".*git.*"]
     },
     {
       "skill": "skill-advisor",
@@ -124,9 +122,7 @@
         "leetcode",
         "problems"
       ],
-      "intentPatterns": [
-        ".*leet.*"
-      ]
+      "intentPatterns": [".*leet.*"]
     },
     {
       "skill": "tdd-workflow",
@@ -210,9 +206,7 @@
         "about",
         "image"
       ],
-      "intentPatterns": [
-        ".*opencv.*"
-      ]
+      "intentPatterns": [".*opencv.*"]
     },
     {
       "skill": "mermaid-class-diagram",
@@ -296,9 +290,7 @@
         "output",
         "worked"
       ],
-      "intentPatterns": [
-        ".*auto.*"
-      ]
+      "intentPatterns": [".*auto.*"]
     },
     {
       "skill": "context7-documentation-lookup",
@@ -316,9 +308,7 @@
         "library",
         "setup"
       ],
-      "intentPatterns": [
-        ".*context7.*"
-      ]
+      "intentPatterns": [".*context7.*"]
     },
     {
       "skill": "tailwindcss",
@@ -358,9 +348,7 @@
         "building",
         "pythonic"
       ],
-      "intentPatterns": [
-        ".*python.*"
-      ]
+      "intentPatterns": [".*python.*"]
     },
     {
       "skill": "python-testing",
@@ -400,9 +388,7 @@
         "emphasizing",
         "readability"
       ],
-      "intentPatterns": [
-        ".*python.*"
-      ]
+      "intentPatterns": [".*python.*"]
     },
     {
       "skill": "domain-modeling",
@@ -418,9 +404,7 @@
         "model",
         "wants"
       ],
-      "intentPatterns": [
-        ".*domain.*"
-      ]
+      "intentPatterns": [".*domain.*"]
     },
     {
       "skill": "diagnosing-bugs",
@@ -438,9 +422,7 @@
         "hard",
         "loop"
       ],
-      "intentPatterns": [
-        ".*diagnosing.*"
-      ]
+      "intentPatterns": [".*diagnosing.*"]
     },
     {
       "skill": "grilling",
@@ -480,9 +462,7 @@
         "critical",
         "details"
       ],
-      "intentPatterns": [
-        ".*document.*"
-      ]
+      "intentPatterns": [".*document.*"]
     },
     {
       "skill": "code-review",
@@ -522,9 +502,7 @@
         "non-english",
         "remediation"
       ],
-      "intentPatterns": [
-        ".*codebase.*"
-      ]
+      "intentPatterns": [".*codebase.*"]
     },
     {
       "skill": "orchestrate",
@@ -542,9 +520,7 @@
         "subagents",
         "ensuring"
       ],
-      "intentPatterns": [
-        ".*orchestrate.*"
-      ]
+      "intentPatterns": [".*orchestrate.*"]
     },
     {
       "skill": "resolve-merge-conflicts",
@@ -584,9 +560,7 @@
         "github",
         "python"
       ],
-      "intentPatterns": [
-        ".*copilot.*"
-      ]
+      "intentPatterns": [".*copilot.*"]
     },
     {
       "skill": "integration-testing",
@@ -610,11 +584,11 @@
       ]
     },
     {
-      "skill": "tlc-tasks-to-taskmaster",
+      "skill": "sd-insert-taskmaster",
       "priority": "high",
       "hint": "Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json for task list, .taskmaster/execution/metadata.json for strategy).",
       "keywords": [
-        "tlc-tasks-to-taskmaster",
+        "sd-insert-taskmaster",
         "taskmaster",
         "tasks",
         "tlc",
@@ -644,9 +618,7 @@
         "markdown",
         "product"
       ],
-      "intentPatterns": [
-        ".*prd.*"
-      ]
+      "intentPatterns": [".*prd.*"]
     },
     {
       "skill": "event-storming",
@@ -775,9 +747,7 @@
         "problem",
         "asking"
       ],
-      "intentPatterns": [
-        ".*skills.*"
-      ]
+      "intentPatterns": [".*skills.*"]
     },
     {
       "skill": "safe-refactor",
@@ -884,9 +854,7 @@
         "practices",
         "building"
       ],
-      "intentPatterns": [
-        ".*golang.*"
-      ]
+      "intentPatterns": [".*golang.*"]
     },
     {
       "skill": "react-composition-patterns",
@@ -1033,9 +1001,7 @@
         "complex",
         "context"
       ],
-      "intentPatterns": [
-        ".*subagent.*"
-      ]
+      "intentPatterns": [".*subagent.*"]
     },
     {
       "skill": "domain-analysis",
@@ -1097,9 +1063,7 @@
         "loading",
         "overall"
       ],
-      "intentPatterns": [
-        ".*perf.*"
-      ]
+      "intentPatterns": [".*perf.*"]
     },
     {
       "skill": "mermaid-studio",
@@ -1162,9 +1126,7 @@
         "handle",
         "issues"
       ],
-      "intentPatterns": [
-        ".*jira.*"
-      ]
+      "intentPatterns": [".*jira.*"]
     },
     {
       "skill": "coupling-analysis",
@@ -1247,9 +1209,7 @@
         "search",
         "asked"
       ],
-      "intentPatterns": [
-        ".*seo.*"
-      ]
+      "intentPatterns": [".*seo.*"]
     },
     {
       "skill": "legacy-migration-planner",
@@ -1418,9 +1378,7 @@
         "whenever",
         "skill"
       ],
-      "intentPatterns": [
-        ".*keycloak.*"
-      ]
+      "intentPatterns": [".*keycloak.*"]
     },
     {
       "skill": "analyze-comfyui-workflow-json",
@@ -1573,9 +1531,7 @@
         "chunking",
         "reading"
       ],
-      "intentPatterns": [
-        ".*handling.*"
-      ]
+      "intentPatterns": [".*handling.*"]
     },
     {
       "skill": "generate-docs-update",
@@ -1616,9 +1572,7 @@
         "executing",
         "practical"
       ],
-      "intentPatterns": [
-        ".*mcp.*"
-      ]
+      "intentPatterns": [".*mcp.*"]
     },
     {
       "skill": "codebase-rules-extractor",
@@ -1681,9 +1635,7 @@
         "analysis",
         "informed"
       ],
-      "intentPatterns": [
-        ".*technical.*"
-      ]
+      "intentPatterns": [".*technical.*"]
     },
     {
       "skill": "generate-pr-description",
@@ -1745,9 +1697,7 @@
         "state",
         "next"
       ],
-      "intentPatterns": [
-        ".*frontend.*"
-      ]
+      "intentPatterns": [".*frontend.*"]
     },
     {
       "skill": "taskmaster-overview",
@@ -1992,11 +1942,11 @@
       ]
     },
     {
-      "skill": "tlc-spec-driven-taskmaster",
+      "skill": "sd-execute",
       "priority": "medium",
       "hint": "Executes feature tasks by tag, integrating spec files with tlc-spec-driven.",
       "keywords": [
-        "tlc-spec-driven-taskmaster",
+        "sd-execute",
         "execute",
         "tasks",
         "tlc",
@@ -2007,9 +1957,7 @@
         "filters",
         "pending"
       ],
-      "intentPatterns": [
-        ".*tlc.*"
-      ]
+      "intentPatterns": [".*tlc.*"]
     },
     {
       "skill": "database-migrations",
@@ -2027,10 +1975,7 @@
         "practices",
         "rollbacks"
       ],
-      "intentPatterns": [
-        ".*database.*",
-        "(migrate|upgrade|transition).*"
-      ]
+      "intentPatterns": [".*database.*", "(migrate|upgrade|transition).*"]
     },
     {
       "skill": "backend-patterns",
@@ -2070,9 +2015,7 @@
         "readiness",
         "workflows"
       ],
-      "intentPatterns": [
-        ".*deployment.*"
-      ]
+      "intentPatterns": [".*deployment.*"]
     },
     {
       "skill": "docker-patterns",
@@ -2090,9 +2033,7 @@
         "container",
         "security"
       ],
-      "intentPatterns": [
-        ".*docker.*"
-      ]
+      "intentPatterns": [".*docker.*"]
     },
     {
       "skill": "api-design",
@@ -2196,9 +2137,7 @@
         "schedule",
         "scrapes"
       ],
-      "intentPatterns": [
-        ".*data.*"
-      ]
+      "intentPatterns": [".*data.*"]
     },
     {
       "skill": "blueprint",
@@ -2238,9 +2177,7 @@
         "choosing",
         "decision"
       ],
-      "intentPatterns": [
-        ".*regex.*"
-      ]
+      "intentPatterns": [".*regex.*"]
     },
     {
       "skill": "coding-standards",
@@ -2300,9 +2237,7 @@
         "separation",
         "expensive"
       ],
-      "intentPatterns": [
-        ".*content.*"
-      ]
+      "intentPatterns": [".*content.*"]
     },
     {
       "skill": "pr-review",
@@ -2385,9 +2320,7 @@
         "screens",
         "belong"
       ],
-      "intentPatterns": [
-        ".*figma.*"
-      ]
+      "intentPatterns": [".*figma.*"]
     },
     {
       "skill": "figma-requirements-conformance",
@@ -2531,9 +2464,7 @@
         "files",
         "todos"
       ],
-      "intentPatterns": [
-        ".*caveman.*"
-      ]
+      "intentPatterns": [".*caveman.*"]
     },
     {
       "skill": "caveman-stats",
@@ -2551,9 +2482,7 @@
         "reads",
         "token"
       ],
-      "intentPatterns": [
-        ".*caveman.*"
-      ]
+      "intentPatterns": [".*caveman.*"]
     },
     {
       "skill": "caveman-help",
@@ -2571,9 +2500,7 @@
         "modes",
         "card"
       ],
-      "intentPatterns": [
-        ".*caveman.*"
-      ]
+      "intentPatterns": [".*caveman.*"]
     },
     {
       "skill": "cavecrew",

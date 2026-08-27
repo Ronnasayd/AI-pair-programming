@@ -4,10 +4,10 @@
 # pr-review
 # resolve-merge-conflicts
 # technical-decision-helper
-# tlc-semantic-grilling
+# sd-planning
 # tlc-spec-driven
-# tlc-spec-driven-taskmaster
-# tlc-tasks-to-taskmaster
+# sd-execute
+# sd-insert-taskmaster
 adversarial-dev
 agent-architecture-audit
 agent-creator
