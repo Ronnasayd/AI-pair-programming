@@ -28,6 +28,41 @@ RULE = (
 )
 
 
+def last_assistant_from_transcript(path):
+    """Reconstruct the last assistant turn's text from the JSONL transcript.
+
+    Used when the payload's ``last_assistant_message`` is missing or truncated
+    (Claude Code drops/clips that field for very large messages).
+    """
+    if not path:
+        return None
+    try:
+        lines = Path(path).read_text(encoding="utf-8").splitlines()
+    except OSError as e:
+        LOG.debug(f"Failed to read transcript {path}: {e}")
+        return None
+
+    collected = []
+    for line in reversed(lines):
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        etype = entry.get("type")
+        if etype == "assistant":
+            content = entry.get("message", {}).get("content", [])
+            texts = [b.get("text", "") for b in content if b.get("type") == "text"]
+            joined = "\n".join(t for t in texts if t)
+            if joined:
+                collected.append(joined)
+        elif etype in ("user", "system") and collected:
+            break  # reached the start of the last assistant turn
+
+    if not collected:
+        return None
+    return "\n".join(reversed(collected))
+
+
 def main() -> None:
     try:
         payload = json.load(sys.stdin)
@@ -39,6 +74,11 @@ def main() -> None:
         sys.exit(0)
 
     last_message = get_by_key(payload, "last_assistant_message")
+    if not last_message:
+        # Field dropped/clipped for very large messages: reconstruct from transcript.
+        last_message = last_assistant_from_transcript(
+            get_by_key(payload, "transcript_path")
+        )
     if not last_message or "?" not in last_message:
         sys.exit(0)
 
