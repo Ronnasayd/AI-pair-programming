@@ -134,8 +134,8 @@
 - **[🧹 Chores]** Add .mcp.json configuration for multiple mcp servers ([346cd42](https://github.com/Ronnasayd/AI-pair-programming/commit/346cd42))
 - **[✨ Features]** Add git command restrictions to settings.json ([e0fa0dd](https://github.com/Ronnasayd/AI-pair-programming/commit/e0fa0dd))
 - **[🧹 Chores]** Add attribution fields to settings.json ([e45ebeb](https://github.com/Ronnasayd/AI-pair-programming/commit/e45ebeb))
-- **[🧹 Chores]** Update .skillsignore to exclude tlc-spec-driven-taskmaster skill ([b99f110](https://github.com/Ronnasayd/AI-pair-programming/commit/b99f110))
-- **[✨ Features]** Add tlc-spec-driven-taskmaster skill with tag validation and task execution flow ([7e9232f](https://github.com/Ronnasayd/AI-pair-programming/commit/7e9232f))
+- **[🧹 Chores]** Update .skillsignore to exclude sd-execute skill ([b99f110](https://github.com/Ronnasayd/AI-pair-programming/commit/b99f110))
+- **[✨ Features]** Add sd-execute skill with tag validation and task execution flow ([7e9232f](https://github.com/Ronnasayd/AI-pair-programming/commit/7e9232f))
 - **[✨ Features]** Add active skills, rules, and agents aliases ([4b0f528](https://github.com/Ronnasayd/AI-pair-programming/commit/4b0f528))
 - **[♻️ Refactoring]** Update agent context search order and formatting in docs/agent.instructions.md ([0d19f32](https://github.com/Ronnasayd/AI-pair-programming/commit/0d19f32))
 - **[♻️ Refactoring]** Format cost to three decimal places in status line ([020970d](https://github.com/Ronnasayd/AI-pair-programming/commit/020970d))
@@ -156,8 +156,8 @@
 - **[🧹 Chores]** Add plansdirectory setting to settings.json ([12affc4](https://github.com/Ronnasayd/AI-pair-programming/commit/12affc4))
 - **[✨ Features]** Add caveman mode status to status line ([a318bdc](https://github.com/Ronnasayd/AI-pair-programming/commit/a318bdc))
 - **[🧹 Chores]** Update status line script location in settings.json ([d8b7867](https://github.com/Ronnasayd/AI-pair-programming/commit/d8b7867))
-- **[✨ Features]** Add skill-description-generator skill with description and frontmatter, update tlc-tasks-to-taskmaster description for better trigger accuracy, and add skill-description-generator to index.yaml and .skillsignore. ([907654b](https://github.com/Ronnasayd/AI-pair-programming/commit/907654b))
-- **[✨ Features]** Add tlc-tasks-to-taskmaster skill for converting tasks.md to taskmaster format with execution metadata ([e847f9d](https://github.com/Ronnasayd/AI-pair-programming/commit/e847f9d))
+- **[✨ Features]** Add skill-description-generator skill with description and frontmatter, update sd-insert-taskmaster description for better trigger accuracy, and add skill-description-generator to index.yaml and .skillsignore. ([907654b](https://github.com/Ronnasayd/AI-pair-programming/commit/907654b))
+- **[✨ Features]** Add sd-insert-taskmaster skill for converting tasks.md to taskmaster format with execution metadata ([e847f9d](https://github.com/Ronnasayd/AI-pair-programming/commit/e847f9d))
 - **[🧹 Chores]** Update status line script with enhanced context and rate limit info ([03ac03c](https://github.com/Ronnasayd/AI-pair-programming/commit/03ac03c))
 
 ### **2026-06-13**
@@ -252,9 +252,9 @@
 
 ### **2026-05-22**
 
-- **[✨ Features]** Add output tag resolution step to tlc-tasks-to-taskmaster skill documentation ([70ca366](https://github.com/Ronnasayd/AI-pair-programming/commit/70ca366))
+- **[✨ Features]** Add output tag resolution step to sd-insert-taskmaster skill documentation ([70ca366](https://github.com/Ronnasayd/AI-pair-programming/commit/70ca366))
 - **[✨ Features]** Add tasks-md-to-taskmaster-json skill for converting tasks.md to taskmaster format ([9890511](https://github.com/Ronnasayd/AI-pair-programming/commit/9890511))
-- **[✨ Features]** Add tlc-tasks-to-taskmaster skill and update related documentation ([ea73f71](https://github.com/Ronnasayd/AI-pair-programming/commit/ea73f71))
+- **[✨ Features]** Add sd-insert-taskmaster skill and update related documentation ([ea73f71](https://github.com/Ronnasayd/AI-pair-programming/commit/ea73f71))
 - **[🧹 Chores]** Remove unused aliases for ignore and ai context cleanup ([e16f008](https://github.com/Ronnasayd/AI-pair-programming/commit/e16f008))
 - **[🧹 Chores]** Update file permissions for clean scripts to executable ([d59238a](https://github.com/Ronnasayd/AI-pair-programming/commit/d59238a))
 - **[✨ Features]** Add clean functionality for install scripts to remove symlinks ([d614468](https://github.com/Ronnasayd/AI-pair-programming/commit/d614468))
@@ -1174,4 +1174,5 @@
 - **[🚧 Other Changes]** D83773e - first commit | 2025-09-11
 
 ---
+
 Generated on 2026-07-03 11:57:34
