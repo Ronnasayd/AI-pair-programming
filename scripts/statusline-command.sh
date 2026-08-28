@@ -7,6 +7,35 @@
 # via rate_limits.five_hour.used_percentage and rate_limits.seven_day.used_percentage
 # Only populated for Pro/Max subscribers after the first API response.
 
+# Nerd Font icons: set NERD_FONT=1 to enable glyphs, anything else disables them
+NERD_FONT="${NERD_FONT:-1}"
+
+if [ "$NERD_FONT" = "1" ]; then
+    ICON_PYTHON=$'\U0000E73C'
+    ICON_GO=$'\U0000E627'
+    ICON_EFFORT=$'\U0000EE9C'
+    ICON_JAIL=$'\U000F033E'
+    ICON_CAVEMAN=$'\U0000EE9A'
+    ICON_EMAIL=$'\U0000F42F'
+    ICON_SERENA=$'\U000F1077'
+    ICON_MEMORY=$'\U0000F0C7'
+    ICON_RAGRAT=$'\U000F1636'
+    ICON_COST=$'\U000F0CF4'
+    ICON_WEEK=$'\U000F00ED'
+    ICON_FOLDER=$'\U0000F07B'
+    ICON_BRANCH=$'\U0000E702'
+    ICON_MODEL=$'\U000F06A9'
+    ICON_CTX=$'\U000F125F'
+    ICON_CACHE=$'\U0000F49B'
+    ICON_TOKEN=$'\U0000EB7E'
+    ICON_5H=$'\u23F1'
+else
+    ICON_PYTHON="🐍" ICON_GO="🐹" ICON_EFFORT="🧠" ICON_JAIL="🔒" ICON_CAVEMAN="🦴"
+    ICON_EMAIL="📧" ICON_SERENA="🧭" ICON_MEMORY="💾" ICON_RAGRAT="🐀" ICON_COST="💰"
+    ICON_WEEK="📅" ICON_FOLDER="📁" ICON_BRANCH="🌿" ICON_MODEL="🤖" ICON_CTX="📚"
+    ICON_CACHE="📦" ICON_TOKEN="🎟" ICON_5H="⏱"
+fi
+
 # Read JSON input from stdin
 input=$(cat)
 
@@ -26,14 +55,40 @@ cache_read=$(echo "$input" | jq -r '.context_window.current_usage.cache_read_inp
 cache_creation=$(echo "$input" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
 total_input=$(echo "$input" | jq -r '.context_window.total_input_tokens // 0')
 total_output=$(echo "$input" | jq -r '.context_window.total_output_tokens // 0')
-if [ "$ctx_pct_int" -ge 80 ] 2>/dev/null; then
-    ctx_color="\033[31m"
-elif [ "$ctx_pct_int" -ge 50 ] 2>/dev/null; then
-    ctx_color="\033[33m"
-else
-    ctx_color="\033[32m"
-fi
+# Catppuccin Frappe palette (24-bit true color)
+C_RED="\033[38;2;231;130;132m"
+C_YELLOW="\033[38;2;229;200;144m"
+C_GREEN="\033[38;2;166;209;137m"
+C_TEAL="\033[38;2;129;200;190m"
+C_BLUE="\033[38;2;140;170;238m"
+C_MAUVE="\033[38;2;202;158;230m"
+C_LAVENDER="\033[38;2;186;187;241m"
+C_PEACH="\033[38;2;239;159;118m"
+C_SUBTEXT="\033[38;2;165;173;206m"
 RESET="\033[0m"
+
+if [ "$ctx_pct_int" -ge 80 ] 2>/dev/null; then
+    ctx_color="$C_RED"
+elif [ "$ctx_pct_int" -ge 50 ] 2>/dev/null; then
+    ctx_color="$C_YELLOW"
+else
+    ctx_color="$C_GREEN"
+fi
+
+# Context bar (10 segments) + k-formatted tokens
+ctx_filled=$(( ctx_pct_int / 10 ))
+[ "$ctx_filled" -gt 10 ] && ctx_filled=10
+[ "$ctx_filled" -lt 0 ] && ctx_filled=0
+ctx_bar=""
+for i in $(seq 1 10); do
+    if [ "$i" -le "$ctx_filled" ]; then
+        ctx_bar="${ctx_bar}▓"
+    else
+        ctx_bar="${ctx_bar}░"
+    fi
+done
+ctx_usage_k=$(( ctx_usage / 1000 ))
+ctx_size_k=$(( ctx_size / 1000 ))
 
 # Detect project type and language info
 lang_info=""
@@ -47,19 +102,25 @@ if [ -n "$VIRTUAL_ENV" ]; then
     #     venv="($venv_raw)"
     # fi
     pyver=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo 'N/A')
-    lang_info=" |  $pyver(venv)"
+    lang_info=" | ${ICON_PYTHON} $pyver(venv)"
 elif [ -f "requirements.txt" ] || [ -f "setup.py" ] || [ -f "pyproject.toml" ] || [ -f "Pipfile" ]; then
     pyver=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo 'N/A')
-    lang_info=" |  $pyver"
+    lang_info=" | ${ICON_PYTHON} $pyver"
 elif [ -f "go.mod" ] || [ -f "go.sum" ] || ls *.go >/dev/null 2>&1; then
     gover=$(go version 2>/dev/null | grep -oE 'go[0-9]+\.[0-9]+(\.[0-9]+)?' | sed 's/go//' || echo 'N/A')
     if [ "$gover" != "N/A" ]; then
-        lang_info=" |  $gover"
+        lang_info=" | ${ICON_GO} $gover"
     fi
 fi
 
 # Git branch
 branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'N/A')
+if [ "${#branch}" -gt 20 ]; then
+    branch="${branch:0:19}…"
+fi
+
+# Claude Code version
+cc_version=$(claude --version 2>/dev/null | awk '{print $1}')
 
 # Thinking effort level (🧠 = thinking). Absent if model doesn't support it.
 effort_level=$(echo "$input" | jq -r '.effort.level // empty')
@@ -71,13 +132,13 @@ if [ -n "$effort_level" ]; then
         high|xhigh|max) effort_color="\033[31m" ;;
         *)      effort_color="" ;;
     esac
-    effort_info=" |  ${effort_color}${effort_level}${RESET}"
+    effort_info=" | ${ICON_EFFORT} ${effort_color}${effort_level}${RESET}"
 fi
 
 # ai-jail sandbox status
 jail_info=""
 if [ -n "$AI_JAIL" ]; then
-    jail_info=" | 󰌾 lock"
+    jail_info=" | ${ICON_JAIL} lock"
 fi
 
 # Caveman mode status
@@ -87,9 +148,9 @@ if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
     CAVEMAN_MODE=$(head -c 64 "$CAVEMAN_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
     if [ -n "$CAVEMAN_MODE" ] && [ "$CAVEMAN_MODE" != "off" ]; then
         if [ "$CAVEMAN_MODE" = "full" ]; then
-            caveman_info=" |  cav"
+            caveman_info=" | ${ICON_CAVEMAN} cav"
         else
-            caveman_info=" |  cav($CAVEMAN_MODE)"
+            caveman_info=" | ${ICON_CAVEMAN} cav($CAVEMAN_MODE)"
         fi
     fi
 fi
@@ -98,17 +159,17 @@ fi
 email_info=""
 email_color="\033[32m"
 if [ "$CLAUDE_CONFIG_DIR" == "$HOME/.claude-L" ] ; then
-    email_info=" $(cat $HOME/.claude-L/.claude.json | jq -r '.oauthAccount.emailAddress')"
+    email_info="${ICON_EMAIL} $(cat $HOME/.claude-L/.claude.json | jq -r '.oauthAccount.emailAddress')"
 else
-    email_info=" $(cat $HOME/.claude.json | jq -r '.oauthAccount.emailAddress')"
+    email_info="${ICON_EMAIL} $(cat $HOME/.claude.json | jq -r '.oauthAccount.emailAddress')"
 fi
 
 # Serena status
 serena_info=""
 if  pgrep -f "serena" > /dev/null; then
-    serena_info=" | 󱁷 sr(🟢)"
+    serena_info=" | ${ICON_SERENA} sr(🟢)"
 else
-    serena_info=" | 󱁷 sr(🔴)"
+    serena_info=" | ${ICON_SERENA} sr(🔴)"
 fi
 
 
@@ -116,15 +177,15 @@ fi
 # AI Memory server status
 memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
-    memory_status=" |  ai-mem(🟢)"
+    memory_status=" | ${ICON_MEMORY} ai-mem(🟢)"
 else
-    memory_status=" |  ai-mem(🔴)"
+    memory_status=" | ${ICON_MEMORY} ai-mem(🔴)"
 fi
 
 if [ -f "rag-rat.toml" ] && [ ! -L "rag-rat.toml" ]; then
-    ragrat_status=" | 󱘶 rr(🟢)"
+    ragrat_status=" | ${ICON_RAGRAT} rr(🟢)"
 else
-    ragrat_status=" | 󱘶 rr(🔴)"
+    ragrat_status=" | ${ICON_RAGRAT} rr(🔴)"
 fi
 
 # Session cost
@@ -133,7 +194,7 @@ cost_info=""
 if [ -n "$cost" ]; then
     cost=$(LC_NUMERIC=C printf "%.3f" "$cost")
     cost_color="\033[32m"
-    cost_info=" | 󰳴 ${cost_color}\$$cost${RESET}"
+    cost_info=" | ${ICON_COST} ${cost_color}\$$cost${RESET}"
 
 fi
 
@@ -200,11 +261,13 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
     esac
     reset_label="${reset_date}${reset_suffix}"
 
-    rate_info=" | ⏱ 5h ${five_color}${five_int}%${RESET} (-${time_left}) | 󰃭 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
+    rate_info=" | ${ICON_5H} 5h ${five_color}${five_int}%${RESET} (-${time_left}) | ${ICON_WEEK} 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
 fi
 
 # Output the complete status line
+cc_ver_info=""
+[ -n "$cc_version" ] && cc_ver_info=" | ${C_SUBTEXT}v${cc_version}${RESET}"
 echo -e "${email_color}${email_info}${RESET}"
-echo -e " $folder${lang_info} |  $branch | 󰚩 $model${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}"
-echo -e "󱉟 ctx ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage}/${ctx_size}) |  cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) |  tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
+echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info} | ${ICON_BRANCH} ${C_MAUVE}$branch${RESET} | ${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
+echo -e "${ICON_CTX} ctx ${ctx_color}${ctx_bar}${RESET} ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k) | ${ICON_CACHE} cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) | ${ICON_TOKEN} tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
 
