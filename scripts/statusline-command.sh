@@ -165,9 +165,9 @@ if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
     CAVEMAN_MODE=$(head -c 64 "$CAVEMAN_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
     if [ -n "$CAVEMAN_MODE" ] && [ "$CAVEMAN_MODE" != "off" ]; then
         if [ "$CAVEMAN_MODE" = "full" ]; then
-            caveman_info="${SEP}${ICON_CAVEMAN} cav"
+            caveman_info="${SEP}${ICON_CAVEMAN} caveman(${C_GREEN}●${RESET})"
         else
-            caveman_info="${SEP}${ICON_CAVEMAN} cav($CAVEMAN_MODE)"
+            caveman_info="${SEP}${ICON_CAVEMAN} caveman($CAVEMAN_MODE)(${C_GREEN}●${RESET})"
         fi
     fi
 fi
@@ -185,9 +185,9 @@ fi
 serena_dash="http://localhost:24282/dashboard/"
 serena_info=""
 if  pgrep -f "serena" > /dev/null; then
-    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🟢)\e]8;;\e\\\\"
+    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\serena(${C_GREEN}●${RESET})\e]8;;\e\\\\"
 else
-    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🔴)\e]8;;\e\\\\"
+    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\serena(${C_RED}●${RESET})\e]8;;\e\\\\"
 fi
 
 
@@ -196,15 +196,15 @@ fi
 memory_web="http://localhost:49374/web"
 memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
-    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🟢)\e]8;;\e\\\\"
+    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-memory(${C_GREEN}●${RESET})\e]8;;\e\\\\"
 else
-    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🔴)\e]8;;\e\\\\"
+    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-memory(${C_RED}●${RESET})\e]8;;\e\\\\"
 fi
 
 if [ -f "rag-rat.toml" ] && [ ! -L "rag-rat.toml" ]; then
-    ragrat_status="${SEP}${ICON_RAGRAT} rr(🟢)"
+    ragrat_status="${SEP}${ICON_RAGRAT} rag-rat(${C_GREEN}●${RESET})"
 else
-    ragrat_status="${SEP}${ICON_RAGRAT} rr(🔴)"
+    ragrat_status="${SEP}${ICON_RAGRAT} rag-rat(${C_RED}●${RESET})"
 fi
 
 # Session cost
