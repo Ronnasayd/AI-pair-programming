@@ -1,5 +1,12 @@
 {
   "mcpServers": {
+    "omniroute": {
+      "url": "http://localhost:20128/api/mcp/stream",
+      "type": "http",
+      "headers": {
+        "Authorization": "Bearer ${OMNIROUTE_ADMIN_TOKEN:-add-value-to-env-vars}"
+      }
+    },
     "figma": {
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
@@ -112,10 +119,7 @@
     },
     "gcloud": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@google-cloud/gcloud-mcp"
-      ]
+      "args": ["-y", "@google-cloud/gcloud-mcp"]
     },
     "context7": {
       "command": "npx",
@@ -132,10 +136,7 @@
     },
     "mobile-mcp": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@mobilenext/mobile-mcp@latest"
-      ],
+      "args": ["-y", "@mobilenext/mobile-mcp@latest"],
       "env": {
         "MOBILEMCP_DISABLE_TELEMETRY": "1"
       }

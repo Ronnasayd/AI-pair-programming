@@ -6,7 +6,7 @@ Sobe um proxy LiteLLM localmente que traduz chamadas do Claude Code para o forma
 
 ```bash
 cp .env.example .env
-# edite o .env e coloque sua OPENROUTER_API_KEY e uma LITELLM_MASTER_KEY à sua escolha
+# edite o .env e coloque sua OMNIROUTER_API_KEY e uma LITELLM_MASTER_KEY à sua escolha
 ```
 
 ## 2. Subir o proxy

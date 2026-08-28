@@ -2,17 +2,17 @@ model_list:
   - model_name: openrouter-gpt-oss-20b:free
     litellm_params:
       model: openrouter/openai/gpt-oss-20b:free
-      api_key: os.environ/OPENROUTER_API_KEY
+      api_key: os.environ/OMNIROUTER_API_KEY
 
   - model_name: openrouter-nemotron-3-ultra-550b-a55b:free
     litellm_params:
       model: openrouter/nvidia/nemotron-3-ultra-550b-a55b:free
-      api_key: os.environ/OPENROUTER_API_KEY
+      api_key: os.environ/OMNIROUTER_API_KEY
 
   - model_name: openrouter-gemma-4-31b-it:free
     litellm_params:
       model: openrouter/google/gemma-4-31b-it:free
-      api_key: os.environ/OPENROUTER_API_KEY
+      api_key: os.environ/OMNIROUTER_API_KEY
 
   - model_name: 9router-high
     litellm_params:
