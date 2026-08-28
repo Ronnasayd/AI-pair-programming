@@ -50,6 +50,7 @@ alias aij="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh" # Run ai-jail sandbox s
 alias ca="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh"
 alias cacs="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh choose"
 alias lca="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude" # Run ai-jail sandbox script with claude
+alias lcay="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude --dangerously-skip-permissions" # Run ai-jail sandbox script with claude
 alias omniroute="ASDF_NODEJS_VERSION=24.16.0 omniroute"
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
