@@ -50,7 +50,7 @@ design, work breakdown = tasks.
 | 3   | Enumerate               | One row per criterion; sweep `tasks.md` for uncovered "done when" items                                                  | six cases existing for six reasons = six rows, never merged             |
 | 4   | Group                   | Sections follow system execution order, not story order                                                                  | each section readable given only sections above it                      |
 | 5   | Write rows              | Per rules below                                                                                                          | every row self-contained                                                |
-| 6   | Consequences section    | Numbered prose entries, each naming the rows producing it                                                                | every uncomfortable trade-off named explicitly, not implied across rows |
+| 6   | Consequences section    | Last numbered section: a table, one numbered row per trade-off, naming the rows that drive it                            | every uncomfortable trade-off named explicitly, not implied across rows |
 | 7   | Format + verify         | Run project markdown formatter if present (wide tables realign — expected, don't revert); then verification checks below | all checks pass                                                         |
 | 8   | Report entry point      | Name rows most likely wrong or most expensive if wrong                                                                   | reviewer has a starting place                                           |
 
@@ -59,15 +59,19 @@ across many rows and defeat "one row, one decision".
 
 **Row rules (step 5)**:
 
-| Rule                                       | Why                                                                               |
-| ------------------------------------------ | --------------------------------------------------------------------------------- |
-| State both sides of an exclusion (**And**) | Positive-only leaves the reviewer inferring the negative                          |
-| Rationale explains, doesn't cite           | `REQ-03 / AC-1.3` is unevaluable; "a stray space must not create a new record" is |
-| Translate out of EARS register             | "The system SHALL…" is written for implementers                                   |
-| Tag SP / EP                                | Reviewer skims for failure modes — where contentious decisions sit                |
+| Rule                                        | Why                                                                                                                                                                                          |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| State both sides of an exclusion (**And**)  | Positive-only leaves the reviewer inferring the negative                                                                                                                                     |
+| Rationale explains, doesn't cite spec codes | `REQ-03 / AC-1.3` is unevaluable; "a stray space must not create a new record" is. A pointer to a _sibling row_ in this table (`… (FR-042)`, `See §14.`) is fine — it stays inside the sheet |
+| Translate out of EARS register              | "The system SHALL…" is written for implementers                                                                                                                                              |
+| Tag SP / EP                                 | Reviewer skims for failure modes — where contentious decisions sit                                                                                                                           |
 
 **Consequences (step 6)** — behaviors correct per-row but costly in combination.
 Usually the highest-value part: the only place the design's cost is stated plainly.
+Render as the final numbered section, titled so it reads as deliberate ("Accepted
+consequences (not defects)"), with a one-line lead-in and a three-column table:
+`#` | `Consequence` | `Driven by` (the row ids). Quantify with real counts where
+the sources give them.
 Typical members: validation rules rendering existing records uneditable; data absent
 until an out-of-band migration; deliberate divergence between two stored
 representations of one fact; fail-closed availability/correctness trades; breaking
@@ -86,10 +90,31 @@ Write to the feature's own directory, beside its sources — typically
 `requirements.md` next to `spec.md`.
 
 ```
-Header: links to spec.md / design.md / tasks.md, status, date, one-line reading guide
-Section 1..N: one table per behavioral area, columns per the user's template
-Consequences: numbered prose entries, each naming the rows that cause it
-Glossary: expansion of every abbreviation used
+# <Feature> — Requirements Table
+
+**Spec:** `path/spec.md`      ← one bold-label line per source that exists,
+**Design:** `path/design.md`     backticked paths (add **BDD:** when a bdd.md exists)
+**Tasks:** `path/tasks.md`
+**Status:** Draft
+**Created:** YYYY-MM-DD
+
+> One-line reading guide: how to read the columns, and that every row stands alone.
+
+---
+
+## 1..N. <Behavioral area>        ← `---` between sections; optional lead-in
+                                   line under the heading when the area needs one
+| table, columns per the user's template |
+
+---
+
+## N+1. Accepted consequences (not defects)
+lead-in line, then `#` | `Consequence` | `Driven by` table
+
+---
+
+## Glossary
+- **FR** — …                      ← every abbreviation used
 ```
 
 Default columns when no template supplied:
@@ -106,13 +131,15 @@ success path, `EP` error path.
 
 ## Anti-patterns
 
-| Anti-pattern                                    | Why it fails                                           |
-| ----------------------------------------------- | ------------------------------------------------------ |
-| Concrete ids or sample values in the Expression | Forces a lookup; row stops being self-contained        |
-| Citing spec requirement codes as the rationale  | Cites instead of explains; a code is unevaluable       |
-| Deriving rows from a bdd.md instead of the spec | Inherits the technical register the table must replace |
-| Copying EARS phrasing verbatim from the spec    | Same: written for implementers, not reviewers          |
-| Merging several distinct cases into one row     | Hides distinct decisions behind one line               |
-| Reading only the spec and skipping the design   | Yields behaviors with no rationale — nothing to review |
-| Omitting the consequences section               | The costliest information is the least visible per-row |
-| Choosing language or id scheme mid-writing      | Both global; retrofitting costs a full rewrite         |
+| Anti-pattern                                    | Why it fails                                              |
+| ----------------------------------------------- | --------------------------------------------------------- |
+| Concrete ids or sample values in the Expression | Forces a lookup; row stops being self-contained           |
+| Citing spec requirement codes as the rationale  | Cites instead of explains; a code is unevaluable          |
+| Deriving rows from a bdd.md instead of the spec | Inherits the technical register the table must replace    |
+| Copying EARS phrasing verbatim from the spec    | Same: written for implementers, not reviewers             |
+| Merging several distinct cases into one row     | Hides distinct decisions behind one line                  |
+| Reading only the spec and skipping the design   | Yields behaviors with no rationale — nothing to review    |
+| Omitting the consequences section               | The costliest information is the least visible per-row    |
+| Choosing language or id scheme mid-writing      | Both global; retrofitting costs a full rewrite            |
+| Writing consequences as loose prose paragraphs  | Loses the `Driven by` back-link that makes them checkable |
+| Unquantified consequences ("some events")       | A trade-off without a count cannot be weighed             |
