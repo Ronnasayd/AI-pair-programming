@@ -277,7 +277,7 @@
   },
   "dynamic-programming-analysis": {
     "skill_md": "dynamic-programming-analysis/SKILL.md",
-    "files": []
+    "files": ["references/example.md", "references/response-template.md"]
   },
   "event-storming": {
     "skill_md": "event-storming/SKILL.md",
@@ -757,6 +757,26 @@
     "skill_md": "scan-codebase-rules-ai-memory/SKILL.md",
     "files": []
   },
+  "sd-execute": {
+    "skill_md": "sd-execute/SKILL.md",
+    "files": ["CHECKLIST.md", "references/troubleshooting.md"]
+  },
+  "sd-insert-taskmaster": {
+    "skill_md": "sd-insert-taskmaster/SKILL.md",
+    "files": [
+      "index.html",
+      "references/json-schemas.md",
+      "references/walkthrough-example.md",
+      "scripts/README.md",
+      "scripts/merge-tasks.py",
+      "scripts/validate-tasks.py",
+      "test-merge.sh"
+    ]
+  },
+  "sd-planning": {
+    "skill_md": "sd-planning/SKILL.md",
+    "files": ["CHECKLIST.md", "references/docs-adr.md"]
+  },
   "semantic-commit-message": {
     "skill_md": "semantic-commit-message/SKILL.md",
     "files": []
@@ -771,6 +791,10 @@
   },
   "skills-discovery": {
     "skill_md": "skills-discovery/SKILL.md",
+    "files": []
+  },
+  "spec-to-requirements-table": {
+    "skill_md": "spec-to-requirements-table/SKILL.md",
     "files": []
   },
   "srs-generator": {
@@ -1112,26 +1136,6 @@
   "test-coverage-review": {
     "skill_md": "tests/test-coverage-review/SKILL.md",
     "files": []
-  },
-  "sd-planning": {
-    "skill_md": "sd-planning/SKILL.md",
-    "files": ["CHECKLIST.md"]
-  },
-  "sd-execute": {
-    "skill_md": "sd-execute/SKILL.md",
-    "files": ["CHECKLIST.md", "references/troubleshooting.md"]
-  },
-  "sd-insert-taskmaster": {
-    "skill_md": "sd-insert-taskmaster/SKILL.md",
-    "files": [
-      "index.html",
-      "references/json-schemas.md",
-      "references/walkthrough-example.md",
-      "scripts/README.md",
-      "scripts/merge-tasks.py",
-      "scripts/validate-tasks.py",
-      "test-merge.sh"
-    ]
   },
   "typescript-style-guide": {
     "skill_md": "typescript-style-guide/SKILL.md",
