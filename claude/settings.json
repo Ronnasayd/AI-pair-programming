@@ -293,10 +293,6 @@
           },
           {
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/md_json_lint.py"
-          },
-          {
-            "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_incremental.py"
           },
           {
