@@ -67,6 +67,9 @@ C_PEACH="\033[38;2;239;159;118m"
 C_SUBTEXT="\033[38;2;165;173;206m"
 RESET="\033[0m"
 
+# Field separator
+SEP=" • "
+
 if [ "$ctx_pct_int" -ge 80 ] 2>/dev/null; then
     ctx_color="$C_RED"
 elif [ "$ctx_pct_int" -ge 50 ] 2>/dev/null; then
@@ -116,14 +119,14 @@ if [ -n "$VIRTUAL_ENV" ]; then
     #     venv="($venv_raw)"
     # fi
     pyver=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo 'N/A')
-    lang_info=" | ${ICON_PYTHON} $pyver(venv)"
+    lang_info="${SEP}${ICON_PYTHON} $pyver(venv)"
 elif [ -f "requirements.txt" ] || [ -f "setup.py" ] || [ -f "pyproject.toml" ] || [ -f "Pipfile" ]; then
     pyver=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo 'N/A')
-    lang_info=" | ${ICON_PYTHON} $pyver"
+    lang_info="${SEP}${ICON_PYTHON} $pyver"
 elif [ -f "go.mod" ] || [ -f "go.sum" ] || ls *.go >/dev/null 2>&1; then
     gover=$(go version 2>/dev/null | grep -oE 'go[0-9]+\.[0-9]+(\.[0-9]+)?' | sed 's/go//' || echo 'N/A')
     if [ "$gover" != "N/A" ]; then
-        lang_info=" | ${ICON_GO} $gover"
+        lang_info="${SEP}${ICON_GO} $gover"
     fi
 fi
 
@@ -146,13 +149,13 @@ if [ -n "$effort_level" ]; then
         high|xhigh|max) effort_color="$C_RED" ;;
         *)      effort_color="" ;;
     esac
-    effort_info=" | ${ICON_EFFORT} ${effort_color}${effort_level}${RESET}"
+    effort_info="${SEP}${ICON_EFFORT} ${effort_color}${effort_level}${RESET}"
 fi
 
 # ai-jail sandbox status
 jail_info=""
 if [ -n "$AI_JAIL" ]; then
-    jail_info=" | ${ICON_JAIL} lock"
+    jail_info="${SEP}${ICON_JAIL} lock"
 fi
 
 # Caveman mode status
@@ -162,9 +165,9 @@ if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
     CAVEMAN_MODE=$(head -c 64 "$CAVEMAN_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
     if [ -n "$CAVEMAN_MODE" ] && [ "$CAVEMAN_MODE" != "off" ]; then
         if [ "$CAVEMAN_MODE" = "full" ]; then
-            caveman_info=" | ${ICON_CAVEMAN} cav"
+            caveman_info="${SEP}${ICON_CAVEMAN} cav"
         else
-            caveman_info=" | ${ICON_CAVEMAN} cav($CAVEMAN_MODE)"
+            caveman_info="${SEP}${ICON_CAVEMAN} cav($CAVEMAN_MODE)"
         fi
     fi
 fi
@@ -182,9 +185,9 @@ fi
 serena_dash="http://localhost:24282/dashboard/"
 serena_info=""
 if  pgrep -f "serena" > /dev/null; then
-    serena_info=" | ${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🟢)\e]8;;\e\\\\"
+    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🟢)\e]8;;\e\\\\"
 else
-    serena_info=" | ${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🔴)\e]8;;\e\\\\"
+    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🔴)\e]8;;\e\\\\"
 fi
 
 
@@ -193,15 +196,15 @@ fi
 memory_web="http://localhost:49374/web"
 memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
-    memory_status=" | ${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🟢)\e]8;;\e\\\\"
+    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🟢)\e]8;;\e\\\\"
 else
-    memory_status=" | ${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🔴)\e]8;;\e\\\\"
+    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🔴)\e]8;;\e\\\\"
 fi
 
 if [ -f "rag-rat.toml" ] && [ ! -L "rag-rat.toml" ]; then
-    ragrat_status=" | ${ICON_RAGRAT} rr(🟢)"
+    ragrat_status="${SEP}${ICON_RAGRAT} rr(🟢)"
 else
-    ragrat_status=" | ${ICON_RAGRAT} rr(🔴)"
+    ragrat_status="${SEP}${ICON_RAGRAT} rr(🔴)"
 fi
 
 # Session cost
@@ -210,7 +213,7 @@ cost_info=""
 if [ -n "$cost" ]; then
     cost=$(LC_NUMERIC=C printf "%.3f" "$cost")
     cost_color="$C_GREEN"
-    cost_info=" | ${ICON_COST} ${cost_color}\$$cost${RESET}"
+    cost_info="${SEP}${ICON_COST} ${cost_color}\$$cost${RESET}"
 
 fi
 
@@ -277,14 +280,14 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
     esac
     reset_label="${reset_date}${reset_suffix}"
 
-    rate_info=" | ${ICON_5H} 5h ${five_color}${five_int}%${RESET} (-${time_left}) | ${ICON_WEEK} 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
+    rate_info="${SEP}${ICON_5H} 5h ${five_color}${five_int}%${RESET} (-${time_left})${SEP}${ICON_WEEK} 7d ${seven_color}${seven_int}%${RESET} (${reset_label})"
 fi
 
 # Output the complete status line
 cc_ver_info=""
 # OSC 8 hyperlink: v<version> -> release notes (degrades to plain text on terminals without support)
-[ -n "$cc_version" ] && cc_ver_info=" | \e]8;;https://github.com/anthropics/claude-code/releases\e\\\\${C_SUBTEXT}v${cc_version}${RESET}\e]8;;\e\\\\"
+[ -n "$cc_version" ] && cc_ver_info="${SEP}\e]8;;https://github.com/anthropics/claude-code/releases\e\\\\${C_SUBTEXT}v${cc_version}${RESET}\e]8;;\e\\\\"
 echo -e "${email_color}${email_info}${RESET}"
-echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info} | ${ICON_BRANCH} ${C_MAUVE}$branch${RESET} | ${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
-echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k) | ${ICON_CACHE} cache(r:${cache_read_f} c:${cache_creation_f} i:${input_tokens_f}) | ${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f}) | ${cost_info# | }${rate_info}"
+echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info}${SEP}${ICON_BRANCH} ${C_MAUVE}$branch${RESET}${SEP}${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
+echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k)${SEP}${ICON_CACHE} cache(r:${cache_read_f} c:${cache_creation_f} i:${input_tokens_f})${SEP}${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f})${SEP}${cost_info#"${SEP}"}${rate_info}"
 
