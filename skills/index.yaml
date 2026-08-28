@@ -1,1610 +1,1444 @@
 skills:
-  - name:
-      - git-guide
-    description:
-      A comprehensive guide to Git commands and workflows, based on the official
-      Git cheat sheet. Use this skill to learn and reference common Git operations,
-      from basic repository setup to advanced history manipulation.
-  - name:
-      - skill-advisor
-    description:
-      'Analyzes a task or problem and recommends which available skill(s)
-      are the best fit — including whether to combine multiple skills together. Use
-      this skill whenever the user asks "which skill should I use?", "what skill is
-      good for X?", "do I have a skill for Y?", "is there a skill that can help with
-      Z?", or any variant of "help me pick a skill". Also trigger this when the user
-      describes a task that clearly involves multiple steps or file types and they seem
-      unsure how to approach it — even if they don''t use the word "skill". The goal
-      is to be the routing layer that maps problems to the right capabilities.
+- name:
+  - git-guide
+  description: A comprehensive guide to Git commands and workflows, based on the official
+    Git cheat sheet. Use this skill to learn and reference common Git operations,
+    from basic repository setup to advanced history manipulation.
+- name:
+  - skill-advisor
+  description: 'Analyzes a task or problem and recommends which available skill(s)
+    are the best fit — including whether to combine multiple skills together. Use
+    this skill whenever the user asks "which skill should I use?", "what skill is
+    good for X?", "do I have a skill for Y?", "is there a skill that can help with
+    Z?", or any variant of "help me pick a skill". Also trigger this when the user
+    describes a task that clearly involves multiple steps or file types and they seem
+    unsure how to approach it — even if they don''t use the word "skill". The goal
+    is to be the routing layer that maps problems to the right capabilities.
 
-      '
-  - name:
-      - context-map
-    description: Generate a map of all files relevant to a task before making changes
-  - name:
-      - deep-research-web
-    description:
-      Multi-source deep research using firecrawl and exa MCPs. Searches the
-      web, synthesizes findings, and delivers cited reports with source attribution.
-      Use when the user wants thorough research on any topic with evidence and citations.
-  - name:
-      - modular-monolith-decomposer
-    description:
-      Decomposes a system description into Modular Monolith modules using
-      Domain-Driven Design (DDD) principles. Produces a bounded context map, data ownership
-      table, external integration boundaries, cross-module communication patterns, a
-      ready-to-use directory structure, and an architectural decision log. Use when
-      the user says "which modules should I create", "modular monolith decomposition",
-      "map bounded contexts", "identify modules from PRD", "structure this codebase",
-      "DDD module mapping", "data ownership", "find module boundaries", "how to organize
-      my modules", or provides any system description (PRD, requirements, informal explanation)
-      and wants to implement it as a Modular Monolith. Do NOT use for Event Storming
-      artifact creation (use event-storming skill), microservices decomposition, or
-      general architectural Q&A without a concrete system description to analyze.
-  - name:
-      - jira-to-todo
-    description:
-      Export a user's pending (non-Done) Jira issues into a structured local
-      todo.md with descriptions, links, and parent/epic grouping. Use when user says
-      "export my jira tasks", "pull my open jira issues", "sync jira to todo", "what's
-      on my jira board", "gera minha lista de tarefas do jira", or "exportar tarefas
-      pendentes do jira". Do NOT use for general task tracking unrelated to Jira, PRD/requirements
-      generation (taskmaster-prd-generator), or non-Jira todo list creation.
-  - name:
-      - adversarial-dev
-    description:
-      Orchestrates a code task through two separate agents in an adversarial
-      loop — an executor that implements and a strict evaluator (no write tools) that
-      scores the result 0-10 and demands fixes. Use when the user wants a task "executed
-      and evaluated by 2 agents", "adversarial dev", "generator/evaluator loop", higher-reliability
-      implementation with independent review, or says "turn this into an adversarial
-      workflow". Do NOT use for simple one-shot edits, multi-task wave orchestration
-      (use orchestrate), or single-pass code review of existing code (use code-review).
-  - name:
-      - leet-code-patterns
-    description:
-      'Expert guidance on solving LeetCode and coding interview problems
-      using the 15 most important algorithmic patterns. Use this skill whenever the
-      user asks about: solving a LeetCode problem, coding interview prep, algorithm
-      patterns, data structure problems, competitive programming, identifying the right
-      approach for a problem, or asks "how do I solve X type of problem". Also trigger
-      when user describes a problem and wants to know which technique or pattern to
-      apply. Trigger even for vague requests like "help me get better at LeetCode" or
-      "I''m stuck on this array problem".
+    '
+- name:
+  - context-map
+  description: Generate a map of all files relevant to a task before making changes
+- name:
+  - deep-research-web
+  description: Multi-source deep research using firecrawl and exa MCPs. Searches the
+    web, synthesizes findings, and delivers cited reports with source attribution.
+    Use when the user wants thorough research on any topic with evidence and citations.
+- name:
+  - modular-monolith-decomposer
+  description: Decomposes a system description into Modular Monolith modules using
+    Domain-Driven Design (DDD) principles. Produces a bounded context map, data ownership
+    table, external integration boundaries, cross-module communication patterns, a
+    ready-to-use directory structure, and an architectural decision log. Use when
+    the user says "which modules should I create", "modular monolith decomposition",
+    "map bounded contexts", "identify modules from PRD", "structure this codebase",
+    "DDD module mapping", "data ownership", "find module boundaries", "how to organize
+    my modules", or provides any system description (PRD, requirements, informal explanation)
+    and wants to implement it as a Modular Monolith. Do NOT use for Event Storming
+    artifact creation (use event-storming skill), microservices decomposition, or
+    general architectural Q&A without a concrete system description to analyze.
+- name:
+  - jira-to-todo
+  description: Export a user's pending (non-Done) Jira issues into a structured local
+    todo.md with descriptions, links, and parent/epic grouping. Use when user says
+    "export my jira tasks", "pull my open jira issues", "sync jira to todo", "what's
+    on my jira board", "gera minha lista de tarefas do jira", or "exportar tarefas
+    pendentes do jira". Do NOT use for general task tracking unrelated to Jira, PRD/requirements
+    generation (taskmaster-prd-generator), or non-Jira todo list creation.
+- name:
+  - adversarial-dev
+  description: Orchestrates a code task through two separate agents in an adversarial
+    loop — an executor that implements and a strict evaluator (no write tools) that
+    scores the result 0-10 and demands fixes. Use when the user wants a task "executed
+    and evaluated by 2 agents", "adversarial dev", "generator/evaluator loop", higher-reliability
+    implementation with independent review, or says "turn this into an adversarial
+    workflow". Do NOT use for simple one-shot edits, multi-task wave orchestration
+    (use orchestrate), or single-pass code review of existing code (use code-review).
+- name:
+  - leet-code-patterns
+  description: 'Expert guidance on solving LeetCode and coding interview problems
+    using the 15 most important algorithmic patterns. Use this skill whenever the
+    user asks about: solving a LeetCode problem, coding interview prep, algorithm
+    patterns, data structure problems, competitive programming, identifying the right
+    approach for a problem, or asks "how do I solve X type of problem". Also trigger
+    when user describes a problem and wants to know which technique or pattern to
+    apply. Trigger even for vague requests like "help me get better at LeetCode" or
+    "I''m stuck on this array problem".
 
-      '
-  - name:
-      - my-tdd-workflow
-    description:
-      Use this skill when writing new features, fixing bugs, or refactoring
-      code. Enforces test-driven development with 80%+ coverage including unit, integration,
-      and E2E tests.
-  - name:
-      - tdd
-    description:
-      Use when implementing any feature or bugfix, before writing implementation
-      code - write the test first, watch it fail, write minimal code to pass; ensures
-      tests actually verify behavior by requiring failure first
-  - name:
-      - test-coverage-review
-    description:
-      A skill for performing a deep analysis of test coverage for either
-      a task specification (pre-implementation) or a completed task (post-implementation).
-      Use this skill to identify missing scenarios, edge cases, and error paths, and
-      to ensure that the testing strategy is robust and follows best practices.
-  - name:
-      - opencv
-    description:
-      Use this skill whenever the user asks about Python OpenCV, computer
-      vision, or image/video processing with cv2. Triggers include reading/writing/displaying
-      images, drawing on images, image transformations (resize, rotate, warp, crop),
-      thresholding, edge detection, feature detection, color space conversion, smoothing/blurring,
-      morphological operations, working with video or webcam feeds, camera calibration,
-      and object detection with OpenCV. Apply this skill even if the user just mentions
-      cv2, imread, imshow, or asks how to do anything visual/image-related in Python.
-      Always use this skill before writing any OpenCV code — it contains critical syntax
-      reminders, common parameter patterns, and usage notes.
-  - name:
-      - mermaid-class-diagram
-    description:
-      'Generate, render, and explain Mermaid class diagrams (UML). Use this
-      skill whenever the user wants to visualize class structures, object-oriented models,
-      entity relationships, system architecture, or data models using Mermaid syntax.
-      Triggers include: "class diagram", "UML diagram", "show me the class structure",
-      "diagram these classes", "model this system", "visualize my OOP design", "entity
-      diagram", "draw relationships between classes", or any request to represent inheritance,
-      composition, aggregation, associations, or interfaces visually. Also use when
-      a user pastes code (Python, Java, TypeScript, etc.) and asks to diagram it, or
-      when they describe a system and want a visual model. Always use this skill proactively
-      when class/entity relationships are involved, even if "Mermaid" isn''t mentioned.
+    '
+- name:
+  - my-tdd-workflow
+  description: Use this skill when writing new features, fixing bugs, or refactoring
+    code. Enforces test-driven development with 80%+ coverage including unit, integration,
+    and E2E tests.
+- name:
+  - tdd
+  description: Use when implementing any feature or bugfix, before writing implementation
+    code - write the test first, watch it fail, write minimal code to pass; ensures
+    tests actually verify behavior by requiring failure first
+- name:
+  - test-coverage-review
+  description: A skill for performing a deep analysis of test coverage for either
+    a task specification (pre-implementation) or a completed task (post-implementation).
+    Use this skill to identify missing scenarios, edge cases, and error paths, and
+    to ensure that the testing strategy is robust and follows best practices.
+- name:
+  - opencv
+  description: Use this skill whenever the user asks about Python OpenCV, computer
+    vision, or image/video processing with cv2. Triggers include reading/writing/displaying
+    images, drawing on images, image transformations (resize, rotate, warp, crop),
+    thresholding, edge detection, feature detection, color space conversion, smoothing/blurring,
+    morphological operations, working with video or webcam feeds, camera calibration,
+    and object detection with OpenCV. Apply this skill even if the user just mentions
+    cv2, imread, imshow, or asks how to do anything visual/image-related in Python.
+    Always use this skill before writing any OpenCV code — it contains critical syntax
+    reminders, common parameter patterns, and usage notes.
+- name:
+  - mermaid-class-diagram
+  description: 'Generate, render, and explain Mermaid class diagrams (UML). Use this
+    skill whenever the user wants to visualize class structures, object-oriented models,
+    entity relationships, system architecture, or data models using Mermaid syntax.
+    Triggers include: "class diagram", "UML diagram", "show me the class structure",
+    "diagram these classes", "model this system", "visualize my OOP design", "entity
+    diagram", "draw relationships between classes", or any request to represent inheritance,
+    composition, aggregation, associations, or interfaces visually. Also use when
+    a user pastes code (Python, Java, TypeScript, etc.) and asks to diagram it, or
+    when they describe a system and want a visual model. Always use this skill proactively
+    when class/entity relationships are involved, even if "Mermaid" isn''t mentioned.
 
-      '
-  - name:
-      - apk-reverse
-    description:
-      'Reverse engineering of Android APK files. Use this skill ALWAYS whenever
-      the user mentions APK, Android, decompile, reverse engineer, analyze Android app,
-      extract code, manifest, permissions, DEX classes, resources, certificates, smali,
-      or any kind of Android mobile application analysis. Even if the request is simple
-      like "analyze this APK" or "what does this app do", use this skill. Includes static
-      analysis, metadata extraction, strings, URLs, permissions, Java/Kotlin classes,
-      resources, and suspicious pattern detection.
+    '
+- name:
+  - apk-reverse
+  description: 'Reverse engineering of Android APK files. Use this skill ALWAYS whenever
+    the user mentions APK, Android, decompile, reverse engineer, analyze Android app,
+    extract code, manifest, permissions, DEX classes, resources, certificates, smali,
+    or any kind of Android mobile application analysis. Even if the request is simple
+    like "analyze this APK" or "what does this app do", use this skill. Includes static
+    analysis, metadata extraction, strings, URLs, permissions, Java/Kotlin classes,
+    resources, and suspicious pattern detection.
 
-      '
-  - name:
-      - generate-docs
-    description:
-      'Use this skill to generate, refactor, maintain, or update project
-      documentation from source code or a code diff. Triggers include: any request to
-      "document the project", "write docs", "create a README", "generate architecture
-      docs", "write a contribution guide", "create an ADR", "document this codebase",
-      "update the docs", "reflect these changes in the documentation", "sync the docs
-      with the latest diff", or "update the README after this PR". Also triggers when
-      asked to analyze folder/module structure and produce incremental documentation,
-      or when a git diff, patch, or modified file is provided and documentation needs
-      to be kept in sync. The skill auto-detects whether to scaffold a full docs/ hierarchy
-      from scratch (create mode) or preview and apply targeted updates to existing docs
-      based on a diff (update mode). Do NOT use for code generation, debugging, or non-documentation
-      writing tasks.
+    '
+- name:
+  - generate-docs
+  description: 'Use this skill to generate, refactor, maintain, or update project
+    documentation from source code or a code diff. Triggers include: any request to
+    "document the project", "write docs", "create a README", "generate architecture
+    docs", "write a contribution guide", "create an ADR", "document this codebase",
+    "update the docs", "reflect these changes in the documentation", "sync the docs
+    with the latest diff", or "update the README after this PR". Also triggers when
+    asked to analyze folder/module structure and produce incremental documentation,
+    or when a git diff, patch, or modified file is provided and documentation needs
+    to be kept in sync. The skill auto-detects whether to scaffold a full docs/ hierarchy
+    from scratch (create mode) or preview and apply targeted updates to existing docs
+    based on a diff (update mode). Do NOT use for code generation, debugging, or non-documentation
+    writing tasks.
 
-      '
-  - name:
-      - plan-generator
-    description:
-      Generate structured plans for tasks and projects, saved as date-stamped
-      markdown files in docs/agents/plans/. Use whenever the user wants to plan a project,
-      break down a task, create a roadmap, design a workflow, or organize phases and
-      milestones — even if they just say "make a plan for X" or "how should I approach
-      Y".
-  - name:
-      - auto-improve
-    description:
-      'After completing any task, extract reusable rules from what worked
-      and what failed. Produces output in the exact format used by agent.instructions.md
-      (## Mandatory: Rules to Follow / ## Mandatory: Rules to Avoid). Trigger after
-      a task finishes when the user asks for a retrospective, lessons learned, or rule
-      extraction — or implicitly with phrases like "what did we learn", "what went wrong",
-      "what should we avoid next time". Do NOT trigger mid-task or before execution
-      completes.
+    '
+- name:
+  - plan-generator
+  description: Generate structured plans for tasks and projects, saved as date-stamped
+    markdown files in docs/agents/plans/. Use whenever the user wants to plan a project,
+    break down a task, create a roadmap, design a workflow, or organize phases and
+    milestones — even if they just say "make a plan for X" or "how should I approach
+    Y".
+- name:
+  - auto-improve
+  description: 'After completing any task, extract reusable rules from what worked
+    and what failed. Produces output in the exact format used by agent.instructions.md
+    (## Mandatory: Rules to Follow / ## Mandatory: Rules to Avoid). Trigger after
+    a task finishes when the user asks for a retrospective, lessons learned, or rule
+    extraction — or implicitly with phrases like "what did we learn", "what went wrong",
+    "what should we avoid next time". Do NOT trigger mid-task or before execution
+    completes.
 
-      '
-  - name:
-      - context7-documentation-lookup
-    description:
-      Use up-to-date library and framework docs via Context7 MCP instead
-      of training data. Activates for setup questions, API references, code examples,
-      or when the user names a framework (e.g. React, Next.js, Prisma).
-  - name:
-      - my-frontend-patterns
-    description:
-      Frontend development patterns for React, Next.js, state management,
-      performance optimization, and UI best practices.
-  - name:
-      - tailwindcss
-    description:
-      Tailwind CSS v4 utility-first styling patterns including responsive
-      design, dark mode, and custom configuration. Use when styling with Tailwind, adding
-      utility classes, configuring Tailwind, setting up dark mode, or customizing the
-      theme.
-  - name:
-      - sd-planning
-    description: step-by-step to follow in generate a plan.
-  - name:
-      - my-python-patterns
-    description:
-      Pythonic idioms, PEP 8 standards, type hints, and best practices for
-      building robust, efficient, and maintainable Python applications.
-  - name:
-      - my-python-testing
-    description:
-      Python testing strategies using pytest, TDD methodology, fixtures,
-      mocking, parametrization, and coverage requirements.
-  - name:
-      - python-style-guide
-    description:
-      Coding conventions and best practices for Python based on the Google
-      Python Style Guide, emphasizing readability, explicitness, consistent naming,
-      clear docstrings, safe exception handling, small focused functions, and static
-      typing for writing maintainable production-quality Python code.
-  - name:
-      - coverage-gap-audit
-    description:
-      Audit Jest test coverage to separate real testing gaps (business logic,
-      security paths) from false negatives (wiring, config, generated code) that shouldn't
-      count against coverage metrics. Use when the user says "audit test coverage",
-      "which files actually need tests", "reduce coverage noise", "why is coverage low",
-      "exclude files from coverage", or asks to review/clean up `collectCoverageFrom`.
-      Do NOT use for writing the missing tests themselves (that's a separate follow-up
-      step this skill hands off explicitly), and do NOT use for non-Jest runners (vitest/pytest/go
-      test) — this skill's commands are Jest-specific.
-  - name:
-      - domain-modeling
-    description:
-      Build and sharpen a project's domain model. Use when discussing codebase
-      terminology, writing or editing a CONTEXT.md, or recording or editing an ADR.
-  - name:
-      - diagnosing-bugs
-    description:
-      Diagnosis loop for hard bugs and performance regressions. Use when
-      the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
-  - name:
-      - grill-with-docs
-    description:
-      A relentless interview to sharpen a plan or design, which also creates
-      docs (ADR's and glossary) as we go.
-  - name:
-      - grilling
-    description:
-      Grill the user relentlessly about a plan, decision, or idea. Use when
-      the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
-  - name:
-      - document-summarizer
-    description:
-      Extract and condense key information from any document or text while
-      preserving critical details. Use when you need to summarize PRDs, specifications,
-      technical documents, articles, reports, emails, or any text that needs a condensed,
-      structured overview. Produces output in sections with bullet points, intelligently
-      combining extracted quotes with rewritten insights. Always use this skill whenever
-      the user asks to "summarize", "condense", "brief", "extract key points", "make
-      a summary", "create an overview", "reduce this", or provides a document/text saying
-      "please summarize this" — even if they mention it informally.
-  - name:
-      - code-review
-    description:
-      A skill for performing structured code reviews based on git diffs and
-      specialist instructions. Use this skill to analyze code changes, identify required
-      adjustments, and generate detailed review reports that comply with the system's
-      guidelines for surgical changes and security best practices.
-  - name:
-      - codebase-linguistic-analysis-to-csv-export
-    description:
-      Identify all non-English text in a codebase (specifically Portuguese
-      characters) and export findings to a structured CSV for translation/remediation
-      workflows.
-  - name:
-      - orchestrate
-    description:
-      Coordinate the execution of complex tasks using multiple specialized
-      subagents, ensuring dependencies are respected and parallelization is maximized.
-  - name:
-      - resolve-merge-conflicts
-    description:
-      Use this skill immediately when the user mentions merge conflicts that
-      need to be resolved. Do not attempt to resolve conflicts directly - invoke this
-      skill first. This skill specializes in providing a structured framework for merging
-      imports, tests, lock files (regeneration), configuration files, and handling deleted-but-modified
-      files with backup and analysis.
-  - name:
-      - copilot-sdk
-    description:
-      'Use this skill whenever the user wants to build Python applications
-      or scripts using the GitHub Copilot SDK. Triggers include: building Copilot-powered
-      agents or tools in Python, integrating GitHub Copilot CLI programmatically, using
-      the copilot Python package, creating sessions with CopilotClient, defining custom
-      tools for Copilot, handling streaming from Copilot, setting up custom LLM providers
-      (BYOK/Ollama/Azure), permission handling for tool calls, or any workflow involving
-      the `copilot` Python package (copilot-sdk). Use this skill even if the user only
-      says "Copilot agent", "Copilot session", or "Copilot tool" in a Python context
-      — they almost certainly need this.
+    '
+- name:
+  - context7-documentation-lookup
+  description: Use up-to-date library and framework docs via Context7 MCP instead
+    of training data. Activates for setup questions, API references, code examples,
+    or when the user names a framework (e.g. React, Next.js, Prisma).
+- name:
+  - my-frontend-patterns
+  description: Frontend development patterns for React, Next.js, state management,
+    performance optimization, and UI best practices.
+- name:
+  - tailwindcss
+  description: Tailwind CSS v4 utility-first styling patterns including responsive
+    design, dark mode, and custom configuration. Use when styling with Tailwind, adding
+    utility classes, configuring Tailwind, setting up dark mode, or customizing the
+    theme.
+- name:
+  - my-python-patterns
+  description: Pythonic idioms, PEP 8 standards, type hints, and best practices for
+    building robust, efficient, and maintainable Python applications.
+- name:
+  - my-python-testing
+  description: Python testing strategies using pytest, TDD methodology, fixtures,
+    mocking, parametrization, and coverage requirements.
+- name:
+  - python-style-guide
+  description: Coding conventions and best practices for Python based on the Google
+    Python Style Guide, emphasizing readability, explicitness, consistent naming,
+    clear docstrings, safe exception handling, small focused functions, and static
+    typing for writing maintainable production-quality Python code.
+- name:
+  - coverage-gap-audit
+  description: Audit Jest test coverage to separate real testing gaps (business logic,
+    security paths) from false negatives (wiring, config, generated code) that shouldn't
+    count against coverage metrics. Use when the user says "audit test coverage",
+    "which files actually need tests", "reduce coverage noise", "why is coverage low",
+    "exclude files from coverage", or asks to review/clean up `collectCoverageFrom`.
+    Do NOT use for writing the missing tests themselves (that's a separate follow-up
+    step this skill hands off explicitly), and do NOT use for non-Jest runners (vitest/pytest/go
+    test) — this skill's commands are Jest-specific.
+- name:
+  - domain-modeling
+  description: Build and sharpen a project's domain model. Use when discussing codebase
+    terminology, writing or editing a CONTEXT.md, or recording or editing an ADR.
+- name:
+  - diagnosing-bugs
+  description: Diagnosis loop for hard bugs and performance regressions. Use when
+    the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
+- name:
+  - grill-with-docs
+  description: A relentless interview to sharpen a plan or design, which also creates
+    docs (ADR's and glossary) as we go.
+- name:
+  - grilling
+  description: Grill the user relentlessly about a plan, decision, or idea. Use when
+    the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
+- name:
+  - document-summarizer
+  description: Extract and condense key information from any document or text while
+    preserving critical details. Use when you need to summarize PRDs, specifications,
+    technical documents, articles, reports, emails, or any text that needs a condensed,
+    structured overview. Produces output in sections with bullet points, intelligently
+    combining extracted quotes with rewritten insights. Always use this skill whenever
+    the user asks to "summarize", "condense", "brief", "extract key points", "make
+    a summary", "create an overview", "reduce this", or provides a document/text saying
+    "please summarize this" — even if they mention it informally.
+- name:
+  - code-review
+  description: A skill for performing structured code reviews based on git diffs and
+    specialist instructions. Use this skill to analyze code changes, identify required
+    adjustments, and generate detailed review reports that comply with the system's
+    guidelines for surgical changes and security best practices.
+- name:
+  - codebase-linguistic-analysis-to-csv-export
+  description: Identify all non-English text in a codebase (specifically Portuguese
+    characters) and export findings to a structured CSV for translation/remediation
+    workflows.
+- name:
+  - orchestrate
+  description: Coordinate the execution of complex tasks using multiple specialized
+    subagents, ensuring dependencies are respected and parallelization is maximized.
+- name:
+  - resolve-merge-conflicts
+  description: Use this skill immediately when the user mentions merge conflicts that
+    need to be resolved. Do not attempt to resolve conflicts directly - invoke this
+    skill first. This skill specializes in providing a structured framework for merging
+    imports, tests, lock files (regeneration), configuration files, and handling deleted-but-modified
+    files with backup and analysis.
+- name:
+  - copilot-sdk
+  description: 'Use this skill whenever the user wants to build Python applications
+    or scripts using the GitHub Copilot SDK. Triggers include: building Copilot-powered
+    agents or tools in Python, integrating GitHub Copilot CLI programmatically, using
+    the copilot Python package, creating sessions with CopilotClient, defining custom
+    tools for Copilot, handling streaming from Copilot, setting up custom LLM providers
+    (BYOK/Ollama/Azure), permission handling for tool calls, or any workflow involving
+    the `copilot` Python package (copilot-sdk). Use this skill even if the user only
+    says "Copilot agent", "Copilot session", or "Copilot tool" in a Python context
+    — they almost certainly need this.
 
-      '
-  - name:
-      - integration-testing
-    description:
-      'Expert guidance on Integration Testing in software engineering. Use
-      this skill whenever the user asks about integration testing strategies, approaches
-      (Big-Bang, Top-Down, Bottom-Up, Mixed/Sandwich), writing integration test cases,
-      setting up test environments, identifying integration defects, or comparing integration
-      testing with unit/system testing. Trigger this skill for questions like "how do
-      I do integration testing", "what''s the difference between top-down and bottom-up
-      testing", "how to write integration tests for my modules", "what testing approach
-      should I use", or any mention of module interaction testing, stub/driver usage,
-      or interface verification. Also trigger when users discuss CI/CD pipelines and
-      want to know where integration tests fit in.
+    '
+- name:
+  - integration-testing
+  description: 'Expert guidance on Integration Testing in software engineering. Use
+    this skill whenever the user asks about integration testing strategies, approaches
+    (Big-Bang, Top-Down, Bottom-Up, Mixed/Sandwich), writing integration test cases,
+    setting up test environments, identifying integration defects, or comparing integration
+    testing with unit/system testing. Trigger this skill for questions like "how do
+    I do integration testing", "what''s the difference between top-down and bottom-up
+    testing", "how to write integration tests for my modules", "what testing approach
+    should I use", or any mention of module interaction testing, stub/driver usage,
+    or interface verification. Also trigger when users discuss CI/CD pipelines and
+    want to know where integration tests fit in.
 
-      '
-  - name:
-      - sd-insert-taskmaster
-    description:
-      Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json).
-      When only spec.md exists (no formal tasks.md, e.g. Small/Medium features where
-      tlc-spec-driven's auto-sizing skipped the Tasks phase), derives one taskmaster
-      task per requirement/acceptance-criterion from spec.md instead, purely for tracking/registry
-      purposes. Use when user says "convert tasks.md to taskmaster json", "transform
-      tasks.md to .taskmaster format", "converta tasks.md em tasks.json", "registra
-      essa spec no taskmaster", or wants to generate TaskMaster JSON from a tasks or
-      spec file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster
-      conversions.
-  - name:
-      - prd-from-codebase
-    description:
-      'Generates a complete Product Requirements Document (PRD) in Markdown
-      from an existing codebase. Use this skill whenever the user wants to document
-      software without documentation, understand what a project does, generate a product
-      document from code, map application features, identify system agents/roles, or
-      mentions terms such as "PRD", "document the project", "generate product documentation",
-      "what does this code do", "map features", "understand the codebase", "reverse
-      PRD", or similar. The skill uses the available tools (bash, view, etc.) to autonomously
-      explore the codebase before generating the document—the user does not need to
-      manually paste any code.
+    '
+- name:
+  - sd-insert-taskmaster
+  description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json).
+    When only spec.md exists (no formal tasks.md, e.g. Small/Medium features where
+    tlc-spec-driven's auto-sizing skipped the Tasks phase), derives one taskmaster
+    task per requirement/acceptance-criterion from spec.md instead, purely for tracking/registry
+    purposes. Use when user says "convert tasks.md to taskmaster json", "transform
+    tasks.md to .taskmaster format", "converta tasks.md em tasks.json", "registra
+    essa spec no taskmaster", or wants to generate TaskMaster JSON from a tasks or
+    spec file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster
+    conversions.
+- name:
+  - prd-from-codebase
+  description: 'Generates a complete Product Requirements Document (PRD) in Markdown
+    from an existing codebase. Use this skill whenever the user wants to document
+    software without documentation, understand what a project does, generate a product
+    document from code, map application features, identify system agents/roles, or
+    mentions terms such as "PRD", "document the project", "generate product documentation",
+    "what does this code do", "map features", "understand the codebase", "reverse
+    PRD", or similar. The skill uses the available tools (bash, view, etc.) to autonomously
+    explore the codebase before generating the document—the user does not need to
+    manually paste any code.
 
-      '
-  - name:
-      - event-storming
-    description:
-      'Use this skill whenever the user wants to create, document, or model
-      an Event Storming. Triggers include: "do event storming", "model a domain", "map
-      domain flow", "create an event diagram", "document bounded contexts", "model commands
-      and events", "DDD", "Domain-Driven Design", "convert sticky notes into code",
-      "represent flows with Mermaid", "create aggregates", "identify bounded contexts",
-      "map domain policies". Also use this skill when the user provides business process
-      descriptions and wants to transform them into structured Event Storming artifacts
-      — even if they do not explicitly mention the term.
+    '
+- name:
+  - sd-execute
+  description: 'Thin wrapper around tlc-spec-driven''s Execute phase that adds taskmaster
+    status sync. Main agent reads tlc-spec-driven/SKILL.md, runs its normal Execute
+    flow (implement.md, auto-sized batching, always-on Verifier) unmodified, and after
+    each task/batch calls taskmaster''s set_task_status so the taskmaster tag mirrors
+    real progress. Taskmaster is a read-only dashboard here -- it never drives what
+    gets executed or in what order; tlc-spec-driven''s own auto-sizing and batching
+    decide that. Use: ''execute feature <tag>'' or run tasks for <tag> when the feature
+    already has a taskmaster tag to keep in sync. Do not use for direct task management
+    (taskmaster skill), spec creation (tlc-spec-driven), or when there is no taskmaster
+    tag to sync (just call tlc-spec-driven directly).'
+- name:
+  - event-storming
+  description: 'Use this skill whenever the user wants to create, document, or model
+    an Event Storming. Triggers include: "do event storming", "model a domain", "map
+    domain flow", "create an event diagram", "document bounded contexts", "model commands
+    and events", "DDD", "Domain-Driven Design", "convert sticky notes into code",
+    "represent flows with Mermaid", "create aggregates", "identify bounded contexts",
+    "map domain policies". Also use this skill when the user provides business process
+    descriptions and wants to transform them into structured Event Storming artifacts
+    — even if they do not explicitly mention the term.
 
-      '
-  - name:
-      - image-mockup-recreator
-    description:
-      Recreate a reference screenshot or mockup image as a live HTML/CSS
-      artifact, using headless-browser screenshots, an SSIM visual diff score, and pixel-grid
-      overlays to iteratively close the gap between the render and the original. Use
-      when someone uploads a UI screenshot, app screen, or design mockup and asks to
-      "recreate this as an artifact", "build this in HTML", "make a mockup of this image",
-      "match this design", or wants automatic adjustment/refinement toward a reference
-      image without a Figma file. Do NOT use when a Figma file/node URL is available
-      (use a Figma-to-code skill instead) or when the user just wants a design critique
-      without building anything (use design-image-diff instead).
-  - name:
-      - webapp-testing
-    description:
-      Toolkit for interacting with and testing local web applications using
-      Playwright. Supports verifying frontend functionality, debugging UI behavior,
-      capturing browser screenshots, and viewing browser logs.
-  - name:
-      - skill-creator
-    description:
-      Create new skills, modify and improve existing skills, and measure
-      skill performance. Use when users want to create a skill from scratch, edit, or
-      optimize an existing skill, run evals to test a skill, benchmark skill performance
-      with variance analysis, or optimize a skill's description for better triggering
-      accuracy.
-  - name:
-      - pdf
-    description:
-      Use this skill whenever the user wants to do anything with PDF files.
-      This includes reading or extracting text/tables from PDFs, combining or merging
-      multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks,
-      creating new PDFs, filling PDF forms, encrypting/decrypting PDFs, extracting images,
-      and OCR on scanned PDFs to make them searchable. If the user mentions a .pdf file
-      or asks to produce one, use this skill.
-  - name:
-      - algorithmic-art
-    description:
-      Creating algorithmic art using p5.js with seeded randomness and interactive
-      parameter exploration. Use this when users request creating art using code, generative
-      art, algorithmic art, flow fields, or particle systems. Create original algorithmic
-      art rather than copying existing artists' work to avoid copyright violations.
-  - name:
-      - frontend-design
-    description:
-      Guidance for distinctive, intentional visual design when building new
-      UI or reshaping an existing one. Helps with aesthetic direction, typography, and
-      making choices that don't read as templated defaults.
-  - name:
-      - docx
-    description:
-      "Use this skill whenever the user wants to create, read, edit, or manipulate
-      Word documents (.docx files) or Word templates (.dotx files). Triggers include:
-      any mention of 'Word doc', 'word document', '.docx', '.dotx', or requests
-      to produce professional documents with formatting like tables of contents, headings,
-      page numbers, or letterheads. Also use when extracting or reorganizing content
-      from .docx or .dotx files, inserting or replacing images in documents, performing
-      find-and-replace in Word files, working with tracked changes or comments, or converting
-      content into a polished Word document. If the user asks for a 'report', 'memo',
-      'letter', 'template', or similar deliverable as a Word or .docx file, use
-      this skill. Do NOT use for PDFs, spreadsheets, Google Docs, or general coding
-      tasks unrelated to document generation."
-  - name:
-      - xlsx
-    description:
-      'Use this skill any time a spreadsheet file is the primary input or
-      output. This means any task where the user wants to: open, read, edit, or fix
-      an existing .xlsx, .xlsm, .xltx, .csv, or .tsv file (e.g., adding columns, computing
-      formulas, formatting, charting, cleaning messy data); create a new spreadsheet
-      from scratch or from other data sources; or convert between tabular file formats.
-      Trigger especially when the user references a spreadsheet file by name or path
-      — even casually (like "the xlsx in my downloads") — and wants something done to
-      it or produced from it. Also trigger for cleaning or restructuring messy tabular
-      data files (malformed rows, misplaced headers, junk data) into proper spreadsheets.
-      The deliverable must be a spreadsheet file. Do NOT trigger when the primary deliverable
-      is a Word document, HTML report, standalone Python script, database pipeline,
-      or Google Sheets API integration, even if tabular data is involved.'
-  - name:
-      - mcp-builder
-    description:
-      Guide for creating high-quality MCP (Model Context Protocol) servers
-      that enable LLMs to interact with external services through well-designed tools.
-      Use when building MCP servers to integrate external APIs or services, whether
-      in Python (FastMCP) or Node/TypeScript (MCP SDK).
-  - name:
-      - dynamic-programming-analysis
-    description:
-      "Use this skill whenever the user presents a problem, challenge, decision,
-      or complex question that needs to be broken down into smaller, manageable sub-problems,
-      just like dynamic programming in computer science. Triggers include: any problem
-      that feels too big or overwhelming, strategic planning questions, optimization
-      challenges (what is the best way to...), multi-step processes, decision trees,
-      architectural designs, research questions, business or personal dilemmas, or any
-      situation where the user says they do not know where to start. Always use this
-      skill when decomposition, step-by-step reasoning, or structured problem-solving
-      would help, even if the user does not mention dynamic programming explicitly.
-      The goal is to model the DP mindset: identify base cases, define sub-problems,
-      find overlapping structure, and build toward the solution bottom-up.
+    '
+- name:
+  - image-mockup-recreator
+  description: Recreate a reference screenshot or mockup image as a live HTML/CSS
+    artifact, using headless-browser screenshots, an SSIM visual diff score, and pixel-grid
+    overlays to iteratively close the gap between the render and the original. Use
+    when someone uploads a UI screenshot, app screen, or design mockup and asks to
+    "recreate this as an artifact", "build this in HTML", "make a mockup of this image",
+    "match this design", or wants automatic adjustment/refinement toward a reference
+    image without a Figma file. Do NOT use when a Figma file/node URL is available
+    (use a Figma-to-code skill instead) or when the user just wants a design critique
+    without building anything (use design-image-diff instead).
+- name:
+  - webapp-testing
+  description: Toolkit for interacting with and testing local web applications using
+    Playwright. Supports verifying frontend functionality, debugging UI behavior,
+    capturing browser screenshots, and viewing browser logs.
+- name:
+  - skill-creator
+  description: Create new skills, modify and improve existing skills, and measure
+    skill performance. Use when users want to create a skill from scratch, edit, or
+    optimize an existing skill, run evals to test a skill, benchmark skill performance
+    with variance analysis, or optimize a skill's description for better triggering
+    accuracy.
+- name:
+  - pdf
+  description: Use this skill whenever the user wants to do anything with PDF files.
+    This includes reading or extracting text/tables from PDFs, combining or merging
+    multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks,
+    creating new PDFs, filling PDF forms, encrypting/decrypting PDFs, extracting images,
+    and OCR on scanned PDFs to make them searchable. If the user mentions a .pdf file
+    or asks to produce one, use this skill.
+- name:
+  - algorithmic-art
+  description: Creating algorithmic art using p5.js with seeded randomness and interactive
+    parameter exploration. Use this when users request creating art using code, generative
+    art, algorithmic art, flow fields, or particle systems. Create original algorithmic
+    art rather than copying existing artists' work to avoid copyright violations.
+- name:
+  - frontend-design
+  description: Guidance for distinctive, intentional visual design when building new
+    UI or reshaping an existing one. Helps with aesthetic direction, typography, and
+    making choices that don't read as templated defaults.
+- name:
+  - docx
+  description: 'Use this skill whenever the user wants to create, read, edit, or manipulate
+    Word documents (.docx files) or Word templates (.dotx files). Triggers include:
+    any mention of ''Word doc'', ''word document'', ''.docx'', ''.dotx'', or requests
+    to produce professional documents with formatting like tables of contents, headings,
+    page numbers, or letterheads. Also use when extracting or reorganizing content
+    from .docx or .dotx files, inserting or replacing images in documents, performing
+    find-and-replace in Word files, working with tracked changes or comments, or converting
+    content into a polished Word document. If the user asks for a ''report'', ''memo'',
+    ''letter'', ''template'', or similar deliverable as a Word or .docx file, use
+    this skill. Do NOT use for PDFs, spreadsheets, Google Docs, or general coding
+    tasks unrelated to document generation.'
+- name:
+  - xlsx
+  description: 'Use this skill any time a spreadsheet file is the primary input or
+    output. This means any task where the user wants to: open, read, edit, or fix
+    an existing .xlsx, .xlsm, .xltx, .csv, or .tsv file (e.g., adding columns, computing
+    formulas, formatting, charting, cleaning messy data); create a new spreadsheet
+    from scratch or from other data sources; or convert between tabular file formats.
+    Trigger especially when the user references a spreadsheet file by name or path
+    — even casually (like "the xlsx in my downloads") — and wants something done to
+    it or produced from it. Also trigger for cleaning or restructuring messy tabular
+    data files (malformed rows, misplaced headers, junk data) into proper spreadsheets.
+    The deliverable must be a spreadsheet file. Do NOT trigger when the primary deliverable
+    is a Word document, HTML report, standalone Python script, database pipeline,
+    or Google Sheets API integration, even if tabular data is involved.'
+- name:
+  - mcp-builder
+  description: Guide for creating high-quality MCP (Model Context Protocol) servers
+    that enable LLMs to interact with external services through well-designed tools.
+    Use when building MCP servers to integrate external APIs or services, whether
+    in Python (FastMCP) or Node/TypeScript (MCP SDK).
+- name:
+  - dynamic-programming-analysis
+  description: 'Use this skill whenever the user presents a problem, challenge, decision,
+    or complex question that needs to be broken down into smaller, manageable sub-problems,
+    just like dynamic programming in computer science. Triggers include: any problem
+    that feels too big or overwhelming, strategic planning questions, optimization
+    challenges (what is the best way to...), multi-step processes, decision trees,
+    architectural designs, research questions, business or personal dilemmas, or any
+    situation where the user says they do not know where to start. Always use this
+    skill when decomposition, step-by-step reasoning, or structured problem-solving
+    would help, even if the user does not mention dynamic programming explicitly.
+    The goal is to model the DP mindset: identify base cases, define sub-problems,
+    find overlapping structure, and build toward the solution bottom-up.
 
-      "
-  - name:
-      - skills-discovery
-    description:
-      'Explore all available skills (enabled and disabled) by task or theme
-      to discover which skills exist for a problem. Use when asking "which skills can
-      help with X?", "what skills do I have for topic Y?", "explore skills related to
-      Z", "show me all skills for [domain]", or when wanting to discover relevant skills
-      before deciding to enable them. Different from skill-advisor: exploratory discovery
-      across ALL skills with reasons why each matches.'
-  - name:
-      - sd-execute
-    description:
-      "Thin wrapper around tlc-spec-driven's Execute phase that adds taskmaster
-      status sync. Main agent reads tlc-spec-driven/SKILL.md, runs its normal Execute
-      flow (implement.md, auto-sized batching, always-on Verifier) unmodified, and after
-      each task/batch calls taskmaster's set_task_status so the taskmaster tag mirrors
-      real progress. Taskmaster is a read-only dashboard here -- it never drives what
-      gets executed or in what order; tlc-spec-driven's own auto-sizing and batching
-      decide that. Use: 'execute feature <tag>' or run tasks for <tag> when the feature
-      already has a taskmaster tag to keep in sync. Do not use for direct task management
-      (taskmaster skill), spec creation (tlc-spec-driven), or when there is no taskmaster
-      tag to sync (just call tlc-spec-driven directly)."
-  - name:
-      - extract-automation-candidates
-    description:
-      Mines a project's Claude Code session transcripts, git commit history,
-      and formal spec/PRD markdown files for recurring or high-cost manual workflows
-      that are worth turning into a reusable skill, slash command, or standing instruction
-      — then writes the actual artifact (SKILL.md, command markdown, or an AGENTS.md/CLAUDE.md
-      instruction line) instead of just describing it. Use when the user asks to "find
-      things worth automating", "extract skills from our sessions", "what should be
-      a command by now", "turn recurring patterns into skills", or wants a cross-source
-      audit of automation opportunities with traceability back to the conversations/commits/specs
-      that justified each one. Do NOT use for requirements extraction (use extract-software-requirements
-      instead), for scaffolding a skill the user has already fully specified (use skill-architect
-      instead), or for a one-off single-file edit with no recurring pattern behind it.
-  - name:
-      - safe-refactor
-    description:
-      'Guide safe refactoring of complex, untested code using a multi-phase
-      hybrid approach: characterization tests → agent-assisted refactoring → manual
-      review → integration testing → staged rollout. Use this skill whenever the user
-      mentions refactoring, code cleanup, or code modernization — especially when there
-      are no existing tests, when delegating to an agent, or when regressions would
-      be costly. Also trigger for: "improve code quality without breaking things", "migrate
-      to a new pattern safely", "modernize legacy code", "rewrite this module", "clean
-      up this file", "my code has no tests but I need to refactor it", or any scenario
-      involving high-risk code changes where behavior preservation matters. When in
-      doubt, use this skill — a structured approach is almost always better than ad-hoc
-      refactoring.
+    '
+- name:
+  - skills-discovery
+  description: 'Explore all available skills (enabled and disabled) by task or theme
+    to discover which skills exist for a problem. Use when asking "which skills can
+    help with X?", "what skills do I have for topic Y?", "explore skills related to
+    Z", "show me all skills for [domain]", or when wanting to discover relevant skills
+    before deciding to enable them. Different from skill-advisor: exploratory discovery
+    across ALL skills with reasons why each matches.'
+- name:
+  - extract-automation-candidates
+  description: Mines a project's Claude Code session transcripts, git commit history,
+    and formal spec/PRD markdown files for recurring or high-cost manual workflows
+    that are worth turning into a reusable skill, slash command, or standing instruction
+    — then writes the actual artifact (SKILL.md, command markdown, or an AGENTS.md/CLAUDE.md
+    instruction line) instead of just describing it. Use when the user asks to "find
+    things worth automating", "extract skills from our sessions", "what should be
+    a command by now", "turn recurring patterns into skills", or wants a cross-source
+    audit of automation opportunities with traceability back to the conversations/commits/specs
+    that justified each one. Do NOT use for requirements extraction (use extract-software-requirements
+    instead), for scaffolding a skill the user has already fully specified (use skill-architect
+    instead), or for a one-off single-file edit with no recurring pattern behind it.
+- name:
+  - safe-refactor
+  description: 'Guide safe refactoring of complex, untested code using a multi-phase
+    hybrid approach: characterization tests → agent-assisted refactoring → manual
+    review → integration testing → staged rollout. Use this skill whenever the user
+    mentions refactoring, code cleanup, or code modernization — especially when there
+    are no existing tests, when delegating to an agent, or when regressions would
+    be costly. Also trigger for: "improve code quality without breaking things", "migrate
+    to a new pattern safely", "modernize legacy code", "rewrite this module", "clean
+    up this file", "my code has no tests but I need to refactor it", or any scenario
+    involving high-risk code changes where behavior preservation matters. When in
+    doubt, use this skill — a structured approach is almost always better than ad-hoc
+    refactoring.
 
-      '
-  - name:
-      - execute-task
-    description:
-      "Execute a specified task by reading detailed specifications, analyzing
-      requirements, planning the approach, and implementing step-by-step. Use this skill
-      when: you have a task specification file or task ID that needs completion; the
-      task is multi-step, involves architecture decisions, or requires tool orchestration;
-      you need to track progress across subtasks and delegate work to specialist agents.
-      Triggers on task execution requests, implementation assignments, feature builds,
-      bug fixes, refactoring projects, or when a user provides a task spec .md file.
-      Always use this skill for complex development work rather than tackling it directly
-      —delegate to specialists and maintain progress visibility with task tracking."
-  - name:
-      - golang-style-guide
-    description:
-      "Conventions and best practices for writing readable, maintainable
-      Go code based on the Google Go Style Guide. Use this skill when: Writing new Go
-      packages, services, or command-line tools. Refactoring Go code to improve clarity
-      and maintainability. Enforcing idiomatic Go naming, formatting, and structure.
-      Designing APIs and libraries for long-term maintainability. Avoiding unnecessary
-      abstraction or complexity in Go programs."
-  - name:
-      - my-golang-testing
-    description:
-      Go testing patterns including table-driven tests, subtests, benchmarks,
-      fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
-  - name:
-      - my-golang-patterns
-    description:
-      Idiomatic Go patterns, best practices, and conventions for building
-      robust, efficient, and maintainable Go applications.
-  - name:
-      - react-composition-patterns
-    description:
-      React composition patterns that scale. Use when refactoring components
-      with boolean prop proliferation, building flexible component libraries, or designing
-      reusable APIs. Triggers on tasks involving compound components, render props,
-      context providers, or component architecture. Includes React 19 API changes. Do
-      NOT use for React/Next.js performance optimization (use react-best-practices instead).
-  - name:
-      - codenavi
-    description:
-      Your pathfinder for navigating unknown codebases. Investigates with
-      precision, implements surgically, and never assumes — if it doesn't know, it says
-      so. Maintains a .notebook/ knowledge base that grows across sessions, turning
-      every discovery into lasting intelligence. Summons available skills, MCPs, and
-      docs when the mission demands. Use when fixing bugs, implementing features, refactoring,
-      investigating flows, or any development task in unfamiliar territory. Triggers
-      on "fix this", "implement this", "how does this work", "investigate this flow",
-      "help me with this code". Do NOT use for greenfield scaffolding, CI/CD, or infrastructure
-      provisioning.
-  - name:
-      - frontend-blueprint
-    description:
-      AI frontend specialist and design consultant that guides users through
-      a structured discovery process before generating any code. Collects visual references,
-      design tokens, typography, icons, layout preferences, and brand guidelines to
-      ensure the final output matches the user's vision with high fidelity. Use when
-      the user asks to build, design, create, or improve any frontend interface — websites,
-      landing pages, dashboards, components, apps, emails, forms, modals, or any UI
-      element. Also triggers on "build me a UI", "design a page", "create a component",
-      "improve this layout", "make this look better", "frontend", "interface", "redesign",
-      or when the user provides mockups, screenshots, or design references. Do NOT use
-      for backend logic, API design, database schemas, or non-visual code tasks.
-  - name:
-      - tlc-spec-driven
-    description:
-      Feature planning and implementation with 4 adaptive phases (Specify,
-      Design, Tasks, Execute). Auto-sizes depth by complexity. Writes testable requirements
-      in EARS notation, atomic tasks, atomic Conventional Commits, and requirement traceability.
-      Ships deterministic Python validation scripts so structural gates are enforced
-      by code, not memory. Features an independent Verifier (author != verifier, evidence-or-zero),
-      a discrimination sensor, a decision log (STATE.md), a test-coverage matrix, and
-      a self-improving lessons layer. Stack-agnostic and tool-agnostic. Use when (1)
-      planning features, (2) implementing with verification and atomic commits, (3)
-      validating an implementation against a spec. Triggers on "specify feature", "discuss
-      feature", "design", "tasks", "implement", "validate", "verify work", "UAT", "record
-      decision", "pause work", "resume work". Do NOT use for pure architecture decomposition
-      analysis or standalone technical design documents.
-  - name:
-      - figma-implement-design
-    description:
-      Translate Figma nodes into production-ready code with 1:1 visual fidelity
-      using the Figma MCP workflow (design context, screenshots, assets, and project-convention
-      translation). Use when the user provides Figma URLs or node IDs and asks to implement
-      designs or components that must match Figma specs. Requires a working Figma MCP
-      server connection. Do NOT use for general Figma data fetching, variable exploration,
-      or MCP troubleshooting (use figma instead).
-  - name:
-      - create-rfc
-    description:
-      Creates structured Request for Comments (RFC) documents for proposing
-      and deciding on significant changes. Use when the user says "write an RFC", "create
-      a proposal", "I need to propose a change", "draft an RFC", "document a decision",
-      or needs stakeholder alignment before making a major technical or process decision.
-      Do NOT use for TDDs/implementation docs (use technical-design-doc-creator instead),
-      README files, or general documentation.
-  - name:
-      - subagent-creator
-    description:
-      Guide for creating AI subagents with isolated context for complex multi-step
-      workflows. Use when users want to create a subagent, specialized agent, verifier,
-      debugger, or orchestrator that requires isolated context and deep specialization.
-      Works with any agent that supports subagent delegation. Triggers on "create subagent",
-      "new agent", "specialized assistant", "create verifier". Do NOT use for Cursor-specific
-      subagents (use cursor-subagent-creator instead).
-  - name:
-      - domain-analysis
-    description:
-      Maps business domains and suggests service boundaries in any codebase
-      using DDD Strategic Design. Use when asking "what are the domains in this codebase?",
-      "where should I draw service boundaries?", "identify bounded contexts", "classify
-      subdomains", "DDD analysis", or analyzing domain cohesion. Do NOT use for grouping
-      existing components into domains (use domain-identification-grouping) or dependency
-      analysis (use coupling-analysis).
-  - name:
-      - gh-address-comments
-    description:
-      Address review and issue comments on the open GitHub PR for the current
-      branch using gh CLI. Use when user says "address PR comments", "fix review feedback",
-      "respond to PR review", or "handle PR comments". Verifies gh auth first and prompts
-      to authenticate if not logged in. Do NOT use for creating PRs, CI debugging (use
-      gh-fix-ci), or general Git operations.
-  - name:
-      - perf-web-optimization
-    description:
-      "Optimize web performance: bundle size, images, caching, lazy loading,
-      and overall page speed. Use when site is slow, reducing bundle size, fixing layout
-      shifts, improving Time to Interactive, or optimizing for Lighthouse scores. Triggers
-      on: web performance, bundle size, page speed, slow site, lazy loading. Do NOT
-      use for Core Web Vitals-specific fixes (use core-web-vitals), running Lighthouse
-      audits (use perf-lighthouse), or Astro-specific optimization (use perf-astro)."
-  - name:
-      - mermaid-studio
-    description:
-      Expert Mermaid diagram creation, validation, and rendering with dual-engine
-      output (SVG/PNG/ASCII). Supports all 20+ diagram types including C4 architecture,
-      AWS architecture-beta with service icons, flowcharts, sequence, ERD, state, class,
-      mindmap, timeline, git graph, sankey, and more. Features code-to-diagram analysis,
-      batch rendering, 15+ themes, and syntax validation. Use when users ask to create
-      diagrams, visualize architecture, render mermaid files, generate ASCII diagrams,
-      document system flows, model databases, draw AWS infrastructure, analyze code
-      structure, or anything involving "mermaid", "diagram", "flowchart", "architecture
-      diagram", "sequence diagram", "ERD", "C4", "ASCII diagram". Do NOT use for non-Mermaid
-      image generation, data plotting with chart libraries, or general documentation
-      writing.
-  - name:
-      - modular-decomposition
-    description:
-      Runs a sequenced monolith-to-modular pipeline that sizes and inventories
-      components, finds shared domain duplication, addresses flattening and hierarchy
-      issues, analyzes coupling, then groups components into candidate domain-aligned
-      units, with optional embedded DDD strategic analysis for bounded contexts. Use
-      when asking how to split a monolith, size components before extraction, find duplicated
-      domain logic, clean up module hierarchy, measure coupling between modules, or
-      group components into services. Do NOT use for phased extraction roadmaps or prioritization
-      without the prior analysis steps (use decomposition-planning-roadmap after this
-      pipeline), end-to-end legacy migration strategy writeups (use legacy-migration-planner),
-      pure infrastructure capacity sizing, or when you only need DDD without the structural
-      pipeline (install domain-analysis standalone).
-  - name:
-      - the-fool
-    description:
-      Use when challenging ideas, plans, decisions, or proposals. Invoke
-      to play devil's advocate, run a pre-mortem, red team, stress test assumptions,
-      audit evidence quality, or find blind spots before committing. Do NOT use for
-      building plans, making decisions, or generating solutions — this skill only challenges
-      and critiques. For a multi-agent panel that challenges and then commits to a verdict,
-      use the-jury.
-  - name:
-      - jira-assistant
-    description:
-      Manage Jira issues via Atlassian MCP — search, create, update, transition
-      status, and handle sprint tasks. Auto-detects workspace configuration. Use when
-      user says "create a Jira ticket", "update my sprint", "check Jira status", "transition
-      this issue", "search Jira", or "move ticket to done". Do NOT use for Confluence
-      pages (use confluence-assistant).
-  - name:
-      - coupling-analysis
-    description:
-      Analyzes coupling between modules using the three-dimensional model
-      (strength, distance, volatility) from "Balancing Coupling in Software Design".
-      Use when asking "are these modules too coupled?", "show me dependencies", "analyze
-      integration quality", "which modules should I decouple?", "coupling report", or
-      evaluating architectural health. Do NOT use for domain boundary analysis (use
-      domain-analysis) or component sizing (use component-identification-sizing).
-  - name:
-      - security-best-practices
-    description:
-      Perform language and framework specific security best-practice reviews
-      and suggest improvements. Use when the user explicitly requests security best
-      practices guidance, a security review or report, or secure-by-default coding help.
-      Supports Python, JavaScript/TypeScript, and Go. Do NOT use for general code review,
-      debugging, threat modeling (use security-threat-model), or non-security tasks.
-  - name:
-      - gh-fix-ci
-    description:
-      Use when a user asks to debug or fix failing GitHub PR checks that
-      run in GitHub Actions. Uses `gh` to inspect checks and logs, summarize failure
-      context, draft a fix plan, and implement only after explicit approval. Treats
-      external providers (for example Buildkite) as out of scope and reports only the
-      details URL. Do NOT use for addressing PR review comments (use gh-address-comments)
-      or general CI outside GitHub Actions.
-  - name:
-      - seo
-    description:
-      Optimize for search engine visibility and ranking. Use when asked to
-      "improve SEO", "optimize for search", "fix meta tags", "add structured data",
-      "sitemap optimization", or "search engine optimization". Do NOT use for accessibility
-      (use web-accessibility), performance (use core-web-vitals), or comprehensive site
-      audits covering multiple areas (use web-quality-audit).
-  - name:
-      - legacy-migration-planner
-    description:
-      Use when planning legacy system migrations, codebase modernization,
-      monolith decomposition, microservices consolidation, cross-language rewrites,
-      or framework upgrades. Invoke for strangler fig pattern, incremental migration
-      strategy, or refactoring roadmaps. Do NOT use for domain analysis (use domain-analysis),
-      component sizing (use component-identification-sizing), or step-by-step decomposition
-      plans (use decomposition-planning-roadmap).
-  - name:
-      - gtm-engineering
-    description:
-      When the user wants to build GTM automation with code, design workflow
-      architectures, use AI agents for GTM tasks, or implement the 'architecture over
-      tools' principle. Also use when the user mentions 'GTM engineering,' 'GTM automation,'
-      'n8n,' 'Make,' 'Zapier,' 'workflow automation,' 'Clay API,' 'instruction stacks,'
-      'AI agents for GTM,' or 'revenue automation.' This skill covers technical GTM
-      infrastructure from workflow design through agent orchestration. Do NOT use for
-      technical implementation, code review, or software architecture.
-  - name:
-      - create-adr
-    description:
-      Creates Architecture Decision Records (ADRs) to document significant
-      architectural choices and their rationale for future team members. Use when the
-      user says "write an ADR", "document this decision", "record why we chose X", "add
-      an architecture decision record", "create an ADR for", or wants to capture the
-      reasoning behind a technical choice so the team understands it later. Do NOT use
-      when the decision hasn't been made yet (use create-rfc instead), for implementation
-      planning (use technical-design-doc-creator), or for general documentation.
-  - name:
-      - react-best-practices
-    description:
-      React and Next.js performance optimization guidelines from Vercel Engineering.
-      Use when writing, reviewing, or refactoring React/Next.js code to ensure optimal
-      performance patterns. Triggers on tasks involving React components, Next.js pages,
-      data fetching, bundle optimization, or performance improvements. Do NOT use for
-      component API architecture or composition patterns (use react-composition-patterns
-      instead).
-  - name:
-      - gtm-metrics
-    description:
-      When the user wants to define GTM metrics, build a metrics dashboard,
-      measure pipeline efficiency, or track AI product performance. Also use when the
-      user mentions 'GTM metrics,' 'revenue latency,' 'pipeline metrics,' 'TTFV,' 'time-to-first-value,'
-      'data health,' 'attribution,' 'conversion rate,' 'CAC,' 'LTV,' 'NRR,' 'GTM dashboard,'
-      'magic number,' 'pipeline velocity,' or 'funnel metrics.' This skill covers GTM
-      measurement from metric selection through dashboard design, including AI-specific
-      cost metrics, attribution models, and weekly review cadences. Do NOT use for technical
-      implementation, code review, or software architecture.
-  - name:
-      - skill-architect
-    description:
-      Expert guide for designing and building high-quality skills from scratch
-      through structured conversation. Use when someone wants to create a new skill,
-      build a skill, design a skill, or asks for help making Agents do something consistently.
-      Also use when someone says "turn this into a skill", "I want to automate this
-      workflow", "how do I teach my Agent to do X", or mentions creating SKILL.md files.
-      Covers standalone skills and MCP-enhanced workflows. Do NOT use for creating subagents
-      (use subagent-creator) or technical design documents (use create-technical-design-doc).
-  - name:
-      - create-task-spec
-    description:
-      A skill for creating structured task specifications based on detailed
-      analysis of the provided task description. Use this skill to generate comprehensive
-      technical specifications that will serve as input for task-master, ensuring that
-      all necessary context, relevant files, code snippets, and a clear action plan
-      are included to facilitate efficient task implementation.
-  - name:
-      - keycloak-docs-index
-    description:
-      'Keycloak Documentation Index. Use this skill whenever the user asks
-      about Keycloak features, configuration, deployment, security, monitoring, or any
-      other Keycloak-related topic. This skill provides a structured index of official
-      Keycloak documentation with direct links to complete guides, allowing agents to
-      quickly navigate and access the full documentation context needed for any Keycloak
-      task. Always refer to this index when helping with Keycloak setup, configuration,
-      troubleshooting, or best practices - even if the user doesn''t explicitly mention
-      "documentation" or "guide".
+    '
+- name:
+  - execute-task
+  description: 'Execute a specified task by reading detailed specifications, analyzing
+    requirements, planning the approach, and implementing step-by-step. Use this skill
+    when: you have a task specification file or task ID that needs completion; the
+    task is multi-step, involves architecture decisions, or requires tool orchestration;
+    you need to track progress across subtasks and delegate work to specialist agents.
+    Triggers on task execution requests, implementation assignments, feature builds,
+    bug fixes, refactoring projects, or when a user provides a task spec .md file.
+    Always use this skill for complex development work rather than tackling it directly
+    —delegate to specialists and maintain progress visibility with task tracking.'
+- name:
+  - golang-style-guide
+  description: 'Conventions and best practices for writing readable, maintainable
+    Go code based on the Google Go Style Guide. Use this skill when: Writing new Go
+    packages, services, or command-line tools. Refactoring Go code to improve clarity
+    and maintainability. Enforcing idiomatic Go naming, formatting, and structure.
+    Designing APIs and libraries for long-term maintainability. Avoiding unnecessary
+    abstraction or complexity in Go programs.'
+- name:
+  - my-golang-testing
+  description: Go testing patterns including table-driven tests, subtests, benchmarks,
+    fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
+- name:
+  - my-golang-patterns
+  description: Idiomatic Go patterns, best practices, and conventions for building
+    robust, efficient, and maintainable Go applications.
+- name:
+  - spec-to-requirements-table
+  description: Derive a flat, self-contained requirements review table from a feature's
+    spec.md, design.md and tasks.md — one row per acceptance criterion, tagged success
+    or error path — so a non-implementer can scan it and judge whether each rule makes
+    sense. Use when the user says "the spec is too technical", "quero uma tabela de
+    requisitos", "make a requirements table", "review sheet for these requirements",
+    "listar os requisitos para revisar", or supplies a table template and asks to
+    fill it from an existing spec. Do NOT use for authoring the spec, design or tasks
+    themselves, for generating test code, or for implementation planning.
+- name:
+  - react-composition-patterns
+  description: React composition patterns that scale. Use when refactoring components
+    with boolean prop proliferation, building flexible component libraries, or designing
+    reusable APIs. Triggers on tasks involving compound components, render props,
+    context providers, or component architecture. Includes React 19 API changes. Do
+    NOT use for React/Next.js performance optimization (use react-best-practices instead).
+- name:
+  - codenavi
+  description: Your pathfinder for navigating unknown codebases. Investigates with
+    precision, implements surgically, and never assumes — if it doesn't know, it says
+    so. Maintains a .notebook/ knowledge base that grows across sessions, turning
+    every discovery into lasting intelligence. Summons available skills, MCPs, and
+    docs when the mission demands. Use when fixing bugs, implementing features, refactoring,
+    investigating flows, or any development task in unfamiliar territory. Triggers
+    on "fix this", "implement this", "how does this work", "investigate this flow",
+    "help me with this code". Do NOT use for greenfield scaffolding, CI/CD, or infrastructure
+    provisioning.
+- name:
+  - frontend-blueprint
+  description: AI frontend specialist and design consultant that guides users through
+    a structured discovery process before generating any code. Collects visual references,
+    design tokens, typography, icons, layout preferences, and brand guidelines to
+    ensure the final output matches the user's vision with high fidelity. Use when
+    the user asks to build, design, create, or improve any frontend interface — websites,
+    landing pages, dashboards, components, apps, emails, forms, modals, or any UI
+    element. Also triggers on "build me a UI", "design a page", "create a component",
+    "improve this layout", "make this look better", "frontend", "interface", "redesign",
+    or when the user provides mockups, screenshots, or design references. Do NOT use
+    for backend logic, API design, database schemas, or non-visual code tasks.
+- name:
+  - tlc-spec-driven
+  description: Feature planning and implementation with 4 adaptive phases (Specify,
+    Design, Tasks, Execute). Auto-sizes depth by complexity. Writes testable requirements
+    in EARS notation, atomic tasks, atomic Conventional Commits, and requirement traceability.
+    Ships deterministic Python validation scripts so structural gates are enforced
+    by code, not memory. Features an independent Verifier (author != verifier, evidence-or-zero),
+    a discrimination sensor, a decision log (STATE.md), a test-coverage matrix, and
+    a self-improving lessons layer. Stack-agnostic and tool-agnostic. Use when (1)
+    planning features, (2) implementing with verification and atomic commits, (3)
+    validating an implementation against a spec. Triggers on "specify feature", "discuss
+    feature", "design", "tasks", "implement", "validate", "verify work", "UAT", "record
+    decision", "pause work", "resume work". Do NOT use for pure architecture decomposition
+    analysis or standalone technical design documents.
+- name:
+  - figma-implement-design
+  description: Translate Figma nodes into production-ready code with 1:1 visual fidelity
+    using the Figma MCP workflow (design context, screenshots, assets, and project-convention
+    translation). Use when the user provides Figma URLs or node IDs and asks to implement
+    designs or components that must match Figma specs. Requires a working Figma MCP
+    server connection. Do NOT use for general Figma data fetching, variable exploration,
+    or MCP troubleshooting (use figma instead).
+- name:
+  - create-rfc
+  description: Creates structured Request for Comments (RFC) documents for proposing
+    and deciding on significant changes. Use when the user says "write an RFC", "create
+    a proposal", "I need to propose a change", "draft an RFC", "document a decision",
+    or needs stakeholder alignment before making a major technical or process decision.
+    Do NOT use for TDDs/implementation docs (use technical-design-doc-creator instead),
+    README files, or general documentation.
+- name:
+  - subagent-creator
+  description: Guide for creating AI subagents with isolated context for complex multi-step
+    workflows. Use when users want to create a subagent, specialized agent, verifier,
+    debugger, or orchestrator that requires isolated context and deep specialization.
+    Works with any agent that supports subagent delegation. Triggers on "create subagent",
+    "new agent", "specialized assistant", "create verifier". Do NOT use for Cursor-specific
+    subagents (use cursor-subagent-creator instead).
+- name:
+  - domain-analysis
+  description: Maps business domains and suggests service boundaries in any codebase
+    using DDD Strategic Design. Use when asking "what are the domains in this codebase?",
+    "where should I draw service boundaries?", "identify bounded contexts", "classify
+    subdomains", "DDD analysis", or analyzing domain cohesion. Do NOT use for grouping
+    existing components into domains (use domain-identification-grouping) or dependency
+    analysis (use coupling-analysis).
+- name:
+  - gh-address-comments
+  description: Address review and issue comments on the open GitHub PR for the current
+    branch using gh CLI. Use when user says "address PR comments", "fix review feedback",
+    "respond to PR review", or "handle PR comments". Verifies gh auth first and prompts
+    to authenticate if not logged in. Do NOT use for creating PRs, CI debugging (use
+    gh-fix-ci), or general Git operations.
+- name:
+  - perf-web-optimization
+  description: 'Optimize web performance: bundle size, images, caching, lazy loading,
+    and overall page speed. Use when site is slow, reducing bundle size, fixing layout
+    shifts, improving Time to Interactive, or optimizing for Lighthouse scores. Triggers
+    on: web performance, bundle size, page speed, slow site, lazy loading. Do NOT
+    use for Core Web Vitals-specific fixes (use core-web-vitals), running Lighthouse
+    audits (use perf-lighthouse), or Astro-specific optimization (use perf-astro).'
+- name:
+  - mermaid-studio
+  description: Expert Mermaid diagram creation, validation, and rendering with dual-engine
+    output (SVG/PNG/ASCII). Supports all 20+ diagram types including C4 architecture,
+    AWS architecture-beta with service icons, flowcharts, sequence, ERD, state, class,
+    mindmap, timeline, git graph, sankey, and more. Features code-to-diagram analysis,
+    batch rendering, 15+ themes, and syntax validation. Use when users ask to create
+    diagrams, visualize architecture, render mermaid files, generate ASCII diagrams,
+    document system flows, model databases, draw AWS infrastructure, analyze code
+    structure, or anything involving "mermaid", "diagram", "flowchart", "architecture
+    diagram", "sequence diagram", "ERD", "C4", "ASCII diagram". Do NOT use for non-Mermaid
+    image generation, data plotting with chart libraries, or general documentation
+    writing.
+- name:
+  - modular-decomposition
+  description: Runs a sequenced monolith-to-modular pipeline that sizes and inventories
+    components, finds shared domain duplication, addresses flattening and hierarchy
+    issues, analyzes coupling, then groups components into candidate domain-aligned
+    units, with optional embedded DDD strategic analysis for bounded contexts. Use
+    when asking how to split a monolith, size components before extraction, find duplicated
+    domain logic, clean up module hierarchy, measure coupling between modules, or
+    group components into services. Do NOT use for phased extraction roadmaps or prioritization
+    without the prior analysis steps (use decomposition-planning-roadmap after this
+    pipeline), end-to-end legacy migration strategy writeups (use legacy-migration-planner),
+    pure infrastructure capacity sizing, or when you only need DDD without the structural
+    pipeline (install domain-analysis standalone).
+- name:
+  - the-fool
+  description: Use when challenging ideas, plans, decisions, or proposals. Invoke
+    to play devil's advocate, run a pre-mortem, red team, stress test assumptions,
+    audit evidence quality, or find blind spots before committing. Do NOT use for
+    building plans, making decisions, or generating solutions — this skill only challenges
+    and critiques. For a multi-agent panel that challenges and then commits to a verdict,
+    use the-jury.
+- name:
+  - jira-assistant
+  description: Manage Jira issues via Atlassian MCP — search, create, update, transition
+    status, and handle sprint tasks. Auto-detects workspace configuration. Use when
+    user says "create a Jira ticket", "update my sprint", "check Jira status", "transition
+    this issue", "search Jira", or "move ticket to done". Do NOT use for Confluence
+    pages (use confluence-assistant).
+- name:
+  - coupling-analysis
+  description: Analyzes coupling between modules using the three-dimensional model
+    (strength, distance, volatility) from "Balancing Coupling in Software Design".
+    Use when asking "are these modules too coupled?", "show me dependencies", "analyze
+    integration quality", "which modules should I decouple?", "coupling report", or
+    evaluating architectural health. Do NOT use for domain boundary analysis (use
+    domain-analysis) or component sizing (use component-identification-sizing).
+- name:
+  - security-best-practices
+  description: Perform language and framework specific security best-practice reviews
+    and suggest improvements. Use when the user explicitly requests security best
+    practices guidance, a security review or report, or secure-by-default coding help.
+    Supports Python, JavaScript/TypeScript, and Go. Do NOT use for general code review,
+    debugging, threat modeling (use security-threat-model), or non-security tasks.
+- name:
+  - gh-fix-ci
+  description: Use when a user asks to debug or fix failing GitHub PR checks that
+    run in GitHub Actions. Uses `gh` to inspect checks and logs, summarize failure
+    context, draft a fix plan, and implement only after explicit approval. Treats
+    external providers (for example Buildkite) as out of scope and reports only the
+    details URL. Do NOT use for addressing PR review comments (use gh-address-comments)
+    or general CI outside GitHub Actions.
+- name:
+  - seo
+  description: Optimize for search engine visibility and ranking. Use when asked to
+    "improve SEO", "optimize for search", "fix meta tags", "add structured data",
+    "sitemap optimization", or "search engine optimization". Do NOT use for accessibility
+    (use web-accessibility), performance (use core-web-vitals), or comprehensive site
+    audits covering multiple areas (use web-quality-audit).
+- name:
+  - legacy-migration-planner
+  description: Use when planning legacy system migrations, codebase modernization,
+    monolith decomposition, microservices consolidation, cross-language rewrites,
+    or framework upgrades. Invoke for strangler fig pattern, incremental migration
+    strategy, or refactoring roadmaps. Do NOT use for domain analysis (use domain-analysis),
+    component sizing (use component-identification-sizing), or step-by-step decomposition
+    plans (use decomposition-planning-roadmap).
+- name:
+  - gtm-engineering
+  description: When the user wants to build GTM automation with code, design workflow
+    architectures, use AI agents for GTM tasks, or implement the 'architecture over
+    tools' principle. Also use when the user mentions 'GTM engineering,' 'GTM automation,'
+    'n8n,' 'Make,' 'Zapier,' 'workflow automation,' 'Clay API,' 'instruction stacks,'
+    'AI agents for GTM,' or 'revenue automation.' This skill covers technical GTM
+    infrastructure from workflow design through agent orchestration. Do NOT use for
+    technical implementation, code review, or software architecture.
+- name:
+  - create-adr
+  description: Creates Architecture Decision Records (ADRs) to document significant
+    architectural choices and their rationale for future team members. Use when the
+    user says "write an ADR", "document this decision", "record why we chose X", "add
+    an architecture decision record", "create an ADR for", or wants to capture the
+    reasoning behind a technical choice so the team understands it later. Do NOT use
+    when the decision hasn't been made yet (use create-rfc instead), for implementation
+    planning (use technical-design-doc-creator), or for general documentation.
+- name:
+  - react-best-practices
+  description: React and Next.js performance optimization guidelines from Vercel Engineering.
+    Use when writing, reviewing, or refactoring React/Next.js code to ensure optimal
+    performance patterns. Triggers on tasks involving React components, Next.js pages,
+    data fetching, bundle optimization, or performance improvements. Do NOT use for
+    component API architecture or composition patterns (use react-composition-patterns
+    instead).
+- name:
+  - gtm-metrics
+  description: When the user wants to define GTM metrics, build a metrics dashboard,
+    measure pipeline efficiency, or track AI product performance. Also use when the
+    user mentions 'GTM metrics,' 'revenue latency,' 'pipeline metrics,' 'TTFV,' 'time-to-first-value,'
+    'data health,' 'attribution,' 'conversion rate,' 'CAC,' 'LTV,' 'NRR,' 'GTM dashboard,'
+    'magic number,' 'pipeline velocity,' or 'funnel metrics.' This skill covers GTM
+    measurement from metric selection through dashboard design, including AI-specific
+    cost metrics, attribution models, and weekly review cadences. Do NOT use for technical
+    implementation, code review, or software architecture.
+- name:
+  - skill-architect
+  description: Expert guide for designing and building high-quality skills from scratch
+    through structured conversation. Use when someone wants to create a new skill,
+    build a skill, design a skill, or asks for help making Agents do something consistently.
+    Also use when someone says "turn this into a skill", "I want to automate this
+    workflow", "how do I teach my Agent to do X", or mentions creating SKILL.md files.
+    Covers standalone skills and MCP-enhanced workflows. Do NOT use for creating subagents
+    (use subagent-creator) or technical design documents (use create-technical-design-doc).
+- name:
+  - create-task-spec
+  description: A skill for creating structured task specifications based on detailed
+    analysis of the provided task description. Use this skill to generate comprehensive
+    technical specifications that will serve as input for task-master, ensuring that
+    all necessary context, relevant files, code snippets, and a clear action plan
+    are included to facilitate efficient task implementation.
+- name:
+  - keycloak-docs-index
+  description: 'Keycloak Documentation Index. Use this skill whenever the user asks
+    about Keycloak features, configuration, deployment, security, monitoring, or any
+    other Keycloak-related topic. This skill provides a structured index of official
+    Keycloak documentation with direct links to complete guides, allowing agents to
+    quickly navigate and access the full documentation context needed for any Keycloak
+    task. Always refer to this index when helping with Keycloak setup, configuration,
+    troubleshooting, or best practices - even if the user doesn''t explicitly mention
+    "documentation" or "guide".
 
-      '
-  - name:
-      - analyze-comfyui-workflow-json
-    description:
-      Analyze a ComfyUI workflow JSON and produce a structured map of nodes,
-      links, subgraphs, and data flow before making changes. Use when user says "analyze
-      this workflow", "map this comfyui json", "understand this workflow", "analise
-      esse workflow", "what does this workflow do", or needs to audit node types, trace
-      IMAGE/VIDEO/MODEL chains, or extract parameter values from a .json workflow file.
-      Do NOT use for editing workflow files, general JSON parsing, non-ComfyUI JSON
-      files, or generating new workflows.
-  - name:
-      - ste-pt
-    description:
-      'Rewrite, review, or check Portuguese text against ASD-STE100 (Simplified
-      Technical English) by translating through English and back. Use whenever the user
-      asks to check or rewrite Portuguese text for "STE", "ASD-STE100", "inglês técnico
-      simplificado", or similar, and wants the final result in Portuguese. Delegates
-      the actual rule/dictionary checking to the `ste` skill — do NOT reimplement STE
-      rules or dictionary lookups here. Do NOT use this skill if the user wants the
-      output in English (use `ste` directly).
+    '
+- name:
+  - analyze-comfyui-workflow-json
+  description: Analyze a ComfyUI workflow JSON and produce a structured map of nodes,
+    links, subgraphs, and data flow before making changes. Use when user says "analyze
+    this workflow", "map this comfyui json", "understand this workflow", "analise
+    esse workflow", "what does this workflow do", or needs to audit node types, trace
+    IMAGE/VIDEO/MODEL chains, or extract parameter values from a .json workflow file.
+    Do NOT use for editing workflow files, general JSON parsing, non-ComfyUI JSON
+    files, or generating new workflows.
+- name:
+  - ste-pt
+  description: 'Rewrite, review, or check Portuguese text against ASD-STE100 (Simplified
+    Technical English) by translating through English and back. Use whenever the user
+    asks to check or rewrite Portuguese text for "STE", "ASD-STE100", "inglês técnico
+    simplificado", or similar, and wants the final result in Portuguese. Delegates
+    the actual rule/dictionary checking to the `ste` skill — do NOT reimplement STE
+    rules or dictionary lookups here. Do NOT use this skill if the user wants the
+    output in English (use `ste` directly).
 
-      '
-  - name:
-      - tailwind-config-conformance
-    description:
-      "Validate and refactor Tailwind CSS classes to conform with project's
-      tailwind.config definitions.
+    '
+- name:
+  - tailwind-config-conformance
+  description: 'Validate and refactor Tailwind CSS classes to conform with project''s
+    tailwind.config definitions.
 
-      Use this skill whenever: agents or developers generate Tailwind classes without
-      checking the config file;
+    Use this skill whenever: agents or developers generate Tailwind classes without
+    checking the config file;
 
-      you need to enforce consistency with custom theme extensions;
+    you need to enforce consistency with custom theme extensions;
 
-      you want to replace arbitrary or ad-hoc classes with officially configured alternatives;
+    you want to replace arbitrary or ad-hoc classes with officially configured alternatives;
 
-      you're reviewing code and need to ensure all utility classes match the tailwind.config
-      (colors, spacing, typography, etc.);
+    you''re reviewing code and need to ensure all utility classes match the tailwind.config
+    (colors, spacing, typography, etc.);
 
-      you want to migrate code to use only valid config-defined classes instead of free-form
-      utilities.
+    you want to migrate code to use only valid config-defined classes instead of free-form
+    utilities.
 
-      Works with React, Vue, HTML, Svelte, and any code containing Tailwind classes.
-      Automatically discovers tailwind.config.js/ts
+    Works with React, Vue, HTML, Svelte, and any code containing Tailwind classes.
+    Automatically discovers tailwind.config.js/ts
 
-      and validates against both built-in Tailwind defaults and custom extensions defined
-      in the config.
+    and validates against both built-in Tailwind defaults and custom extensions defined
+    in the config.
 
-      "
-  - name:
-      - typescript-style-guide
-    description:
-      "Conventions and best practices for writing maintainable TypeScript
-      code based on the Google TypeScript Style Guide. Use this skill when writing new
-      TypeScript modules or services, refactoring TypeScript code to improve readability
-      and maintainability, enforcing consistent naming, typing, and formatting conventions,
-      designing strongly typed APIs, interfaces, and classes, avoiding unsafe patterns
-      such as `any`, prototype modification, or loose equality, structuring large TypeScript
-      codebases with predictable patterns, and implementing safe and maintainable code
-      in Node.js or browser TypeScript projects. Emphasizes strong typing, clear naming
-      conventions, strict equality usage, minimal visibility exposure, avoiding dangerous
-      JavaScript features, and consistent formatting. Reference: https://google.github.io/styleguide/tsguide.html"
-  - name:
-      - skill-description-generator
-    description:
-      Generate skill description fields that trigger correctly with specific
-      phrases and clear negatives. Use when creating new skills and need description
-      copy following trigger rules. Do NOT use for entire SKILL.md files, architecture
-      docs, or non-description content.
-  - name:
-      - mutation-survivor-triage
-    description:
-      Triage Stryker mutation testing survivors (mutation-report.json) into
-      false negatives (log-only/metadata mutants with no observable behavior) vs real
-      coverage gaps (mutants affecting return values, thrown errors, persisted data,
-      or side-effecting branches). Produces a per-file consolidated table of gaps with
-      concrete test recommendations, and maps false negatives to Stryker's native suppression
-      mechanisms (disable comments, mutate globs). Use when the user says "triage mutation
-      survivors", "review Stryker report", "why did these mutants survive", "reduce
-      mutation testing false negatives", or shares a Stryker JSON/HTML report asking
-      what to fix. Do NOT use for writing tests from scratch (use tdd-workflow), for
-      non-Stryker mutation tools without adapting the jq queries first, or for general
-      test coverage gap analysis unrelated to mutation testing (use coverage-gap-audit).
-  - name:
-      - agent-creator
-    description:
-      Create new specialist agents, modify and improve existing agents, and
-      validate agent behavior. Use when users want to create a custom agent from scratch,
-      edit or optimize an existing agent, test an agent against realistic prompts, or
-      improve an agent's description and instructions. Triggers on phrases like "create
-      an agent for X", "make a specialist agent that does Y", "build me an agent for
-      Z", "improve this agent", "update agent instructions", "add a new agent", or whenever
-      a new autonomous specialist role needs to be defined. Always use this skill when
-      the work involves writing or editing .agent.md files, even if the user just says
-      "I need something that specializes in X".
-  - name:
-      - handling-large-files
-    description:
-      Strategies for reading, chunking, and processing files that exceed
-      practical token limits. Covers streaming reads, selective extraction, summarization-before-analysis,
-      and memory-efficient patterns for large codebases, logs, or datasets. Use whenever
-      a file or set of files is too large to fit in context at once. Do NOT use for
-      normally-sized files — adds unnecessary overhead.
-  - name:
-      - ste
-    description:
-      'Rewrite, review, or check text against ASD-STE100 (Simplified Technical
-      English), the aerospace/defense controlled-language specification. Use this skill
-      whenever the user asks to write, rewrite, or review text in "Simplified Technical
-      English", "STE", "ASD-STE100", or asks to check a document for unapproved words
-      / non-STE constructions. Also use when the user pastes technical/maintenance/procedural
-      text and asks to simplify it for non-native English readers, or asks about STE
-      dictionary approval status of a specific word. Do NOT use for general plain-language
-      editing unrelated to the STE spec.
+    '
+- name:
+  - typescript-style-guide
+  description: 'Conventions and best practices for writing maintainable TypeScript
+    code based on the Google TypeScript Style Guide. Use this skill when writing new
+    TypeScript modules or services, refactoring TypeScript code to improve readability
+    and maintainability, enforcing consistent naming, typing, and formatting conventions,
+    designing strongly typed APIs, interfaces, and classes, avoiding unsafe patterns
+    such as `any`, prototype modification, or loose equality, structuring large TypeScript
+    codebases with predictable patterns, and implementing safe and maintainable code
+    in Node.js or browser TypeScript projects. Emphasizes strong typing, clear naming
+    conventions, strict equality usage, minimal visibility exposure, avoiding dangerous
+    JavaScript features, and consistent formatting. Reference: https://google.github.io/styleguide/tsguide.html'
+- name:
+  - skill-description-generator
+  description: Generate skill description fields that trigger correctly with specific
+    phrases and clear negatives. Use when creating new skills and need description
+    copy following trigger rules. Do NOT use for entire SKILL.md files, architecture
+    docs, or non-description content.
+- name:
+  - mutation-survivor-triage
+  description: Triage Stryker mutation testing survivors (mutation-report.json) into
+    false negatives (log-only/metadata mutants with no observable behavior) vs real
+    coverage gaps (mutants affecting return values, thrown errors, persisted data,
+    or side-effecting branches). Produces a per-file consolidated table of gaps with
+    concrete test recommendations, and maps false negatives to Stryker's native suppression
+    mechanisms (disable comments, mutate globs). Use when the user says "triage mutation
+    survivors", "review Stryker report", "why did these mutants survive", "reduce
+    mutation testing false negatives", or shares a Stryker JSON/HTML report asking
+    what to fix. Do NOT use for writing tests from scratch (use tdd-workflow), for
+    non-Stryker mutation tools without adapting the jq queries first, or for general
+    test coverage gap analysis unrelated to mutation testing (use coverage-gap-audit).
+- name:
+  - agent-creator
+  description: Create new specialist agents, modify and improve existing agents, and
+    validate agent behavior. Use when users want to create a custom agent from scratch,
+    edit or optimize an existing agent, test an agent against realistic prompts, or
+    improve an agent's description and instructions. Triggers on phrases like "create
+    an agent for X", "make a specialist agent that does Y", "build me an agent for
+    Z", "improve this agent", "update agent instructions", "add a new agent", or whenever
+    a new autonomous specialist role needs to be defined. Always use this skill when
+    the work involves writing or editing .agent.md files, even if the user just says
+    "I need something that specializes in X".
+- name:
+  - handling-large-files
+  description: Strategies for reading, chunking, and processing files that exceed
+    practical token limits. Covers streaming reads, selective extraction, summarization-before-analysis,
+    and memory-efficient patterns for large codebases, logs, or datasets. Use whenever
+    a file or set of files is too large to fit in context at once. Do NOT use for
+    normally-sized files — adds unnecessary overhead.
+- name:
+  - ste
+  description: 'Rewrite, review, or check text against ASD-STE100 (Simplified Technical
+    English), the aerospace/defense controlled-language specification. Use this skill
+    whenever the user asks to write, rewrite, or review text in "Simplified Technical
+    English", "STE", "ASD-STE100", or asks to check a document for unapproved words
+    / non-STE constructions. Also use when the user pastes technical/maintenance/procedural
+    text and asks to simplify it for non-native English readers, or asks about STE
+    dictionary approval status of a specific word. Do NOT use for general plain-language
+    editing unrelated to the STE spec.
 
-      '
-  - name:
-      - scan-codebase-rules-ai-memory
-    description:
-      Scan the current repo's structure, config files, and code to extract
-      concrete conventions (lint/format rules, naming, folder layout, commit style,
-      CI checks, testing conventions) and persist them as durable rule pages in ai-memory
-      for future sessions. Use when the user says "scan codebase for rules", "extract
-      conventions", "analyze repo and save to memory", "gera regras da codebase", or
-      "cria regras no ai memory". Do NOT use for one-off code questions, business-logic/architecture
-      deep dives (use codenavi), or bug diagnosis (use diagnosing-bugs).
-  - name:
-      - mcp-manager-instructions
-    description:
-      Provide practical guidance for discovering available MCP tools, understanding
-      their schemas, and executing them using mcp-manager. Use when user says "how do
-      I use mcp-manager", "what MCP tools are available", "explain mcp-manager workflow",
-      "how do I discover tools", or needs help with MCP tool discovery and execution.
-      Do NOT use for actual tool execution (call the MCP manager tool directly), implementing
-      new MCP servers, or discovering non-MCP tools.
-  - name:
-      - compress-skill
-    description:
-      Compresses a verbose SKILL.md into a short, scannable core file by
-      moving prose into tables, mermaid flowcharts, and reference files — without losing
-      technical substance. Use when a SKILL.md has grown long (200+ lines of numbered
-      prose, repeated Notes sections, verbatim templates inline) and the user asks to
-      make it 'shorter but still effective', 'more direct', 'use tables/lists/graphs',
-      'split into reference files', or 'compress this skill'. Do NOT use for creating
-      a new skill from scratch (use skill-creator/skill-architect) or for editing skill
-      description-field triggering copy only (use skill-description-generator).
-  - name:
-      - extract-software-requirements
-    description:
-      Extracts and consolidates software requirements from a project's Claude
-      Code session transcripts, git commit history, and formal spec/PRD markdown files
-      into a single traceable RF-xxx/RNF-xxx requirements document with an explicit
-      unresolved-conflicts section. Use when the user asks to "extract requirements
-      from this project", "generate a requirements doc from commits", "extract requirements
-      from transcripts", "consolidate PRD and specs into one doc", "what requirements
-      were implemented vs still pending", or wants a cross-source requirements audit
-      with traceability between conversations, code history, and formal specs. Do NOT
-      use for writing a brand-new PRD from scratch with no existing project history
-      (use prd-generator instead), or for pure implicit-requirement gap analysis on
-      a single already-written PRD (use prd-get-implicit-requirements instead).
-  - name:
-      - codebase-rules-extractor
-    description:
-      Extract and document coding rules, patterns, conventions, and anti-patterns
-      from a codebase. Maps the code structure, identifies what to do and what to avoid
-      when creating new code, and generates a comprehensive rules reference document.
-  - name:
-      - mermaid-erd
-    description:
-      'Generate, render, and explain Mermaid Entity Relationship Diagrams
-      (ERD) using erDiagram syntax. Use this skill whenever the user wants to model
-      database schemas, data models, relational structures, or entity relationships.
-      Triggers include: "ER diagram", "ERD", "entity relationship", "database schema",
-      "data model", "draw my tables", "show table relationships", "model the database",
-      "schema diagram", "foreign key diagram", or any request to visualize how data
-      entities relate to each other. Also use when a user shares SQL DDL, ORM models,
-      or describes tables/entities and wants a diagram. Proactively use this skill whenever
-      database design, relational modeling, or schema visualization is involved — even
-      if the user doesn''t say "ERD" or "Mermaid".
+    '
+- name:
+  - scan-codebase-rules-ai-memory
+  description: Scan the current repo's structure, config files, and code to extract
+    concrete conventions (lint/format rules, naming, folder layout, commit style,
+    CI checks, testing conventions) and persist them as durable rule pages in ai-memory
+    for future sessions. Use when the user says "scan codebase for rules", "extract
+    conventions", "analyze repo and save to memory", "gera regras da codebase", or
+    "cria regras no ai memory". Do NOT use for one-off code questions, business-logic/architecture
+    deep dives (use codenavi), or bug diagnosis (use diagnosing-bugs).
+- name:
+  - mcp-manager-instructions
+  description: Provide practical guidance for discovering available MCP tools, understanding
+    their schemas, and executing them using mcp-manager. Use when user says "how do
+    I use mcp-manager", "what MCP tools are available", "explain mcp-manager workflow",
+    "how do I discover tools", or needs help with MCP tool discovery and execution.
+    Do NOT use for actual tool execution (call the MCP manager tool directly), implementing
+    new MCP servers, or discovering non-MCP tools.
+- name:
+  - compress-skill
+  description: Compresses a verbose SKILL.md into a short, scannable core file by
+    moving prose into tables, mermaid flowcharts, and reference files — without losing
+    technical substance. Use when a SKILL.md has grown long (200+ lines of numbered
+    prose, repeated Notes sections, verbatim templates inline) and the user asks to
+    make it 'shorter but still effective', 'more direct', 'use tables/lists/graphs',
+    'split into reference files', or 'compress this skill'. Do NOT use for creating
+    a new skill from scratch (use skill-creator/skill-architect) or for editing skill
+    description-field triggering copy only (use skill-description-generator).
+- name:
+  - extract-software-requirements
+  description: Extracts and consolidates software requirements from a project's Claude
+    Code session transcripts, git commit history, and formal spec/PRD markdown files
+    into a single traceable RF-xxx/RNF-xxx requirements document with an explicit
+    unresolved-conflicts section. Use when the user asks to "extract requirements
+    from this project", "generate a requirements doc from commits", "extract requirements
+    from transcripts", "consolidate PRD and specs into one doc", "what requirements
+    were implemented vs still pending", or wants a cross-source requirements audit
+    with traceability between conversations, code history, and formal specs. Do NOT
+    use for writing a brand-new PRD from scratch with no existing project history
+    (use prd-generator instead), or for pure implicit-requirement gap analysis on
+    a single already-written PRD (use prd-get-implicit-requirements instead).
+- name:
+  - codebase-rules-extractor
+  description: Extract and document coding rules, patterns, conventions, and anti-patterns
+    from a codebase. Maps the code structure, identifies what to do and what to avoid
+    when creating new code, and generates a comprehensive rules reference document.
+- name:
+  - mermaid-erd
+  description: 'Generate, render, and explain Mermaid Entity Relationship Diagrams
+    (ERD) using erDiagram syntax. Use this skill whenever the user wants to model
+    database schemas, data models, relational structures, or entity relationships.
+    Triggers include: "ER diagram", "ERD", "entity relationship", "database schema",
+    "data model", "draw my tables", "show table relationships", "model the database",
+    "schema diagram", "foreign key diagram", or any request to visualize how data
+    entities relate to each other. Also use when a user shares SQL DDL, ORM models,
+    or describes tables/entities and wants a diagram. Proactively use this skill whenever
+    database design, relational modeling, or schema visualization is involved — even
+    if the user doesn''t say "ERD" or "Mermaid".
 
-      '
-  - name:
-      - technical-decision-helper
-    description:
-      Helps make informed technical decisions by presenting viable options
-      with pros/cons analysis, context searches, and decomposition of complex problems
-      into smaller sub-problems.
-  - name:
-      - generate-pr-description
-    description:
-      Generate structured Pull Request descriptions from git diffs (staged
-      or branch) and commit history. Auto-detects .github/pull_request_template.md;
-      falls back to Description/Impact/Task sections. Use when user says 'generate PR
-      description', 'write PR description', 'create pull request description', 'gera
-      descricao de PR', or 'crie descricao do PR'. Always asks user for output language
-      if not specified. Do NOT use for writing code, reviewing diffs (use code-review),
-      or generating commit messages (use caveman-commit).
-  - name:
-      - prd-get-implicit-requirements
-    description:
-      'Extract implicit requirements from product requirement documents (PRDs),
-      identify coverage gaps across 14 universal categories, and generate clarification
-      questions for stakeholders. Use when user says "analyze PRD for gaps", "extract
-      implicit requirements", "find missing requirements", "what''s not defined in our
-      spec", "identify PRD holes", or "get clarification questions from PRD". Systematically
-      covers: interface states, error handling, navigation, data persistence, network
-      behavior, security, performance, platform behavior, content fallbacks, localization,
-      accessibility, legal compliance, deployment, and observability. Do NOT use for
-      creating PRDs (use tlc-spec-driven), technical design documents, architectural
-      decisions, or test planning.'
-  - name:
-      - taskmaster-overview
-    description:
-      AI-driven task management and project tracking using Task Master. Use
-      when agent needs to initialize projects, parse Product Requirements Documents
-      (PRDs), break down tasks into subtasks, or perform contextual research for technical
-      implementations.
-  - name:
-      - taskmaster-mapper
-    description:
-      Analyzes task lists (.taskmaster/tasks.json or any task/subtask structure)
-      and, for each task and subtask, identifies which skills and agents are most relevant
-      based on the task context, then adds them to the `details` section. Use this skill
-      whenever the user wants to enrich a task file with skill/agent recommendations,
-      wants to know "which agent should handle this task", asks to annotate tasks with
-      tooling context, or says things like "add skills and agents to my tasks", "map
-      agents to tasks", "which skills apply here", "enrich my task spec with agents",
-      or provides a .taskmaster/tasks.json and asks what skills/agents to use. Always
-      trigger this skill when the user wants to associate available skills or specialist
-      agents with a list of tasks or subtasks, even if they phrase it as "who should
-      do this" or "what tool fits each task".
-  - name:
-      - taskmaster-task-validator
-    description:
-      Validate taskmaster tasks against requirements and ensure 100% coverage
-      of all requisites. Use when you need to verify that created tasks fully address
-      all requirements from a PRD or specification. Triggers on phrases like "validate
-      my tasks", "check task coverage", "verify tasks against requirements", "validate
-      task completeness", "ensure tasks meet requirements", or when assessing whether
-      a task structure comprehensively addresses a given specification. This skill will
-      analyze requirements in parallel using isolated subagents to validate different
-      aspects (requirement coverage, task structure, dependencies, traceability, and
-      test adequacy), generate a comprehensive gaps report, and after user approval,
-      iteratively update and improve tasks and subtasks until they meet all parameters.
-  - name:
-      - taskmaster-create-task
-    description:
-      A skill for creating structured task specifications based on detailed
-      analysis of the provided task description. Use this skill to generate comprehensive
-      technical specifications that will serve as input for task-master, ensuring that
-      all necessary context, relevant files, code snippets, and a clear action plan
-      are included to facilitate efficient task implementation.
-  - name:
-      - taskmaster-expand-task
-    description:
-      A skill for expanding existing task specifications with additional
-      details and context. This skill takes a task specification in markdown format
-      and generates an expanded version that includes more comprehensive information,
-      examples, and clarifications to help users better understand the task requirements
-      and expectations.
-  - name:
-      - taskmaster-prd-generator
-    description:
-      'Generate structured Product Requirements Documents (PRDs) for development
-      projects in the `.taskmaster/prds/` directory. Use this skill whenever the user:
-      says "create a PRD", "write requirements", "document this spec", "plan this project",
-      or "help me structure this idea"; pastes a project description, rough notes, or
-      spec file and wants it organized; mentions wanting to run `task-master parse-prd`;
-      or describes a feature, app, or system they want to build — even casually. Trigger
-      on intent to plan or document a project, not just the word "PRD". When in doubt,
-      use this skill.
+    '
+- name:
+  - technical-decision-helper
+  description: Helps make informed technical decisions by presenting viable options
+    with pros/cons analysis, context searches, and decomposition of complex problems
+    into smaller sub-problems.
+- name:
+  - sd-planning
+  description: step-by-step guide to generating a plan.
+- name:
+  - generate-pr-description
+  description: Generate structured Pull Request descriptions from git diffs (staged
+    or branch) and commit history. Auto-detects .github/pull_request_template.md;
+    falls back to Description/Impact/Task sections. Use when user says 'generate PR
+    description', 'write PR description', 'create pull request description', 'gera
+    descricao de PR', or 'crie descricao do PR'. Always asks user for output language
+    if not specified. Do NOT use for writing code, reviewing diffs (use code-review),
+    or generating commit messages (use caveman-commit).
+- name:
+  - prd-get-implicit-requirements
+  description: 'Extract implicit requirements from product requirement documents (PRDs),
+    identify coverage gaps across 14 universal categories, and generate clarification
+    questions for stakeholders. Use when user says "analyze PRD for gaps", "extract
+    implicit requirements", "find missing requirements", "what''s not defined in our
+    spec", "identify PRD holes", or "get clarification questions from PRD". Systematically
+    covers: interface states, error handling, navigation, data persistence, network
+    behavior, security, performance, platform behavior, content fallbacks, localization,
+    accessibility, legal compliance, deployment, and observability. Do NOT use for
+    creating PRDs (use tlc-spec-driven), technical design documents, architectural
+    decisions, or test planning.'
+- name:
+  - taskmaster-overview
+  description: AI-driven task management and project tracking using Task Master. Use
+    when agent needs to initialize projects, parse Product Requirements Documents
+    (PRDs), break down tasks into subtasks, or perform contextual research for technical
+    implementations.
+- name:
+  - taskmaster-mapper
+  description: Analyzes task lists (.taskmaster/tasks.json or any task/subtask structure)
+    and, for each task and subtask, identifies which skills and agents are most relevant
+    based on the task context, then adds them to the `details` section. Use this skill
+    whenever the user wants to enrich a task file with skill/agent recommendations,
+    wants to know "which agent should handle this task", asks to annotate tasks with
+    tooling context, or says things like "add skills and agents to my tasks", "map
+    agents to tasks", "which skills apply here", "enrich my task spec with agents",
+    or provides a .taskmaster/tasks.json and asks what skills/agents to use. Always
+    trigger this skill when the user wants to associate available skills or specialist
+    agents with a list of tasks or subtasks, even if they phrase it as "who should
+    do this" or "what tool fits each task".
+- name:
+  - taskmaster-task-validator
+  description: Validate taskmaster tasks against requirements and ensure 100% coverage
+    of all requisites. Use when you need to verify that created tasks fully address
+    all requirements from a PRD or specification. Triggers on phrases like "validate
+    my tasks", "check task coverage", "verify tasks against requirements", "validate
+    task completeness", "ensure tasks meet requirements", or when assessing whether
+    a task structure comprehensively addresses a given specification. This skill will
+    analyze requirements in parallel using isolated subagents to validate different
+    aspects (requirement coverage, task structure, dependencies, traceability, and
+    test adequacy), generate a comprehensive gaps report, and after user approval,
+    iteratively update and improve tasks and subtasks until they meet all parameters.
+- name:
+  - taskmaster-create-task
+  description: A skill for creating structured task specifications based on detailed
+    analysis of the provided task description. Use this skill to generate comprehensive
+    technical specifications that will serve as input for task-master, ensuring that
+    all necessary context, relevant files, code snippets, and a clear action plan
+    are included to facilitate efficient task implementation.
+- name:
+  - taskmaster-expand-task
+  description: A skill for expanding existing task specifications with additional
+    details and context. This skill takes a task specification in markdown format
+    and generates an expanded version that includes more comprehensive information,
+    examples, and clarifications to help users better understand the task requirements
+    and expectations.
+- name:
+  - taskmaster-prd-generator
+  description: 'Generate structured Product Requirements Documents (PRDs) for development
+    projects in the `.taskmaster/prds/` directory. Use this skill whenever the user:
+    says "create a PRD", "write requirements", "document this spec", "plan this project",
+    or "help me structure this idea"; pastes a project description, rough notes, or
+    spec file and wants it organized; mentions wanting to run `task-master parse-prd`;
+    or describes a feature, app, or system they want to build — even casually. Trigger
+    on intent to plan or document a project, not just the word "PRD". When in doubt,
+    use this skill.
 
-      '
-  - name:
-      - taskmaster-append-tasks
-    description:
-      A skill for appending new tasks to an existing task specification in
-      task-master. Use this skill to enhance and expand the original task specification
-      with additional context, relevant files, code snippets, and a clear action plan
-      for efficient task implementation. This skill is designed to ensure that any new
-      information or requirements are seamlessly integrated into the existing task specification,
-      maintaining a comprehensive and organized structure for task execution.
-  - name:
-      - semantic-commit-message
-    description:
-      Generate Conventional Commit messages in English based on staged git
-      diffs. Use this skill whenever the user asks for a commit message, semantic/Conventional
-      Commits, or wants a commit based on staged changes, even if they just say 'write
-      my commit message' or 'help with commit title'.
-  - name:
-      - prd-generator
-    description:
-      'Generate complete PRD in 15-20min for ANY project using 5-battery
-      question framework. Detects briefing (from context or user input), runs structured
-      Q&A, outputs PRD.md with vision+scope+tech+timeline+KPIs+risks. Use when: "create
-      PRD", "generate PRD for", "build PRD", "need PRD". NOT for: tech spec, design
-      docs, task breakdown.'
-  - name:
-      - srs-generator
-    description:
-      Generates complete Software Requirements Specification (SRS) documents,
-      following the standard template based on ISO/IEC/IEEE 29148:2018. Use this skill
-      whenever the user asks to create, write, generate, or document an SRS, software
-      requirements specification, requirements document, or mentions terms such as "SRS",
-      "software specification", "functional and non-functional requirements", "requirements
-      document", or requests to document a software system/product in a structured way.
-      Also use it when the user provides information about a system and asks to structure
-      it into formal documentation. The skill accepts text descriptions OR spec files,
-      asks targeted clarifying questions to fill information gaps, extracts key requirements,
-      and lets the user review a preview before saving the file with timestamp format
-      at `docs/srs/yyyy-mm-dd-<short-description>.md`
-  - name:
-      - design-image-diff
-    description:
-      'Use this skill whenever the user wants to compare a design mockup/wireframe/Figma
-      screenshot with a frontend implementation screenshot to identify visual differences
-      and generate a list of changes needed. Triggers include: "compare design with
-      implementation", "find differences between design and code", "what''s different
-      from the mockup", "design review", "pixel comparison", "why doesn''t my implementation
-      match the design", "QA visual comparison", "design vs screenshot", or any time
-      two images are provided where one is a design reference and the other is a rendered
-      UI. Always use this skill when the user uploads two images and asks what needs
-      to change to make one look like the other — even if they don''t mention "design"
-      explicitly.
+    '
+- name:
+  - taskmaster-append-tasks
+  description: A skill for appending new tasks to an existing task specification in
+    task-master. Use this skill to enhance and expand the original task specification
+    with additional context, relevant files, code snippets, and a clear action plan
+    for efficient task implementation. This skill is designed to ensure that any new
+    information or requirements are seamlessly integrated into the existing task specification,
+    maintaining a comprehensive and organized structure for task execution.
+- name:
+  - semantic-commit-message
+  description: Generate Conventional Commit messages in English based on staged git
+    diffs. Use this skill whenever the user asks for a commit message, semantic/Conventional
+    Commits, or wants a commit based on staged changes, even if they just say 'write
+    my commit message' or 'help with commit title'.
+- name:
+  - prd-generator
+  description: 'Generate complete PRD in 15-20min for ANY project using 5-battery
+    question framework. Detects briefing (from context or user input), runs structured
+    Q&A, outputs PRD.md with vision+scope+tech+timeline+KPIs+risks. Use when: "create
+    PRD", "generate PRD for", "build PRD", "need PRD". NOT for: tech spec, design
+    docs, task breakdown.'
+- name:
+  - srs-generator
+  description: Generates complete Software Requirements Specification (SRS) documents,
+    following the standard template based on ISO/IEC/IEEE 29148:2018. Use this skill
+    whenever the user asks to create, write, generate, or document an SRS, software
+    requirements specification, requirements document, or mentions terms such as "SRS",
+    "software specification", "functional and non-functional requirements", "requirements
+    document", or requests to document a software system/product in a structured way.
+    Also use it when the user provides information about a system and asks to structure
+    it into formal documentation. The skill accepts text descriptions OR spec files,
+    asks targeted clarifying questions to fill information gaps, extracts key requirements,
+    and lets the user review a preview before saving the file with timestamp format
+    at `docs/srs/yyyy-mm-dd-<short-description>.md`
+- name:
+  - design-image-diff
+  description: 'Use this skill whenever the user wants to compare a design mockup/wireframe/Figma
+    screenshot with a frontend implementation screenshot to identify visual differences
+    and generate a list of changes needed. Triggers include: "compare design with
+    implementation", "find differences between design and code", "what''s different
+    from the mockup", "design review", "pixel comparison", "why doesn''t my implementation
+    match the design", "QA visual comparison", "design vs screenshot", or any time
+    two images are provided where one is a design reference and the other is a rendered
+    UI. Always use this skill when the user uploads two images and asks what needs
+    to change to make one look like the other — even if they don''t mention "design"
+    explicitly.
 
-      '
-  - name:
-      - production-audit
-    description:
-      Local-evidence production readiness audit for shipped apps, pre-launch
-      reviews, post-merge checks, and "what breaks in prod?" questions without sending
-      repo data to an external audit service. Use when auditing production readiness
-      before launch, after a merge, or when asked what breaks in prod.
-  - name:
-      - redis-patterns
-    description:
-      Redis data structure patterns, caching strategies, distributed locks,
-      rate limiting, pub/sub, and connection management for production applications.
-      Use when adding caching, a distributed lock, rate limiting, or pub/sub with Redis,
-      or when key design needs review.
-  - name:
-      - vue-patterns
-    description:
-      Vue.js 3 Composition API patterns, component architecture, reactivity
-      best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns.
-      Activates for Vue, Nuxt, Vite, or Pinia projects. Use when building or reviewing
-      Vue 3, Nuxt, or Pinia code — Composition API, reactivity, or router navigation.
-  - name:
-      - agent-self-evaluation
-    description:
-      Use after completing any non-trivial task. The agent self-rates its
-      output on 5 axes — accuracy, completeness, clarity, actionability, conciseness
-      — with concrete evidence per criterion. Produces a structured 1-5 scorecard with
-      specific improvement suggestions.
-  - name:
-      - database-migrations
-    description:
-      Database migration best practices for schema changes, data migrations,
-      rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common
-      ORMs (Prisma, Drizzle, Kysely, Django, TypeORM, golang-migrate). Use when writing
-      a schema or data migration, planning a rollback, or aiming for zero-downtime deployment.
-  - name:
-      - browser-qa
-    description:
-      Use this skill to automate visual testing and UI interaction verification
-      using browser automation after deploying features.
-  - name:
-      - postgres-patterns
-    description:
-      PostgreSQL database patterns for query optimization, schema design,
-      indexing, and security. Based on Supabase best practices. Use when designing PostgreSQL
-      schemas, indexes, or RLS policies, or when a query is too slow.
-  - name:
-      - mysql-patterns
-    description:
-      MySQL and MariaDB schema, query, indexing, transaction, replication,
-      and connection-pool patterns for production backends. Use when designing MySQL
-      or MariaDB schemas and indexes, or when a query, transaction, or replica lags.
-  - name:
-      - frontend-a11y
-    description:
-      "Accessibility patterns for React and Next.js — semantic HTML, ARIA
-      attributes, form labeling, keyboard navigation, focus management, and screen reader
-      support. Use when building any interactive UI component or form.
+    '
+- name:
+  - production-audit
+  description: Local-evidence production readiness audit for shipped apps, pre-launch
+    reviews, post-merge checks, and "what breaks in prod?" questions without sending
+    repo data to an external audit service. Use when auditing production readiness
+    before launch, after a merge, or when asked what breaks in prod.
+- name:
+  - redis-patterns
+  description: Redis data structure patterns, caching strategies, distributed locks,
+    rate limiting, pub/sub, and connection management for production applications.
+    Use when adding caching, a distributed lock, rate limiting, or pub/sub with Redis,
+    or when key design needs review.
+- name:
+  - vue-patterns
+  description: Vue.js 3 Composition API patterns, component architecture, reactivity
+    best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns.
+    Activates for Vue, Nuxt, Vite, or Pinia projects. Use when building or reviewing
+    Vue 3, Nuxt, or Pinia code — Composition API, reactivity, or router navigation.
+- name:
+  - agent-self-evaluation
+  description: Use after completing any non-trivial task. The agent self-rates its
+    output on 5 axes — accuracy, completeness, clarity, actionability, conciseness
+    — with concrete evidence per criterion. Produces a structured 1-5 scorecard with
+    specific improvement suggestions.
+- name:
+  - database-migrations
+  description: Database migration best practices for schema changes, data migrations,
+    rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common
+    ORMs (Prisma, Drizzle, Kysely, Django, TypeORM, golang-migrate). Use when writing
+    a schema or data migration, planning a rollback, or aiming for zero-downtime deployment.
+- name:
+  - browser-qa
+  description: Use this skill to automate visual testing and UI interaction verification
+    using browser automation after deploying features.
+- name:
+  - postgres-patterns
+  description: PostgreSQL database patterns for query optimization, schema design,
+    indexing, and security. Based on Supabase best practices. Use when designing PostgreSQL
+    schemas, indexes, or RLS policies, or when a query is too slow.
+- name:
+  - mysql-patterns
+  description: MySQL and MariaDB schema, query, indexing, transaction, replication,
+    and connection-pool patterns for production backends. Use when designing MySQL
+    or MariaDB schemas and indexes, or when a query, transaction, or replica lags.
+- name:
+  - frontend-a11y
+  description: 'Accessibility patterns for React and Next.js — semantic HTML, ARIA
+    attributes, form labeling, keyboard navigation, focus management, and screen reader
+    support. Use when building any interactive UI component or form.
 
-      "
-  - name:
-      - autonomous-agent-harness
-    description:
-      Transform Claude Code into a fully autonomous agent system with persistent
-      memory, scheduled operations, computer use, and task queuing. Replaces standalone
-      agent frameworks (Hermes, AutoGPT) by leveraging Claude Code's native crons, dispatch,
-      MCP tools, and memory. Use when the user wants continuous autonomous operation,
-      scheduled tasks, or a self-directing agent loop.
-  - name:
-      - git-workflow
-    description:
-      Git workflow patterns including branching strategies, commit conventions,
-      merge vs rebase, conflict resolution, and collaborative development best practices
-      for teams of all sizes. Use when choosing a branching strategy, writing commit
-      conventions, deciding merge versus rebase, or resolving conflicts.
-  - name:
-      - python-patterns
-    description:
-      Pythonic idioms, PEP 8 standards, type hints, and best practices for
-      building robust, efficient, and maintainable Python applications. Use when writing
-      or reviewing Python code and idiomatic structure, typing, or PEP 8 is in question.
-  - name:
-      - python-testing
-    description:
-      Python testing strategies using pytest, TDD methodology, fixtures,
-      mocking, parametrization, and coverage requirements. Use when writing pytest tests
-      — fixtures, mocks, parametrization, or coverage.
-  - name:
-      - backend-patterns
-    description:
-      Backend architecture patterns, API design, database optimization, and
-      server-side best practices for Node.js, Express, and Next.js API routes. Use when
-      building or reviewing Node.js, Express, or Next.js API routes and their data access.
-  - name:
-      - jira-integration
-    description:
-      Use this skill when retrieving Jira tickets, analyzing requirements,
-      updating ticket status, adding comments, or transitioning issues. Provides Jira
-      API patterns via MCP or direct REST calls.
-  - name:
-      - security-review
-    description:
-      Use this skill when adding authentication, handling user input, working
-      with secrets, creating API endpoints, or implementing payment/sensitive features.
-      Provides comprehensive security checklist and patterns.
-  - name:
-      - deployment-patterns
-    description:
-      Deployment workflows, CI/CD pipeline patterns, Docker containerization,
-      health checks, rollback strategies, and production readiness checklists for web
-      applications. Use when setting up CI/CD, containerizing an app, or checking production
-      readiness before a release.
-  - name:
-      - react-native-patterns
-    description:
-      React Native and Expo app patterns — Expo Router navigation, state
-      separation (server/client/route/form), TanStack Query data fetching with Zod,
-      performant lists, NativeWind/StyleSheet styling, native APIs, and secure storage.
-      Use when building or editing React Native / Expo screens, components, navigation,
-      or data layers.
-  - name:
-      - docker-patterns
-    description:
-      Docker and Docker Compose patterns for local development, hardened
-      CLI installer harnesses, container security, networking, volumes, and multi-service
-      orchestration. Use when creating or reviewing Dockerfiles and Compose services,
-      testing installers across Linux distributions, or planning accurate native macOS
-      and Windows validation.
-  - name:
-      - exa-search
-    description:
-      Neural search via Exa MCP for web, code, and company research. Use
-      when the user needs web search, code examples, company intel, people lookup, or
-      AI-powered deep research with Exa's neural search engine.
-  - name:
-      - react-performance
-    description:
-      React and Next.js performance optimization patterns adapted from Vercel
-      Engineering's React Best Practices (https://github.com/vercel-labs/agent-skills).
-      Organizes 70+ rules across 8 priority categories — waterfalls, bundle size, server-side,
-      client fetching, re-render, rendering, JS micro-perf, advanced. Use when writing,
-      reviewing, or refactoring React/Next.js code for performance.
-  - name:
-      - agent-architecture-audit
-    description:
-      Full-stack diagnostic for agent and LLM applications. Audits the 12-layer
-      agent stack for wrapper regression, memory pollution, tool discipline failures,
-      hidden repair loops, and rendering corruption. Produces severity-ranked findings
-      with code-first fixes. Essential for developers building agent applications, autonomous
-      loops, or any LLM-powered feature. Use when an agent or LLM feature misbehaves
-      and the failing layer is unknown, or before shipping an agent stack.
-  - name:
-      - api-design
-    description:
-      REST API design patterns including resource naming, status codes, pagination,
-      filtering, error responses, versioning, and rate limiting for production APIs.
-      Use when designing or reviewing REST endpoints, resource names, status codes,
-      pagination, or versioning.
-  - name:
-      - team-builder
-    description:
-      Interactive agent picker for composing and dispatching parallel teams.
-      Use when composing and dispatching a parallel team of agents for a task.
-  - name:
-      - kubernetes-patterns
-    description:
-      Kubernetes workload patterns, resource management, RBAC, probes, autoscaling,
-      ConfigMap/Secret handling, and kubectl debugging for production-grade deployments.
-      Use when writing or reviewing Kubernetes manifests, or debugging probes, RBAC,
-      autoscaling, or resource limits.
-  - name:
-      - agent-harness-construction
-    description:
-      Design and optimize AI agent action spaces, tool definitions, and observation
-      formatting for higher completion rates.
-  - name:
-      - security-bounty-hunter
-    description:
-      Hunt for exploitable, bounty-worthy security issues in repositories.
-      Focuses on remotely reachable vulnerabilities that qualify for real reports instead
-      of noisy local-only findings. Use when hunting reportable, remotely reachable
-      vulnerabilities in a repository.
-  - name:
-      - deep-research
-    description:
-      Multi-source deep research using firecrawl and exa MCPs. Searches the
-      web, synthesizes findings, and delivers cited reports with source attribution.
-      Use when the user wants thorough research on any topic with evidence and citations.
-  - name:
-      - cpp-coding-standards
-    description:
-      C++ coding standards based on the C++ Core Guidelines (isocpp.github.io).
-      Use when writing, reviewing, or refactoring C++ code to enforce modern, safe,
-      and idiomatic practices.
-  - name:
-      - data-scraper-agent
-    description:
-      Build a fully automated AI-powered data collection agent for any public
-      source — job boards, prices, news, GitHub, sports, anything. Runs on a schedule,
-      enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase,
-      and learns from user feedback. Runs 100% free on GitHub Actions. Use when the
-      user wants to monitor, collect, or track any public data automatically.
-  - name:
-      - gan-style-harness
-    description:
-      GAN-inspired Generator-Evaluator agent harness for building high-quality
-      applications autonomously. Based on Anthropic's March 2026 harness design paper.
-      Use when a feature should be built autonomously through generator and evaluator
-      iteration until it clears a quality bar.
-  - name:
-      - error-handling
-    description:
-      Patterns for robust error handling across TypeScript, Python, and Go.
-      Covers typed errors, error boundaries, retries, circuit breakers, and user-facing
-      error messages. Use when designing error types, retries, circuit breakers, or
-      user-facing failure messages in TypeScript, Python, or Go.
-  - name:
-      - tdd-workflow
-    description:
-      Use this skill when writing new features, fixing bugs, or refactoring
-      code. Enforces test-driven development with 80%+ coverage including unit, integration,
-      and E2E tests.
-  - name:
-      - blueprint
-    description:
-      'Turn a one-line objective into a step-by-step construction plan for
-      multi-session, multi-agent engineering projects. Each step has a self-contained
-      context brief so a fresh agent can execute it cold. Includes adversarial review
-      gate, dependency graph, parallel step detection, anti-pattern catalog, and plan
-      mutation protocol. TRIGGER when: user requests a plan, blueprint, or roadmap for
-      a complex multi-PR task, or describes work that needs multiple sessions. DO NOT
-      TRIGGER when: task is completable in a single PR or fewer than 3 tool calls, or
-      user says "just do it".'
-  - name:
-      - dmux-workflows
-    description:
-      Multi-agent orchestration using dmux (tmux pane manager for AI agents).
-      Patterns for parallel agent workflows across Claude Code, Codex, OpenCode, and
-      other harnesses. Use when running multiple agent sessions in parallel or coordinating
-      multi-agent development workflows.
-  - name:
-      - react-testing
-    description:
-      React component testing with React Testing Library, Vitest/Jest, MSW
-      for network mocking, accessibility assertions with axe, and the decision boundary
-      between component tests and Playwright/Cypress end-to-end runs. Use when writing
-      or fixing tests for React components, hooks, or pages.
-  - name:
-      - regex-vs-llm-structured-text
-    description:
-      Decision framework for choosing between regex and LLM when parsing
-      structured text — start with regex, add LLM only for low-confidence edge cases.
-  - name:
-      - github-ops
-    description:
-      GitHub repository operations, automation, and management. Issue triage,
-      PR management, CI/CD operations, release management, and security monitoring using
-      the gh CLI. Use when the user wants to manage GitHub issues, PRs, CI status, releases,
-      contributors, stale items, or any GitHub operational task beyond simple git commands.
-  - name:
-      - security-scan
-    description:
-      Scan your Claude Code configuration (.claude/ directory) for security
-      vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks
-      CLAUDE.md, settings.json, MCP servers, hooks, and agent definitions. Use when
-      auditing a .claude/ directory — CLAUDE.md, settings.json, MCP servers, hooks,
-      or agent definitions.
-  - name:
-      - coding-standards
-    description:
-      Baseline cross-project coding conventions for naming, readability,
-      immutability, and code-quality review. Use detailed frontend or backend skills
-      for framework-specific patterns. Use when reviewing code quality or naming with
-      no framework-specific skill that applies.
-  - name:
-      - ai-regression-testing
-    description:
-      Regression testing strategies for AI-assisted development. Sandbox-mode
-      API testing without database dependencies, automated bug-check workflows, and
-      patterns to catch AI blind spots where the same model writes and reviews code.
-      Use when adding regression coverage to AI-assisted code, or when the same model
-      both wrote and reviewed a change.
-  - name:
-      - hexagonal-architecture
-    description:
-      Design, implement, and refactor Ports & Adapters systems with clear
-      domain boundaries, dependency inversion, and testable use-case orchestration across
-      TypeScript, Java, Kotlin, and Go services. Use when introducing or refactoring
-      toward Ports and Adapters, or when domain logic has become entangled with I/O.
-  - name:
-      - e2e-testing
-    description:
-      Playwright E2E testing patterns, Page Object Model, configuration,
-      CI/CD integration, artifact management, and flaky test strategies. Use when writing
-      Playwright tests, structuring page objects, or fixing flaky E2E runs in CI.
-  - name:
-      - prisma-patterns
-    description:
-      Prisma ORM patterns for TypeScript backends — schema design, query
-      optimization, transactions, pagination, and critical traps like updateMany returning
-      count not records, $transaction timeouts, migrate dev resetting the DB, @updatedAt
-      skipped on bulk writes, and serverless connection exhaustion. Use when writing
-      a Prisma schema or query, or debugging transactions, migrations, or serverless
-      connection limits.
-  - name:
-      - architecture-decision-records
-    description:
-      Capture architectural decisions made during Claude Code sessions as
-      structured ADRs. Auto-detects decision moments, records context, alternatives
-      considered, and rationale. Maintains an ADR log so future developers understand
-      why the codebase is shaped the way it is.
-  - name:
-      - codebase-onboarding
-    description:
-      Analyze an unfamiliar codebase and generate a structured onboarding
-      guide with architecture map, key entry points, conventions, and a starter CLAUDE.md.
-      Use when joining a new project or setting up Claude Code for the first time in
-      a repo.
-  - name:
-      - autonomous-loops
-    description:
-      "Patterns and architectures for autonomous Claude Code loops — from
-      simple sequential pipelines to RFC-driven multi-agent DAG systems. Retained for
-      compatibility only: when new autonomous loop guidance is needed, use continuous-agent-loop
-      instead."
-  - name:
-      - golang-testing
-    description:
-      Go testing patterns including table-driven tests, subtests, benchmarks,
-      fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
-      Use when writing Go tests — table-driven cases, subtests, benchmarks, fuzzing,
-      or coverage.
-  - name:
-      - react-patterns
-    description:
-      React 18/19 patterns including hooks discipline, server/client component
-      boundaries, Suspense + error boundaries, form actions, data fetching, state management
-      decision trees, and accessibility-first composition. Use when writing or reviewing
-      React components.
-  - name:
-      - mcp-server-patterns
-    description:
-      Build MCP servers with Node/TypeScript SDK — tools, resources, prompts,
-      Zod validation, stdio vs Streamable HTTP. Use Context7 or official MCP docs for
-      latest API. Use when building or debugging an MCP server — tools, resources, prompts,
-      validation, or transport choice.
-  - name:
-      - frontend-patterns
-    description:
-      Frontend development patterns for React, Next.js, state management,
-      performance optimization, and UI best practices. Use when building or reviewing
-      React or Next.js components, state, or render performance.
-  - name:
-      - golang-patterns
-    description:
-      Idiomatic Go patterns, best practices, and conventions for building
-      robust, efficient, and maintainable Go applications. Use when writing or reviewing
-      Go code and idiomatic structure or conventions are in question.
-  - name:
-      - vite-patterns
-    description:
-      Vite build tool patterns including config, plugins, HMR, env variables,
-      proxy setup, SSR, library mode, dependency pre-bundling, and build optimization.
-      Activate when working with vite.config.ts, Vite plugins, or Vite-based projects.
-  - name:
-      - parallel-execution-optimizer
-    description:
-      Use when the user wants a task done much faster through parallel work,
-      concurrent agents, batched tool calls, isolated worktrees, or many independent
-      verification lanes without losing correctness.
-  - name:
-      - content-hash-cache-pattern
-    description:
-      Cache expensive file processing results using SHA-256 content hashes
-      — path-independent, auto-invalidating, with service layer separation. Use when
-      repeated file processing is slow and results should be cached and invalidated
-      by content rather than path.
-  - name:
-      - agent-introspection-debugging
-    description:
-      Structured self-debugging workflow for AI agent failures using capture,
-      diagnosis, contained recovery, and introspection reports. Use when an agent run
-      fails and you need a reproducible diagnosis instead of a retry.
-  - name:
-      - cpp-testing
-    description:
-      Use only when writing/updating/fixing C++ tests, configuring GoogleTest/CTest,
-      diagnosing failing or flaky tests, or adding coverage/sanitizers.
-  - name:
-      - pr-review
-    description:
-      Systematic PR review using GitHub MCP tools. Produces structured report
-      with summary of changes, critical bugs, minor issues, code examples, and external
-      references. Use when asked to "review PR", "analyze PR", "check PR", "give feedback
-      on PR", or given a GitHub PR URL to evaluate. Works for any language or framework.
-      Do NOT use for creating PRs or making code changes.
-  - name:
-      - figma-design-system-to-tailwind
-    description:
-      Extract and convert a Figma Design System to Tailwind CSS v4 configuration
-      with semantic component mapping. Use when migrating design tokens, colors, typography,
-      spacing, and components from Figma to a code-based Tailwind theme. Optimized for
-      small-to-medium design systems (< 20 components) with complete token coverage.
-  - name:
-      - figma-capture-mcp
-    description:
-      Captures a screenshot and reference JSX code from a Figma node URL
-      and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the
-      user says "captura esse nó do figma", "salva a imagem e o código de [url figma]",
-      "usa o figma mcp para salvar [url]", "capture this figma node", or any variation
-      requesting to save a Figma design locally. Do NOT use for generating new designs,
-      syncing components, or code-connect mapping workflows.
-  - name:
-      - figma-mcp
-    description:
-      Provides instructions and workflows for using the Figma MCP (Model-Context-Protocol)
-      server to interact with Figma and FigJam. Use this skill to generate designs from
-      web interfaces, extract design context, manage design systems, and create diagrams.
-  - name:
-      - figma-requirements-screen-mapper
-    description:
-      'Map software requirements to Figma screens, producing a table that
-      shows which requirements belong to each screen, and which requirements don''t
-      belong to any screen. Use this skill whenever the user provides a requirements
-      document (SRS, PRD, technical spec) AND a Figma file with multiple screens/frames
-      and wants to understand which requirements apply to each screen. Triggers on phrases
-      like: "map these requirements to the Figma screens", "which requirements belong
-      to each screen", "create a requirements matrix for these screens", "relate my
-      spec to each Figma frame", "which spec items apply to each screen", "trace requirements
-      to screens", "requirements traceability matrix", "which requirements are covered
-      per screen", "organize requirements by screen", or when the user provides a requirements
-      doc path AND a Figma file URL and wants a mapping/matrix. Also triggers when the
-      user asks "which requirements don''t belong to any screen" or "what requirements
-      are cross-cutting / non-UI". Always use this skill when BOTH a requirements document
-      AND a multi-screen Figma reference are present and the user wants a mapping, matrix,
-      or traceability table — even if they don''t use the exact words "requirements
-      screen mapper".
+    '
+- name:
+  - autonomous-agent-harness
+  description: Transform Claude Code into a fully autonomous agent system with persistent
+    memory, scheduled operations, computer use, and task queuing. Replaces standalone
+    agent frameworks (Hermes, AutoGPT) by leveraging Claude Code's native crons, dispatch,
+    MCP tools, and memory. Use when the user wants continuous autonomous operation,
+    scheduled tasks, or a self-directing agent loop.
+- name:
+  - git-workflow
+  description: Git workflow patterns including branching strategies, commit conventions,
+    merge vs rebase, conflict resolution, and collaborative development best practices
+    for teams of all sizes. Use when choosing a branching strategy, writing commit
+    conventions, deciding merge versus rebase, or resolving conflicts.
+- name:
+  - python-patterns
+  description: Pythonic idioms, PEP 8 standards, type hints, and best practices for
+    building robust, efficient, and maintainable Python applications. Use when writing
+    or reviewing Python code and idiomatic structure, typing, or PEP 8 is in question.
+- name:
+  - python-testing
+  description: Python testing strategies using pytest, TDD methodology, fixtures,
+    mocking, parametrization, and coverage requirements. Use when writing pytest tests
+    — fixtures, mocks, parametrization, or coverage.
+- name:
+  - backend-patterns
+  description: Backend architecture patterns, API design, database optimization, and
+    server-side best practices for Node.js, Express, and Next.js API routes. Use when
+    building or reviewing Node.js, Express, or Next.js API routes and their data access.
+- name:
+  - jira-integration
+  description: Use this skill when retrieving Jira tickets, analyzing requirements,
+    updating ticket status, adding comments, or transitioning issues. Provides Jira
+    API patterns via MCP or direct REST calls.
+- name:
+  - security-review
+  description: Use this skill when adding authentication, handling user input, working
+    with secrets, creating API endpoints, or implementing payment/sensitive features.
+    Provides comprehensive security checklist and patterns.
+- name:
+  - deployment-patterns
+  description: Deployment workflows, CI/CD pipeline patterns, Docker containerization,
+    health checks, rollback strategies, and production readiness checklists for web
+    applications. Use when setting up CI/CD, containerizing an app, or checking production
+    readiness before a release.
+- name:
+  - react-native-patterns
+  description: React Native and Expo app patterns — Expo Router navigation, state
+    separation (server/client/route/form), TanStack Query data fetching with Zod,
+    performant lists, NativeWind/StyleSheet styling, native APIs, and secure storage.
+    Use when building or editing React Native / Expo screens, components, navigation,
+    or data layers.
+- name:
+  - docker-patterns
+  description: Docker and Docker Compose patterns for local development, hardened
+    CLI installer harnesses, container security, networking, volumes, and multi-service
+    orchestration. Use when creating or reviewing Dockerfiles and Compose services,
+    testing installers across Linux distributions, or planning accurate native macOS
+    and Windows validation.
+- name:
+  - exa-search
+  description: Neural search via Exa MCP for web, code, and company research. Use
+    when the user needs web search, code examples, company intel, people lookup, or
+    AI-powered deep research with Exa's neural search engine.
+- name:
+  - react-performance
+  description: React and Next.js performance optimization patterns adapted from Vercel
+    Engineering's React Best Practices (https://github.com/vercel-labs/agent-skills).
+    Organizes 70+ rules across 8 priority categories — waterfalls, bundle size, server-side,
+    client fetching, re-render, rendering, JS micro-perf, advanced. Use when writing,
+    reviewing, or refactoring React/Next.js code for performance.
+- name:
+  - agent-architecture-audit
+  description: Full-stack diagnostic for agent and LLM applications. Audits the 12-layer
+    agent stack for wrapper regression, memory pollution, tool discipline failures,
+    hidden repair loops, and rendering corruption. Produces severity-ranked findings
+    with code-first fixes. Essential for developers building agent applications, autonomous
+    loops, or any LLM-powered feature. Use when an agent or LLM feature misbehaves
+    and the failing layer is unknown, or before shipping an agent stack.
+- name:
+  - api-design
+  description: REST API design patterns including resource naming, status codes, pagination,
+    filtering, error responses, versioning, and rate limiting for production APIs.
+    Use when designing or reviewing REST endpoints, resource names, status codes,
+    pagination, or versioning.
+- name:
+  - team-builder
+  description: Interactive agent picker for composing and dispatching parallel teams.
+    Use when composing and dispatching a parallel team of agents for a task.
+- name:
+  - kubernetes-patterns
+  description: Kubernetes workload patterns, resource management, RBAC, probes, autoscaling,
+    ConfigMap/Secret handling, and kubectl debugging for production-grade deployments.
+    Use when writing or reviewing Kubernetes manifests, or debugging probes, RBAC,
+    autoscaling, or resource limits.
+- name:
+  - agent-harness-construction
+  description: Design and optimize AI agent action spaces, tool definitions, and observation
+    formatting for higher completion rates.
+- name:
+  - security-bounty-hunter
+  description: Hunt for exploitable, bounty-worthy security issues in repositories.
+    Focuses on remotely reachable vulnerabilities that qualify for real reports instead
+    of noisy local-only findings. Use when hunting reportable, remotely reachable
+    vulnerabilities in a repository.
+- name:
+  - deep-research
+  description: Multi-source deep research using firecrawl and exa MCPs. Searches the
+    web, synthesizes findings, and delivers cited reports with source attribution.
+    Use when the user wants thorough research on any topic with evidence and citations.
+- name:
+  - cpp-coding-standards
+  description: C++ coding standards based on the C++ Core Guidelines (isocpp.github.io).
+    Use when writing, reviewing, or refactoring C++ code to enforce modern, safe,
+    and idiomatic practices.
+- name:
+  - data-scraper-agent
+  description: Build a fully automated AI-powered data collection agent for any public
+    source — job boards, prices, news, GitHub, sports, anything. Runs on a schedule,
+    enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase,
+    and learns from user feedback. Runs 100% free on GitHub Actions. Use when the
+    user wants to monitor, collect, or track any public data automatically.
+- name:
+  - gan-style-harness
+  description: GAN-inspired Generator-Evaluator agent harness for building high-quality
+    applications autonomously. Based on Anthropic's March 2026 harness design paper.
+    Use when a feature should be built autonomously through generator and evaluator
+    iteration until it clears a quality bar.
+- name:
+  - error-handling
+  description: Patterns for robust error handling across TypeScript, Python, and Go.
+    Covers typed errors, error boundaries, retries, circuit breakers, and user-facing
+    error messages. Use when designing error types, retries, circuit breakers, or
+    user-facing failure messages in TypeScript, Python, or Go.
+- name:
+  - tdd-workflow
+  description: Use this skill when writing new features, fixing bugs, or refactoring
+    code. Enforces test-driven development with 80%+ coverage including unit, integration,
+    and E2E tests.
+- name:
+  - blueprint
+  description: 'Turn a one-line objective into a step-by-step construction plan for
+    multi-session, multi-agent engineering projects. Each step has a self-contained
+    context brief so a fresh agent can execute it cold. Includes adversarial review
+    gate, dependency graph, parallel step detection, anti-pattern catalog, and plan
+    mutation protocol. TRIGGER when: user requests a plan, blueprint, or roadmap for
+    a complex multi-PR task, or describes work that needs multiple sessions. DO NOT
+    TRIGGER when: task is completable in a single PR or fewer than 3 tool calls, or
+    user says "just do it".'
+- name:
+  - dmux-workflows
+  description: Multi-agent orchestration using dmux (tmux pane manager for AI agents).
+    Patterns for parallel agent workflows across Claude Code, Codex, OpenCode, and
+    other harnesses. Use when running multiple agent sessions in parallel or coordinating
+    multi-agent development workflows.
+- name:
+  - react-testing
+  description: React component testing with React Testing Library, Vitest/Jest, MSW
+    for network mocking, accessibility assertions with axe, and the decision boundary
+    between component tests and Playwright/Cypress end-to-end runs. Use when writing
+    or fixing tests for React components, hooks, or pages.
+- name:
+  - regex-vs-llm-structured-text
+  description: Decision framework for choosing between regex and LLM when parsing
+    structured text — start with regex, add LLM only for low-confidence edge cases.
+- name:
+  - github-ops
+  description: GitHub repository operations, automation, and management. Issue triage,
+    PR management, CI/CD operations, release management, and security monitoring using
+    the gh CLI. Use when the user wants to manage GitHub issues, PRs, CI status, releases,
+    contributors, stale items, or any GitHub operational task beyond simple git commands.
+- name:
+  - security-scan
+  description: Scan your Claude Code configuration (.claude/ directory) for security
+    vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks
+    CLAUDE.md, settings.json, MCP servers, hooks, and agent definitions. Use when
+    auditing a .claude/ directory — CLAUDE.md, settings.json, MCP servers, hooks,
+    or agent definitions.
+- name:
+  - coding-standards
+  description: Baseline cross-project coding conventions for naming, readability,
+    immutability, and code-quality review. Use detailed frontend or backend skills
+    for framework-specific patterns. Use when reviewing code quality or naming with
+    no framework-specific skill that applies.
+- name:
+  - ai-regression-testing
+  description: Regression testing strategies for AI-assisted development. Sandbox-mode
+    API testing without database dependencies, automated bug-check workflows, and
+    patterns to catch AI blind spots where the same model writes and reviews code.
+    Use when adding regression coverage to AI-assisted code, or when the same model
+    both wrote and reviewed a change.
+- name:
+  - hexagonal-architecture
+  description: Design, implement, and refactor Ports & Adapters systems with clear
+    domain boundaries, dependency inversion, and testable use-case orchestration across
+    TypeScript, Java, Kotlin, and Go services. Use when introducing or refactoring
+    toward Ports and Adapters, or when domain logic has become entangled with I/O.
+- name:
+  - e2e-testing
+  description: Playwright E2E testing patterns, Page Object Model, configuration,
+    CI/CD integration, artifact management, and flaky test strategies. Use when writing
+    Playwright tests, structuring page objects, or fixing flaky E2E runs in CI.
+- name:
+  - prisma-patterns
+  description: Prisma ORM patterns for TypeScript backends — schema design, query
+    optimization, transactions, pagination, and critical traps like updateMany returning
+    count not records, $transaction timeouts, migrate dev resetting the DB, @updatedAt
+    skipped on bulk writes, and serverless connection exhaustion. Use when writing
+    a Prisma schema or query, or debugging transactions, migrations, or serverless
+    connection limits.
+- name:
+  - architecture-decision-records
+  description: Capture architectural decisions made during Claude Code sessions as
+    structured ADRs. Auto-detects decision moments, records context, alternatives
+    considered, and rationale. Maintains an ADR log so future developers understand
+    why the codebase is shaped the way it is.
+- name:
+  - codebase-onboarding
+  description: Analyze an unfamiliar codebase and generate a structured onboarding
+    guide with architecture map, key entry points, conventions, and a starter CLAUDE.md.
+    Use when joining a new project or setting up Claude Code for the first time in
+    a repo.
+- name:
+  - autonomous-loops
+  description: 'Patterns and architectures for autonomous Claude Code loops — from
+    simple sequential pipelines to RFC-driven multi-agent DAG systems. Retained for
+    compatibility only: when new autonomous loop guidance is needed, use continuous-agent-loop
+    instead.'
+- name:
+  - golang-testing
+  description: Go testing patterns including table-driven tests, subtests, benchmarks,
+    fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices.
+    Use when writing Go tests — table-driven cases, subtests, benchmarks, fuzzing,
+    or coverage.
+- name:
+  - react-patterns
+  description: React 18/19 patterns including hooks discipline, server/client component
+    boundaries, Suspense + error boundaries, form actions, data fetching, state management
+    decision trees, and accessibility-first composition. Use when writing or reviewing
+    React components.
+- name:
+  - mcp-server-patterns
+  description: Build MCP servers with Node/TypeScript SDK — tools, resources, prompts,
+    Zod validation, stdio vs Streamable HTTP. Use Context7 or official MCP docs for
+    latest API. Use when building or debugging an MCP server — tools, resources, prompts,
+    validation, or transport choice.
+- name:
+  - frontend-patterns
+  description: Frontend development patterns for React, Next.js, state management,
+    performance optimization, and UI best practices. Use when building or reviewing
+    React or Next.js components, state, or render performance.
+- name:
+  - golang-patterns
+  description: Idiomatic Go patterns, best practices, and conventions for building
+    robust, efficient, and maintainable Go applications. Use when writing or reviewing
+    Go code and idiomatic structure or conventions are in question.
+- name:
+  - vite-patterns
+  description: Vite build tool patterns including config, plugins, HMR, env variables,
+    proxy setup, SSR, library mode, dependency pre-bundling, and build optimization.
+    Activate when working with vite.config.ts, Vite plugins, or Vite-based projects.
+- name:
+  - parallel-execution-optimizer
+  description: Use when the user wants a task done much faster through parallel work,
+    concurrent agents, batched tool calls, isolated worktrees, or many independent
+    verification lanes without losing correctness.
+- name:
+  - content-hash-cache-pattern
+  description: Cache expensive file processing results using SHA-256 content hashes
+    — path-independent, auto-invalidating, with service layer separation. Use when
+    repeated file processing is slow and results should be cached and invalidated
+    by content rather than path.
+- name:
+  - agent-introspection-debugging
+  description: Structured self-debugging workflow for AI agent failures using capture,
+    diagnosis, contained recovery, and introspection reports. Use when an agent run
+    fails and you need a reproducible diagnosis instead of a retry.
+- name:
+  - cpp-testing
+  description: Use only when writing/updating/fixing C++ tests, configuring GoogleTest/CTest,
+    diagnosing failing or flaky tests, or adding coverage/sanitizers.
+- name:
+  - pr-review
+  description: Systematic PR review using GitHub MCP tools. Produces structured report
+    with summary of changes, critical bugs, minor issues, code examples, and external
+    references. Use when asked to "review PR", "analyze PR", "check PR", "give feedback
+    on PR", or given a GitHub PR URL to evaluate. Works for any language or framework.
+    Do NOT use for creating PRs or making code changes.
+- name:
+  - figma-design-system-to-tailwind
+  description: Extract and convert a Figma Design System to Tailwind CSS v4 configuration
+    with semantic component mapping. Use when migrating design tokens, colors, typography,
+    spacing, and components from Figma to a code-based Tailwind theme. Optimized for
+    small-to-medium design systems (< 20 components) with complete token coverage.
+- name:
+  - figma-capture-mcp
+  description: Captures a screenshot and reference JSX code from a Figma node URL
+    and saves both to `.figma/` as `<node-id>.png` and `<node-id>.jsx`. Use when the
+    user says "captura esse nó do figma", "salva a imagem e o código de [url figma]",
+    "usa o figma mcp para salvar [url]", "capture this figma node", or any variation
+    requesting to save a Figma design locally. Do NOT use for generating new designs,
+    syncing components, or code-connect mapping workflows.
+- name:
+  - figma-mcp
+  description: Provides instructions and workflows for using the Figma MCP (Model-Context-Protocol)
+    server to interact with Figma and FigJam. Use this skill to generate designs from
+    web interfaces, extract design context, manage design systems, and create diagrams.
+- name:
+  - figma-requirements-screen-mapper
+  description: 'Map software requirements to Figma screens, producing a table that
+    shows which requirements belong to each screen, and which requirements don''t
+    belong to any screen. Use this skill whenever the user provides a requirements
+    document (SRS, PRD, technical spec) AND a Figma file with multiple screens/frames
+    and wants to understand which requirements apply to each screen. Triggers on phrases
+    like: "map these requirements to the Figma screens", "which requirements belong
+    to each screen", "create a requirements matrix for these screens", "relate my
+    spec to each Figma frame", "which spec items apply to each screen", "trace requirements
+    to screens", "requirements traceability matrix", "which requirements are covered
+    per screen", "organize requirements by screen", or when the user provides a requirements
+    doc path AND a Figma file URL and wants a mapping/matrix. Also triggers when the
+    user asks "which requirements don''t belong to any screen" or "what requirements
+    are cross-cutting / non-UI". Always use this skill when BOTH a requirements document
+    AND a multi-screen Figma reference are present and the user wants a mapping, matrix,
+    or traceability table — even if they don''t use the exact words "requirements
+    screen mapper".
 
-      '
-  - name:
-      - figma-requirements-conformance
-    description:
-      'Verify conformance between a software requirements specification (SRS)
-      document and a Figma screen design. Use this skill whenever the user wants to
-      audit whether a design screen matches its requirements, check if requirements
-      are reflected in a Figma mockup, find gaps between an SRS and a UI design, validate
-      design compliance with specification, or identify over/under-specified areas in
-      requirements vs design. Triggers on phrases like: "check if the design matches
-      the requirements", "audit this Figma screen against the spec", "what''s missing
-      in the design", "verify requirements vs Figma", "conformance check", "SRS vs design",
-      "does the design cover all requirements", "gap analysis between spec and Figma",
-      or when the user provides a document path and a Figma URL and asks whether they
-      agree. Always use this skill when BOTH a requirements document path AND a Figma
-      reference are present in the request, even if the user doesn''t use the word "conformance"
-      or "audit".
+    '
+- name:
+  - figma-requirements-conformance
+  description: 'Verify conformance between a software requirements specification (SRS)
+    document and a Figma screen design. Use this skill whenever the user wants to
+    audit whether a design screen matches its requirements, check if requirements
+    are reflected in a Figma mockup, find gaps between an SRS and a UI design, validate
+    design compliance with specification, or identify over/under-specified areas in
+    requirements vs design. Triggers on phrases like: "check if the design matches
+    the requirements", "audit this Figma screen against the spec", "what''s missing
+    in the design", "verify requirements vs Figma", "conformance check", "SRS vs design",
+    "does the design cover all requirements", "gap analysis between spec and Figma",
+    or when the user provides a document path and a Figma URL and asks whether they
+    agree. Always use this skill when BOTH a requirements document path AND a Figma
+    reference are present in the request, even if the user doesn''t use the word "conformance"
+    or "audit".
 
-      '
-  - name:
-      - figma-code-connect-components
-    description:
-      Connects Figma design components to code components using Code Connect.
-      Use when user says "code connect", "connect this component to code", "connect
-      Figma to code", "map this component", "link component to code", "create code connect
-      mapping", "add code connect", "connect design to code", or wants to establish
-      mappings between Figma designs and code implementations. Requires Figma MCP server
-      connection.
-  - name:
-      - figma-to-code-agentic
-    description:
-      'Convert Figma designs into production-ready component code using an
-      agentic loop that validates implementation against the design.
+    '
+- name:
+  - figma-code-connect-components
+  description: Connects Figma design components to code components using Code Connect.
+    Use when user says "code connect", "connect this component to code", "connect
+    Figma to code", "map this component", "link component to code", "create code connect
+    mapping", "add code connect", "connect design to code", or wants to establish
+    mappings between Figma designs and code implementations. Requires Figma MCP server
+    connection.
+- name:
+  - figma-to-code-agentic
+  description: 'Convert Figma designs into production-ready component code using an
+    agentic loop that validates implementation against the design.
 
 
-      Use this skill whenever: a Figma link or file is provided and the user wants code
-      generated from it; the user says "generate this Figma design as React/Vue/HTML",
-      "convert this Figma to code", "build a component from this design", "make it look
-      exactly like Figma", or "match the design"; the user needs pixel-perfect design-to-development
-      handoff; the user mentions needing to validate UI against a Figma spec.
+    Use this skill whenever: a Figma link or file is provided and the user wants code
+    generated from it; the user says "generate this Figma design as React/Vue/HTML",
+    "convert this Figma to code", "build a component from this design", "make it look
+    exactly like Figma", or "match the design"; the user needs pixel-perfect design-to-development
+    handoff; the user mentions needing to validate UI against a Figma spec.
 
 
-      The skill reads design specs via Figma MCP, auto-detects the framework, generates
-      code, renders a screenshot via browser automation, compares using SSIM (Structural
-      Similarity Index), and iterates up to 10 times until reaching ≥0.9 visual similarity.
-      Works for React, Vue 3, and vanilla HTML/CSS. Perfect for design system components,
-      landing pages, or any UI that must match a Figma spec.
+    The skill reads design specs via Figma MCP, auto-detects the framework, generates
+    code, renders a screenshot via browser automation, compares using SSIM (Structural
+    Similarity Index), and iterates up to 10 times until reaching ≥0.9 visual similarity.
+    Works for React, Vue 3, and vanilla HTML/CSS. Perfect for design system components,
+    landing pages, or any UI that must match a Figma spec.
 
-      '
-  - name:
-      - figma-capture-local
-    description:
-      Organizes a user-supplied reference image and reference code (any language/framework,
-      not fetched from Figma MCP) into `.figma/` as `<name>.png`/`<name>.jpg` and `<name>.jsx`/`<name>.<ext>`,
-      plus a JSX/preview wrapper when the source isn't already JSX. Use when the user
-      says "tenho uma imagem e um codigo de referencia", "captura isso localmente",
-      "salva essa referencia local", "organiza essa imagem e codigo como referencia",
-      "capture this local reference", or any variation providing a local reference image
-      + code pair (no Figma URL involved). Do NOT use when the source is a Figma node
-      URL — use figma-capture-mcp for that.
+    '
+- name:
+  - figma-capture-local
+  description: Organizes a user-supplied reference image and reference code (any language/framework,
+    not fetched from Figma MCP) into `.figma/` as `<name>.png`/`<name>.jpg` and `<name>.jsx`/`<name>.<ext>`,
+    plus a JSX/preview wrapper when the source isn't already JSX. Use when the user
+    says "tenho uma imagem e um codigo de referencia", "captura isso localmente",
+    "salva essa referencia local", "organiza essa imagem e codigo como referencia",
+    "capture this local reference", or any variation providing a local reference image
+    + code pair (no Figma URL involved). Do NOT use when the source is a Figma node
+    URL — use figma-capture-mcp for that.
