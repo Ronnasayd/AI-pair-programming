@@ -649,6 +649,7 @@
     "enabled": false,
     "mode": "hold"
   },
+  "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
   "verbose": false,
   "autoCompactEnabled": true,

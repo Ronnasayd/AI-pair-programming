@@ -21,6 +21,9 @@ CACHE_DENY=(BraveSoftware basilisk-dev chromium spotify nvidia mesa_shader_cache
 # Dotdirs requiring read-write access
 DOTDIR_RW=(.claude .crush .codex .aider .config .cargo .cache .docker .github)
 
+# Extra project dependency dirs to mount read-only (outside $HOME/project)
+PROJECT_DEPS_RO=("$HOME/develop/personal/mcp-manager")
+
 # ── Passthrough env vars (hooks  need these inside jail) ──
 PASSTHROUGH_VARS=(AI_PROJECT_DIR AI_PROJECT_ROOT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC_MODEL ANTHROPIC_API_KEY ENABLE_TOOL_SEARCH ASDF_NODEJS_VERSION)
 
@@ -115,6 +118,12 @@ for rw_share in zoxide crush opencode atuin mise yarn flutter kotlin NuGet pipx 
 done
 [ -d "$HOME/.local/bin" ] && LOCAL_OVERRIDES+=("--bind" "$HOME/.local/bin" "$HOME/.local/bin")
 
+# ── Extra project dependency mounts (read-only) ──────────────
+PROJECT_DEPS_MOUNTS=()
+for dep in "${PROJECT_DEPS_RO[@]}"; do
+    [ -e "$dep" ] && PROJECT_DEPS_MOUNTS+=("--ro-bind" "$dep" "$dep")
+done
+
 # ── GPU device mounts (NVIDIA + DRM) ─────────────────────────
 GPU_MOUNTS=()
 for dev in /dev/nvidia* /dev/dri; do
@@ -191,6 +200,7 @@ bwrap \
   "${CACHE_HIDE_MOUNTS[@]}" \
   "${LOCAL_OVERRIDES[@]}" \
   "${EXTRA_MOUNTS[@]}" \
+  "${PROJECT_DEPS_MOUNTS[@]}" \
   "${AI_ROOT_MOUNT[@]}" \
   --bind "$PROJECT_DIR" "$PROJECT_DIR" \
   --chdir "$PROJECT_DIR" \
