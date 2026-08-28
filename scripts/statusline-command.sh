@@ -178,22 +178,24 @@ else
     email_info="${ICON_EMAIL} $(cat $HOME/.claude.json | jq -r '.oauthAccount.emailAddress')"
 fi
 
-# Serena status
+# Serena status (sr(<dot>) is an OSC 8 hyperlink to the dashboard)
+serena_dash="http://localhost:24282/dashboard/"
 serena_info=""
 if  pgrep -f "serena" > /dev/null; then
-    serena_info=" | ${ICON_SERENA} sr(🟢)"
+    serena_info=" | ${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🟢)\e]8;;\e\\\\"
 else
-    serena_info=" | ${ICON_SERENA} sr(🔴)"
+    serena_info=" | ${ICON_SERENA} \e]8;;${serena_dash}\e\\\\sr(🔴)\e]8;;\e\\\\"
 fi
 
 
 
-# AI Memory server status
+# AI Memory server status (ai-mem(<dot>) is an OSC 8 hyperlink to the web UI)
+memory_web="http://localhost:49374/web"
 memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
-    memory_status=" | ${ICON_MEMORY} ai-mem(🟢)"
+    memory_status=" | ${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🟢)\e]8;;\e\\\\"
 else
-    memory_status=" | ${ICON_MEMORY} ai-mem(🔴)"
+    memory_status=" | ${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-mem(🔴)\e]8;;\e\\\\"
 fi
 
 if [ -f "rag-rat.toml" ] && [ ! -L "rag-rat.toml" ]; then
@@ -280,7 +282,8 @@ fi
 
 # Output the complete status line
 cc_ver_info=""
-[ -n "$cc_version" ] && cc_ver_info=" | ${C_SUBTEXT}v${cc_version}${RESET}"
+# OSC 8 hyperlink: v<version> -> release notes (degrades to plain text on terminals without support)
+[ -n "$cc_version" ] && cc_ver_info=" | \e]8;;https://github.com/anthropics/claude-code/releases\e\\\\${C_SUBTEXT}v${cc_version}${RESET}\e]8;;\e\\\\"
 echo -e "${email_color}${email_info}${RESET}"
 echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info} | ${ICON_BRANCH} ${C_MAUVE}$branch${RESET} | ${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
 echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k) | ${ICON_CACHE} cache(r:${cache_read_f} c:${cache_creation_f} i:${input_tokens_f}) | ${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f}) | ${cost_info# | }${rate_info}"
