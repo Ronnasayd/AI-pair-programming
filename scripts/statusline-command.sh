@@ -78,14 +78,14 @@ else
     ctx_color="$C_GREEN"
 fi
 
-# Context bar (10 segments) + k-formatted tokens
-ctx_filled=$(( ctx_pct_int / 10 ))
-[ "$ctx_filled" -gt 10 ] && ctx_filled=10
+# Context bar (20 segments, 5% each) + k-formatted tokens
+ctx_filled=$(( ctx_pct_int / 5 ))
+[ "$ctx_filled" -gt 20 ] && ctx_filled=20
 [ "$ctx_filled" -lt 0 ] && ctx_filled=0
 ctx_bar=""
-for i in $(seq 1 10); do
+for i in $(seq 1 20); do
     if [ "$i" -le "$ctx_filled" ]; then
-        ctx_bar="${ctx_bar}▓"
+        ctx_bar="${ctx_bar}█"
     else
         ctx_bar="${ctx_bar}░"
     fi
