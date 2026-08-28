@@ -90,6 +90,20 @@ done
 ctx_usage_k=$(( ctx_usage / 1000 ))
 ctx_size_k=$(( ctx_size / 1000 ))
 
+# Format a token count: k-suffixed when > 1000, raw otherwise
+fmt_k() {
+    if [ "$1" -gt 1000 ] 2>/dev/null; then
+        echo "$(( $1 / 1000 ))k"
+    else
+        echo "$1"
+    fi
+}
+cache_read_f=$(fmt_k "$cache_read")
+cache_creation_f=$(fmt_k "$cache_creation")
+input_tokens_f=$(fmt_k "$input_tokens")
+total_input_f=$(fmt_k "$total_input")
+total_output_f=$(fmt_k "$total_output")
+
 # Detect project type and language info
 lang_info=""
 
@@ -127,9 +141,9 @@ effort_level=$(echo "$input" | jq -r '.effort.level // empty')
 effort_info=""
 if [ -n "$effort_level" ]; then
     case "$effort_level" in
-        low)    effort_color="\033[32m" ;;
-        medium) effort_color="\033[33m" ;;
-        high|xhigh|max) effort_color="\033[31m" ;;
+        low)    effort_color="$C_GREEN" ;;
+        medium) effort_color="$C_YELLOW" ;;
+        high|xhigh|max) effort_color="$C_RED" ;;
         *)      effort_color="" ;;
     esac
     effort_info=" | ${ICON_EFFORT} ${effort_color}${effort_level}${RESET}"
@@ -157,7 +171,7 @@ fi
 
 # email proxy status
 email_info=""
-email_color="\033[32m"
+email_color="$C_MAUVE"
 if [ "$CLAUDE_CONFIG_DIR" == "$HOME/.claude-L" ] ; then
     email_info="${ICON_EMAIL} $(cat $HOME/.claude-L/.claude.json | jq -r '.oauthAccount.emailAddress')"
 else
@@ -193,7 +207,7 @@ cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
 cost_info=""
 if [ -n "$cost" ]; then
     cost=$(LC_NUMERIC=C printf "%.3f" "$cost")
-    cost_color="\033[32m"
+    cost_color="$C_GREEN"
     cost_info=" | ${ICON_COST} ${cost_color}\$$cost${RESET}"
 
 fi
@@ -210,19 +224,19 @@ if [ -n "$five_h" ] || [ -n "$seven_d" ]; then
     [ -z "$seven_int" ] && seven_int=0
 
     if [ "$five_int" -ge 80 ] 2>/dev/null; then
-        five_color="\033[31m"
+        five_color="$C_RED"
     elif [ "$five_int" -ge 50 ] 2>/dev/null; then
-        five_color="\033[33m"
+        five_color="$C_YELLOW"
     else
-        five_color="\033[32m"
+        five_color="$C_GREEN"
     fi
 
     if [ "$seven_int" -ge 80 ] 2>/dev/null; then
-        seven_color="\033[31m"
+        seven_color="$C_RED"
     elif [ "$seven_int" -ge 50 ] 2>/dev/null; then
-        seven_color="\033[33m"
+        seven_color="$C_YELLOW"
     else
-        seven_color="\033[32m"
+        seven_color="$C_GREEN"
     fi
 
     # Calculate time remaining in 5-hour session from resets_at timestamp
@@ -269,5 +283,5 @@ cc_ver_info=""
 [ -n "$cc_version" ] && cc_ver_info=" | ${C_SUBTEXT}v${cc_version}${RESET}"
 echo -e "${email_color}${email_info}${RESET}"
 echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info} | ${ICON_BRANCH} ${C_MAUVE}$branch${RESET} | ${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
-echo -e "${ICON_CTX} ctx ${ctx_color}${ctx_bar}${RESET} ${ctx_color}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k) | ${ICON_CACHE} cache(r:${cache_read} c:${cache_creation} i:${input_tokens}) | ${ICON_TOKEN} tok(in:${total_input} out:${total_output}) | ${cost_info# | }${rate_info}"
+echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k) | ${ICON_CACHE} cache(r:${cache_read_f} c:${cache_creation_f} i:${input_tokens_f}) | ${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f}) | ${cost_info# | }${rate_info}"
 
