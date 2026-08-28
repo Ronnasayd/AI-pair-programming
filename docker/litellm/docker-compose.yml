@@ -8,7 +8,7 @@ services:
     volumes:
       - ./config.yaml:/app/config.yaml:ro
     environment:
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OMNIROUTER_API_KEY=${OMNIROUTER_API_KEY}
       - NINE_ROUTER_API_KEY=${NINE_ROUTER_API_KEY}
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
       - LITELLM_LOCAL_MODEL_COST_MAP=true
