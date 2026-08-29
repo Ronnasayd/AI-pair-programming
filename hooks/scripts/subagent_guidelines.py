@@ -15,6 +15,7 @@ GUIDELINES = (
     '- The agent must be instructed to communicate using "caveman full."\n\n'
     "- The agent must have sufficient context to perform its task.\n\n"
     "- Choose the agent model best suited to the task.\n\n"
+    "- Must not include any information regarding Claude or any agent in commits\n\n"
 )
 
 AGENT_TOOL_NAMES = {"agent", "task"}
