@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+"""git commit-msg hook: reject messages that mention AI code assistants.
+
+Symlinked into each project's .git/hooks/commit-msg by scripts/claude.install.sh
+(the install loop symlinks every git-hooks/* into .git/hooks/).
+
+Blocks the commit if the message body references Claude, Gemini, Codex, Copilot,
+ChatGPT, Cursor, or a generic "AI assistant / AI-generated" phrasing. Keeps the
+history free of tool attribution.
+
+Bypass for a deliberate exception: git commit --no-verify
+"""
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+# Word-boundary patterns. Case-insensitive. Keep this list tight to avoid
+# false positives on unrelated prose.
+_PATTERNS = [
+    r"\bclaude\b",
+    r"\banthropic\b",
+    r"\bgemini\b",
+    r"\bcodex\b",
+    r"\bcopilot\b",
+    r"\bchatgpt\b",
+    r"\bopenai\b",
+    r"\bcursor\s+(ai|ide|editor)\b",
+    r"\bco-?authored-by:\s*claude",
+    r"\bgenerated\s+(with|by)\s+.*\b(ai|claude|gemini|codex|copilot|chatgpt)\b",
+    r"\bai[- ]generated\b",
+    r"\bai\s+(assistant|agent|pair)\b",
+    r"🤖",
+]
+_REGEX = re.compile("|".join(_PATTERNS), re.IGNORECASE)
+
+
+def strip_comments(text: str) -> str:
+    return "\n".join(l for l in text.splitlines() if not l.lstrip().startswith("#"))
+
+
+def main() -> int:
+    if len(sys.argv) < 2:
+        return 0
+    msg = strip_comments(Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace"))
+
+    hits = sorted({m.group(0) for m in _REGEX.finditer(msg)})
+    if not hits:
+        return 0
+
+    sys.stderr.write(
+        "\n✖ commit rejected: message references an AI code assistant.\n"
+        f"  matched: {', '.join(hits)}\n"
+        "  Remove the reference, or use `git commit --no-verify` to bypass.\n\n"
+    )
+    return 1
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except Exception as exc:  # never wedge commits on a hook bug
+        sys.stderr.write(f"[commit-msg] error: {exc}\n")
+        sys.exit(0)
