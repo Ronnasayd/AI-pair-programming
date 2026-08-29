@@ -581,16 +581,6 @@
     ],
     "Notification": [
       {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/notify_sound.py",
-            "async": true
-          }
-        ]
-      },
-      {
         "hooks": [
           {
             "type": "command",

@@ -337,8 +337,6 @@ done
 BASE_URL="https://github.com/rohitg00/awesome-claude-code-toolkit/tree/main/commands"
 COMMANDS=(
   "security/dependency-audit.md"
-  "architecture/plan.md"
-  "architecture/migrate.md"
 )
 for command in "${COMMANDS[@]}"; do
   echo "━━━ ${command} ━━━"
