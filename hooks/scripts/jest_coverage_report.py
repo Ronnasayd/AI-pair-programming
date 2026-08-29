@@ -138,12 +138,12 @@ def build_coverage_context(file_path: str | None) -> str | None:
     rel_path_for_lock = os.path.relpath(str(resolved), project_root)
     tmp_dir = tmp_project_dir(project_root, "jest-coverage-incremental")
     lock_file = lock_path_for(tmp_dir, rel_path_for_lock)
-    if lock_file.exists():
+    stale = lock_file.exists()
+    if stale:
         logger.debug(
-            "Incremental coverage run still in progress for %s, coverage may be stale.",
+            "Incremental coverage run still in progress for %s, showing last known coverage.",
             rel_path_for_lock,
         )
-        return None
 
     coverage_dir = find_last_coverage_dir(project_root)
     logger.debug("Using coverage dir: %s", coverage_dir)
@@ -160,6 +160,10 @@ def build_coverage_context(file_path: str | None) -> str | None:
     uncovered_lines = _load_uncovered_lines(final, resolved, project_root)
     rel_path = os.path.relpath(str(resolved), project_root)
     message = _format_message(rel_path, entry, uncovered_lines)
+    if stale:
+        message += (
+            " (incremental run in progress; values may not reflect the latest edit)"
+        )
     logger.debug("Built coverage context: %s", message)
     return message
 
