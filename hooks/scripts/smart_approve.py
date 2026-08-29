@@ -333,6 +333,18 @@ def is_standalone_assignment(cmd):
     return rest == ""
 
 
+def strip_rtk_prefix(cmd):
+    """Strip a leading 'rtk ' proxy prefix so 'rtk git status' matches 'git status'.
+
+    'rtk proxy <cmd>' also unwraps to '<cmd>'. Bare 'rtk' (meta command like
+    'rtk gain') is left untouched.
+    """
+    m = re.match(r"^rtk\s+(?:proxy\s+)?(\S.*)$", cmd)
+    if m:
+        return m.group(1)
+    return cmd
+
+
 def normalize_command(cmd):
     """Normalize a command by stripping env vars, redirections, and whitespace."""
     cmd = cmd.strip()
@@ -341,6 +353,7 @@ def normalize_command(cmd):
     cmd = strip_keyword_prefix(cmd)
     cmd = strip_env_vars(cmd)
     cmd = strip_redirections(cmd)
+    cmd = strip_rtk_prefix(cmd)
     # Collapse multiple spaces
     cmd = re.sub(r"\s+", " ", cmd)
     return cmd.strip()
@@ -386,9 +399,14 @@ def decompose_command(command):
 def decide(command, settings):
     """Make a permission decision for a compound command.
 
+    Sub-commands are normalized (which strips any leading ``rtk`` proxy
+    prefix), so a single settings pattern such as ``Bash(git push:*)``
+    matches both ``git push`` and ``rtk git push``.
+
     Returns:
         ("allow", reason) if all sub-commands match allow patterns
         ("deny", reason) if any sub-command matches a deny pattern
+        ("ask", reason) if any sub-command matches an ask pattern
         (None, None) if we should fall through to normal prompting
     """
     if not command or not command.strip():
@@ -397,6 +415,7 @@ def decide(command, settings):
     permissions = settings.get("permissions", {})
     allow_patterns = parse_bash_patterns(permissions.get("allow", []))
     deny_patterns = parse_bash_patterns(permissions.get("deny", []))
+    ask_patterns = parse_bash_patterns(permissions.get("ask", []))
 
     sub_commands = decompose_command(command)
     if not sub_commands:
@@ -406,6 +425,11 @@ def decide(command, settings):
     for cmd in sub_commands:
         if command_matches_pattern(cmd, deny_patterns):
             return "deny", f"Sub-command '{cmd}' matches deny pattern"
+
+    # Then ask — any sub-command needing confirmation forces a prompt
+    for cmd in sub_commands:
+        if command_matches_pattern(cmd, ask_patterns):
+            return "ask", f"Sub-command '{cmd}' matches ask pattern"
 
     # Check if ALL match allow
     all_allowed = True

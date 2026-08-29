@@ -93,13 +93,9 @@
     "ask": [
       "Bash(chmod:*)",
       "Bash(curl:*)",
-      "Bash(rtk curl:*)",
       "Bash(wget:*)",
-      "Bash(rtk wget:*)",
       "Bash(git merge:*)",
-      "Bash(rtk git merge:*)",
       "Bash(git commit:*)",
-      "Bash(rtk git commit:*)",
       "Bash(docker run:*)",
       "Bash(docker exec:*)",
       "Bash(eval:*)",
