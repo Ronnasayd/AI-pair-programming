@@ -72,6 +72,7 @@ while [ "$i" -lt "$task_count" ]; do
     name=$(echo "$task"   | jq -r '.name // "agent"')
     type=$(echo "$task"   | jq -r '.type // empty')
     status=$(echo "$task" | jq -r '.status // empty')
+    label=$(echo "$task"  | jq -r '.label // .description // empty')
     model=$(echo "$task"  | jq -r '.model // empty')
     effort=$(echo "$task" | jq -r '.effort // empty')
     ctx_size=$(echo "$task"  | jq -r '.contextWindowSize // 0')
@@ -80,16 +81,19 @@ while [ "$i" -lt "$task_count" ]; do
 
     # --- status icon ---
     case "$status" in
-        running|in_progress|active) status_seg="${C_BLUE}${ICON_RUN}${RESET}" ;;
-        completed|done|success)     status_seg="${C_GREEN}${ICON_OK}${RESET}" ;;
-        error|failed)               status_seg="${C_RED}${ICON_ERR}${RESET}" ;;
-        *)                          status_seg="${C_SUBTEXT}${ICON_WAIT}${RESET}" ;;
+        running|in_progress|active) status_seg="${C_BLUE}${ICON_RUN} ${status}${RESET}" ;;
+        completed|done|success)     status_seg="${C_GREEN}${ICON_OK} ${status}${RESET}" ;;
+        error|failed)               status_seg="${C_RED}${ICON_ERR} ${status}${RESET}" ;;
+        *)                          status_seg="${C_SUBTEXT}${ICON_WAIT} ${status:-unknown}${RESET}" ;;
     esac
 
     # --- name + type (type dim, skipped when identical to name) ---
     name_seg="${C_MAUVE}${name}${RESET}"
     if [ -n "$type" ] && [ "$type" != "$name" ]; then
         name_seg="${name_seg} ${C_SUBTEXT}${type}${RESET}"
+    fi
+    if [ -n "$label" ] && [ "$label" != "$name" ]; then
+        name_seg="${name_seg}${SEP}${C_SUBTEXT}${label}${RESET}"
     fi
 
     # --- model short: strip claude- prefix, -YYYYMMDD date, [..] suffix ---
