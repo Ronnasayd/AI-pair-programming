@@ -7,7 +7,6 @@ markdown/JSON conversion, and shell command execution. This module is designed
 for extensibility and integration with AI-powered workflows.
 """
 
-
 import os
 import subprocess
 from glob import glob
@@ -66,7 +65,7 @@ TASKS_DIR = ".taskmaster/tasks"
 TASKS_JSON = "tasks.json"
 TASKS_MD = "tasks.md"
 META_JSON = "meta.json"
-REVIEW_INSTRUCTIONS = "review-refactor-specialist.agent.md"
+REVIEW_INSTRUCTIONS = "reviewer-specialist.agent.md"
 DEVELOPER_WORKFLOW_INSTRUCTIONS = "developer-specialist.agent.md"
 DOCUMENTATION_WORKFLOW_INSTRUCTIONS = "documentation-specialist.agent.md"
 GENERATE_PRD_INSTRUCTIONS = "product-owner-specialist.agent.md"

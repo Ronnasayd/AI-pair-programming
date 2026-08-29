@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
 ---
 
-MANDATORY: Use developer-specialist or review-refactor-specialist agent.
+MANDATORY: Use developer-specialist or reviewer-specialist agent.
 MANDATORY: {language} arg not provided → MUST ask user: "Which language should I use for the PR description (e.g., English, Portuguese)?"
 
 Objective: generate professional, comprehensive PR description by analyzing staged changes + recent commit history.
