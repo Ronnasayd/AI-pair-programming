@@ -10,6 +10,7 @@ on demand from coverage-final.json. Writing it from this background process
 raced against that read (report could see a half-written file).
 """
 
+import fcntl
 import json
 import os
 import sys
@@ -61,7 +62,6 @@ def merge_coverage(base: dict, partial: dict) -> dict:
 def main() -> None:
     partial_dir = Path(sys.argv[1])
     coverage_dir = Path(sys.argv[2])
-    rel_path = sys.argv[3] if len(sys.argv) > 3 else None
     coverage_dir.mkdir(parents=True, exist_ok=True)
 
     partial_file = partial_dir / "coverage-final.json"
@@ -69,12 +69,17 @@ def main() -> None:
         return
 
     partial = json.loads(partial_file.read_text())
-
     coverage_file = coverage_dir / "coverage-final.json"
-    base = json.loads(coverage_file.read_text()) if coverage_file.exists() else {}
 
-    merged = merge_coverage(base, partial)
-    _write_json_atomic(coverage_file, merged)
+    # Serialize the read-modify-write of coverage-final.json across all
+    # concurrent per-file merges (each holds only its own per-file lock, so
+    # without this two edits race and one merge is lost).
+    merge_lock = coverage_dir / ".merge.lock"
+    with open(merge_lock, "w") as lock_fh:
+        fcntl.flock(lock_fh, fcntl.LOCK_EX)
+        base = json.loads(coverage_file.read_text()) if coverage_file.exists() else {}
+        merged = merge_coverage(base, partial)
+        _write_json_atomic(coverage_file, merged)
 
 
 if __name__ == "__main__":
