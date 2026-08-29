@@ -599,6 +599,10 @@
     "type": "command",
     "command": "bash \"$AI_PROJECT_ROOT_DIR/scripts/statusline-command.sh\""
   },
+  "subagentStatusLine": {
+    "type": "command",
+    "command": "bash \"$AI_PROJECT_ROOT_DIR/scripts/subagent-statusline.sh\""
+  },
   "enabledPlugins": {
     "caveman@caveman": true,
     "rag-rat@rag-rat": false,
