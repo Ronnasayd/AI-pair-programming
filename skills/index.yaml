@@ -208,6 +208,21 @@ skills:
   description: Grill the user relentlessly about a plan, decision, or idea. Use when
     the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
 - name:
+  - generate-design-md
+  description: 'Use this skill to generate, refactor, or update a DESIGN.md file —
+    the Google Labs open format that documents a project''s design system as machine-readable
+    tokens (YAML front matter) plus human/AI-readable rationale (Markdown body). Triggers
+    include: "create a DESIGN.md", "generate a design.md", "document the design system",
+    "gerar DESIGN.md", "criar design.md", "write design tokens doc", "extract our
+    design system into DESIGN.md", "update DESIGN.md after these style changes", or
+    being handed CSS/Tailwind config/theme files and asked to capture the visual language.
+    Auto-detects create mode (no DESIGN.md exists — scaffold from the codebase) vs
+    update mode (a DESIGN.md exists — sync it with new styles or a diff). Do NOT use
+    for building component libraries, generating UI code, or writing general prose
+    docs (use generate-docs).
+
+    '
+- name:
   - document-summarizer
   description: Extract and condense key information from any document or text while
     preserving critical details. Use when you need to summarize PRDs, specifications,
