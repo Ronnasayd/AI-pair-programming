@@ -396,12 +396,16 @@ def decompose_command(command):
     ]
 
 
-def decide(command, settings):
+def decide(command, settings, bypass_permissions=False):
     """Make a permission decision for a compound command.
 
     Sub-commands are normalized (which strips any leading ``rtk`` proxy
     prefix), so a single settings pattern such as ``Bash(git push:*)``
     matches both ``git push`` and ``rtk git push``.
+
+    When ``bypass_permissions`` is True (payload permission_mode ==
+    "bypassPermissions"), an "ask" decision is promoted to "allow";
+    "deny" is still honored.
 
     Returns:
         ("allow", reason) if all sub-commands match allow patterns
@@ -426,9 +430,16 @@ def decide(command, settings):
         if command_matches_pattern(cmd, deny_patterns):
             return "deny", f"Sub-command '{cmd}' matches deny pattern"
 
-    # Then ask — any sub-command needing confirmation forces a prompt
+    # Then ask — any sub-command needing confirmation forces a prompt,
+    # unless permission_mode is "bypassPermissions", which promotes to allow.
     for cmd in sub_commands:
         if command_matches_pattern(cmd, ask_patterns):
+            if bypass_permissions:
+                return (
+                    "allow",
+                    f"Sub-command '{cmd}' matches ask pattern; "
+                    "promoted to allow (bypassPermissions mode)",
+                )
             return "ask", f"Sub-command '{cmd}' matches ask pattern"
 
     # Check if ALL match allow
@@ -499,7 +510,11 @@ def main():
     sub_commands = decompose_command(command)
     log(f"sub-commands: {sub_commands[:5]}{'...' if len(sub_commands) > 5 else ''}")
 
-    decision, reason = decide(command, settings)
+    bypass_permissions = input_data.get("permission_mode") == "bypassPermissions"
+    if bypass_permissions:
+        log("permission_mode=bypassPermissions — 'ask' promoted to 'allow'")
+
+    decision, reason = decide(command, settings, bypass_permissions)
 
     log(f"decision={decision or 'passthrough'} reason={reason or 'no pattern matched'}")
 

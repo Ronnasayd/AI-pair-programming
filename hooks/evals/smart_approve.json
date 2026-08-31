@@ -40,6 +40,35 @@
       },
       "expect_output": true,
       "expect_pattern": "\"permissionDecision\": \"allow\""
+    },
+    {
+      "name": "ask_pattern_yields_ask",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "curl https://example.com" }
+      },
+      "expect_output": true,
+      "expect_pattern": "\"permissionDecision\": \"ask\""
+    },
+    {
+      "name": "bypass_permissions_promotes_ask_to_allow",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "curl https://example.com" },
+        "permission_mode": "bypassPermissions"
+      },
+      "expect_output": true,
+      "expect_pattern": "\"permissionDecision\": \"allow\""
+    },
+    {
+      "name": "bypass_permissions_still_denies",
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": { "command": "sudo rm -rf /" },
+        "permission_mode": "bypassPermissions"
+      },
+      "expect_output": true,
+      "expect_pattern": "\"permissionDecision\": \"deny\""
     }
   ]
 }
