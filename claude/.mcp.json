@@ -1,5 +1,13 @@
 {
   "mcpServers": {
+    "notebooklm": {
+      "command": "npx",
+      "args": ["notebooklm-mcp@latest"]
+    },
+    "iconify": {
+      "command": "npx",
+      "args": ["-y", "iconify-mcp-server@latest"]
+    },
     "omniroute": {
       "url": "http://localhost:20128/api/mcp/stream",
       "type": "http",

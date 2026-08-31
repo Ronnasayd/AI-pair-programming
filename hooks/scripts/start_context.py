@@ -117,6 +117,27 @@ def find_config_files(payload):
     return "\n".join(lines)
 
 
+def disabled_mcp_servers():
+    project_dir = os.environ.get("AI_PROJECT_DIR")
+    if not project_dir:
+        return ""
+    claude_json_path = os.path.join(os.path.expanduser("~"), ".claude.json")
+    if not os.path.exists(claude_json_path):
+        return ""
+    with open(claude_json_path) as f:
+        config = json.load(f)
+    servers = (
+        config.get("projects", {}).get(project_dir, {}).get("disabledMcpServers", [])
+    )
+    if not servers:
+        return ""
+    return (
+        "## Disabled MCP servers\n\n"
+        + "\n".join(f"- `{name}`" for name in servers)
+        + "\n\nIf you need to use a disabled MCP, request it from the user.\n"
+    )
+
+
 def main():
     try:
         payload = json.load(sys.stdin)
@@ -129,6 +150,9 @@ def main():
     config_text = find_config_files(payload)
     if config_text:
         additional_context += f"\n\n{config_text}"
+    disabled_mcp_text = disabled_mcp_servers()
+    if disabled_mcp_text:
+        additional_context += f"\n\n{disabled_mcp_text}"
     output = {
         "hookSpecificOutput": {
             "hookEventName": "SessionStart",
