@@ -28,6 +28,8 @@ disabled_mcp_servers = [
     "tokensave",
     "ai-memory",
     "omniroute",
+    "iconify",
+    "notebooklm",
 ]
 
 parser = argparse.ArgumentParser()
