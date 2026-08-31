@@ -25,6 +25,7 @@ RULE = (
     "If an interactive tool exists, never ask a plain-text question.\n\n"
     "If there are multiple questions, use the `grilling` skill.\n"
     "Ask questions using clear, technical language.\n"
+    "Use the same language used by the user.\n"
 )
 
 
