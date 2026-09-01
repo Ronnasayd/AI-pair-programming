@@ -25,6 +25,7 @@ from utils import (  # noqa: E402
     run_command_cwd,
     run_jscpd,
     run_lint_hook_main,
+    truncate_large_output,
 )
 
 logger = get_hooks_logger("TypeScriptLint")
@@ -68,9 +69,10 @@ def _run_typescript(resolved: Path, project_root: str) -> dict:
     logger.debug("t] tsc-files result for %s: %s", resolved, result)
     if not result["success"]:
         logger.debug("t] Type errors in %s:\n%s", resolved, result.get("error", ""))
+    output = truncate_large_output(result.get("output", ""), "tsc")
     return {
         "success": result["success"],
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }
@@ -105,6 +107,7 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
     )
     if not result["success"]:
         logger.debug("t] Lint issues in %s:\n%s", resolved, output)
+    output = truncate_large_output(output, "eslint")
     return {
         "success": result["success"],
         "output": output,
