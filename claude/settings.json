@@ -5,7 +5,8 @@
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5[1m]",
     "ASDF_NODEJS_VERSION": "23.11.1",
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
-    "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"
+    "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "60"
   },
   "attribution": {
     "commit": "",
@@ -108,7 +109,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "sonnet",
+  "model": "haiku",
   "hooks": {
     "PermissionRequest": [
       {
