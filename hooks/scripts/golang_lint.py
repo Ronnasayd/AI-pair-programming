@@ -27,6 +27,7 @@ from utils import (  # noqa: E402
     run_command_cwd,
     run_jscpd,
     run_lint_hook_main,
+    truncate_large_output,
 )
 
 logger = get_hooks_logger("GolangLint")
@@ -74,9 +75,10 @@ def _run_govet(resolved: Path, project_root: str) -> dict:
         )
     if result.get("error"):
         logger.warning("go vet stderr: %s", result.get("error", ""))
+    output = truncate_large_output(result.get("output", ""), "govet")
     return {
         "success": result["success"],
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }
@@ -110,6 +112,7 @@ def _run_golangci_lint(resolved: Path, project_root: str) -> dict:
         logger.warning("golangci-lint found issues in %s:\n%s", resolved, output)
     if result.get("error"):
         logger.warning("golangci-lint stderr: %s", result.get("error", ""))
+    output = truncate_large_output(output, "golangci-lint")
     return {
         "success": result["success"],
         "output": output,
@@ -131,9 +134,10 @@ def _run_gofmt(resolved: Path, project_root: str) -> dict:
     unformatted = bool(result.get("output", "").strip())
     if unformatted:
         logger.warning("gofmt found unformatted file: %s", resolved)
+    output = truncate_large_output(result.get("output", ""), "gofmt")
     return {
         "success": result["success"] and not unformatted,
-        "output": result.get("output", ""),
+        "output": output,
         "error": result.get("error", ""),
         "installed": True,
     }

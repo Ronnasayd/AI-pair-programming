@@ -114,6 +114,29 @@ def parse_json_output(raw: str, tag: str, source: str, logger: logging.Logger) -
         return raw
 
 
+OUTPUT_TRUNCATE_THRESHOLD = int(os.environ.get("OUTPUT_TRUNCATE_THRESHOLD", "2000"))
+
+
+def truncate_large_output(output: Any, tool: str) -> Any:
+    """If output (as text) exceeds OUTPUT_TRUNCATE_THRESHOLD chars, save the
+    full text to /tmp/<tool>-<hash>.output and return a preview dict pointing
+    to it; otherwise return output unchanged."""
+    text = output if isinstance(output, str) else json.dumps(output)
+    if len(text) <= OUTPUT_TRUNCATE_THRESHOLD:
+        return output
+
+    digest = hashlib.sha1(text.encode()).hexdigest()[:12]
+    out_path = Path(tempfile.gettempdir()) / f"{tool}-{digest}.output"
+    out_path.write_text(text, encoding="utf-8")
+
+    return {
+        "truncated": True,
+        "preview": text[:OUTPUT_TRUNCATE_THRESHOLD],
+        "full_output_path": str(out_path),
+        "note": f"Output truncated ({len(text)} chars total). Read full output at full_output_path if needed.",
+    }
+
+
 def parse_jsonlines_output(
     raw: str, tag: str, source: str, logger: logging.Logger
 ) -> Any:
@@ -172,6 +195,7 @@ def run_jscpd(
         return {"success": True, "output": "", "error": "", "installed": True}
 
     logger.warning("[%s] jscpd found issues in %s:\n%s", tag, resolved, output)
+    output = truncate_large_output(output, "jscpd")
 
     return {
         "success": False,
@@ -983,6 +1007,20 @@ def strip_heredocs(command: str) -> str:
     return "\n".join(result)
 
 
+def _demo_truncate_large_output() -> None:
+    """Self-check for truncate_large_output. Run: python3 utils.py"""
+    small = "ok"
+    assert truncate_large_output(small, "demo") == small
+
+    big = "x" * (OUTPUT_TRUNCATE_THRESHOLD + 1)
+    result = truncate_large_output(big, "demo")
+    assert isinstance(result, dict) and result["truncated"] is True
+    saved = Path(result["full_output_path"])
+    assert saved.read_text(encoding="utf-8") == big
+    saved.unlink()
+    print("truncate_large_output: OK")
+
+
 def split_on_operators(command: str, protect_exec: bool = False) -> list[str]:
     """Split a shell command string on &&, ||, ;, |, and newlines.
 
@@ -1076,3 +1114,7 @@ def split_on_operators(command: str, protect_exec: bool = False) -> list[str]:
 
     segments.append("".join(current))
     return [s.replace("\x00", ";").strip() for s in segments if s.strip()]
+
+
+if __name__ == "__main__":
+    _demo_truncate_large_output()

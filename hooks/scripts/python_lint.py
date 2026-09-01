@@ -28,6 +28,7 @@ from utils import (  # noqa: E402
     run_command_cwd,
     run_jscpd,
     run_lint_hook_main,
+    truncate_large_output,
 )
 
 logger = get_hooks_logger("PythonLint")
@@ -87,6 +88,7 @@ def _run_mypy(resolved: Path, project_root: str) -> dict:
         logger.warning("mypy found type errors in %s:\n%s", resolved, output)
     if result.get("error"):
         logger.warning("mypy stderr: %s", result.get("error", ""))
+    output = truncate_large_output(output, "mypy")
     return {
         "success": result["success"],
         "output": output,
@@ -119,6 +121,7 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
         logger.warning("ruff found issues in %s:\n%s", resolved, output)
     if result.get("error"):
         logger.warning("ruff stderr: %s", result.get("error", ""))
+    output = truncate_large_output(output, "ruff")
     return {
         "success": result["success"],
         "output": output,
