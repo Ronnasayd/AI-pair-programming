@@ -109,7 +109,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "haiku",
+  "model": "sonnet",
   "hooks": {
     "PermissionRequest": [
       {
