@@ -12,7 +12,6 @@ alias aimsllm='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memor
     -v ai-memory-data:/data \
     -e AI_MEMORY_LLM_MODEL=claude-haiku-4-5 \
     -e AI_MEMORY_LLM_PROVIDER=anthropic-oauth \
-    -e AI_MEMORY_CONSOLIDATE_ON_SESSION_END=true \
     -e AI_MEMORY_AUTH_TOKEN="$(_aim_secret AI_MEMORY_AUTH_TOKEN)" \
     -e CLAUDE_CODE_OAUTH_TOKEN="$(_aim_secret CLAUDE_CODE_OAUTH_TOKEN)" \
     akitaonrails/ai-memory:latest' # Start AI Memory container using LLM-backed mode: ai-memory-start-llm
