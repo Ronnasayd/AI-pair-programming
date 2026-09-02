@@ -91,7 +91,7 @@ The following rules apply to specific file types:
 
 ### Core Components
 
-- **MCP Servers** (`src/mcps/`, `src/my_mcp_server.py`): FastMCP-based tools for codebase context, code review, documentation sync, semantic search. Supports MongoDB, MySQL, PostgreSQL, SQLite.
+- **MCP Servers** (`src/mcps/`): FastMCP-based tools — `skill_loader_mcp.py`, `search_engine.py` (semantic search). Registered proxies (DB, GitHub, Figma, etc.) are routed through `mcp-manager` and configured in `.mcp.json`.
 - **Agents** (`agents/`): Persona definitions (developer-specialist, cybersecurity-specialist, etc.) with behavioral instructions.
 - **Skills** (`skills/`): Reusable capabilities (workflows, guides, analysis patterns).
 - **Instructions** (`instructions/`): Domain-specific rules (code style, testing, React patterns, etc.).
@@ -111,9 +111,9 @@ docs/           Project documentation
 
 ## Key Technologies
 
-- **Python 3.11+** with Poetry for dependency management
-- **FastMCP**: Model Context Protocol server framework
-- **pytest**: Test framework (async mode enabled)
+- **Python 3.11+** with `uv` for dependency management (`uv.lock` at root; `src/` builds with setuptools)
+- **FastMCP** (`fastmcp>=2.0`): Model Context Protocol server framework
+- **pytest**: Test framework (`asyncio_mode = "auto"`)
 - **Node.js/TypeScript**: Supported for various project types
 - **Bash**: Installation and environment scripts
 
@@ -122,26 +122,25 @@ docs/           Project documentation
 Install and setup:
 
 ```bash
-poetry install                  # Install Python dependencies
-./install.sh [--all|--claude]   # Set up symlinks and configurations
+uv sync                         # Install root Python deps (hook scripts)
+cd src && uv sync               # Install MCP server deps
+./install.sh [--all|--claude]   # Set up symlinks, git-hooks, and configurations
 ```
 
 Run tests:
 
 ```bash
-cd src && pytest                     # Run all tests
-pytest src/copilot/test_*.py         # Run Copilot tests
+cd src && uv run pytest              # Run MCP server tests (testpaths = ["tests"])
 ```
 
 Run MCP servers:
 
 ```bash
-poetry run mongodb-mcp              # MongoDB server
-poetry run mysql-mcp                # MySQL server
-poetry run postgresql-mcp           # PostgreSQL server
-poetry run sqlite-mcp               # SQLite server
-python src/my_mcp_server.py         # Main MCP server
+cd src && uv run skill-loader-mcp    # skill-loader MCP server
 ```
+
+Other MCP servers are provided via `mcp-manager` (proxy); most are disabled by
+default (`scripts/disable-mcps-default.py`). Request a disabled one from the user.
 
 Development workflow:
 

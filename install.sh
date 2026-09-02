@@ -28,6 +28,7 @@ else
     if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
       echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo "alias add at .zshrc"
     fi
+    ai-memory install-skills
     echo "run: '$SOURCE/scripts/build.sh' to add helper tools"
     echo "Use the command: iai --help"
     exit 0
