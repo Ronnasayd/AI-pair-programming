@@ -404,7 +404,7 @@ def decide(command, settings, bypass_permissions=False):
     matches both ``git push`` and ``rtk git push``.
 
     When ``bypass_permissions`` is True (payload permission_mode ==
-    "bypassPermissions"), an "ask" decision is promoted to "allow";
+    "dontAsk"), an "ask" decision is promoted to "allow";
     "deny" is still honored.
 
     Returns:
@@ -431,14 +431,14 @@ def decide(command, settings, bypass_permissions=False):
             return "deny", f"Sub-command '{cmd}' matches deny pattern"
 
     # Then ask — any sub-command needing confirmation forces a prompt,
-    # unless permission_mode is "bypassPermissions", which promotes to allow.
+    # unless permission_mode is "dontAsk", which promotes to allow.
     for cmd in sub_commands:
         if command_matches_pattern(cmd, ask_patterns):
             if bypass_permissions:
                 return (
                     "allow",
                     f"Sub-command '{cmd}' matches ask pattern; "
-                    "promoted to allow (bypassPermissions mode)",
+                    "promoted to allow (dontAsk mode)",
                 )
             return "ask", f"Sub-command '{cmd}' matches ask pattern"
 
@@ -510,9 +510,9 @@ def main():
     sub_commands = decompose_command(command)
     log(f"sub-commands: {sub_commands[:5]}{'...' if len(sub_commands) > 5 else ''}")
 
-    bypass_permissions = input_data.get("permission_mode") == "bypassPermissions"
+    bypass_permissions = input_data.get("permission_mode") == "dontAsk"
     if bypass_permissions:
-        log("permission_mode=bypassPermissions — 'ask' promoted to 'allow'")
+        log("permission_mode=dontAsk — 'ask' promoted to 'allow'")
 
     decision, reason = decide(command, settings, bypass_permissions)
 
