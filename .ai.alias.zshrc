@@ -16,7 +16,7 @@ alias aimsllm='docker run -d --name ai-memory \
 alias aimh='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp"  && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374"' # Install AI Memory MCP + hooks into Claude Code: ai-memory-hooks
 alias aimhllm='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)" && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)"' # Install AI Memory MCP + hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
-alias claude-yolo="claude --dangerously-skip-permissions" # Claude with no permission prompts: yolo
+alias claude-yolo="claude --permission-mode=dontAsk" # Claude with no permission prompts: yolo
 alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills
 alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesignore not found'" # Show rules: show-rules
 alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'" # Show agents: show-agents
@@ -51,7 +51,9 @@ alias aij="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh" # Run ai-jail sandbox s
 alias ca="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh"
 alias cacs="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh choose"
 alias lca="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude" # Run ai-jail sandbox script with claude
-alias lcay="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude --dangerously-skip-permissions" # Run ai-jail sandbox script with claude
+alias lcay="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude --permission-mode=dontAsk" # Run ai-jail sandbox script with claude
 alias omniroute="ASDF_NODEJS_VERSION=24.16.0 omniroute"
+alias cchr="claude --chrome" # Run Claude with chrome browser integration enabled: claude-chrome
+alias cpln="claude --disallowedTools=Write,Edit,NotebookEdit" # Run Claude with some tools disabled: claude-no-write-edit
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
