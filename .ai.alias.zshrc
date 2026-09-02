@@ -1,20 +1,24 @@
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
-alias aims="docker run -d --name ai-memory \
+# Read a value from ~/.secrets/claude.env, stripping surrounding quotes. Handles '=' in the value.
+_aim_secret() { grep -E "^$1=" ~/.secrets/claude.env | head -1 | cut -d= -f2- | sed -e 's/^["'\'']//' -e 's/["'\'']$//'; }
+alias aims='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memory \
     --restart unless-stopped \
     -p 127.0.0.1:49374:49374 \
     -v ai-memory-data:/data \
-    akitaonrails/ai-memory:latest" # Start AI Memory container: ai-memory-start
-alias aimsllm='docker run -d --name ai-memory \
+    akitaonrails/ai-memory:latest' # Start AI Memory container: ai-memory-start
+alias aimsllm='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memory \
     --restart unless-stopped \
     -p 127.0.0.1:49374:49374 \
     -v ai-memory-data:/data \
     -e AI_MEMORY_LLM_MODEL=claude-haiku-4-5 \
     -e AI_MEMORY_LLM_PROVIDER=anthropic-oauth \
-    -e AI_MEMORY_AUTH_TOKEN=$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2) \
-    -e CLAUDE_CODE_OAUTH_TOKEN=$(grep CLAUDE_CODE_OAUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2) \
+    -e AI_MEMORY_CONSOLIDATE_ON_SESSION_END=true \
+    -e AI_MEMORY_AUTH_TOKEN="$(_aim_secret AI_MEMORY_AUTH_TOKEN)" \
+    -e CLAUDE_CODE_OAUTH_TOKEN="$(_aim_secret CLAUDE_CODE_OAUTH_TOKEN)" \
     akitaonrails/ai-memory:latest' # Start AI Memory container using LLM-backed mode: ai-memory-start-llm
 alias aimh='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp"  && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374"' # Install AI Memory MCP + hooks into Claude Code: ai-memory-hooks
-alias aimhllm='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)" && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(grep AI_MEMORY_AUTH_TOKEN ~/.secrets/claude.env | cut -d= -f2)"' # Install AI Memory MCP + hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
+alias aimhllm='_t="$(_aim_secret AI_MEMORY_AUTH_TOKEN)" && ai-memory install-mcp --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$_t" && ai-memory install-hooks --agent claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$_t"' # Install AI Memory MCP + hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
+alias aimup='claude setup-token' # Generate a long-lived (1yr) OAuth token -> paste into ~/.secrets/claude.env as CLAUDE_CODE_OAUTH_TOKEN, then rerun aimsllm: ai-memory-oauth-refresh
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias claude-yolo="claude --permission-mode=dontAsk" # Claude with no permission prompts: yolo
 alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills
@@ -52,8 +56,9 @@ alias ca="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh"
 alias cacs="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh choose"
 alias lca="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude" # Run ai-jail sandbox script with claude
 alias lcay="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude --permission-mode=dontAsk" # Run ai-jail sandbox script with claude
-alias omniroute="ASDF_NODEJS_VERSION=24.16.0 omniroute"
+alias omniroute="ASDF_NODEJS_VERSION=24.16.0 npx omniroute"
 alias cchr="claude --chrome" # Run Claude with chrome browser integration enabled: claude-chrome
 alias cpln="claude --disallowedTools=Write,Edit,NotebookEdit" # Run Claude with some tools disabled: claude-no-write-edit
+alias aimat="ai-memory generate-auth-token" # Generate AI Memory auth token: ai-memory-auth-token
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 

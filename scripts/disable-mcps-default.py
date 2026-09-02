@@ -26,7 +26,6 @@ disabled_mcp_servers = [
     "github-L",
     "github",
     "tokensave",
-    "ai-memory",
     "omniroute",
     "iconify",
     "notebooklm",
