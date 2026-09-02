@@ -11,7 +11,7 @@ import json
 import urllib.request
 from typing import Any, Dict
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 mcp = FastMCP(name="skill_loader")
 
