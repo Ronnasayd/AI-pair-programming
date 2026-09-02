@@ -28,7 +28,6 @@ else
     if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
       echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo "alias add at .zshrc"
     fi
-    ai-memory install-skills
     echo "run: '$SOURCE/scripts/build.sh' to add helper tools"
     echo "Use the command: iai --help"
     exit 0
@@ -169,6 +168,7 @@ for backend in "${BACKENDS[@]}"; do
   run_install "$backend"
 done
 
+ai-memory install-skills && echo "ia-memory install-skills ok"
 
 if ! grep -qF ".agents/skills/*" .git/info/exclude; then
     echo ".agents/skills/*" >> .git/info/exclude
