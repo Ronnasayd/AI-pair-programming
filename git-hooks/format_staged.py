@@ -112,7 +112,7 @@ def resolve_js_bin(project_root: Path, formatter: str) -> list[str] | None:
     import shutil
 
     if shutil.which("npx"):
-        return ["npx", "--no-install", _FORMATTER_PKG[formatter]]
+        return ["npx", _FORMATTER_PKG[formatter]]
     return None
 
 
