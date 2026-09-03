@@ -19,14 +19,17 @@ from pathlib import Path
 
 # Word-boundary patterns. Case-insensitive. Keep this list tight to avoid
 # false positives on unrelated prose.
+# `(?![/.\w-])` guards against matching a path/filename segment
+# (e.g. `claude/settings.json`, `codex.md`) rather than a tool reference.
+_NAME_SUFFIX = r"(?![/.\w-])"
 _PATTERNS = [
-    r"\bclaude\b",
-    r"\banthropic\b",
-    r"\bgemini\b",
-    r"\bcodex\b",
-    r"\bcopilot\b",
-    r"\bchatgpt\b",
-    r"\bopenai\b",
+    r"\bclaude\b" + _NAME_SUFFIX,
+    r"\banthropic\b" + _NAME_SUFFIX,
+    r"\bgemini\b" + _NAME_SUFFIX,
+    r"\bcodex\b" + _NAME_SUFFIX,
+    r"\bcopilot\b" + _NAME_SUFFIX,
+    r"\bchatgpt\b" + _NAME_SUFFIX,
+    r"\bopenai\b" + _NAME_SUFFIX,
     r"\bcursor\s+(ai|ide|editor)\b",
     r"\bco-?authored-by:\s*claude",
     r"\bgenerated\s+(with|by)\s+.*\b(ai|claude|gemini|codex|copilot|chatgpt)\b",
