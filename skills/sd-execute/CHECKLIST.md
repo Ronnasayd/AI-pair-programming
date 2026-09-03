@@ -7,5 +7,6 @@ Checklist for `sd-execute` skill, sequential:
 5. **Sync on Verifier outcome** — PASS: tasks stay `done`. Gap found → fix task syncs back `pending`/`blocked`, re-sync `done` after fix commit.
 6. **Sync docs** — invoke `generate-docs` (update mode) scoped to diff/commits, if warranted. Skip silently if no doc-worthy change.
 7. **Summary** — report tlc-spec-driven output + taskmaster sync confirmation (ids updated) + docs sync outcome. User does final commit/push.
+8. **Save permanent memory** — at session end, evaluate whether anything is worth saving as permanent memory. Save only what the next session needs and cannot rediscover from code, Git, or CLAUDE.md — the _reason_ behind a decision, a non-obvious invariant, a user preference. Already in repo or conversation-only → do not save. Persist via `ai-memory-durable-pages` skill.
 
 Status mapping: committed+gate pass → `done` | Verifier gap → `pending` | deferred → `deferred` | skipped → `cancelled` | blocked → `blocked`.
