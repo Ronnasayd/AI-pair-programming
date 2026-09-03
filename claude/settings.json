@@ -507,6 +507,15 @@
             "timeout": 2
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-start.sh | tee $HOME/.claude/logs/external.log"
+          }
+        ]
       }
     ],
     "SubagentStop": [
@@ -529,6 +538,15 @@
             "type": "command",
             "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
             "timeout": 2
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-stop.sh | tee $HOME/.claude/logs/external.log"
           }
         ]
       }
