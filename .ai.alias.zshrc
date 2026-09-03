@@ -15,8 +15,10 @@ alias aimsllm='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memor
     -e AI_MEMORY_AUTH_TOKEN="$(_aim_secret AI_MEMORY_AUTH_TOKEN)" \
     -e CLAUDE_CODE_OAUTH_TOKEN="$(_aim_secret CLAUDE_CODE_OAUTH_TOKEN)" \
     akitaonrails/ai-memory:latest' # Start AI Memory container using LLM-backed mode: ai-memory-start-llm
-alias aimh='ai-memory install-mcp   --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp"  && ai-memory install-hooks --agent  claude-code --apply --server-url "http://127.0.0.1:49374"' # Install AI Memory MCP + hooks into Claude Code: ai-memory-hooks
-alias aimhllm='_t="$(_aim_secret AI_MEMORY_AUTH_TOKEN)" && ai-memory install-mcp --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$_t" && ai-memory install-hooks --agent claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$_t"' # Install AI Memory MCP + hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
+alias aimm='ai-memory install-mcp --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp"' # Install AI Memory MCP into Claude Code: ai-memory-mcp
+alias aimh='ai-memory install-hooks --agent claude-code --apply --server-url "http://127.0.0.1:49374"' # Install AI Memory hooks into Claude Code: ai-memory-hooks
+alias aimmllm='ai-memory install-mcp --client claude-code --apply --server-url "http://127.0.0.1:49374/mcp" --auth-token "$(_aim_secret AI_MEMORY_AUTH_TOKEN)"' # Install AI Memory MCP with auth token (LLM-backed mode): ai-memory-mcp-llm
+alias aimhllm='ai-memory install-hooks --agent claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(_aim_secret AI_MEMORY_AUTH_TOKEN)"' # Install AI Memory hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
 alias aimup='claude setup-token' # Generate a long-lived (1yr) OAuth token -> paste into ~/.secrets/claude.env as CLAUDE_CODE_OAUTH_TOKEN, then rerun aimsllm: ai-memory-oauth-refresh
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias claude-yolo="claude --permission-mode=dontAsk" # Claude with no permission prompts: yolo
