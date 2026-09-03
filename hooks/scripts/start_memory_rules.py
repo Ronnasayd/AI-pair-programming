@@ -20,7 +20,10 @@ LOG = get_hooks_logger("StartMemoryRules")
 # Durable page path prefixes worth surfacing at session start.
 DURABLE_PREFIXES = ("rules/", "_rules/", "gotchas/", "procedures/", "feedback")
 
-FTS_QUERY = "rules OR feedback OR gotcha OR procedure OR rule"
+# Query the FTS index (which covers the `path` field) with both singular and
+# plural forms of every durable prefix, so a page is matched by its path alone
+# even when its title/body contains none of these words.
+FTS_QUERY = "rules OR rule OR feedback OR gotcha OR gotchas OR procedure OR procedures"
 LIMIT = "60"
 
 
