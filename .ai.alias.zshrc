@@ -6,12 +6,14 @@ alias aims='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memory \
     -p 127.0.0.1:49374:49374 \
     -v ai-memory-data:/data \
     -e AI_MEMORY_AUTO_SCOPE_MODE=repo_root \
+    -e AI_MEMORY_AUTO_IMPROVE__REQUIRE_APPROVAL=true \
     akitaonrails/ai-memory:latest' # Start AI Memory container: ai-memory-start
 alias aimsllm='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memory \
     --restart unless-stopped \
     -p 127.0.0.1:49374:49374 \
     -v ai-memory-data:/data \
     -e AI_MEMORY_AUTO_SCOPE_MODE=repo_root \
+    -e AI_MEMORY_AUTO_IMPROVE__REQUIRE_APPROVAL=true \
     -e AI_MEMORY_LLM_MODEL=claude-haiku-4-5 \
     -e AI_MEMORY_LLM_PROVIDER=anthropic-oauth \
     -e AI_MEMORY_AUTH_TOKEN="$(_aim_secret AI_MEMORY_AUTH_TOKEN)" \
@@ -63,5 +65,6 @@ alias omniroute="ASDF_NODEJS_VERSION=24.16.0 npx omniroute"
 alias cchr="claude --chrome" # Run Claude with chrome browser integration enabled: claude-chrome
 alias cpln="claude --disallowedTools=Write,Edit,NotebookEdit" # Run Claude with some tools disabled: claude-no-write-edit
 alias aimat="ai-memory generate-auth-token" # Generate AI Memory auth token: ai-memory-auth-token
+alias aimpl="ai-memory pending-writes list" # List AI Memory pending writes: ai-memory-pending-writes
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
