@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-"""Stop hook: if the last assistant message asked a plain-text question
-(contains '?'), remind the agent to use an interactive question tool."""
+"""Stop / SubagentStop hook: if the last assistant message asked a plain-text
+question (contains '?'), remind the agent to use an interactive question tool."""
 
 import json
 import sys
@@ -74,6 +74,8 @@ def main() -> None:
     if get_by_key(payload, "stop_hook_active"):
         sys.exit(0)
 
+    event = get_by_key(payload, "hook_event_name") or "Stop"
+
     last_message = get_by_key(payload, "last_assistant_message")
     if not last_message:
         # Field dropped/clipped for very large messages: reconstruct from transcript.
@@ -85,7 +87,7 @@ def main() -> None:
 
     output = {
         "hookSpecificOutput": {
-            "hookEventName": "Stop",
+            "hookEventName": event,
             "additionalContext": RULE,
         }
     }
