@@ -524,6 +524,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py"
+          },
+          {
+            "type": "command",
             "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           },
           {
