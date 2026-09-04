@@ -29,6 +29,7 @@ disabled_mcp_servers = [
     "omniroute",
     "iconify",
     "notebooklm",
+    "blender",
 ]
 
 parser = argparse.ArgumentParser()
