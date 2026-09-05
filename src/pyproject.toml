@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "AI pair programmer tool"
 authors = [{ name = "Ronnasayd Machado" }]
 requires-python = ">=3.11"
-dependencies = ["fastmcp>=2.0"]
+dependencies = ["fastmcp>=2.0,<3"]
 
 [project.scripts]
 skill-loader-mcp = "mcps.skill_loader_mcp:main"
