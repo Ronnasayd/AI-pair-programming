@@ -20,6 +20,7 @@ disabled_mcp_servers = [
     "figma",
     "github-L",
     "github",
+    "omniroute",
 ]
 
 parser = argparse.ArgumentParser()
