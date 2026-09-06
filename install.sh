@@ -168,7 +168,7 @@ for backend in "${BACKENDS[@]}"; do
   run_install "$backend"
 done
 
-ai-memory install-skills && echo "ia-memory install-skills ok"
+ai-memory install-skills > /dev/null 2>&1 && echo "ia-memory install-skills ok"
 
 if ! grep -qF ".agents/skills/*" .git/info/exclude; then
     echo ".agents/skills/*" >> .git/info/exclude

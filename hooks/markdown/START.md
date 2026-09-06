@@ -5,4 +5,4 @@
 - Avoid reading entire files unless necessary; prefer reading only relevant excerpts. To do this, use `read` with `startLine` and `endLine`, or use `grep`, `rag-rat`, or `serena`.
 - Use `grilling` to request clarification from the user when necessary.
 - If a task is complex, use `sequentialthinking` to break it down into smaller tasks.
-- Read CLAUDE.md and AGENTS.md for additional rules and guidelines.
+- Read `CLAUDE.md` and `AGENTS.md` for additional rules and guidelines.
