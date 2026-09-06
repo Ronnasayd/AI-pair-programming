@@ -117,6 +117,85 @@ def find_config_files(payload):
     return "\n".join(lines)
 
 
+def _listen_ports_by_pid():
+    """Parse /proc/net/tcp{,6} -> {pid: set(ports)} for LISTEN sockets (state 0A).
+
+    ponytail: reads the global tables once and maps sockets to pids via
+    /proc/[pid]/fd inode scan. Only pids owned by the current user are visible.
+    """
+    inode_to_port = {}
+    for proto in ("tcp", "tcp6"):
+        try:
+            with open(f"/proc/net/{proto}") as f:
+                next(f, None)  # header
+                for line in f:
+                    parts = line.split()
+                    if len(parts) < 10 or parts[3] != "0A":  # 0A = TCP_LISTEN
+                        continue
+                    port = int(parts[1].split(":")[1], 16)
+                    inode_to_port[parts[9]] = port
+        except (OSError, ValueError):
+            continue
+    if not inode_to_port:
+        return {}
+
+    pid_ports = {}
+    for pid in os.listdir("/proc"):
+        if not pid.isdigit():
+            continue
+        fd_dir = f"/proc/{pid}/fd"
+        try:
+            fds = os.listdir(fd_dir)
+        except OSError:
+            continue
+        for fd in fds:
+            try:
+                target = os.readlink(os.path.join(fd_dir, fd))
+            except OSError:
+                continue
+            if target.startswith("socket:["):
+                inode = target[8:-1]
+                if inode in inode_to_port:
+                    pid_ports.setdefault(pid, set()).add(inode_to_port[inode])
+    return pid_ports
+
+
+def project_ports(payload):
+    cwd = get_by_key(payload, "cwd")
+    if not cwd or not os.path.isdir("/proc/self"):
+        return ""
+    cwd = os.path.realpath(cwd)
+
+    pid_ports = _listen_ports_by_pid()
+    if not pid_ports:
+        return ""
+
+    rows = []
+    for pid, ports in pid_ports.items():
+        try:
+            pcwd = os.path.realpath(f"/proc/{pid}/cwd")
+        except OSError:
+            continue
+        if pcwd != cwd and not pcwd.startswith(cwd + os.sep):
+            continue
+        try:
+            with open(f"/proc/{pid}/cmdline", "rb") as f:
+                cmd = f.read().replace(b"\x00", b" ").decode(errors="replace").strip()
+        except OSError:
+            cmd = "?"
+        rows.append((int(pid), sorted(ports), cmd[:80]))
+
+    if not rows:
+        return ""
+    rows.sort()
+    lines = ["## Project apps listening on ports\n"]
+    lines.extend(
+        f"- PID {pid} | ports {','.join(map(str, ports))} | `{cmd}`"
+        for pid, ports, cmd in rows
+    )
+    return "\n".join(lines)
+
+
 def disabled_mcp_servers():
     project_dir = os.environ.get("AI_PROJECT_DIR")
     if not project_dir:
@@ -150,6 +229,9 @@ def main():
     config_text = find_config_files(payload)
     if config_text:
         additional_context += f"\n\n{config_text}"
+    ports_text = project_ports(payload)
+    if ports_text:
+        additional_context += f"\n\n{ports_text}"
     disabled_mcp_text = disabled_mcp_servers()
     if disabled_mcp_text:
         additional_context += f"\n\n{disabled_mcp_text}"
