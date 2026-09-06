@@ -23,6 +23,27 @@ if script_dir not in sys.path:
 
 from utils import split_on_operators  # noqa: E402
 
+# Custom permissions, same style as settings.json permissions.{allow,deny,ask}.
+# Merged into the settings layers by load_merged_settings (highest priority).
+PERMISSIONS: dict[str, list[str]] = {
+    "allow": [],
+    "deny": [],
+    "ask": [
+        "Bash(curl:*)",
+        "Bash(wget:*)",
+        "Bash(eval:*)",
+        "Bash(xargs:*)",
+        "Bash(rm:*)",
+        "Bash(rmdir:*)",
+        "Bash(rm -rf:*)",
+        "Bash(rm -r:*)",
+        "Bash(docker run:*)",
+        "Bash(docker exec:*)",
+        "Bash(git merge:*)",
+        "Bash(git commit:*)",
+    ],
+}
+
 
 def load_settings(path=None):
     """Load and return the permissions dict from settings.json."""
@@ -48,7 +69,7 @@ def load_merged_settings(global_path=None):
 
     project_dir = os.environ.get("AI_PROJECT_DIR")
     if not project_dir:
-        return settings
+        return _merge_custom_permissions(settings)
 
     # Load both project settings files
     project_shared = load_settings(
@@ -59,7 +80,7 @@ def load_merged_settings(global_path=None):
     )
 
     if not project_shared and not project_local:
-        return settings
+        return _merge_custom_permissions(settings)
 
     # Merge permissions arrays from all layers (deduplicated, order-preserving)
     global_perms = settings.get("permissions", {})
@@ -80,11 +101,34 @@ def load_merged_settings(global_path=None):
             + local_perms.get("deny", [])
         )
     )
+    merged_ask = list(
+        dict.fromkeys(
+            global_perms.get("ask", [])
+            + shared_perms.get("ask", [])
+            + local_perms.get("ask", [])
+        )
+    )
 
     settings.setdefault("permissions", {})
     settings["permissions"]["allow"] = merged_allow
     settings["permissions"]["deny"] = merged_deny
+    settings["permissions"]["ask"] = merged_ask
 
+    return _merge_custom_permissions(settings)
+
+
+def _merge_custom_permissions(settings):
+    """Merge the hardcoded PERMISSIONS dict into settings.permissions.
+
+    Custom patterns are appended after the settings-file patterns
+    (deduplicated, order-preserving) for allow/deny/ask.
+    """
+    if not any(PERMISSIONS.get(k) for k in ("allow", "deny", "ask")):
+        return settings
+
+    perms = settings.setdefault("permissions", {})
+    for key in ("allow", "deny", "ask"):
+        perms[key] = list(dict.fromkeys(perms.get(key, []) + PERMISSIONS.get(key, [])))
     return settings
 
 
@@ -404,7 +448,7 @@ def decide(command, settings, bypass_permissions=False):
     matches both ``git push`` and ``rtk git push``.
 
     When ``bypass_permissions`` is True (payload permission_mode ==
-    "dontAsk"), an "ask" decision is promoted to "allow";
+    "bypassPermissions"), an "ask" decision is promoted to "allow";
     "deny" is still honored.
 
     Returns:
@@ -431,14 +475,14 @@ def decide(command, settings, bypass_permissions=False):
             return "deny", f"Sub-command '{cmd}' matches deny pattern"
 
     # Then ask — any sub-command needing confirmation forces a prompt,
-    # unless permission_mode is "dontAsk", which promotes to allow.
+    # unless permission_mode is "bypassPermissions", which promotes to allow.
     for cmd in sub_commands:
         if command_matches_pattern(cmd, ask_patterns):
             if bypass_permissions:
                 return (
                     "allow",
                     f"Sub-command '{cmd}' matches ask pattern; "
-                    "promoted to allow (dontAsk mode)",
+                    "promoted to allow (bypassPermissions mode)",
                 )
             return "ask", f"Sub-command '{cmd}' matches ask pattern"
 
@@ -510,9 +554,9 @@ def main():
     sub_commands = decompose_command(command)
     log(f"sub-commands: {sub_commands[:5]}{'...' if len(sub_commands) > 5 else ''}")
 
-    bypass_permissions = input_data.get("permission_mode") == "dontAsk"
+    bypass_permissions = input_data.get("permission_mode") == "bypassPermissions"
     if bypass_permissions:
-        log("permission_mode=dontAsk — 'ask' promoted to 'allow'")
+        log("permission_mode=bypassPermissions — 'ask' promoted to 'allow'")
 
     decision, reason = decide(command, settings, bypass_permissions)
 

@@ -57,12 +57,7 @@
       "Bash(timeout:*)",
       "Bash(test:*)",
       "Bash(jest:*)",
-      "mcp__mcp-manager__list_servers",
-      "mcp__mcp-manager__search_tools",
-      "mcp__mcp-manager__get_tool_schema",
-      "mcp__plugin_rag-rat_rag-rat__semantic_search",
-      "mcp__context7__query-docs",
-      "mcp__context7__resolve-library-id"
+      "Bash(chmod:*)"
     ],
     "deny": [
       "Bash(del:*)",
@@ -94,21 +89,7 @@
       "Bash(kubectl delete:*)",
       "Bash(kubectl apply:*)"
     ],
-    "ask": [
-      "Bash(chmod:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
-      "Bash(git merge:*)",
-      "Bash(git commit:*)",
-      "Bash(docker run:*)",
-      "Bash(docker exec:*)",
-      "Bash(eval:*)",
-      "Bash(xargs:*)",
-      "Bash(rm:*)",
-      "Bash(rmdir:*)",
-      "Bash(rm -rf:*)",
-      "Bash(rm -r:*)"
-    ],
+    "ask": [],
     "defaultMode": "auto"
   },
   "model": "sonnet",
