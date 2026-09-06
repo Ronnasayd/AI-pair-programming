@@ -183,12 +183,12 @@ def project_ports(payload):
                 cmd = f.read().replace(b"\x00", b" ").decode(errors="replace").strip()
         except OSError:
             cmd = "?"
-        rows.append((int(pid), sorted(ports), cmd[:80]))
+        rows.append((int(pid), sorted(ports), cmd))
 
     if not rows:
         return ""
     rows.sort()
-    lines = ["## Project apps listening on ports\n"]
+    lines = ["## Project services running on the following ports\n"]
     lines.extend(
         f"- PID {pid} | ports {','.join(map(str, ports))} | `{cmd}`"
         for pid, ports, cmd in rows
