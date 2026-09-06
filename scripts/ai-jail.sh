@@ -19,13 +19,13 @@ CONFIG_DENY=(BraveSoftware Bitwarden)
 CACHE_DENY=(BraveSoftware basilisk-dev chromium spotify nvidia mesa_shader_cache)
 
 # Dotdirs requiring read-write access
-DOTDIR_RW=(.claude .crush .codex .aider .config .cargo .cache .docker .github)
+DOTDIR_RW=(.claude .crush .codex .aider .config .cargo .cache .docker .github .serena)
 
 # Extra project dependency dirs to mount read-only (outside $HOME/project)
 PROJECT_DEPS_RO=("$HOME/develop/personal/mcp-manager")
 
 # ── Passthrough env vars (hooks  need these inside jail) ──
-PASSTHROUGH_VARS=(AI_PROJECT_DIR AI_PROJECT_ROOT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC_MODEL ANTHROPIC_API_KEY ENABLE_TOOL_SEARCH ASDF_NODEJS_VERSION)
+PASSTHROUGH_VARS=(AI_PROJECT_DIR AI_PROJECT_ROOT_DIR CLAUDE_PROJECT_DIR ANTHROPIC_BASE_URL ANTHROPIC_MODEL ANTHROPIC_API_KEY ENABLE_TOOL_SEARCH ASDF_NODEJS_VERSION CONTEXT7_API_KEY)
 
 PROJECT_DIR=$(pwd)
 TEMP_HOSTS=$(mktemp /tmp/bwrap-hosts.XXXXXX)
@@ -85,6 +85,10 @@ for entry in "$HOME"/.*; do
     [ -d "$entry" ] || continue
     name=$(basename "$entry")
     [[ "$name" == "." || "$name" == ".." ]] && continue
+    # .local is mounted explicitly below (ro parent + rw subdirs); a blanket
+    # ro-bind here would shadow those rw binds (bwrap 0.9.0 propagates ro to
+    # nested binds).
+    [[ "$name" == ".local" ]] && continue
     is_denied "$name" && continue
 
     if is_rw "$name"; then
@@ -113,7 +117,7 @@ done
 # ── Override ~/.local subdirs as rw (parent .local is ro) ──────
 LOCAL_OVERRIDES=()
 [ -d "$HOME/.local/state" ] && LOCAL_OVERRIDES+=("--bind" "$HOME/.local/state" "$HOME/.local/state")
-for rw_share in zoxide crush opencode atuin mise yarn flutter kotlin NuGet pipx ruby-advisory-db uv claude; do
+for rw_share in zoxide crush opencode atuin mise yarn flutter kotlin NuGet pipx ruby-advisory-db uv claude rag-rat; do
     [ -d "$HOME/.local/share/$rw_share" ] && LOCAL_OVERRIDES+=("--bind" "$HOME/.local/share/$rw_share" "$HOME/.local/share/$rw_share")
 done
 [ -d "$HOME/.local/bin" ] && LOCAL_OVERRIDES+=("--bind" "$HOME/.local/bin" "$HOME/.local/bin")
@@ -214,4 +218,6 @@ bwrap \
   --setenv PS1 "(jail) \w \$ " \
   --setenv _ZO_DOCTOR 0 \
   --setenv AI_JAIL 1 \
+  --setenv npm_config_cache "$HOME/.cache/npm" \
+  --setenv NPM_CONFIG_CACHE "$HOME/.cache/npm" \
   bash -c "$MISE_INIT && ${*:-bash}"
