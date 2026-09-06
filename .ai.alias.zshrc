@@ -25,7 +25,7 @@ alias aimmllm='ai-memory install-mcp --client claude-code --apply --server-url "
 alias aimhllm='ai-memory install-hooks --agent claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(_aim_secret AI_MEMORY_AUTH_TOKEN)" --project-strategy repo-root' # Install AI Memory hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
 alias aimup='claude setup-token' # Generate a long-lived (1yr) OAuth token -> paste into ~/.secrets/claude.env as CLAUDE_CODE_OAUTH_TOKEN, then rerun aimsllm: ai-memory-oauth-refresh
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
-alias claude-yolo="claude --permission-mode=dontAsk" # Claude with no permission prompts: yolo
+alias claude-yolo="claude --permission-mode=bypassPermissions" # Claude with no permission prompts: yolo
 alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills
 alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesignore not found'" # Show rules: show-rules
 alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'" # Show agents: show-agents
@@ -60,7 +60,7 @@ alias aij="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh" # Run ai-jail sandbox s
 alias ca="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh"
 alias cacs="bash $AI_PROJECT_ROOT_DIR/scripts/claude.accounts.sh choose"
 alias lca="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude" # Run ai-jail sandbox script with claude
-alias lcay="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude --permission-mode=dontAsk" # Run ai-jail sandbox script with claude
+alias lcay="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh claude --permission-mode=bypassPermissions" # Run ai-jail sandbox script with claude
 alias omniroute="ASDF_NODEJS_VERSION=24.16.0 npx omniroute"
 alias cchr="claude --chrome" # Run Claude with chrome browser integration enabled: claude-chrome
 alias cpln="claude --disallowedTools=Write,Edit,NotebookEdit" # Run Claude with some tools disabled: claude-no-write-edit
