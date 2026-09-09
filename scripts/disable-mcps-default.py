@@ -21,6 +21,7 @@ disabled_mcp_servers = [
     "github-L",
     "github",
     "omniroute",
+    "ssh-mcp",
 ]
 
 parser = argparse.ArgumentParser()
