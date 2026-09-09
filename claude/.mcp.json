@@ -1,5 +1,18 @@
 {
   "mcpServers": {
+    "ssh-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "ssh-mcp@latest",
+        "--host=${SSH_MCP_HOST:-add-value-to-env-vars}",
+        "--user=${SSH_MCP_USER:-add-value-to-env-vars}",
+        "--port=${SSH_MCP_PORT:-add-value-to-env-vars}"
+      ],
+      "env": {
+        "SSH_MCP_PASSWORD": "${SSH_MCP_PASSWORD:-add-value-to-env-vars}"
+      }
+    },
     "omniroute": {
       "url": "http://localhost:20128/api/mcp/stream",
       "type": "http",
