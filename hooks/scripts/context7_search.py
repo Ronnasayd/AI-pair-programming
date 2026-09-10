@@ -16,8 +16,10 @@ from utils import extract_query_text, get_by_key, get_hooks_logger, get_project_
 LOG = get_hooks_logger("Context7Search")
 
 SEARCH_URL = "https://context7.com/api/search"
-MIN_BENCHMARK_SCORE = 80
-MIN_EMBEDDING_SIMILARITY = 0.5
+MIN_BENCHMARK_SCORE = 90
+MIN_EMBEDDING_SIMILARITY = 0.6
+MIN_STARS = 50
+MIN_TRUST_SCORE = 8.0
 TOP_N = 3
 TIMEOUT_SECONDS = 5
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
@@ -101,13 +103,27 @@ def fetchResults(query: str) -> list[dict]:
     return get_by_key(payload, "results") or []
 
 
+def _passes_quality_floor(s: dict) -> bool:
+    """Return True if a library entry clears benchmark and popularity floors.
+
+    Args:
+        s: A context7 search-result settings object.
+
+    Returns:
+        True when the entry's benchmark score exceeds ``MIN_BENCHMARK_SCORE`` and
+        it clears either the star or the trust-score floor. Filters out toy repos
+        that score 100 on the benchmark but have no real adoption.
+    """
+    if (get_by_key(s, "queryBenchmarkScore") or 0) <= MIN_BENCHMARK_SCORE:
+        return False
+    stars = get_by_key(s, "stars") or 0
+    trust = get_by_key(s, "trustScore") or 0
+    return stars >= MIN_STARS or trust >= MIN_TRUST_SCORE
+
+
 def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dict]:
     settings = [get_by_key(r, "settings") or r for r in results]
-    filtered = [
-        s
-        for s in settings
-        if (get_by_key(s, "queryBenchmarkScore") or 0) > MIN_BENCHMARK_SCORE
-    ]
+    filtered = [s for s in settings if _passes_quality_floor(s)]
 
     if query_vector is not None:
         scored = []
