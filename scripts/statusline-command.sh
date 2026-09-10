@@ -29,11 +29,12 @@ if [ "$NERD_FONT" = "1" ]; then
     ICON_CACHE=$'\U0000F49B'
     ICON_TOKEN=$'\U0000EB7E'
     ICON_5H=$'\u23F1'
+    ICON_DURATION=$'\U000F0954'
 else
     ICON_PYTHON="🐍" ICON_GO="🐹" ICON_EFFORT="🧠" ICON_JAIL="🔒" ICON_CAVEMAN="🦴"
     ICON_EMAIL="📧" ICON_SERENA="🧭" ICON_MEMORY="💾" ICON_RAGRAT="🐀" ICON_COST="💰"
     ICON_WEEK="📅" ICON_FOLDER="📁" ICON_BRANCH="🌿" ICON_MODEL="🤖" ICON_CTX="📚"
-    ICON_CACHE="📦" ICON_TOKEN="🎟" ICON_5H="⏱"
+    ICON_CACHE="📦" ICON_TOKEN="🎟" ICON_5H="⏱" ICON_DURATION="⌛"
 fi
 
 # Read JSON input from stdin
@@ -207,6 +208,24 @@ else
     ragrat_status="${SEP}${ICON_RAGRAT} rag-rat(${C_RED}●${RESET})"
 fi
 
+# Session duration (wall clock)
+duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // empty')
+dur_info=""
+if [ -n "$duration_ms" ] && [ "$duration_ms" -gt 0 ] 2>/dev/null; then
+    dur_s=$(( duration_ms / 1000 ))
+    dur_h=$(( dur_s / 3600 ))
+    dur_m=$(( (dur_s % 3600) / 60 ))
+    dur_sec=$(( dur_s % 60 ))
+    if [ "$dur_h" -gt 0 ]; then
+        dur_fmt=$(printf "%dh%02dm" "$dur_h" "$dur_m")
+    elif [ "$dur_m" -gt 0 ]; then
+        dur_fmt=$(printf "%dm%02ds" "$dur_m" "$dur_sec")
+    else
+        dur_fmt="${dur_sec}s"
+    fi
+    dur_info="${SEP}${ICON_DURATION} ${C_SUBTEXT}${dur_fmt}${RESET}"
+fi
+
 # Session cost
 cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
 cost_info=""
@@ -289,5 +308,5 @@ cc_ver_info=""
 [ -n "$cc_version" ] && cc_ver_info="${SEP}\e]8;;https://github.com/anthropics/claude-code/releases\e\\\\${C_SUBTEXT}v${cc_version}${RESET}\e]8;;\e\\\\"
 echo -e "${email_color}${email_info}${RESET}"
 echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info}${SEP}${ICON_BRANCH} ${C_MAUVE}$branch${RESET}${SEP}${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
-echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k)${SEP}${ICON_CACHE} cache(r:${cache_read_f} c:${cache_creation_f} i:${input_tokens_f})${SEP}${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f})${SEP}${cost_info#"${SEP}"}${rate_info}"
+echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k)${SEP}${ICON_CACHE} cache(r:${cache_read_f} c:${cache_creation_f} i:${input_tokens_f})${SEP}${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f})${SEP}${cost_info#"${SEP}"}${dur_info}${rate_info}"
 
