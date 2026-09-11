@@ -1,6 +1,9 @@
 alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 # Read a value from ~/.secrets/claude.env, stripping surrounding quotes. Handles '=' in the value.
 _aim_secret() { grep -E "^$1=" ~/.secrets/claude.env | head -1 | cut -d= -f2- | sed -e 's/^["'\'']//' -e 's/["'\'']$//'; }
+cfie(){
+  code $(git rev-parse --path-format=absolute --git-common-dir)/info/exclude
+}
 alias aims='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memory \
     --restart unless-stopped \
     -p 127.0.0.1:49374:49374 \
@@ -53,7 +56,6 @@ alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py" # Disable defau
 alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py $HOME/.claude-L/.claude.json" # Disable default MCP servers: disable-mcps
 alias rri="rag-rat init --yes && rag-rat index --full && rag-rat hooks install" # Init rag-rat and install its hooks: rag-rat-init
 alias sri="serena init" # Init serena in current project: serena-init
-alias cfie="code .git/info/exclude" # Open git local exclude file in editor: code-info-exclude
 alias osd="xdg-open http://localhost:24282/dashboard/" # Open opencode-supervisor dashboard: opencode-supervisor-dashboard
 alias afa="npx agent-flow-app" # Run agent-flow-app via npx: agent-flow-app
 alias aij="bash $AI_PROJECT_ROOT_DIR/scripts/ai-jail.sh" # Run ai-jail sandbox script: ai-jail
