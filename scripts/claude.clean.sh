@@ -1,5 +1,6 @@
 ## CLAUDE CLEAN
 DEFAULT_FOLDER=".claude"
+source "$(dirname "${BASH_SOURCE[0]}")/_git-exclude.sh"
 
 echo "Cleaning claude symlinks..."
 
@@ -33,7 +34,8 @@ find "$LOCAL/$DEFAULT_FOLDER/hooks" -maxdepth 1 -type l 2>/dev/null | while read
     fi
 done
 ########################################################################################
-find "$LOCAL/.git/hooks" -maxdepth 1 -type l 2>/dev/null | while read -r link; do
+GIT_HOOKS_DIR="$(git_path hooks)"
+[ -n "$GIT_HOOKS_DIR" ] && find "$GIT_HOOKS_DIR" -maxdepth 1 -type l 2>/dev/null | while read -r link; do
     target=$(readlink "$link")
     if [[ "$target" == "$SOURCE/git-hooks/"* ]]; then
         rm "$link"

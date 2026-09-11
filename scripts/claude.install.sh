@@ -1,6 +1,7 @@
 ## CLAUDE
 DEFAULT_FOLDER=".claude"
 DEFAULT_LOCAL_AGENTS="agents"
+source "$(dirname "${BASH_SOURCE[0]}")/_git-exclude.sh"
 ############################################################################################
 replace_between() {
     local inicio="$1"
@@ -217,11 +218,12 @@ ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GIT HOOKS (formatter on pre-commit). Symlink git-hooks/* into .git/hooks/,
 ## skipping any name already taken by another tool (e.g. rag-rat's post-*).
-if [ -d "$LOCAL/.git" ]; then
-  mkdir -p "$LOCAL/.git/hooks"
+GIT_HOOKS_DIR="$(git_path hooks)"
+if [ -n "$GIT_HOOKS_DIR" ]; then
+  mkdir -p "$GIT_HOOKS_DIR"
   for hook in "$SOURCE/git-hooks/"*; do
     name=$(basename "$hook")
-    dest="$LOCAL/.git/hooks/$name"
+    dest="$GIT_HOOKS_DIR/$name"
     if [ -L "$dest" ]; then
       case "$(readlink "$dest")" in
         "$SOURCE/git-hooks/"*) ln -sf "$hook" "$dest" ;;
@@ -236,36 +238,16 @@ if [ -d "$LOCAL/.git" ]; then
 fi
 ###########################################################################################
 ## GITIGNORE
-if ! grep -qF "$DEFAULT_FOLDER/skills/*" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/skills/*" >> .git/info/exclude
-fi
-if ! grep -qF "$DEFAULT_FOLDER/commands/*" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/commands/*" >> .git/info/exclude
-fi
-if ! grep -qF "$DEFAULT_FOLDER/instructions/*" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/instructions/*" >> .git/info/exclude
-fi
-if ! grep -qF "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" >> .git/info/exclude
-fi
-if ! grep -qF "$DEFAULT_FOLDER/hooks/*" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/hooks/*" >> .git/info/exclude
-fi
-if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/context-refs.json" >> .git/info/exclude
-fi
-if ! grep -qF "$DEFAULT_FOLDER/context-refs.json" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/context-refs.json" >> .git/info/exclude
-fi
-if ! grep -qF "skills.db" .git/info/exclude; then
-    echo "skills.db" >> .git/info/exclude
-fi
-if ! grep -qF ".mcp.json" .git/info/exclude; then
-    echo ".mcp.json" >> .git/info/exclude
-fi
-if ! grep -qF ".serena/*" .git/info/exclude; then
-    echo ".serena/*" >> .git/info/exclude
-fi
+git_exclude \
+    "$DEFAULT_FOLDER/skills/*" \
+    "$DEFAULT_FOLDER/commands/*" \
+    "$DEFAULT_FOLDER/instructions/*" \
+    "$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/*" \
+    "$DEFAULT_FOLDER/hooks/*" \
+    "$DEFAULT_FOLDER/context-refs.json" \
+    "skills.db" \
+    ".mcp.json" \
+    ".serena/*"
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
 if command -v rtk &>/dev/null; then
@@ -280,12 +262,7 @@ source $SOURCE/scripts/ignores.sh
 ###########################################################################################
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
   npx -y skills add JuliusBrussee/caveman -a claude-code --yes
-  if ! grep -q ".agents/skills/*" .git/info/exclude; then
-      echo ".agents/skills/*" >> .git/info/exclude
-  fi
-  if ! grep -q "skills-lock.json" .git/info/exclude; then
-      echo "skills-lock.json" >> .git/info/exclude
-  fi
+  git_exclude ".agents/skills/*" "skills-lock.json"
 fi
 ########################################################################################
 ## GITIGNORE

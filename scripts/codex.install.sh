@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 ## CODEX
+source "$(dirname "${BASH_SOURCE[0]}")/_git-exclude.sh"
 python3 "$SOURCE/scripts/md2toml.py" "$SOURCE/agents/" "$HOME/.codex/agents/"
 
 ###########################################################################################
@@ -31,12 +32,8 @@ done
 ln -s "$SOURCE/commands/"* "$HOME/.codex/prompts/"
 ###########################################################################################
 ## GITIGNORE
-if ! grep -q "AGENTS.md" .git/info/exclude; then
-    echo "AGENTS.md" >> .git/info/exclude
-fi
-# if ! grep -q ".codex/" .git/info/exclude; then
-#     echo ".codex/" >> .git/info/exclude
-# fi
+git_exclude "AGENTS.md"
+# git_exclude ".codex/"
 
 ###########################################################################################
 ## CODEX CONFIG

@@ -1,5 +1,6 @@
 ## GEMINI
 DEFAULT_FOLDER=".gemini"
+source "$(dirname "${BASH_SOURCE[0]}")/_git-exclude.sh"
 yes | rtk init -g --gemini
 python3 $SOURCE/scripts/md2toml.py $SOURCE/commands/  $LOCAL/$DEFAULT_FOLDER/commands/
 
@@ -159,21 +160,11 @@ cp -r "$SOURCE/hooks/scripts"* "$HOME/$DEFAULT_FOLDER/hooks"
 ########################################################################################
 if  [ ! -f "$LOCAL/skills-lock.json" ]; then
   npx -y skills add JuliusBrussee/caveman -a gemini-cli --yes
-  if ! grep -q ".agents/skills/*" .git/info/exclude; then
-      echo ".agents/skills/*" >> .git/info/exclude
-  fi
-  if ! grep -q "skills-lock.json" .git/info/exclude; then
-      echo "skills-lock.json" >> .git/info/exclude
-  fi
+  git_exclude ".agents/skills/*" "skills-lock.json"
 fi
 ########################################################################################
 ## GITIGNORE
-if ! grep -q "GEMINI.md" .git/info/exclude; then
-    echo "GEMINI.md" >> .git/info/exclude
-fi
-if ! grep -q "$DEFAULT_FOLDER/" .git/info/exclude; then
-    echo "$DEFAULT_FOLDER/" >> .git/info/exclude
-fi
+git_exclude "GEMINI.md" "$DEFAULT_FOLDER/"
 ###########################################################################################
 
 source $SOURCE/scripts/ignores.sh

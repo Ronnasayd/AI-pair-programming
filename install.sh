@@ -38,6 +38,9 @@ export SOURCE="$(dirname "$SCRIPT_FILE")"
 export LOCAL="$(pwd)"
 # echo $SOURCE
 # echo $LOCAL
+
+# Shared git_exclude / git_path helpers (resolve real .git dir, handle subdirs).
+source "$SOURCE/scripts/_git-exclude.sh"
 chmod -R +x $SOURCE/hooks/scripts
 
 
@@ -170,12 +173,7 @@ done
 
 ai-memory install-skills > /dev/null 2>&1 && echo "ia-memory install-skills ok"
 
-if ! grep -qF ".agents/skills/*" .git/info/exclude; then
-    echo ".agents/skills/*" >> .git/info/exclude
-fi
-if ! grep -qF "skills-lock.json" .git/info/exclude; then
-    echo "skills-lock.json" >> .git/info/exclude
-fi
+git_exclude ".agents/skills/*" "skills-lock.json"
 
 # Copy configuration files
 cat $SOURCE/.agentsignore | while read agent; do
