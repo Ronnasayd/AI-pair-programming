@@ -9,12 +9,24 @@ GIT_EXCLUDE=""
 [ -n "$_GIT_COMMON_DIR" ] && GIT_EXCLUDE="$_GIT_COMMON_DIR/info/exclude"
 export GIT_EXCLUDE
 
+_git_exclude_one() {
+  grep -qxF "$1" "$GIT_EXCLUDE" 2>/dev/null || printf '%s\n' "$1" >> "$GIT_EXCLUDE"
+}
+
 git_exclude() {
   local pattern
   [ -n "$GIT_EXCLUDE" ] || return 0
   mkdir -p "$(dirname "$GIT_EXCLUDE")"
   for pattern in "$@"; do
-    grep -qxF "$pattern" "$GIT_EXCLUDE" 2>/dev/null || printf '%s\n' "$pattern" >> "$GIT_EXCLUDE"
+    _git_exclude_one "$pattern"
+    # A pattern with an internal slash is anchored to the exclude dir (repo
+    # root), so it misses nested `.claude/` etc. in subprojects. Add a
+    # `**/`-prefixed copy that also matches at any depth. Bare names already
+    # match at any depth; already-globbed/rooted patterns are left alone.
+    case "$pattern" in
+      '**/'* | /*) ;;
+      */?*)        _git_exclude_one "**/$pattern" ;;
+    esac
   done
 }
 
