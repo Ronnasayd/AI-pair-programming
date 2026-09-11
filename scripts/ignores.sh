@@ -43,12 +43,5 @@ if [ -L "$LOCAL/.rulesignore" ] || [ -f "$LOCAL/.rulesignore" ]; then
 fi
 
 
-if ! grep -q ".rulesignore" .git/info/exclude; then
-      echo ".rulesignore" >> .git/info/exclude
-fi
-if ! grep -q ".skillsignore" .git/info/exclude; then
-      echo ".skillsignore" >> .git/info/exclude
-fi
-if ! grep -q ".agentsignore" .git/info/exclude; then
-      echo ".agentsignore" >> .git/info/exclude
-fi
+type git_exclude >/dev/null 2>&1 || source "$(dirname "${BASH_SOURCE[0]}")/_git-exclude.sh"
+git_exclude ".rulesignore" ".skillsignore" ".agentsignore"

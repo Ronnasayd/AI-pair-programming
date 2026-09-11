@@ -1,5 +1,6 @@
 ###########################################################################################
 ## TASKMASTER
+source "$(dirname "${BASH_SOURCE[0]}")/_git-exclude.sh"
 mkdir -p "$LOCAL/.taskmaster/tasks"
 touch "$LOCAL/.taskmaster/tasks/tasks.json"
 
@@ -19,7 +20,5 @@ cp -r "$SOURCE/taskmaster/reports" "$LOCAL/.taskmaster/reports"
 fi
 ############################################################################################
 ## GIT/INFO/EXCLUDE
-if ! grep -q ".taskmaster/state.json" .git/info/exclude; then
-    echo ".taskmaster/state.json" >> .git/info/exclude
-fi
+git_exclude ".taskmaster/state.json"
 ###########################################################################################
