@@ -68,5 +68,6 @@ alias cchr="claude --chrome" # Run Claude with chrome browser integration enable
 alias cpln="claude --disallowedTools=Write,Edit,NotebookEdit" # Run Claude with some tools disabled: claude-no-write-edit
 alias aimat="ai-memory generate-auth-token" # Generate AI Memory auth token: ai-memory-auth-token
 alias aimpl="ai-memory pending-writes list" # List AI Memory pending writes: ai-memory-pending-writes
+alias rc="exec $SHELL -c \"claude --continue;exec $SHELL\""
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 

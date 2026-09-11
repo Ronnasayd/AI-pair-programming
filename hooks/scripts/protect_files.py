@@ -57,6 +57,28 @@ _extra_allowed = os.environ.get("PROTECT_FILES_EXTRA_ALLOWED", "")
 if _extra_allowed:
     ALLOWED_PATTERNS.extend(p for p in _extra_allowed.split(":") if p)
 
+# MCP server tool calls (tool_name = "mcp__<server>__<tool>") route file args
+# through their own server-side auth (e.g. ai-memory scopes to its own DB,
+# serena/rag-rat operate read-only on the indexed repo) — path-checking them
+# here produces false positives (a legit external path arg denied because it
+# looks like a system path) with no real security gain, since these servers
+# never hand raw file bytes back through this hook's read/write surface.
+# Colon-separated server names; comma/space also accepted for convenience.
+MCP_SERVER_ALLOWLIST = {
+    s
+    for s in re.split(r"[:,\s]+", os.environ.get("PROTECT_FILES_MCP_ALLOWLIST", ""))
+    if s
+}
+
+
+def is_allowlisted_mcp_tool(tool_name: str | None) -> bool:
+    if not tool_name or not tool_name.startswith("mcp__"):
+        return False
+    parts = tool_name.split("__")
+    server = parts[1] if len(parts) > 1 else ""
+    return server in MCP_SERVER_ALLOWLIST
+
+
 PROTECTED_PATTERNS = [
     ".env",
     ".env.*",
@@ -878,6 +900,10 @@ def main():
 
     tool_name = get_by_key(payload, "tool_name")
     tool_input = get_by_key(payload, "tool_input")
+
+    if is_allowlisted_mcp_tool(tool_name):
+        logger.debug(f"Allowed MCP tool (allowlisted server): {tool_name}")
+        sys.exit(0)
 
     # ── 1. Direct file access (Read/Write/Edit/NotebookEdit tools)
     # Grep/Glob use "path" instead of "file_path" — without this, a search
