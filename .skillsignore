@@ -1,14 +1,15 @@
 # dynamic-programming-analysis
 # generate-docs
+# generate-pr-description
 # grilling
 # pr-review
 # resolve-merge-conflicts
-# technical-decision-helper
-# sd-planning
-# tlc-spec-driven
 # sd-execute
 # sd-insert-taskmaster
+# sd-planning
 # spec-to-requirements-table
+# technical-decision-helper
+# tlc-spec-driven
 adversarial-dev
 agent-architecture-audit
 agent-creator
@@ -82,7 +83,7 @@ frontend-blueprint
 frontend-design
 frontend-patterns
 gan-style-harness
-generate-pr-description
+generate-design-md
 gh-address-comments
 gh-fix-ci
 git-guide
@@ -182,4 +183,3 @@ vite-patterns
 vue-patterns
 webapp-testing
 xlsx
-generate-design-md
