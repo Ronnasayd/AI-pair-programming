@@ -223,6 +223,10 @@
       "scripts/analyze_apk.py"
     ]
   },
+  "author-claude-hook": {
+    "skill_md": "author-claude-hook/SKILL.md",
+    "files": ["references/conventions.md"]
+  },
   "auto-improve": {
     "skill_md": "auto-improve/SKILL.md",
     "files": []
@@ -261,6 +265,10 @@
   },
   "create-task-spec": {
     "skill_md": "create-task-spec/SKILL.md",
+    "files": []
+  },
+  "create-validation-scripts": {
+    "skill_md": "create-validation-scripts/SKILL.md",
     "files": []
   },
   "deep-research-web": {
@@ -412,7 +420,7 @@
   },
   "github-ops": {
     "skill_md": "everything-claude-code/github-ops/SKILL.md",
-    "files": []
+    "files": ["references/ecc-release-checklist.md"]
   },
   "golang-patterns": {
     "skill_md": "everything-claude-code/golang-patterns/SKILL.md",
@@ -608,7 +616,7 @@
   },
   "generate-pr-description": {
     "skill_md": "generate-pr-description/SKILL.md",
-    "files": []
+    "files": ["scripts/validate_pr_description.py"]
   },
   "git-guide": {
     "skill_md": "git-guide/SKILL.md",
@@ -767,7 +775,11 @@
   },
   "sd-execute": {
     "skill_md": "sd-execute/SKILL.md",
-    "files": ["CHECKLIST.md", "references/troubleshooting.md"]
+    "files": [
+      "CHECKLIST.md",
+      "references/diagram.md",
+      "references/troubleshooting.md"
+    ]
   },
   "sd-insert-taskmaster": {
     "skill_md": "sd-insert-taskmaster/SKILL.md",
@@ -776,6 +788,7 @@
       "references/json-schemas.md",
       "references/walkthrough-example.md",
       "scripts/README.md",
+      "scripts/__pycache__/merge-tasks.cpython-312.pyc",
       "scripts/merge-tasks.py",
       "scripts/validate-tasks.py",
       "test-merge.sh"
@@ -783,7 +796,7 @@
   },
   "sd-planning": {
     "skill_md": "sd-planning/SKILL.md",
-    "files": ["CHECKLIST.md", "references/docs-adr.md"]
+    "files": ["CHECKLIST.md", "references/diagram.md", "references/docs-adr.md"]
   },
   "semantic-commit-message": {
     "skill_md": "semantic-commit-message/SKILL.md",
@@ -1122,8 +1135,10 @@
       "references/sub-agents.md",
       "references/tasks.md",
       "references/validate.md",
+      "scripts/__pycache__/validate_state.cpython-312.pyc",
       "scripts/check_commit.py",
       "scripts/lessons.py",
+      "scripts/validate_requirements.py",
       "scripts/validate_spec.py",
       "scripts/validate_state.py",
       "scripts/validate_tasks.py"

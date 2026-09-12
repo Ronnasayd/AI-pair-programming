@@ -55,6 +55,17 @@ skills:
     workflow". Do NOT use for simple one-shot edits, multi-task wave orchestration
     (use orchestrate), or single-pass code review of existing code (use code-review).
 - name:
+  - create-validation-scripts
+  description: Create a deterministic, stdlib-only Python validation script that checks
+    a generated markdown artifact (spec, requirements table, tasks list, report, ...)
+    against explicit rules — turning a skill's prose "verification" checklist into
+    a checkable pass/fail gate instead of relying on the model to self-audit. Use
+    when the user says "create a validation script for this skill/artifact", "crie
+    um script de validação", "turn this checklist into a script", "add a validator",
+    "make this a deterministic gate", or when a skill's output has a verification/anti-patterns
+    section but no script enforcing it. Do NOT use for validating code (use a linter/type-checker/test
+    suite instead) or for one-off ad hoc checks with no reusable artifact shape.
+- name:
   - leet-code-patterns
   description: 'Expert guidance on solving LeetCode and coding interview problems
     using the 15 most important algorithmic patterns. Use this skill whenever the
@@ -427,6 +438,16 @@ skills:
     Z", "show me all skills for [domain]", or when wanting to discover relevant skills
     before deciding to enable them. Different from skill-advisor: exploratory discovery
     across ALL skills with reasons why each matches.'
+- name:
+  - author-claude-hook
+  description: Write a new Claude Code hook script for this repo following its established
+    conventions, then wire it into claude/settings.json and give the user the settings
+    snippet. Use when the user says "criar um hook", "fazer um hook que", "create
+    a hook", "comando para colar no settings", or describes an automated behavior
+    that should fire on a tool call / session event (PreToolUse, PostToolUse, SessionStart,
+    Stop, UserPromptSubmit, SubagentStart/Stop). Do NOT use for editing an existing
+    hook's logic (edit it directly), for non-hook settings changes, or for hooks in
+    a different repo that lacks this hooks/ structure.
 - name:
   - extract-automation-candidates
   description: Mines a project's Claude Code session transcripts, git commit history,
