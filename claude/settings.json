@@ -9,7 +9,7 @@
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "60",
     "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS": "2",
     "CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS": "1",
-    "PROTECT_FILES_MCP_ALLOWLIST": "ai-memory:rag-rat:serena:ssh-mcp"
+    "PROTECT_FILES_MCP_ALLOWLIST": "ssh-mcp"
   },
   "attribution": {
     "commit": "",
