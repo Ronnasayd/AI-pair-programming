@@ -46,7 +46,14 @@ Based on analysis, generate PR description:
 4. No language specified → must have asked user in advance (see MANDATORY rule).
 
 ====================
-PHASE 4 — OUTPUT
+PHASE 4 — VALIDATION
+====================
+
+Run `python3 skills/generate-pr-description/scripts/validate_pr_description.py --message "<generated description>"` before presenting it.
+FAIL (exit 1) → fix flagged sections (missing/empty/placeholder text) and re-run until it passes.
+
+====================
+PHASE 5 — OUTPUT
 ====================
 
 Present generated PR description to user in Markdown block.
