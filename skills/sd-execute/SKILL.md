@@ -39,4 +39,5 @@ Add the following steps as tasks using the `TaskCreate`, `TaskUpdate`, `TaskGet`
 
 ## Reference files
 
-- `references/troubleshooting.md` -- common failure symptoms and fixes
+- [troubleshooting.md](./references/troubleshooting.md) -- common failure symptoms and fixes
+- [diagram.md](./references/diagram.md) -- diagram of the flow.
