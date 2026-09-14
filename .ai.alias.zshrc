@@ -69,5 +69,6 @@ alias cpln="claude --disallowedTools=Write,Edit,NotebookEdit" # Run Claude with 
 alias aimat="ai-memory generate-auth-token" # Generate AI Memory auth token: ai-memory-auth-token
 alias aimpl="ai-memory pending-writes list" # List AI Memory pending writes: ai-memory-pending-writes
 alias rc="exec $SHELL -c \"claude --continue;exec $SHELL\""
+alias lhi="LEFTHOOK_CONFIG=$AI_PROJECT_ROOT_DIR/lefthook/lefthook.yml lefthook install" # Install lefthook hooks: lefthook-install
 export AI_PROJECT_ROOT_DIR="/home/ronnas/develop/personal/AI-pair-programming"
 
