@@ -138,6 +138,22 @@
         "--api-key",
         "${CONTEXT7_API_KEY:-add-value-to-env-vars}"
       ]
+    },
+    "rag-rat": {
+      "type": "stdio",
+      "command": "/home/ronnas/.cargo/bin/rag-rat",
+      "args": ["mcp"],
+      "env": {}
+    },
+    "serena": {
+      "type": "stdio",
+      "command": "serena",
+      "args": [
+        "start-mcp-server",
+        "--context=claude-code",
+        "--project-from-cwd"
+      ],
+      "env": {}
     }
   }
 }
