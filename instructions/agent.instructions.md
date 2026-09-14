@@ -1,30 +1,16 @@
 ---
-description: Core dev conventions for all files — package managers (yarn/pip/asdf), mandatory AskUserQuestion for every interaction, task tracking, code style (SRP/early-returns/no-any/4-20 line functions/<5-grep-hit names), comment policy (WHY not WHAT), test rules (FIRST/named fakes), DI, framework-convention structure, formatting, logging. Apply to every code task, always. Do NOT use for doc navigation (see docs.instructions.md) or per-language/framework detail (see code/node-ts/python/react/vue.instructions.md).
+description: Repo-specific dev conventions for all files — package managers (yarn/pip), mandatory AskUserQuestion for every interaction, task tracking tools, naming (<5-grep-hit names), exception-message content, named-fake mocking. Apply to every code task, always. Do NOT use for doc navigation (see docs.instructions.md) or per-language/framework detail (see code/node-ts/python/react/vue.instructions.md).
 applyTo: "**/*"
 ---
 
 ## Environments
 
-- JS/TS: use `yarn`, not `npm`, unless project says `npm`.
-- Python: use `pip` + `venv`.
-- Multi-language versions: use `asdf` when fit.
-
-## Rules
-
-- Before editing any file, read it first. Before modifying a function, grep for all callers. Research before you edit.
+JS/TS: `yarn`, not `npm`, unless project says otherwise. Python: `pip` + `venv`.
 
 ## Always Use Interactive Question Tools
 
-For every user question, use interactive question tool. No exceptions for context, type, or intent.
-
-Use this for clarifications, options, confirmations, preference checks, all user interactions.
-
-- **Claude**: Use `AskUserQuestion`
-- **Other environments**: Use equivalent interactive question tools available in your context
-- **Fallback**: if no interactive tools exist, use labeled options (A, B, C... Z)
-
-If interactive tool exists, never ask plain-text question.
-If there are multiple questions, use the `grilling` skill.
+Every user question → interactive tool, never plain text. Claude:
+`AskUserQuestion`. Multiple questions: `grilling` skill.
 
 ## Task Tracking
 
@@ -32,51 +18,43 @@ When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`
 
 ## Code style
 
-- Functions: 4-20 lines. Split if longer.
-- Files: under 500 lines. Split by responsibility.
-- One thing per function, one responsibility per module (SRP).
+Standard conventions apply (SRP, early returns, no duplication, explicit
+types). Repo-specific deviations only:
+
 - Names: specific and unique. Avoid `data`, `handler`, `Manager`.
   Prefer names that return <5 grep hits in the codebase.
-- Types: explicit. No `any`, no `Dict`, no untyped functions.
-- No code duplication. Extract shared logic into a function/module.
-- Early returns over nested ifs. Max 2 levels of indentation.
 - Exception messages must include the offending value and expected shape.
+  Why: past debugging sessions wasted time on bare `ValueError` with no
+  context — see git history on `src/mcps/`.
 
 ## Comments
 
-- Keep your own comments. Don't strip them on refactor — they carry
-  intent and provenance.
-- Write WHY, not WHAT. Skip `// increment counter` above `i++`.
-- Docstrings on public functions: intent + one usage example.
-- Reference issue numbers / commit SHAs when a line exists because
-  of a specific bug or upstream constraint.
+Keep own comments on refactor — they carry intent/provenance. Beyond that,
+standard WHY-not-WHAT applies.
 
 ## Tests
 
 - Tests run with a single command: `<project-specific>`.
-- Every new function gets a test. Bug fixes get a regression test.
 - Mock external I/O (API, DB, filesystem) with named fake classes,
   not inline stubs.
-- Tests must be F.I.R.S.T: fast, independent, repeatable,
-  self-validating, timely.
+  Why: inline stubs drift silently from the real interface; a named
+  fake class fails loudly when the real dependency's contract changes.
 
-## Dependencies
+## Relevant Skills
 
-- Inject dependencies through constructor/parameter, not global/import.
-- Wrap third-party libs behind a thin interface owned by this project.
-
-## Structure
-
-- Follow the framework's convention (Rails, Django, Next.js, etc.).
-- Prefer small focused modules over god files.
-- Predictable paths: controller/model/view, src/lib/test, etc.
-
-## Formatting
-
-- Use the language default formatter (`cargo fmt`, `gofmt`, `prettier`,
-  `black`, `rubocop -A`). Don't discuss style beyond that.
-
-## Logging
-
-- Structured JSON when logging for debugging / observability.
-- Plain text only for user-facing CLI output.
+| When                                                   | Use                                          |
+| ------------------------------------------------------ | -------------------------------------------- |
+| Creating/editing a skill under `skills/`               | `skill-creator` / `skill-architect`          |
+| New skill's description doesn't trigger reliably       | `skill-description-generator`                |
+| Writing a commit message                               | `semantic-commit-message` / `caveman-commit` |
+| Opening a PR                                           | `generate-pr-description`                    |
+| Unsure about git workflow (rebase, branch strategy)    | `git-guide` / `git-workflow`                 |
+| Break big/complex problem into sub-problems            | `dynamic-programming-analysis`               |
+| Generate/update project docs from code or diff         | `generate-docs`                              |
+| Write PR description from diff/commits                 | `generate-pr-description`                    |
+| Review a PR                                            | `pr-review`                                  |
+| Resolve merge conflicts                                | `resolve-merge-conflicts`                    |
+| Execute tasks for a spec-driven feature (taskmaster)   | `sd-execute`                                 |
+| Generate a plan step-by-step                           | `sd-planning`                                |
+| Build requirements review table from spec/design/tasks | `spec-to-requirements-table`                 |
+| Pick between technical options (pros/cons)             | `technical-decision-helper`                  |
