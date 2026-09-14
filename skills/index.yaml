@@ -532,6 +532,12 @@ skills:
     "help me with this code". Do NOT use for greenfield scaffolding, CI/CD, or infrastructure
     provisioning.
 - name:
+  - tlc-implement
+  description: 'Implement a work already planned: extracts a checklist, builds it,
+    and proves every check with an independent verifier. Use when the user says "extract
+    a checklist", "build this ticket", "implement this spec", or "tlc-implement".
+    Do NOT use when nobody has decided what to build, or to design the work.'
+- name:
   - frontend-blueprint
   description: AI frontend specialist and design consultant that guides users through
     a structured discovery process before generating any code. Collects visual references,
@@ -574,6 +580,19 @@ skills:
     Do NOT use for TDDs/implementation docs (use technical-design-doc-creator instead),
     README files, or general documentation.
 - name:
+  - harness-eval
+  description: 'Evaluate a repo agent harness (AGENTS.md, rules, skills, skill refs)
+    for broken paths/commands, redundant instructions, and usefulness using a stack-agnostic
+    dual-judge protocol with planted traps. HIGH PRIORITY questionnaires at top: Q1
+    optional docs, Q2 B/C budget before Track A (certainty/tokens). A always runs
+    after Q2; B/C opt-in. ADRs/RFCs excluded from T2. Mixed apply uses 11-mixed-apply.md
+    (KEEP/CUT). Use when the user says harness eval, harness-eval, harness debug,
+    audit AGENTS.md, audit skills/rules, instruction audit, redundancy of agent instructions,
+    usefulness of skills, Ship/Review/Hold/Slim/Keep-core for harness, or wants Track
+    A/B/C harness evaluation. Do NOT use for harness setup or init, feature spec-driven
+    work (tlc-spec-driven), or applying Ship/Slim trims unless the user explicitly
+    asks after the report.'
+- name:
   - subagent-creator
   description: Guide for creating AI subagents with isolated context for complex multi-step
     workflows. Use when users want to create a subagent, specialized agent, verifier,
@@ -596,6 +615,13 @@ skills:
     "respond to PR review", or "handle PR comments". Verifies gh auth first and prompts
     to authenticate if not logged in. Do NOT use for creating PRs, CI debugging (use
     gh-fix-ci), or general Git operations.
+- name:
+  - tlc-discover
+  description: Interviews an unshaped idea into a verdict and a design document with
+    literal decisions for tlc-plan. Use when the user says "research this", "help
+    me understand this problem", "should we build this", "discovery", "explore this
+    problem", or "tlc-discover". Do NOT use when the shape is already decided (tlc-plan),
+    or to implement.
 - name:
   - perf-web-optimization
   description: 'Optimize web performance: bundle size, images, caching, lazy loading,
@@ -676,6 +702,15 @@ skills:
     (use web-accessibility), performance (use core-web-vitals), or comprehensive site
     audits covering multiple areas (use web-quality-audit).
 - name:
+  - tlc-spec-lean
+  description: 'Spec-driven feature work that freezes obligations instead of the plan:
+    one human-reviewed plan with EARS criteria, path, entities, interface and one-way
+    doors, then proof-backed checks, then build, then an independent Verifier. Use
+    when the user says "tlc-spec-lean", "plan feature", "specify feature", "write
+    the checks", "build this plan", or "verify work". Do NOT use for standalone design
+    documents unattached to a feature, architecture decomposition analysis, or work
+    that already has a task list or checklist to execute.'
+- name:
   - legacy-migration-planner
   description: Use when planning legacy system migrations, codebase modernization,
     monolith decomposition, microservices consolidation, cross-language rewrites,
@@ -702,6 +737,18 @@ skills:
     when the decision hasn't been made yet (use create-rfc instead), for implementation
     planning (use technical-design-doc-creator), or for general documentation.
 - name:
+  - tlc-plan
+  description: Turns decided work — a PRD, design doc, RFC, or thread — into tasks
+    a builder can act on without guessing. Finds slices that each prove something,
+    grounds them in the code, and writes intent, observable criteria with concrete
+    values, the boundary, what the change disturbs, and only the decisions that are
+    hard to reverse. Walks every surface the work exposes and sweeps the nine unwritten
+    requirements, recording each landing as a criterion already in the source, existing
+    behaviour, n/a, or Unresolved — never as a criterion the walk invented. Defaults
+    to one task per source. Use when the user says "write the task", "cut this PRD
+    into tasks", "turn this design doc into work", or "tlc-plan". Do NOT use for discovery
+    itself or to implement — a one-line ticket is a decision; a blank wish is not.
+- name:
   - react-best-practices
   description: React and Next.js performance optimization guidelines from Vercel Engineering.
     Use when writing, reviewing, or refactoring React/Next.js code to ensure optimal
@@ -709,6 +756,22 @@ skills:
     data fetching, bundle optimization, or performance improvements. Do NOT use for
     component API architecture or composition patterns (use react-composition-patterns
     instead).
+- name:
+  - spec-driven-eval
+  description: Scores how completely an implementation fulfills a PRD/spec, case by
+    case, and produces a single comparable final grade. Invoke only when explicitly
+    named (e.g. run spec-driven-eval); do not auto-trigger. Use when benchmarking
+    spec-driven implementations, grading acceptance criteria, evaluating whether a
+    feature was 100% implemented, comparing multiple implementations of the same PRD,
+    or auditing implementation and test coverage (unit and e2e) against product requirements.
+    Do NOT use for planning or building features (use tlc-spec-driven), writing PRDs,
+    or general code review unrelated to a spec.
+- name:
+  - confluence-assistant
+  description: Expert in Confluence operations using Atlassian MCP. Use when the user
+    says "search Confluence", "create a Confluence page", "update a page", "find documentation
+    in Confluence", "list spaces", or "add a comment to a page". Do NOT use for Jira
+    issues, general web search, or local file creation.
 - name:
   - gtm-metrics
   description: When the user wants to define GTM metrics, build a metrics dashboard,
