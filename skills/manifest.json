@@ -942,6 +942,7 @@
       "references/PROTOCOL.md",
       "references/claims.schema.json",
       "references/judge-prompts.md",
+      "scripts/__pycache__/doc_scope.cpython-313.pyc",
       "scripts/doc_scope.py",
       "scripts/inventory_extract.py",
       "scripts/merge_agreement.py",
