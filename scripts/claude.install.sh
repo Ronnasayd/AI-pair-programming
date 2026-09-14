@@ -216,26 +216,17 @@ rm $HOME/.config/Code/User/mcp.json
 fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
-## GIT HOOKS (formatter on pre-commit). Symlink git-hooks/* into .git/hooks/,
-## skipping any name already taken by another tool (e.g. rag-rat's post-*).
-GIT_HOOKS_DIR="$(git_path hooks)"
-if [ -n "$GIT_HOOKS_DIR" ]; then
-  mkdir -p "$GIT_HOOKS_DIR"
-  for hook in "$SOURCE/git-hooks/"*; do
-    name=$(basename "$hook")
-    dest="$GIT_HOOKS_DIR/$name"
-    if [ -L "$dest" ]; then
-      case "$(readlink "$dest")" in
-        "$SOURCE/git-hooks/"*) ln -sf "$hook" "$dest" ;;
-        *) echo "WARN: $dest is a symlink owned by another tool, skipping" >&2 ;;
-      esac
-    elif [ -e "$dest" ]; then
-      echo "WARN: $dest already exists (not a symlink), skipping" >&2
-    else
-      ln -s "$hook" "$dest"
-    fi
-  done
+## GIT HOOKS (lefthook manages .git/hooks/ directly, no manual symlinking).
+if [ -L "$LOCAL/lefthook.yml" ] || [ -f "$LOCAL/lefthook.yml" ]; then
+  rm -f "$LOCAL/lefthook.yml"
 fi
+ln -s "$SOURCE/lefthook/lefthook.yml" "$LOCAL/lefthook.yml"
+if command -v lefthook &>/dev/null; then
+  (cd "$LOCAL" && lefthook install)
+else
+  echo "Warning: lefthook não encontrado no PATH, pulando 'lefthook install'." >&2
+fi
+git_exclude "lefthook.yml"
 ###########################################################################################
 ## GITIGNORE
 git_exclude \

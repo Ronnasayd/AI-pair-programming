@@ -1,5 +1,6 @@
 <!-- INIT AUTO-CONTEXT -->
 
+
 ## Environments
 
 JS/TS: `yarn`, not `npm`, unless project says otherwise. Python: `pip` + `venv`.
@@ -59,9 +60,7 @@ standard WHY-not-WHAT applies.
 ## Context-Specific Rules
 
 The following rules apply to specific file types:
-
 - [code.instructions](.claude/instructions/code.instructions.md) — applies to: `**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx`
-
 <!-- END AUTO-CONTEXT -->
 
 ## Project Architecture
@@ -84,7 +83,8 @@ skills/         Skill files (workflows, style guides)
 instructions/   Domain-specific rules and conventions
 scripts/        Installation and environment setup
 commands/       CLI command definitions
-hooks/          Git and event-driven automation
+hooks/          Event-driven automation (Claude Code hooks)
+lefthook/       Git hooks (managed by lefthook)
 docs/           Project documentation
 ```
 
@@ -103,7 +103,7 @@ Install and setup:
 ```bash
 uv sync                         # Install root Python deps (hook scripts)
 cd src && uv sync               # Install MCP server deps
-./install.sh [--all|--claude]   # Set up symlinks, git-hooks, and configurations
+./install.sh [--all|--claude]   # Set up symlinks, lefthook, and configurations
 ```
 
 Run tests:

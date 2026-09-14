@@ -34,13 +34,12 @@ find "$LOCAL/$DEFAULT_FOLDER/hooks" -maxdepth 1 -type l 2>/dev/null | while read
     fi
 done
 ########################################################################################
-GIT_HOOKS_DIR="$(git_path hooks)"
-[ -n "$GIT_HOOKS_DIR" ] && find "$GIT_HOOKS_DIR" -maxdepth 1 -type l 2>/dev/null | while read -r link; do
-    target=$(readlink "$link")
-    if [[ "$target" == "$SOURCE/git-hooks/"* ]]; then
-        rm "$link"
-    fi
-done
+if command -v lefthook &>/dev/null; then
+  (cd "$LOCAL" && lefthook uninstall) 2>/dev/null
+fi
+if [ -L "$LOCAL/lefthook.yml" ]; then
+  rm "$LOCAL/lefthook.yml"
+fi
 ########################################################################################
 find "$LOCAL/$DEFAULT_FOLDER/agents" -maxdepth 1 -type l 2>/dev/null | while read -r link; do
     target=$(readlink "$link")
