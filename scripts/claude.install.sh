@@ -101,6 +101,7 @@ if [[ "${CLAUDE_INSTALL_SKIP_AUTO_CONTEXT:-}" != "1" ]]; then
       "$LOCAL/AGENTS.md"
 fi
 
+if [[ "${CLAUDE_INSTALL_SKIP_CLAUDE_MD:-}" != "1" ]]; then
 cat > "$LOCAL/CLAUDE.md" << 'EOF'
 # Instructions
 
@@ -110,6 +111,7 @@ Gemini CLI, and other AGENTS-aware harnesses.
 
 Do not duplicate project rules here. Update `AGENTS.md` instead.
 EOF
+fi
 
 ########################################################################################
 if [ -L "$LOCAL/.mcp.json" ] || [ -d "$LOCAL/.mcp.json" ]; then
