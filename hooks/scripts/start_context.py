@@ -196,6 +196,20 @@ def project_ports(payload):
     return "\n".join(lines)
 
 
+def agents_md(payload):
+    cwd = get_by_key(payload, "cwd")
+    if not cwd:
+        return ""
+    agents_md_path = os.path.join(cwd, "AGENTS.md")
+    if not os.path.exists(agents_md_path):
+        return ""
+    with open(agents_md_path) as f:
+        content = f.read()
+    if not content.strip():
+        return ""
+    return "## AGENTS.md\n\n" + content
+
+
 def disabled_mcp_servers():
     project_dir = os.environ.get("AI_PROJECT_DIR")
     if not project_dir:
@@ -232,6 +246,9 @@ def main():
     ports_text = project_ports(payload)
     if ports_text:
         additional_context += f"\n\n{ports_text}"
+    agents_md_text = agents_md(payload)
+    if agents_md_text:
+        additional_context += f"\n\n{agents_md_text}"
     disabled_mcp_text = disabled_mcp_servers()
     if disabled_mcp_text:
         additional_context += f"\n\n{disabled_mcp_text}"
