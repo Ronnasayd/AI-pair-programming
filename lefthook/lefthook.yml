@@ -1,6 +1,6 @@
-# Lefthook config — migrated from lefthook/ (symlinked git hooks).
+# Lefthook config — migrated from git-hooks/ (symlinked git hooks).
 # Install: `lefthook install` (run once per clone).
-# Bypass: `git commit --no-verify` (see lefthook/commit-msg for why this exists).
+# Bypass: `git commit --no-verify` (see lefthook/scripts/commit-msg for why this exists).
 #
 # NOTE: post-checkout, post-commit, post-merge, post-rewrite hooks still live
 # directly in .git/hooks/ and are NOT migrated here yet — protected path,
