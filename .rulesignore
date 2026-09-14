@@ -1,14 +1,14 @@
 # agent.instructions.md
 # code.instructions.md
-test.instructions.md
-test-mutation.instructions.md
+docs.instructions.md
 http.instructions.md
 jsdocs.instructions.md
 node-ts.instructions.md
 openapi.instructions.md
+python.instructions.md
 react.instructions.md
 reactjs.instructions.md
+test-mutation.instructions.md
 test-typescript-node-backend.instructions.md
+test.instructions.md
 vue.instructions.md
-docs.instructions.md
-python.instructions.md

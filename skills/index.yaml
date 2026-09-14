@@ -899,6 +899,12 @@ skills:
     from a codebase. Maps the code structure, identifies what to do and what to avoid
     when creating new code, and generates a comprehensive rules reference document.
 - name:
+  - skill-judge
+  description: Evaluate Agent Skill design quality against official specifications
+    and best practices. Use when reviewing, auditing, or improving SKILL.md files
+    and skill packages. Provides multi-dimensional scoring and actionable improvement
+    suggestions.
+- name:
   - mermaid-erd
   description: 'Generate, render, and explain Mermaid Entity Relationship Diagrams
     (ERD) using erDiagram syntax. Use this skill whenever the user wants to model

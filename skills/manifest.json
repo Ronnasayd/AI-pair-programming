@@ -7,6 +7,10 @@
     "skill_md": "agent-creator/SKILL.md",
     "files": []
   },
+  "skill-judge": {
+    "skill_md": "agent-toolkit/skill-judge/SKILL.md",
+    "files": ["README.md"]
+  },
   "analyze-comfyui-workflow-json": {
     "skill_md": "analyze-comfyui-workflow-json/SKILL.md",
     "files": []
@@ -816,7 +820,7 @@
   },
   "spec-to-requirements-table": {
     "skill_md": "spec-to-requirements-table/SKILL.md",
-    "files": []
+    "files": ["scripts/validate_requirements.py"]
   },
   "srs-generator": {
     "skill_md": "srs-generator/SKILL.md",
@@ -1138,7 +1142,6 @@
       "scripts/__pycache__/validate_state.cpython-312.pyc",
       "scripts/check_commit.py",
       "scripts/lessons.py",
-      "scripts/validate_requirements.py",
       "scripts/validate_spec.py",
       "scripts/validate_state.py",
       "scripts/validate_tasks.py"

@@ -1,6 +1,5 @@
 <!-- INIT AUTO-CONTEXT -->
 
-
 ## Environments
 
 - JS/TS: use `yarn`, not `npm`, unless project says `npm`.
@@ -82,7 +81,9 @@ When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`
 ## Context-Specific Rules
 
 The following rules apply to specific file types:
+
 - [code.instructions](.claude/instructions/code.instructions.md) — applies to: `**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx`
+
 <!-- END AUTO-CONTEXT -->
 
 ## Project Architecture
@@ -152,15 +153,18 @@ Development workflow:
 ## Relevant Skills
 
 **Repo maintenance (core)**
-- `skill-creator` / `skill-architect` — build/edit skills like ones just added (frontend-patterns, golang-*, python-*, tdd-workflow)
+
+- `skill-creator` / `skill-architect` — build/edit skills like ones just added (frontend-patterns, golang-_, python-_, tdd-workflow)
 - `skill-description-generator` — tune trigger phrasing for new skill descriptions
 - `agent-creator` / `subagent-creator` — same for `.claude/agents`
 - `taskmaster-mapper` — map skills/agents to taskmaster tasks (repo has `.taskmaster/`)
 
 **Git/PR hygiene (repo has heavy commit history)**
+
 - `semantic-commit-message` / `caveman-commit`
 - `generate-pr-description`
 - `code-review`, `git-guide`, `git-workflow`
 
 **MCP work** (repo has `mcps/` dir)
+
 - `mcp-builder`, `mcp-manager-instructions`
