@@ -329,6 +329,23 @@ def matches_pattern(path: str) -> tuple[bool, str]:
     return False, ""
 
 
+def iter_string_leaves(value: object) -> list[str]:
+    """Recursively collect every string value out of a nested dict/list —
+    used to scan an MCP tool's arbitrary tool_input shape for path-like or
+    secret-bearing strings when the param name doesn't match a known key."""
+    strings: list[str] = []
+    if isinstance(value, str):
+        if value:
+            strings.append(value)
+    elif isinstance(value, Mapping):
+        for v in value.values():
+            strings.extend(iter_string_leaves(v))
+    elif isinstance(value, (list, tuple)):
+        for v in value:
+            strings.extend(iter_string_leaves(v))
+    return strings
+
+
 def expand_targets(targets: list[str]) -> list[str]:
     """Expand globs like *.env → actual files."""
     expanded = []
@@ -959,6 +976,28 @@ def main():
                 deny_secret(file_path, findings)
 
         logger.debug(f"Allowed file access: {file_path}")
+
+    # ── 1b. Non-allowlisted MCP tools with unrecognized path arg names
+    # (e.g. serena's "relative_path") skip check #1 entirely since it only
+    # looks at file_path/notebook_path/path — get_by_key finds nothing and
+    # the request sails through with zero inspection. Scan every string leaf
+    # in tool_input as a candidate path/content instead of relying on a
+    # fixed key list, since MCP servers don't share a param-naming contract.
+    if tool_name and tool_name.startswith("mcp__") and not file_path:
+        for candidate in iter_string_leaves(tool_input):
+            norm = normalize(candidate)
+            blocked, pattern = matches_pattern(norm)
+            if blocked:
+                deny(candidate, pattern, "mcp_arg")
+
+            if os.path.isfile(norm):
+                if not is_allowed(norm) and not is_within_project(norm):
+                    deny(candidate, "outside_project", "mcp_path_escape")
+                content = get_write_content({}, tool_name, norm)
+                if content:
+                    findings = scan_content_for_secrets(content, norm)
+                    if findings:
+                        deny_secret(candidate, findings)
 
     # ── 2. Shell command inspection
     command = get_by_key(tool_input, "command")
