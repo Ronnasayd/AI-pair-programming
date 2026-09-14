@@ -152,8 +152,12 @@ find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     # Obter apenas o nome da skill
     skill_name=$(basename "$skill_dir")
 
-    # Criar symlink
-    ln -s "$skill_dir" "$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
+    # Criar symlink (remove o que existir no lugar, ex.: skill baixada via MCP)
+    target_link="$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"
+    if [ -L "$target_link" ] || [ -e "$target_link" ]; then
+        rm -rf "$target_link"
+    fi
+    ln -s "$skill_dir" "$target_link"
 done
 if [ -d "$LOCAL/$DEFAULT_LOCAL_AGENTS/skills" ]; then
     find "$LOCAL/$DEFAULT_LOCAL_AGENTS/skills" -maxdepth 1 -mindepth 1 -type d | while read skill_dir; do
