@@ -1,0 +1,17 @@
+# Lefthook config — migrated from lefthook/ (symlinked git hooks).
+# Install: `lefthook install` (run once per clone).
+# Bypass: `git commit --no-verify` (see lefthook/commit-msg for why this exists).
+#
+# NOTE: post-checkout, post-commit, post-merge, post-rewrite hooks still live
+# directly in .git/hooks/ and are NOT migrated here yet — protected path,
+# content unknown. Migrate those once their source is available.
+
+pre-commit:
+  commands:
+    format-staged:
+      run: uv run --project $AI_PROJECT_ROOT_DIR lefthook/scripts/format_staged.py
+
+commit-msg:
+  commands:
+    reject-ai-mentions:
+      run: uv run --project $AI_PROJECT_ROOT_DIR lefthook/scripts/commit-msg {1}
