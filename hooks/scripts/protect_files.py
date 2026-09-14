@@ -798,26 +798,50 @@ FALLBACK_SECRET_PATTERNS = [
 ]
 
 
+ALLOWLIST_PRAGMA = re.compile(r"pragma:\s*allowlist\s*secret", re.IGNORECASE)
+
+
+def is_allowlisted_line(lines: list[str], line_no: int) -> bool:
+    """True if the finding's own line, or the line directly above it, carries
+    the `pragma: allowlist secret` bypass comment (matches detect-secrets'
+    own inline-allowlist convention, so one marker works for both scan paths)."""
+    idx = line_no - 1
+    for candidate in (idx, idx - 1):
+        if 0 <= candidate < len(lines) and ALLOWLIST_PRAGMA.search(lines[candidate]):
+            return True
+    return False
+
+
 def scan_content_fallback(content: str) -> list[dict]:
     """Regex-based secret scan used when detect-secrets isn't installed."""
     findings = []
     lines = content.split("\n")
     for name, regex in FALLBACK_SECRET_PATTERNS:
         for i, line in enumerate(lines):
-            if regex.search(line):
+            if regex.search(line) and not is_allowlisted_line(lines, i + 1):
                 findings.append({"type": name, "line": i + 1})
     return findings
 
 
 def deny_secret(file_path: str, findings: list[dict]) -> None:
     types = ", ".join(sorted({f["type"] for f in findings}))
+    lines = sorted(
+        {f["line_number"] for f in findings if "line_number" in f}
+        | {f["line"] for f in findings if "line" in f}
+    )
+    location = f" at line(s) {', '.join(map(str, lines))}" if lines else ""
     print(
         json.dumps(
             {
                 "decision": "deny",
                 "file": file_path,
                 "source": "secret_scan",
-                "reason": f"potential secret detected ({types})",
+                "reason": (
+                    f"potential secret detected ({types}){location}. "
+                    "If this is a false positive or test fixture, add "
+                    "`# pragma: allowlist secret` on the flagged line (or "
+                    "the line above it) to bypass."
+                ),
             }
         ),
         file=sys.stderr,
