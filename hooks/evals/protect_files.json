@@ -716,6 +716,54 @@
         "command": "echo $((1 + 2))"
       },
       "expect": "allow"
+    },
+    {
+      "name": "mcp_serena_relative_path_settings_denied",
+      "tool_name": "mcp__serena__find_symbol",
+      "tool_input": {
+        "name_path": "mcpServers",
+        "relative_path": ".claude/settings.local.json",
+        "include_body": true
+      },
+      "expect": "deny",
+      "expect_pattern": "settings.local.json"
+    },
+    {
+      "name": "mcp_serena_relative_path_env_denied",
+      "tool_name": "mcp__serena__get_symbols_overview",
+      "tool_input": {
+        "relative_path": ".env"
+      },
+      "expect": "deny",
+      "expect_pattern": ".env"
+    },
+    {
+      "name": "mcp_non_allowlisted_normal_arg_allowed",
+      "tool_name": "mcp__serena__get_symbols_overview",
+      "tool_input": {
+        "relative_path": "hooks/scripts/utils.py"
+      },
+      "expect": "allow"
+    },
+    {
+      "name": "mcp_allowlisted_server_bypasses_check",
+      "tool_name": "mcp__ssh-mcp__read_file",
+      "tool_input": {
+        "remote_path": "/home/ronnas/.ssh/id_rsa"
+      },
+      "expect": "allow"
+    },
+    {
+      "name": "mcp_nested_args_env_denied",
+      "tool_name": "mcp__serena__replace_content",
+      "tool_input": {
+        "relative_path": "some_file.py",
+        "options": {
+          "extra": [".env", "unrelated"]
+        }
+      },
+      "expect": "deny",
+      "expect_pattern": ".env"
     }
   ]
 }
