@@ -9,6 +9,7 @@
 # sd-planning
 # spec-to-requirements-table
 # technical-decision-helper
+# tlc-discover
 # tlc-spec-driven
 adversarial-dev
 agent-architecture-audit
@@ -22,6 +23,7 @@ analyze-comfyui-workflow-json
 api-design
 apk-reverse
 architecture-decision-records
+author-claude-hook
 auto-improve
 autonomous-agent-harness
 autonomous-loops
@@ -35,6 +37,7 @@ codebase-rules-extractor
 codenavi
 coding-standards
 compress-skill
+confluence-assistant
 content-hash-cache-pattern
 context-map
 context7-documentation-lookup
@@ -46,6 +49,7 @@ cpp-testing
 create-adr
 create-rfc
 create-task-spec
+create-validation-scripts
 data-scraper-agent
 database-migrations
 deep-research
@@ -97,6 +101,7 @@ grilling
 gtm-engineering
 gtm-metrics
 handling-large-files
+harness-eval
 hexagonal-architecture
 image-mockup-recreator
 integration-testing
@@ -159,7 +164,9 @@ skill-advisor
 skill-architect
 skill-creator
 skill-description-generator
+skill-judge
 skills-discovery
+spec-driven-eval
 srs-generator
 ste
 ste-pt
@@ -178,18 +185,11 @@ tdd-workflow
 team-builder
 test-coverage-review
 the-fool
+tlc-implement
+tlc-plan
+tlc-spec-lean
 typescript-style-guide
 vite-patterns
 vue-patterns
 webapp-testing
 xlsx
-skill-judge
-author-claude-hook
-create-validation-scripts
-confluence-assistant
-harness-eval
-spec-driven-eval
-tlc-discover
-tlc-implement
-tlc-plan
-tlc-spec-lean
