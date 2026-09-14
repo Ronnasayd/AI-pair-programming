@@ -194,7 +194,8 @@ print(d.get('download_url') or '', d.get('sha') or '')
 
 # ─── Lista de skills ──────────────────────────────────────────────────────────
 
-# Tech Leads Club
+get_skills_tlc(){
+  # Tech Leads Club
 BASE_URL="https://github.com/tech-leads-club/agent-skills/tree/main/packages/skills-catalog/skills"
 SKILLS=(
   "(architecture)/coupling-analysis"
@@ -229,7 +230,9 @@ for skill in "${SKILLS[@]}"; do
   grep -qF "${skill_name}" .skillsignore 2>/dev/null || echo "${skill_name}" >> .skillsignore
   echo ""
 done
+}
 
+get_skills_anthropic(){
 # Anthropic
 BASE_URL="https://github.com/anthropics/skills/tree/main/skills"
 SKILLS=(
@@ -248,7 +251,9 @@ for skill in "${SKILLS[@]}"; do
   grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
   echo ""
 done
+}
 
+get_skills_ecc(){
 # Everything Claude Code
 BASE_URL="https://github.com/affaan-m/ECC/tree/main/skills"
 SKILLS=(
@@ -315,8 +320,9 @@ for skill in "${SKILLS[@]}"; do
   grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
   echo ""
 done
+}
 
-
+get_skills_mattpocock(){
 # Mattpocock
 BASE_URL="https://github.com/mattpocock/skills/tree/main/skills"
 SKILLS=(
@@ -331,8 +337,23 @@ for skill in "${SKILLS[@]}"; do
   grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
   echo ""
 done
+}
 
+get_skills_agent-toolkit(){
+# agent-toolkit
+BASE_URL="https://github.com/softaworks/agent-toolkit/tree/main/skills"
+SKILLS=(
+  "skill-judge"
+)
+for skill in "${SKILLS[@]}"; do
+  echo "━━━ ${skill} ━━━"
+  gghget "${BASE_URL}/${skill}" "skills/agent-toolkit/${skill}"
+  grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
+  echo ""
+done
+}
 
+get_commands_awesome_claude_code_toolkit(){
 # awesome-claude-code-toolkit
 BASE_URL="https://github.com/rohitg00/awesome-claude-code-toolkit/tree/main/commands"
 COMMANDS=(
@@ -343,3 +364,13 @@ for command in "${COMMANDS[@]}"; do
   gghget_file "${BASE_URL}/${command}" "commands/awesome-claude-code-toolkit/${command%/*}"
   echo ""
 done
+}
+
+# Get all skills and commands
+get_skills_tlc
+get_skills_anthropic
+get_skills_ecc
+get_skills_mattpocock
+get_skills_agent-toolkit
+get_commands_awesome_claude_code_toolkit
+
