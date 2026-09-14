@@ -9,11 +9,11 @@
 pre-commit:
   commands:
     format-staged:
-      run: uv run --project $AI_PROJECT_ROOT_DIR lefthook/scripts/format_staged.py
+      run: uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/format_staged.py
 
 commit-msg:
   commands:
     reject-ai-mentions:
-      run: uv run --project $AI_PROJECT_ROOT_DIR lefthook/scripts/commit-msg {1}
+      run: uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/commit-msg {1}
     reject-emoji:
-      run: uv run --project $AI_PROJECT_ROOT_DIR lefthook/scripts/reject-emoji-commit-msg {1}
+      run: uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/reject-emoji-commit-msg {1}
