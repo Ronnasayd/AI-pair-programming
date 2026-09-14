@@ -186,3 +186,10 @@ xlsx
 skill-judge
 author-claude-hook
 create-validation-scripts
+confluence-assistant
+harness-eval
+spec-driven-eval
+tlc-discover
+tlc-implement
+tlc-plan
+tlc-spec-lean
