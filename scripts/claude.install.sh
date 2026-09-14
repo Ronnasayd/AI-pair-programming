@@ -93,11 +93,13 @@ if [[ -n "$references" ]]; then
     instructions+=$'\n\n## Context-Specific Rules\n\nThe following rules apply to specific file types:'"$references"
 fi
 
-replace_between \
-  "<!-- INIT AUTO-CONTEXT -->" \
-  "<!-- END AUTO-CONTEXT -->" \
-  "$instructions" \
-  "$LOCAL/AGENTS.md"
+if [[ "${CLAUDE_INSTALL_SKIP_AUTO_CONTEXT:-}" != "1" ]]; then
+    replace_between \
+      "<!-- INIT AUTO-CONTEXT -->" \
+      "<!-- END AUTO-CONTEXT -->" \
+      "$instructions" \
+      "$LOCAL/AGENTS.md"
+fi
 
 cat > "$LOCAL/CLAUDE.md" << 'EOF'
 # Instructions

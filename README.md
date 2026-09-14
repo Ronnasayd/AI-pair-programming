@@ -27,4 +27,17 @@ cd ~/AI-pair-programming
 bash install.sh
 ```
 
+### Environment Variables
+
+| Variable                                                                                                                                            | Default         | Used in                                                           | Description                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `CLAUDE_INSTALL_SKIP_AUTO_CONTEXT`                                                                                                                  | unset           | `scripts/claude.install.sh`                                       | Set to `1` to skip regenerating the `<!-- INIT AUTO-CONTEXT -->` block in `AGENTS.md` on install.     |
+| `AI_PROJECT_DIR`                                                                                                                                    | project path    | `scripts/claude.install.sh`, `scripts/statusline-command.sh`      | Local project dir written to `settings.local.json`; used to locate `rag-rat.toml` for the statusline. |
+| `AI_PROJECT_ROOT_DIR`                                                                                                                               | unset           | `scripts/ai-jail.sh`                                              | Root dir (hooks/statusline/skills live here via symlinks) read-only-bind-mounted into the sandbox.    |
+| `AI_JAIL`                                                                                                                                           | unset           | `scripts/ai-jail.sh`, `scripts/statusline-command.sh`             | Set to `1` inside the sandbox by `ai-jail.sh`; read by the statusline to show a jail indicator.       |
+| `GITHUB_PAT_TOKEN`                                                                                                                                  | none (required) | `scripts/update-external-tools.sh`                                | GitHub PAT used to authenticate API calls when syncing external tools.                                |
+| `NERD_FONT`                                                                                                                                         | `1`             | `scripts/statusline-command.sh`, `scripts/subagent-statusline.sh` | Set to anything other than `1` to disable Nerd Font glyphs in the statusline.                         |
+| `CLAUDE_CONFIG_DIR`                                                                                                                                 | `$HOME/.claude` | `scripts/statusline-command.sh`                                   | Claude config dir; used to locate the caveman-mode flag file and detect the `-L` (local) profile.     |
+| `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `ANTHROPIC_API_KEY`, `CLAUDE_PROJECT_DIR`, `ENABLE_TOOL_SEARCH`, `ASDF_NODEJS_VERSION`, `CONTEXT7_API_KEY` | unset           | `scripts/ai-jail.sh`                                              | Passed through into the sandbox when set (see `PASSTHROUGH_VARS`).                                    |
+
 ---
