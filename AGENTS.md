@@ -39,13 +39,22 @@ standard WHY-not-WHAT applies.
 
 ## Relevant Skills
 
-| When                                                | Use                                          |
-| --------------------------------------------------- | -------------------------------------------- |
-| Creating/editing a skill under `skills/`            | `skill-creator` / `skill-architect`          |
-| New skill's description doesn't trigger reliably    | `skill-description-generator`                |
-| Writing a commit message                            | `semantic-commit-message` / `caveman-commit` |
-| Opening a PR                                        | `generate-pr-description`                    |
-| Unsure about git workflow (rebase, branch strategy) | `git-guide` / `git-workflow`                 |
+| When                                                   | Use                                          |
+| ------------------------------------------------------ | -------------------------------------------- |
+| Creating/editing a skill under `skills/`               | `skill-creator` / `skill-architect`          |
+| New skill's description doesn't trigger reliably       | `skill-description-generator`                |
+| Writing a commit message                               | `semantic-commit-message` / `caveman-commit` |
+| Opening a PR                                           | `generate-pr-description`                    |
+| Unsure about git workflow (rebase, branch strategy)    | `git-guide` / `git-workflow`                 |
+| Break big/complex problem into sub-problems            | `dynamic-programming-analysis`               |
+| Generate/update project docs from code or diff         | `generate-docs`                              |
+| Write PR description from diff/commits                 | `generate-pr-description`                    |
+| Review a PR                                            | `pr-review`                                  |
+| Resolve merge conflicts                                | `resolve-merge-conflicts`                    |
+| Execute tasks for a spec-driven feature (taskmaster)   | `sd-execute`                                 |
+| Generate a plan step-by-step                           | `sd-planning`                                |
+| Build requirements review table from spec/design/tasks | `spec-to-requirements-table`                 |
+| Pick between technical options (pros/cons)             | `technical-decision-helper`                  |
 
 ## Context-Specific Rules
 
