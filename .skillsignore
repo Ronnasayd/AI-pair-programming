@@ -2,13 +2,13 @@
 # generate-docs
 # generate-pr-description
 # grilling
-# pr-review
 # resolve-merge-conflicts
 # sd-execute
 # sd-insert-taskmaster
 # sd-planning
 # spec-to-requirements-table
 # technical-decision-helper
+# the-judge
 # tlc-discover
 # tlc-spec-driven
 adversarial-dev
@@ -135,6 +135,7 @@ pdf
 perf-web-optimization
 plan-generator
 postgres-patterns
+pr-review
 prd-from-codebase
 prd-generator
 prd-get-implicit-requirements
@@ -193,4 +194,3 @@ vite-patterns
 vue-patterns
 webapp-testing
 xlsx
-the-judge
