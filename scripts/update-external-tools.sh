@@ -111,6 +111,7 @@ for e in entries:
 
         if curl -sf -L -o "$local_file" "$dl_url"; then
           echo "  $label: $local_file"
+          echo "$local_path" >> "$_GGHGET_CHANGED_DIRS_FILE"
         else
           echo "  ✗ Erro: $local_file" >&2
         fi
@@ -121,7 +122,14 @@ for e in entries:
     done
   }
 
+  _GGHGET_CHANGED_DIRS_FILE="$(mktemp)"
   _gghget_recurse "$DIR_PATH" "$OUTPUT_DIR"
+
+  if [[ -s "$_GGHGET_CHANGED_DIRS_FILE" ]]; then
+    _scan_skill_dir "$OUTPUT_DIR"
+  fi
+  rm -f "$_GGHGET_CHANGED_DIRS_FILE"
+
   echo "Concluído → $OUTPUT_DIR"
 }
 
@@ -190,6 +198,15 @@ print(d.get('download_url') or '', d.get('sha') or '')
     echo "  ✗ Erro: $local_file" >&2
     return 1
   fi
+}
+
+# ─── Scan de segurança (SkillSpector) ───────────────────────────────────────
+
+# Roda NVIDIA SkillSpector num diretório de skill (só log, não bloqueia)
+_scan_skill_dir() {
+  local dir="$1"
+  command -v uv &>/dev/null || return 0
+  uv run skillspector scan "$dir" --no-llm --recursive || echo "  ⚠ skillspector: findings em $dir (não bloqueante)" >&2
 }
 
 # ─── Lista de skills ──────────────────────────────────────────────────────────
