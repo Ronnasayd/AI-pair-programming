@@ -40,7 +40,7 @@ else
       echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
     fi
 
-    source "$SOURCE/scripts/build/_generic.install.sh"
+    source "$SOURCE/scripts/installs/_generic.install.sh"
 
     install_tool "serena" "serena --version" "uv tool install serena-agent" "serena init"
     install_tool "rtk" "rtk --version" "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" "rtk init"
