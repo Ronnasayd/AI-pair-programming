@@ -5,7 +5,7 @@ description: step-by-step guide to generating a plan.
 
 # Steps
 
-See [diagram](./references/diagram.md) for a visual flow overview.
+See [diagram](references/diagram.md) for a visual flow overview.
 
 Add the following steps as tasks using the `TaskCreate`, `TaskUpdate`, `TaskGet`, and `TaskList` tools. Update the status as you progress through each step to keep the user informed.
 
