@@ -20,7 +20,7 @@ from utils import get_by_key, get_hooks_logger, split_on_operators  # noqa: E402
 
 logger = get_hooks_logger("ProtectBranches")
 
-PROJECT_ROOT = os.environ.get("AI_PROJECT_DIR", os.getcwd())
+PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
 
 DEFAULT_PROTECTED_BRANCHES = {"main", "master", "develop", "homolog"}
 

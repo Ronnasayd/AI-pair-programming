@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
 - **Never crash the tool call.** Every failure path — bad stdin, missing field, subprocess error, exception — is `sys.exit(0)` with no stdout. The outer `try/except logger.exception` is mandatory.
 - **Payload access via `get_by_key`** — it normalizes `tool_input` / `toolInput` / `TOOL_INPUT`. Don't index the dict directly.
-- **Project root**: `os.environ["AI_PROJECT_DIR"]` (deployed) — but tolerate its absence in evals; fall back to `data`'s `cwd` or a repo-root walk. The `KeyError: 'AI_PROJECT_DIR'` regression in `skill_activation.py` came from a bare `os.environ[...]`.
+- **Project root**: `os.environ["CLAUDE_PROJECT_DIR"]` (deployed) — but tolerate its absence in evals; fall back to `data`'s `cwd` or a repo-root walk. The `KeyError: 'CLAUDE_PROJECT_DIR'` regression in `skill_activation.py` came from a bare `os.environ[...]`.
 - **Logger name** is the `[Name]` that shows up in `/tmp/hooks.log`. Use `get_hooks_logger("Name")`; `--log-file` support comes free.
 - **stdin cap** `MAX_STDIN = 1024*1024`.
 
@@ -121,7 +121,7 @@ Concurrent writers (e.g. jest coverage hooks) → write to a temp file + `os.rep
 
 ## settings.json wiring
 
-Path is `$AI_PROJECT_DIR/.claude/hooks/scripts/<name>.py`. Add under the matching event block, next to sibling hooks. `log_hooks.py` stays last in each block. Example PostToolUse `Edit|Write` addition:
+Path is `$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/<name>.py`. Add under the matching event block, next to sibling hooks. `log_hooks.py` stays last in each block. Example PostToolUse `Edit|Write` addition:
 
 ```json
 {
@@ -129,7 +129,7 @@ Path is `$AI_PROJECT_DIR/.claude/hooks/scripts/<name>.py`. Add under the matchin
   "hooks": [
     {
       "type": "command",
-      "command": "$AI_PROJECT_DIR/.claude/hooks/scripts/<name>.py"
+      "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/<name>.py"
     }
   ]
 }

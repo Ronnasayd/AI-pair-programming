@@ -202,7 +202,7 @@ else
     memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-memory(${C_RED}●${RESET})\e]8;;\e\\\\"
 fi
 
-if [ -f "$AI_PROJECT_DIR/rag-rat.toml" ] && [ ! -L "$AI_PROJECT_DIR/rag-rat.toml" ]; then
+if [ -f "$CLAUDE_PROJECT_DIR/rag-rat.toml" ] && [ ! -L "$CLAUDE_PROJECT_DIR/rag-rat.toml" ]; then
     ragrat_status="${SEP}${ICON_RAGRAT} rag-rat(${C_GREEN}●${RESET})"
 else
     ragrat_status="${SEP}${ICON_RAGRAT} rag-rat(${C_RED}●${RESET})"

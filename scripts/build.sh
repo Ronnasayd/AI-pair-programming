@@ -18,14 +18,10 @@ sudo apt install cargo  && echo "cargo installation [ok]"
 cargo install rag-rat && echo "rag-rat installation [ok]"
 
 # Install serena
-uv tool install  serena-agent && echo "serena installation [ok]"
-serena init
+bash "$(dirname "$0")/build/serena.install.sh"
 
 # Install ai-memory
-mkdir -p ~/.local/bin
-curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory \
-    -o ~/.local/bin/ai-memory
-chmod +x ~/.local/bin/ai-memory
+mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory
 echo "ai-memory installation [ok]"
 
 
