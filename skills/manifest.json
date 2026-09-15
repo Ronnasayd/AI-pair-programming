@@ -1141,6 +1141,16 @@
       "references/socratic-questioning.md"
     ]
   },
+  "the-judge": {
+    "skill_md": "tech-leads-club/the-judge/SKILL.md",
+    "files": [
+      "references/comment-voice.md",
+      "references/review-standards.md",
+      "scripts/post_review.py",
+      "scripts/review_gate.py",
+      "scripts/scan_bypasses.py"
+    ]
+  },
   "tlc-discover": {
     "skill_md": "tech-leads-club/tlc-discover/SKILL.md",
     "files": ["references/document-format.md"]
