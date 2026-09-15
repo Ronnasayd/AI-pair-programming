@@ -24,10 +24,10 @@ PERCENTAGE_BUCKET_SIZE = 5
 LOG = get_hooks_logger("ChecklistContextWatch")
 
 STATUSLINE_PATH = Path.home() / ".claude" / "logs" / "claude_statusline.json"
-_AI_PROJECT_DIR_RAW = os.environ.get("AI_PROJECT_DIR")
+_CLAUDE_PROJECT_DIR_RAW = os.environ.get("CLAUDE_PROJECT_DIR")
 SKILLS_ROOT = (
-    Path(_AI_PROJECT_DIR_RAW) / ".claude" / "skills"
-    if _AI_PROJECT_DIR_RAW
+    Path(_CLAUDE_PROJECT_DIR_RAW) / ".claude" / "skills"
+    if _CLAUDE_PROJECT_DIR_RAW
     else Path(".claude") / "skills"
 )
 
@@ -53,7 +53,7 @@ def save_state(path: Path, state: dict) -> None:
 def find_checklist(skill_name: str | None) -> str | None:
     LOG.debug(
         f"find_checklist: skill_name={skill_name!r} "
-        f"AI_PROJECT_DIR={_AI_PROJECT_DIR_RAW!r} SKILLS_ROOT={SKILLS_ROOT} "
+        f"CLAUDE_PROJECT_DIR={_CLAUDE_PROJECT_DIR_RAW!r} SKILLS_ROOT={SKILLS_ROOT} "
         f"SKILLS_ROOT.exists()={SKILLS_ROOT.exists()} cwd={Path.cwd()}"
     )
     if not skill_name:

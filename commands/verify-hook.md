@@ -16,4 +16,4 @@ Do this:
 4. **Validate the payload is correct**, not just present: does the returned context match what the hook is supposed to compute for that input? Check against the hook's docstring intent.
 5. **Check the log.** `grep` the hook's logger name in `/tmp/hooks.log` (or its `--log-file`) for the run you just triggered; confirm it logged without exceptions.
 
-Report: eval result, live-trigger output (verbatim), whether the payload was correct, and any bug found with a concrete fix. If the hook produced nothing when it should have, that is the finding — trace why (matcher mismatch, missing env like `AI_PROJECT_DIR`, dedup window, silent exception).
+Report: eval result, live-trigger output (verbatim), whether the payload was correct, and any bug found with a concrete fix. If the hook produced nothing when it should have, that is the finding — trace why (matcher mismatch, missing env like `CLAUDE_PROJECT_DIR`, dedup window, silent exception).

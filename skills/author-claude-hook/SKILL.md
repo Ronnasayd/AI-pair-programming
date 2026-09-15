@@ -30,7 +30,7 @@ Read 1–2 nearby hooks of the same event type before writing (`dir_context_refs
 
 ## Phase 2 — Write the script
 
-Follow `references/conventions.md` exactly: shebang `#!/usr/bin/python3`, `utils` import via `sys.path`, `get_hooks_logger("Name")`, read stdin with a `MAX_STDIN` cap, parse JSON defensively (exit 0 on any failure), use `get_by_key` for payload access, resolve project via `AI_PROJECT_DIR` env, wrap `main()` in `try/except logger.exception; sys.exit(0)`. A hook must never crash the tool call — every failure path is `sys.exit(0)`.
+Follow `references/conventions.md` exactly: shebang `#!/usr/bin/python3`, `utils` import via `sys.path`, `get_hooks_logger("Name")`, read stdin with a `MAX_STDIN` cap, parse JSON defensively (exit 0 on any failure), use `get_by_key` for payload access, resolve project via `CLAUDE_PROJECT_DIR` env, wrap `main()` in `try/except logger.exception; sys.exit(0)`. A hook must never crash the tool call — every failure path is `sys.exit(0)`.
 
 Output shape for context injection:
 
@@ -45,7 +45,7 @@ Save to `hooks/scripts/<snake_name>.py`, `chmod +x`.
 
 ## Phase 3 — Wire settings.json
 
-Add the hook command under the right event/matcher block in `claude/settings.json`, using `$AI_PROJECT_DIR/.claude/hooks/scripts/<name>.py` (that is the deployed path — `.claude/` symlinks to the repo). Place it near sibling hooks of the same purpose. Keep the `log_hooks.py` entry last in its block.
+Add the hook command under the right event/matcher block in `claude/settings.json`, using `$CLAUDE_PROJECT_DIR/.claude/hooks/scripts/<name>.py` (that is the deployed path — `.claude/` symlinks to the repo). Place it near sibling hooks of the same purpose. Keep the `log_hooks.py` entry last in its block.
 
 Give the user the exact JSON snippet to paste, showing the full event block with the new entry in place.
 

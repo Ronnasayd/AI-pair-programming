@@ -33,7 +33,10 @@ EVALS_DIR = Path(__file__).resolve().parent
 HOOKS_DIR = EVALS_DIR.parent
 REPO_ROOT = HOOKS_DIR.parent
 
-ENV = {**os.environ, "AI_PROJECT_DIR": os.environ.get("AI_PROJECT_DIR", str(REPO_ROOT))}
+ENV = {
+    **os.environ,
+    "CLAUDE_PROJECT_DIR": os.environ.get("CLAUDE_PROJECT_DIR", str(REPO_ROOT)),
+}
 
 
 def run_exit_code_case(hook_path: Path, case: dict) -> tuple[bool, str]:

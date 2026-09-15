@@ -27,10 +27,10 @@ logger = get_hooks_logger("ProtectFiles")
 # CONFIG
 # ─────────────────────────────────────────────────────────────
 
-# AI_PROJECT_DIR (set by Claude Code) takes precedence when present, since it's
+# CLAUDE_PROJECT_DIR (set by Claude Code) takes precedence when present, since it's
 # stable for the whole session; os.getcwd() is the fallback but can drift if cwd
 # changes mid-session (cd, subagents), silently widening the boundary check.
-PROJECT_ROOT = os.environ.get("AI_PROJECT_DIR", os.getcwd())
+PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
 
 # Get the home directory path object
 home_dir = str(Path.home())

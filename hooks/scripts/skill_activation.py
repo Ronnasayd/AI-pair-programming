@@ -26,7 +26,7 @@ from utils import (
 
 LOG = get_hooks_logger("SkillActivation")
 
-DB_PATH = Path(os.environ["AI_PROJECT_DIR"]) / ".claude/skills/skills.db"
+DB_PATH = Path(os.environ["CLAUDE_PROJECT_DIR"]) / ".claude/skills/skills.db"
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 MIN_SIMILARITY = 0.5
 MAX_SUGGESTIONS = 3

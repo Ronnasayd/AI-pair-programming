@@ -11,31 +11,44 @@ else
   if [ ! -L "/usr/local/bin/iai" ]; then
     echo "Running install script: $SCRIPT_FILE"
     SOURCE="$(pwd)"
-    if [ -f "$SOURCE/.ai.alias.zshrc" ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" $SOURCE/.ai.alias.zshrc; then
-      echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\""  >> $SOURCE/.ai.alias.zshrc && echo "alias add at .bashrc"
-    fi
-    uv sync --project "$SOURCE" > /dev/null && echo "fastembed ok"
-    uv run --project "$SOURCE" python3 -m spacy download pt_core_news_sm > /dev/null && echo "spacy pt model ok"
-    uv run --project "$SOURCE" python3 -m spacy download en_core_web_sm > /dev/null && echo "spacy en model ok"
+    bash "$SOURCE/scripts/build/uv.install.sh"
+    uv sync --project "$SOURCE" > /dev/null && echo "sync [ok]"
+    uv run --project "$SOURCE" python3 -m spacy download pt_core_news_sm > /dev/null && echo "spacy pt model [ok]"
+    uv run --project "$SOURCE" python3 -m spacy download en_core_web_sm > /dev/null && echo "spacy en model [ok]"
     # bash "$(pwd)/scripts/update-external-tools.sh"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
     sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$SOURCE/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
     if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo "alias add at .bashrc"
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo ".ai.alias.zshrc add at .bashrc [ok]"
     fi
     if [ -f ~/.bashrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.bashrc; then
-      echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc"
+      echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc [ok]"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo "alias add at .zshrc"
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo ".ai.alias.zshrc add at .zshrc [ok]"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.zshrc; then
-      echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.zshrc && echo "AI_PROJECT_ROOT_DIR add at .zshrc"
+      echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.zshrc && echo "AI_PROJECT_ROOT_DIR add at .zshrc [ok]"
     fi
 
-    echo "run: '$SOURCE/scripts/build.sh' to add helper tools"
+    if [ -f ~/.bashrc ] && ! grep -q "export PATH=$HOME/.local/bin:$PATH" ~/.bashrc; then
+      echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc
+    fi
+    if [ -f ~/.zshrc ] && ! grep -q "export PATH=$HOME/.local/bin:$PATH" ~/.zshrc; then
+      echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
+    fi
+
+    source "$SOURCE/scripts/build/_generic.install.sh"
+
+    install_tool "serena" "serena --version" "uv tool install serena-agent" "serena init"
+    install_tool "rtk" "rtk --version" "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" "rtk init"
+    install_tool "rag-rat" "rag-rat --version" "apt install cargo && cargo install rag-rat"
+    install_tool "bat" "bat --version" "apt install bat"
+    install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
+
+
     echo "Use the command: iai --help"
     exit 0
   fi
