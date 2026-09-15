@@ -44,8 +44,9 @@ else
 
     install_tool "serena" "serena --version" "uv tool install serena-agent" "serena init"
     install_tool "rtk" "rtk --version" "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" "rtk init"
-    install_tool "rag-rat" "rag-rat --version" "apt install cargo && cargo install rag-rat"
-    install_tool "bat" "bat --version" "apt install bat"
+    install_tool "rag-rat" "rag-rat --version" "sudo apt install cargo && cargo install rag-rat"
+    install_tool "bat" "bat --version" "sudo apt install bat"
+    install_tool "jq" "jq --version" "sudo apt install jq"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
 
