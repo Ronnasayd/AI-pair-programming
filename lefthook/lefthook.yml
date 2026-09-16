@@ -17,3 +17,10 @@ commit-msg:
       run: uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/commit-msg {1}
     reject-emoji:
       run: uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/reject-emoji-commit-msg {1}
+
+pre-push:
+  commands:
+    jest:
+      run: $AI_PROJECT_ROOT_DIR/lefthook/scripts/pre-push-jest
+    typecheck:
+      run: $AI_PROJECT_ROOT_DIR/lefthook/scripts/pre-push-typecheck

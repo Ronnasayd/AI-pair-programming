@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# git pre-push hook: run typecheck if this is a TypeScript repo.
+#
+# Detects package manager from lockfile (yarn.lock, pnpm-lock.yaml,
+# package-lock.json), falling back to yarn per repo convention.
+# No-ops silently for non-Node repos or repos without TypeScript.
+#
+# Bypass: git push --no-verify
+
+set -euo pipefail
+
+if [ ! -f package.json ] || [ ! -f tsconfig.json ]; then
+    exit 0
+fi
+
+if ! grep -q '"typescript"' package.json 2>/dev/null && [ ! -d node_modules/typescript ]; then
+    exit 0
+fi
+
+if [ -f yarn.lock ]; then
+    manager="yarn"
+elif [ -f pnpm-lock.yaml ]; then
+    manager="pnpm"
+elif [ -f package-lock.json ]; then
+    manager="npm"
+else
+    manager="yarn"
+fi
+
+if grep -qE '"(typecheck|type-check)"\s*:' package.json 2>/dev/null; then
+    script=$(grep -oE '"(typecheck|type-check)"\s*:' package.json | head -1 | grep -oE 'typecheck|type-check')
+    echo "pre-push: running $script via $manager"
+    case "$manager" in
+        npm) npm run "$script" ;;
+        yarn | pnpm) "$manager" "$script" ;;
+    esac
+else
+    echo "pre-push: running tsc --noEmit"
+    case "$manager" in
+        npm) npx tsc --noEmit ;;
+        yarn) yarn tsc --noEmit ;;
+        pnpm) pnpm exec tsc --noEmit ;;
+    esac
+fi
