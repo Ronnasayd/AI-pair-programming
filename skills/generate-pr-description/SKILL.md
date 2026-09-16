@@ -1,6 +1,6 @@
 ---
 name: generate-pr-description
-description: "Generate structured Pull Request descriptions from git diffs (staged or branch) and commit history. Auto-detects .github/pull_request_template.md; falls back to Description/Impact/Task sections. Use when user says 'generate PR description', 'write PR description', 'create pull request description', 'gera descricao de PR', or 'crie descricao do PR'. Always asks user for output language if not specified. Do NOT use for writing code, reviewing diffs (use code-review), or generating commit messages (use caveman-commit)."
+description: "Generate structured Pull Request descriptions from git diffs (staged or branch) and commit history. Auto-detects .github/pull_request_template.md; falls back to Description/Impact/Task sections. Use when user says 'generate PR description', 'write PR description', 'create pull request description', 'draft the PR description', or 'summarize this branch for a PR'. Always asks user for output language if not specified."
 argument-hint: "[language]: (Optional) Language for PR description (e.g., 'English', 'Portuguese'). Not provided → skill MUST ask user."
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd

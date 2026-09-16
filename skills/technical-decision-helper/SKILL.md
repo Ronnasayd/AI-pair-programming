@@ -1,6 +1,6 @@
 ---
 name: technical-decision-helper
-description: Helps make informed technical decisions by presenting viable options with pros/cons analysis, context searches, and decomposition of complex problems into smaller sub-problems.
+description: Present 2-3 viable technical options with pros/cons, trade-off comparisons, and a recommendation with fallback, decomposing complex decisions into sub-problems first. Use when user says 'help me choose between these technologies', 'should I use X or Y', 'compare these architecture options', or 'build vs buy for this feature'.
 argument-hint: Describe the technical problem or question, project context, constraints, and any relevant information about previously considered alternatives.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd

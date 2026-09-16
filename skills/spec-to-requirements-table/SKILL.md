@@ -1,6 +1,6 @@
 ---
 name: spec-to-requirements-table
-description: Derive a flat, self-contained requirements review table from a feature's spec.md, design.md and tasks.md — one row per acceptance criterion, tagged success or error path — so a non-implementer can scan it and judge whether each rule makes sense. Use when the user says "the spec is too technical", "quero uma tabela de requisitos", "make a requirements table", "review sheet for these requirements", "listar os requisitos para revisar", or supplies a table template and asks to fill it from an existing spec. Do NOT use for authoring the spec, design or tasks themselves, for generating test code, or for implementation planning.
+description: Derive a flat, self-contained requirements review table from a feature's spec.md, design.md and tasks.md — one row per acceptance criterion, tagged success or error path — so a non-implementer can scan it and judge whether each rule makes sense. Use when the user says 'the spec is too technical', 'make a requirements table', 'build a review sheet for these requirements', 'turn this spec into a requirements table', or supplies a table template and asks to fill it from an existing spec.
 ---
 
 # Spec → Requirements Review Table

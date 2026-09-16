@@ -1,6 +1,6 @@
 ---
 name: sd-execute
-description: "Thin wrapper around tlc-spec-driven's Execute phase that adds taskmaster status sync. Main agent reads tlc-spec-driven/SKILL.md, runs its normal Execute flow (implement.md, auto-sized batching, always-on Verifier) unmodified, and after each task/batch calls taskmaster's set_task_status so the taskmaster tag mirrors real progress. Taskmaster is a read-only dashboard here -- it never drives what gets executed or in what order; tlc-spec-driven's own auto-sizing and batching decide that. Use: 'execute feature <tag>' or run tasks for <tag> when the feature already has a taskmaster tag to keep in sync. Do not use for direct task management (taskmaster skill), spec creation (tlc-spec-driven), or when there is no taskmaster tag to sync (just call tlc-spec-driven directly)."
+description: "Execute a spec-driven feature's implementation phase while syncing taskmaster status after each task or batch, so the taskmaster tag mirrors real progress without driving execution order itself. Use when user says 'execute feature', 'run tasks for this feature tag', 'implement this taskmaster feature', or 'continue executing the spec and keep taskmaster in sync'."
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "2.0.0"
