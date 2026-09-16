@@ -1,6 +1,6 @@
 ---
 name: sd-insert-taskmaster
-description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json). When only spec.md exists (no formal tasks.md, e.g. Small/Medium features where tlc-spec-driven's auto-sizing skipped the Tasks phase), derives one taskmaster task per requirement/acceptance-criterion from spec.md instead, purely for tracking/registry purposes. Use when user says "convert tasks.md to taskmaster json", "transform tasks.md to .taskmaster format", "converta tasks.md em tasks.json", "registra essa spec no taskmaster", or wants to generate TaskMaster JSON from a tasks or spec file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster conversions.
+description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json), falling back to one synthetic task per requirement from spec.md when tasks.md doesn't exist. Use when user says 'convert tasks.md to taskmaster json', 'transform tasks.md to .taskmaster format', 'generate taskmaster json from this spec', or 'register this feature in taskmaster'.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: 1.2.0

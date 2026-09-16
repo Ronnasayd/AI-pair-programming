@@ -1,6 +1,6 @@
 ---
 name: resolve-merge-conflicts
-description: Use this skill immediately when the user mentions merge conflicts that need to be resolved. Do not attempt to resolve conflicts directly - invoke this skill first. This skill specializes in providing a structured framework for merging imports, tests, lock files (regeneration), configuration files, and handling deleted-but-modified files with backup and analysis.
+description: Resolve Git merge conflicts with a structured plan-first framework covering imports, tests, lock files, config files, and deleted-but-modified files with backup and analysis. Use when user says 'resolve merge conflicts', 'fix merge conflicts', 'help me merge this branch', 'there are conflict markers in this file', or 'rebase is failing with conflicts'.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"
