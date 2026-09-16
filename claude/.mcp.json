@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "notion": {
+      "url": "https://mcp.notion.com/mcp",
+      "type": "http"
+    },
     "ssh-mcp": {
       "command": "npx",
       "args": [
