@@ -21,6 +21,7 @@ from utils import (
     get_project_name,
     get_session_id_short,
     read_file,
+    resolve_command_text,
     write_file,
 )
 
@@ -28,7 +29,7 @@ LOG = get_hooks_logger("SkillActivation")
 
 DB_PATH = Path(os.environ["CLAUDE_PROJECT_DIR"]) / ".claude/skills/skills.db"
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-MIN_SIMILARITY = 0.5
+MIN_SIMILARITY = 0.55
 MAX_SUGGESTIONS = 3
 DEDUP_HOURS = 1
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
@@ -325,13 +326,22 @@ def main():
 
         LOG.debug(f"Processing prompt ({len(prompt)} chars): {prompt[:80]!r}...")
 
+        command_text = resolve_command_text(
+            prompt, Path(os.environ["CLAUDE_PROJECT_DIR"])
+        )
+        query_text = command_text if command_text is not None else prompt
+        if command_text is not None:
+            LOG.debug(
+                f"Resolved /command to body ({len(command_text)} chars): {command_text[:80]!r}..."
+            )
+
         session_id = get_session_id_short(get_by_key(payload, "session_id") or "")
         rec_log_path = Path(f"/tmp/skill-rec-log-{session_id}.json")
         LOG.debug(f"Session: {session_id} | rec_log: {rec_log_path}")
         rec_log = loadRecLog(rec_log_path)
         LOG.debug(f"Rec log has {len(rec_log)} entries: {list(rec_log.keys())}")
 
-        query_vector = encodeViaDaemon(prompt)
+        query_vector = encodeViaDaemon(query_text)
         if query_vector is None:
             LOG.warning("Failed to get embedding — skipping")
             sys.exit(0)
@@ -340,7 +350,7 @@ def main():
         LOG.debug(f"Loaded {len(skills_raw)} skills from DB")
 
         candidates = findSkills(
-            DB_PATH, prompt, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
+            DB_PATH, query_text, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
         )
         LOG.debug(
             f"Fused candidates: {[(name, f'{score:.4f}') for score, name, _ in candidates]}"
