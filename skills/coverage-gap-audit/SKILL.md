@@ -1,6 +1,6 @@
 ---
 name: coverage-gap-audit
-description: Audit Jest test coverage to separate real testing gaps (business logic, security paths) from false negatives (wiring, config, generated code) that shouldn't count against coverage metrics. Use when the user says "audit test coverage", "which files actually need tests", "reduce coverage noise", "why is coverage low", "exclude files from coverage", or asks to review/clean up `collectCoverageFrom`. Do NOT use for writing the missing tests themselves (that's a separate follow-up step this skill hands off explicitly), and do NOT use for non-Jest runners (vitest/pytest/go test) — this skill's commands are Jest-specific.
+description: Audit Jest test coverage to separate real testing gaps (business logic, security paths) from false negatives (wiring, config, generated code) that shouldn't count against coverage metrics. Use when the user says "audit test coverage", "which files actually need tests", "reduce coverage noise", "why is coverage low", "exclude files from coverage", or asks to review/clean up `collectCoverageFrom`.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: 1.1.0

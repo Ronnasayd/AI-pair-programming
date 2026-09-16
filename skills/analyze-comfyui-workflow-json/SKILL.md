@@ -1,6 +1,6 @@
 ---
 name: analyze-comfyui-workflow-json
-description: 'Analyze a ComfyUI workflow JSON and produce a structured map of nodes, links, subgraphs, and data flow before making changes. Use when user says "analyze this workflow", "map this comfyui json", "understand this workflow", "analise esse workflow", "what does this workflow do", or needs to audit node types, trace IMAGE/VIDEO/MODEL chains, or extract parameter values from a .json workflow file. Do NOT use for editing workflow files, general JSON parsing, non-ComfyUI JSON files, or generating new workflows.'
+description: 'Analyze a ComfyUI workflow JSON and produce a structured map of nodes, links, subgraphs, and data flow before making changes. Use when user says "analyze this workflow", "map this comfyui json", "understand this workflow", "analise esse workflow", "what does this workflow do", or needs to audit node types, trace IMAGE/VIDEO/MODEL chains, or extract parameter values from a .json workflow file.'
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"

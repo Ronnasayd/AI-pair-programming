@@ -1,6 +1,6 @@
 ---
 name: adversarial-dev
-description: Orchestrates a code task through two separate agents in an adversarial loop — an executor that implements and a strict evaluator (no write tools) that scores the result 0-10 and demands fixes. Use when the user wants a task "executed and evaluated by 2 agents", "adversarial dev", "generator/evaluator loop", higher-reliability implementation with independent review, or says "turn this into an adversarial workflow". Do NOT use for simple one-shot edits, multi-task wave orchestration (use orchestrate), or single-pass code review of existing code (use code-review).
+description: Orchestrates a code task through two separate agents in an adversarial loop — an executor that implements and a strict evaluator (no write tools) that scores the result 0-10 and demands fixes. Use when the user wants a task "executed and evaluated by 2 agents", "adversarial dev", "generator/evaluator loop", higher-reliability implementation with independent review, or says "turn this into an adversarial workflow".
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"

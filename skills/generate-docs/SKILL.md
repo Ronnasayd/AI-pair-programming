@@ -1,6 +1,6 @@
 ---
 name: generate-docs
-description: Generate, refactor, or update project documentation from source code or a git diff, auto-scaffolding a full docs/ hierarchy or applying targeted updates to existing docs. Use when user says "document the project", "write docs", "create a README", "generate architecture docs", "write a contribution guide", "create an ADR", "document this codebase", "update the docs", "sync the docs with the latest diff", or "update the README after this PR". Also triggers when a git diff, patch, or modified file is provided and docs need to stay in sync. Do NOT use for code generation, debugging, or non-documentation writing tasks.
+description: Generate, refactor, or update project documentation from source code or a git diff, auto-scaffolding a full docs/ hierarchy or applying targeted updates to existing docs. Use when user says "document the project", "write docs", "create a README", "generate architecture docs", "write a contribution guide", "create an ADR", "document this codebase", "update the docs", "sync the docs with the latest diff", or "update the README after this PR". Also triggers when a git diff, patch, or modified file is provided and docs need to stay in sync.
 argument-hint: >
   Optional {change_source} — a diff command (e.g. `git diff HEAD~1`, `git diff
   main...feature/my-branch`, `cat patch.diff`), a list of changed files, or

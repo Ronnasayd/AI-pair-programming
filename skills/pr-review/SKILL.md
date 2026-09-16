@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Systematic PR review using GitHub MCP tools. Produces structured report with summary of changes, critical bugs, minor issues, code examples, and external references. Use when asked to "review PR", "analyze PR", "check PR", "give feedback on PR", or given a GitHub PR URL to evaluate. Works for any language or framework. Do NOT use for creating PRs or making code changes.
+description: Systematic PR review using GitHub MCP tools. Produces structured report with summary of changes, critical bugs, minor issues, code examples, and external references. Use when user says "review PR", "analyze PR", "check PR", "give feedback on PR", or shares a GitHub PR URL to evaluate. Works for any language or framework.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.1.0"

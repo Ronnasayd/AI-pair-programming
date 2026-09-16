@@ -1,6 +1,6 @@
 ---
 name: extract-software-requirements
-description: Extracts and consolidates software requirements from a project's Claude Code session transcripts, git commit history, and formal spec/PRD markdown files into a single traceable RF-xxx/RNF-xxx requirements document with an explicit unresolved-conflicts section. Use when the user asks to "extract requirements from this project", "generate a requirements doc from commits", "extract requirements from transcripts", "consolidate PRD and specs into one doc", "what requirements were implemented vs still pending", or wants a cross-source requirements audit with traceability between conversations, code history, and formal specs. Do NOT use for writing a brand-new PRD from scratch with no existing project history (use prd-generator instead), or for pure implicit-requirement gap analysis on a single already-written PRD (use prd-get-implicit-requirements instead).
+description: Extract and consolidate software requirements from a project's Claude Code session transcripts, git commit history, and spec or PRD markdown files into a single traceable RF-xxx/RNF-xxx requirements document with an explicit unresolved-conflicts section. Use when user says "extract requirements from this project", "generate a requirements doc from commits", "extract requirements from transcripts", "consolidate PRD and specs into one doc", "what requirements were implemented vs still pending", or "audit requirements across conversations, code history, and formal specs".
 license: CC-BY-4.0
 metadata:
   author: Ronnasayd

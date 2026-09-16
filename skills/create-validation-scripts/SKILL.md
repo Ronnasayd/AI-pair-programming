@@ -1,6 +1,6 @@
 ---
 name: create-validation-scripts
-description: Create a deterministic, stdlib-only Python validation script that checks a generated markdown artifact (spec, requirements table, tasks list, report, ...) against explicit rules — turning a skill's prose "verification" checklist into a checkable pass/fail gate instead of relying on the model to self-audit. Use when the user says "create a validation script for this skill/artifact", "crie um script de validação", "turn this checklist into a script", "add a validator", "make this a deterministic gate", or when a skill's output has a verification/anti-patterns section but no script enforcing it. Do NOT use for validating code (use a linter/type-checker/test suite instead) or for one-off ad hoc checks with no reusable artifact shape.
+description: Create a deterministic, stdlib-only Python validation script that checks a generated markdown artifact (spec, requirements table, tasks list, report) against explicit rules, turning a skill's prose verification checklist into a checkable pass/fail gate. Use when user says "create a validation script for this skill", "turn this checklist into a script", "add a validator", "make this a deterministic gate", "enforce this verification section with code", or a skill's output has a verification or anti-patterns section but no script enforcing it.
 ---
 
 # Create Validation Scripts

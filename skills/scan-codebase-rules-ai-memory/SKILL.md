@@ -1,6 +1,6 @@
 ---
 name: scan-codebase-rules-ai-memory
-description: Scan the current repo's structure, config files, and code to extract concrete conventions (lint/format rules, naming, folder layout, commit style, CI checks, testing conventions) and persist them as durable rule pages in ai-memory for future sessions. Use when the user says "scan codebase for rules", "extract conventions", "analyze repo and save to memory", "gera regras da codebase", or "cria regras no ai memory". Do NOT use for one-off code questions, business-logic/architecture deep dives (use codenavi), or bug diagnosis (use diagnosing-bugs).
+description: Scan the current repo's structure, config files, and code to extract concrete conventions (lint/format rules, naming, folder layout, commit style, CI checks, testing conventions) and persist them as durable rule pages in ai-memory for future sessions. Use when user says "scan codebase for rules", "extract conventions", "analyze repo and save to memory", "record project conventions", or "generate ai-memory rules from this repo".
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"
