@@ -11,7 +11,8 @@ else
   if [ ! -L "/usr/local/bin/iai" ]; then
     echo "Running install script: $SCRIPT_FILE"
     SOURCE="$(pwd)"
-    bash "$SOURCE/scripts/build/uv.install.sh"
+    source "$SOURCE/scripts/installs/_generic.install.sh"
+    install_tool "uv" "uv --version" "curl -LsSf https://astral.sh/uv/install.sh | sh"
     uv sync --project "$SOURCE" > /dev/null && echo "sync [ok]"
     uv run --project "$SOURCE" python3 -m spacy download pt_core_news_sm > /dev/null && echo "spacy pt model [ok]"
     uv run --project "$SOURCE" python3 -m spacy download en_core_web_sm > /dev/null && echo "spacy en model [ok]"
@@ -40,7 +41,7 @@ else
       echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
     fi
 
-    source "$SOURCE/scripts/installs/_generic.install.sh"
+    
 
     install_tool "serena" "serena --version" "uv tool install serena-agent" "serena init"
     install_tool "rtk" "rtk --version" "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" "rtk init"
@@ -48,7 +49,6 @@ else
     install_tool "bat" "bat --version" "sudo apt install bat"
     install_tool "jq" "jq --version" "sudo apt install jq"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
-
 
     echo "Use the command: iai --help"
     exit 0
@@ -192,7 +192,7 @@ for backend in "${BACKENDS[@]}"; do
   run_install "$backend"
 done
 
-ai-memory install-skills > /dev/null 2>&1 && echo "ia-memory install-skills ok"
+ai-memory install-skills > /dev/null 2>&1 && echo "ia-memory install-skills [ok]"
 
 git_exclude ".agents/skills/*" "skills-lock.json"
 
