@@ -1,16 +1,6 @@
 ---
 name: dynamic-programming-analysis
-description: >
-  Use this skill whenever the user presents a problem, challenge, decision, or complex question
-  that needs to be broken down into smaller, manageable sub-problems, just like dynamic programming
-  in computer science. Triggers include: any problem that feels too big or overwhelming, strategic
-  planning questions, optimization challenges (what is the best way to...), multi-step processes,
-  decision trees, architectural designs, research questions, business or personal dilemmas, or any
-  situation where the user says they do not know where to start. Always use this skill when
-  decomposition, step-by-step reasoning, or structured problem-solving would help, even if the user
-  does not mention dynamic programming explicitly. The goal is to model the DP mindset: identify
-  base cases, define sub-problems, find overlapping structure, and build toward the solution
-  bottom-up.
+description: Break overwhelming problems, decisions, or plans into DP-style sub-problems (base cases, dependencies, reused parts) and solve bottom-up. Use when user says "I don't know where to start", "break this down", "what's the best way to...", or asks for a step-by-step plan, decision matrix, project roadmap, or architecture decomposition.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.1.0"
