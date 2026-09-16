@@ -16,7 +16,12 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_by_key, get_hooks_logger, get_session_id_short  # noqa: E402
+from utils import (  # noqa: E402
+    get_by_key,
+    get_hooks_logger,
+    get_session_id_short,
+    minify_json,
+)
 
 logger = get_hooks_logger("ContextRefs")
 
@@ -292,7 +297,7 @@ def main() -> None:
             {
                 "hookSpecificOutput": {
                     "hookEventName": "PreToolUse",
-                    "additionalContext": json.dumps(
+                    "additionalContext": minify_json(
                         {
                             "instructions": "The following files contain instructions for matching file types. Before editing or creating a file, find all matching entries, read the rule file at `location`, and follow those rules.",
                             "files": files,

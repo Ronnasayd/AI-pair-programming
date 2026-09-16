@@ -9,7 +9,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger, minify_markdown  # noqa: E402
 
 LOG = get_hooks_logger("StartContext")
 
@@ -255,7 +255,7 @@ def main():
     output = {
         "hookSpecificOutput": {
             "hookEventName": "SessionStart",
-            "additionalContext": additional_context,
+            "additionalContext": minify_markdown(additional_context),
         }
     }
     LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")

@@ -11,7 +11,13 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import extract_query_text, get_by_key, get_hooks_logger, get_project_name
+from utils import (
+    extract_query_text,
+    get_by_key,
+    get_hooks_logger,
+    get_project_name,
+    minify_json,
+)
 
 LOG = get_hooks_logger("Context7Search")
 
@@ -212,7 +218,7 @@ def main():
     output = {
         "hookSpecificOutput": {
             "hookEventName": hook_event_name,
-            "additionalContext": json.dumps(
+            "additionalContext": minify_json(
                 {
                     "instruction": (
                         "these context7 libraries match the user's query; if relevant "
@@ -221,8 +227,7 @@ def main():
                         "project id to fetch up-to-date docs before answering"
                     ),
                     "context7_libraries": [toContext(r) for r in matches],
-                },
-                ensure_ascii=False,
+                }
             ),
         }
     }

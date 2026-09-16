@@ -15,6 +15,8 @@ from utils import (
     get_by_key,
     get_hooks_logger,
     get_session_id_short,
+    minify_json,
+    minify_markdown,
     read_file,
     write_file,
 )
@@ -149,13 +151,12 @@ def main() -> None:
     output = {
         "hookSpecificOutput": {
             "hookEventName": "PostToolUse",
-            "additionalContext": json.dumps(
+            "additionalContext": minify_json(
                 {
                     "reason": f"context usage crossed {bucket * PERCENTAGE_BUCKET_SIZE}%",
                     "checklist_path": checklist_path,
-                    "checklist": checklist_content,
-                },
-                ensure_ascii=False,
+                    "checklist": minify_markdown(checklist_content),
+                }
             ),
         }
     }

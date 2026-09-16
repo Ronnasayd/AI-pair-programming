@@ -18,6 +18,7 @@ from utils import (  # noqa: E402
     extract_code_info,
     get_by_key,
     get_hooks_logger,
+    minify_json,
 )
 
 LOG = get_hooks_logger("ImpactSurfaceHint")
@@ -265,7 +266,7 @@ def main():
         output = {
             "hookSpecificOutput": {
                 "hookEventName": "PostToolUse",
-                "additionalContext": json.dumps(
+                "additionalContext": minify_json(
                     {
                         "instruction": (
                             "the file you just modified has these dependents/dependencies "
@@ -274,8 +275,7 @@ def main():
                         ),
                         "file": file_path,
                         "results": results,
-                    },
-                    ensure_ascii=False,
+                    }
                 ),
             }
         }
