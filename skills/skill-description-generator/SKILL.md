@@ -20,19 +20,19 @@ Create skill description fields that trigger on exact user phrases and avoid ove
 
 ## Generation rules (Step 2)
 
-| Rule            | Requirement                                                                               |
-| --------------- | ----------------------------------------------------------------------------------------- |
-| Length          | Under 1024 characters — count strictly                                                    |
-| Brackets        | No `< >` (XML) allowed                                                                    |
-| Line breaks     | Single line — no YAML multiline `>` or `\|`                                               |
-| Trigger phrases | Real words user would say; English + Portuguese if relevant, comma-separated per language |
-| File types      | Mention if relevant (.md, .json, etc.)                                                    |
-| Tone            | "Use for X" not "Can be used for"                                                         |
+| Rule            | Requirement                                              |
+| --------------- | -------------------------------------------------------- |
+| Length          | Under 1024 characters — count strictly                   |
+| Brackets        | No `< >` (XML) allowed                                   |
+| Line breaks     | Single line — no YAML multiline `>` or `\|`              |
+| Trigger phrases | Real words user would say, English only, comma-separated |
+| File types      | Mention if relevant (.md, .json, etc.)                   |
+| Tone            | "Use for X" not "Can be used for"                        |
 
 ## Validation checklist (Step 3)
 
 - [ ] Starts with action verb (Convert, Generate, Create, etc.)
-- [ ] 3+ trigger phrases (mix languages if relevant)
+- [ ] 3+ trigger phrases, English only
 - [ ] No `< >` brackets
 - [ ] Under 1024 chars
 - [ ] Single line
