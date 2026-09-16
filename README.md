@@ -18,6 +18,7 @@ This project is a comprehensive toolkit designed to enhance AI-assisted software
 - `reference/`, `benchmark/`, `docs/`: Supporting references and benchmarks.
 - Per-harness dirs (`claude/`, `gemini/`, `github-copilot/`, `antigravity/`, `.claude/`, `.gemini/`): harness-specific configs, MCP setups, settings.
 - `install.sh`: Entry-point installer.
+- `uninstall.sh`: Entry-point uninstaller.
 
 ### Instalation
 
@@ -25,6 +26,12 @@ This project is a comprehensive toolkit designed to enhance AI-assisted software
 git clone https://github.com/Ronnasayd/AI-pair-programming.git ~/AI-pair-programming
 cd ~/AI-pair-programming
 bash install.sh
+```
+
+### Uninstalation
+
+```sh
+bash uninstall.sh
 ```
 
 ### Environment Variables
