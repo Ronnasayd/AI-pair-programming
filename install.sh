@@ -48,7 +48,7 @@ else
     install_tool "rag-rat" "rag-rat --version" "sudo apt install cargo && cargo install rag-rat"
     install_tool "bat" "bat --version" "sudo apt install bat"
     install_tool "jq" "jq --version" "sudo apt install jq"
-    install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook"
+    install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook && chmod +x ~/.local/bin/lefthook"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
     echo "Use the command: iai --help"
