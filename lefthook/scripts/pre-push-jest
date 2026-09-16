@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# git pre-push hook: run jest tests if this is a Node repo with jest installed.
+#
+# Detects package manager from lockfile (yarn.lock, pnpm-lock.yaml,
+# package-lock.json), falling back to yarn per repo convention.
+# No-ops silently for non-Node repos or repos without jest.
+#
+# Bypass: git push --no-verify
+
+set -euo pipefail
+
+if [ ! -f package.json ]; then
+    exit 0
+fi
+
+if ! grep -q '"jest"' package.json 2>/dev/null && [ ! -d node_modules/jest ]; then
+    exit 0
+fi
+
+if [ -f yarn.lock ]; then
+    manager="yarn"
+elif [ -f pnpm-lock.yaml ]; then
+    manager="pnpm"
+elif [ -f package-lock.json ]; then
+    manager="npm"
+else
+    manager="yarn"
+fi
+
+if grep -qE '"test:coverage"\s*:' package.json 2>/dev/null; then
+    script="test:coverage"
+    extra_args=()
+else
+    script="test"
+    extra_args=(--coverage)
+fi
+
+echo "pre-push: running jest ($script) via $manager"
+
+case "$manager" in
+    npm)
+        npm run "$script" -- "${extra_args[@]}"
+        ;;
+    yarn | pnpm)
+        "$manager" "$script" "${extra_args[@]}"
+        ;;
+esac
