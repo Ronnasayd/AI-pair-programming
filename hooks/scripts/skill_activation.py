@@ -351,20 +351,32 @@ def main():
             referenced_skill is not None
             and Path(f".claude/skills/{referenced_skill}").exists()
         )
+        LOG.debug(
+            f"Referenced skill in prompt: {referenced_skill!r} "
+            f"(local={referenced_skill_local})"
+        )
         matches = [
             (name, hint)
             for _, name, hint in candidates
             if shouldSuggest(name, rec_log)
             and not (referenced_skill_local and name == referenced_skill)
         ]
-        skipped = [
+        skipped_dedup = [
+            name for _, name, _ in candidates if not shouldSuggest(name, rec_log)
+        ]
+        skipped_referenced = [
             name
             for _, name, _ in candidates
-            if not shouldSuggest(name, rec_log)
-            or (referenced_skill_local and name == referenced_skill)
+            if referenced_skill_local and name == referenced_skill
         ]
-        if skipped:
-            LOG.debug(f"Skipped (dedup {DEDUP_HOURS}h): {skipped}")
+        if skipped_dedup:
+            LOG.debug(
+                f"Skipped (already suggested within {DEDUP_HOURS}h): {skipped_dedup}"
+            )
+        if skipped_referenced:
+            LOG.debug(
+                f"Skipped (explicitly referenced + present locally): {skipped_referenced}"
+            )
         matches = matches[:MAX_SUGGESTIONS]
 
         for name, _ in matches:
