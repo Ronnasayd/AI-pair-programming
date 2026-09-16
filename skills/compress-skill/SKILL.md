@@ -1,6 +1,6 @@
 ---
 name: compress-skill
-description: "Compresses a verbose SKILL.md into a short, scannable core file by moving prose into tables, mermaid flowcharts, and reference files — without losing technical substance. Use when a SKILL.md has grown long (200+ lines of numbered prose, repeated Notes sections, verbatim templates inline) and the user asks to make it 'shorter but still effective', 'more direct', 'use tables/lists/graphs', 'split into reference files', or 'compress this skill'. Do NOT use for creating a new skill from scratch (use skill-creator/skill-architect) or for editing skill description-field triggering copy only (use skill-description-generator)."
+description: "Compresses a verbose SKILL.md into a short, scannable core file by moving prose into tables, mermaid flowcharts, and reference files — without losing technical substance. Use when a SKILL.md has grown long (200+ lines of numbered prose, repeated Notes sections, verbatim templates inline) and the user asks to make it 'shorter but still effective', 'more direct', 'use tables/lists/graphs', 'split into reference files', or 'compress this skill'."
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.1.0"

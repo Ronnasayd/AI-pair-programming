@@ -1,18 +1,6 @@
 ---
 name: generate-design-md
-description: >
-  Use this skill to generate, refactor, or update a DESIGN.md file — the
-  Google Labs open format that documents a project's design system as
-  machine-readable tokens (YAML front matter) plus human/AI-readable
-  rationale (Markdown body). Triggers include: "create a DESIGN.md",
-  "generate a design.md", "document the design system", "gerar DESIGN.md",
-  "criar design.md", "write design tokens doc", "extract our design system
-  into DESIGN.md", "update DESIGN.md after these style changes", or being
-  handed CSS/Tailwind config/theme files and asked to capture the visual
-  language. Auto-detects create mode (no DESIGN.md exists — scaffold from
-  the codebase) vs update mode (a DESIGN.md exists — sync it with new
-  styles or a diff). Do NOT use for building component libraries,
-  generating UI code, or writing general prose docs (use generate-docs).
+description: Generate, refactor, or update a DESIGN.md file, the Google Labs open format that documents a project's design system as machine-readable tokens in YAML front matter plus human-readable rationale in the Markdown body. Auto-detects create mode when no DESIGN.md exists, scaffolding from the codebase, or update mode when one exists, syncing it with new styles or a diff. Use when user says "create a DESIGN.md", "generate a design.md", "document the design system", "write design tokens doc", "extract our design system into DESIGN.md", "update DESIGN.md after these style changes", or hands over CSS, Tailwind config, or theme files and asks to capture the visual language.
 argument-hint: >
   Optional path to a source of truth — a CSS file, `tailwind.config.*`,
   theme module, Figma export, or a diff (`git diff HEAD~1`) — to scope

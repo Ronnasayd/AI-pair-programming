@@ -5,8 +5,6 @@ description: >-
   claude/settings.json and give the user the settings snippet. Use when the user says "criar um hook", "fazer um
   hook que", "create a hook", "comando para colar no settings", or describes an automated behavior that should fire
   on a tool call / session event (PreToolUse, PostToolUse, SessionStart, Stop, UserPromptSubmit, SubagentStart/Stop).
-  Do NOT use for editing an existing hook's logic (edit it directly), for non-hook settings changes, or for hooks in
-  a different repo that lacks this hooks/ structure.
 license: CC-BY-4.0
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd

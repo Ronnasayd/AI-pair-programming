@@ -1,6 +1,6 @@
 ---
 name: task-orchestration-specialist
-description: This custom agent is a task orchestration specialist responsible for intelligently distributing work across available specialist agents. Use this agent when you need to analyze a task specification file or an inline task description and map its subtasks to the most appropriate agents based on domain expertise, complexity, and dependencies. Outputs a complete orchestration plan directly in chat — no files created. Do NOT use for TaskMaster management or creating task specifications.
+description: This custom agent is a task orchestration specialist responsible for intelligently distributing work across available specialist agents. Use this agent when you need to analyze a task specification file or an inline task description and map its subtasks to the most appropriate agents based on domain expertise, complexity, and dependencies. Outputs a complete orchestration plan directly in chat — no files created.
 ---
 
 <instructions>

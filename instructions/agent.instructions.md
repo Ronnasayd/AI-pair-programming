@@ -1,5 +1,5 @@
 ---
-description: Repo-specific dev conventions for all files — package managers (yarn/pip), mandatory AskUserQuestion for every interaction, task tracking tools, naming (<5-grep-hit names), exception-message content, named-fake mocking. Apply to every code task, always. Do NOT use for doc navigation (see docs.instructions.md) or per-language/framework detail (see code/node-ts/python/react/vue.instructions.md).
+description: Repo-specific dev conventions for all files — package managers (yarn/pip), mandatory AskUserQuestion for every interaction, task tracking tools, naming (<5-grep-hit names), exception-message content, named-fake mocking. Apply to every code task, always.
 applyTo: "**/*"
 ---
 

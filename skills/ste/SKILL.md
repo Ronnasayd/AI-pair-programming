@@ -1,15 +1,6 @@
 ---
 name: ste
-description: >
-  Rewrite, review, or check text against ASD-STE100 (Simplified Technical
-  English), the aerospace/defense controlled-language specification. Use this
-  skill whenever the user asks to write, rewrite, or review text in
-  "Simplified Technical English", "STE", "ASD-STE100", or asks to check a
-  document for unapproved words / non-STE constructions. Also use when the
-  user pastes technical/maintenance/procedural text and asks to simplify it
-  for non-native English readers, or asks about STE dictionary approval
-  status of a specific word. Do NOT use for general plain-language editing
-  unrelated to the STE spec.
+description: Rewrite, review, or check text against ASD-STE100 (Simplified Technical English), the aerospace/defense controlled-language specification. Use when user asks to write, rewrite, or review text in "Simplified Technical English", "STE", or "ASD-STE100", asks to check a document for unapproved words or non-STE constructions, pastes technical or maintenance or procedural text and asks to simplify it for non-native English readers, or asks about STE dictionary approval status of a specific word.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"

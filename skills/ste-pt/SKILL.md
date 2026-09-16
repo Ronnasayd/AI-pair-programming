@@ -1,15 +1,6 @@
 ---
 name: ste-pt
-description: >
-  Rewrite, review, or check Portuguese text against ASD-STE100 (Simplified
-  Technical English) by translating through English and back. Use whenever
-  the user asks to check or rewrite Portuguese text for "STE",
-  "ASD-STE100", "inglês técnico simplificado", or similar, and wants the
-  final result in Portuguese. Delegates the actual rule/dictionary
-  checking to the `ste` skill — do NOT
-  reimplement STE rules or dictionary lookups here. Do NOT use this skill
-  if the user wants the output in English (use
-  `ste` directly).
+description: Rewrite, review, or check Portuguese text against ASD-STE100 (Simplified Technical English) by translating through English and back, delegating the actual rule and dictionary checking to the `ste` skill. Use when user asks to check or rewrite Portuguese text against "STE" or "ASD-STE100" and wants the final result in Portuguese.
 metadata:
   author: Ronnasayd Machado - github.com/Ronnasayd
   version: "1.0.0"
