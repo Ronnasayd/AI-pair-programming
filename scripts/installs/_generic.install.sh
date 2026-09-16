@@ -18,7 +18,7 @@ install_tool() {
     answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]' | xargs)
 
     if [[ -z "$answer" || "$answer" == "y"* ]]; then
-        echo "Installing by command $install_cmd"
+        echo "Installing by command \"$install_cmd\""
         eval "$install_cmd"
         echo "$bin_name [ok]"
         [[ -n "$post_install_cmd" ]] && eval "$post_install_cmd"
