@@ -200,7 +200,7 @@
           },
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee $HOME/.claude/logs/external.log"
           },
           {
             "type": "command",
@@ -300,7 +300,7 @@
           },
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh | tee $HOME/.claude/logs/external.log"
           },
           {
             "type": "command",
@@ -359,7 +359,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | tee $HOME/.claude/logs/external.log"
           }
         ]
       },
@@ -379,7 +379,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | tee $HOME/.claude/logs/external.log"
           },
           {
             "type": "command",
@@ -451,7 +451,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh | tee $HOME/.claude/logs/external.log"
           }
         ]
       }
@@ -462,7 +462,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh | tee $HOME/.claude/logs/external.log"
           },
           {
             "type": "command",
@@ -499,7 +499,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-start.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-start.sh | tee $HOME/.claude/logs/external.log"
           }
         ]
       }
@@ -536,7 +536,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-stop.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-stop.sh | tee $HOME/.claude/logs/external.log"
           }
         ]
       }
@@ -547,7 +547,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh | tee $HOME/.claude/logs/external.log"
           },
           {
             "type": "command",
