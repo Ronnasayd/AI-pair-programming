@@ -972,6 +972,31 @@ def detect_skill(text: str) -> str | None:
     return match.group(1) if match else None
 
 
+_FRONTMATTER_RE = re.compile(r"\A---\s*\n.*?\n---\s*\n?", re.DOTALL)
+
+
+def resolve_command_text(text: str, project_dir: Path) -> str | None:
+    """If text is a /command invocation matching commands/<name>.md, return
+    the file's body (frontmatter stripped) as embeddable text. Else None.
+
+    Raw slash-command tokens (e.g. "/create-commit.prompt") embed poorly —
+    they read as a filename, not the instruction the command actually runs —
+    so callers should embed the resolved body instead of the raw prompt.
+    """
+    match = re.match(r"(?<!\S)/([a-zA-Z0-9_.-]+)(?!\S)", text)
+    if not match:
+        return None
+    name = match.group(1)
+    commands_dir = project_dir / "commands"
+    for candidate in (commands_dir / f"{name}.md", commands_dir / f"{name}"):
+        if candidate.is_file():
+            content = read_file(candidate)
+            if content is None:
+                return None
+            return _FRONTMATTER_RE.sub("", content, count=1).strip() or None
+    return None
+
+
 # find's -exec ... ; terminator uses a bare/escaped semicolon that is NOT a
 # shell command separator — splitting there truncates the -exec argument list
 # (and any protected target inside it), silently defeating a targets scan.
