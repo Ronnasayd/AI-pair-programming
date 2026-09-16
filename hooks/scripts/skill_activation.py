@@ -20,6 +20,7 @@ from utils import (
     get_hooks_logger,
     get_project_name,
     get_session_id_short,
+    minify_json,
     read_file,
     resolve_command_text,
     write_file,
@@ -411,7 +412,7 @@ def main():
             output = {
                 "hookSpecificOutput": {
                     "hookEventName": hook_event_name,
-                    "additionalContext": json.dumps(
+                    "additionalContext": minify_json(
                         {
                             "instruction": (
                                 "check if these skills match user request; if present_locally, "
@@ -421,8 +422,7 @@ def main():
                                 "references, fetch them with get_remote_skill_file(name, relpath)"
                             ),
                             "suggestions": suggestions,
-                        },
-                        ensure_ascii=False,
+                        }
                     ),
                 }
             }

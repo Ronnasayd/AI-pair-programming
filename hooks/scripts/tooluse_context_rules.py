@@ -14,7 +14,7 @@ from os import path
 script_dir = path.dirname(path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger, minify_markdown  # noqa: E402
 
 LOG = get_hooks_logger("ToolUseContextRules")
 
@@ -85,7 +85,7 @@ def main():
     output = {
         "hookSpecificOutput": {
             "hookEventName": hook_event_name,
-            "additionalContext": "\n\n".join(contexts),
+            "additionalContext": minify_markdown("\n\n".join(contexts)),
         }
     }
     LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")

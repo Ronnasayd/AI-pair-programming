@@ -229,16 +229,59 @@ def run_lint_hook_main(tag: str, logger: logging.Logger, maybe_run_lint) -> None
     sys.exit(0)
 
 
+def minify_json(data: Any) -> str:
+    """Serialize with no extra whitespace (compact separators)."""
+    return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+
+
+_MULTI_SPACE_RE = re.compile(r" {2,}")
+_TABLE_ROW_RE = re.compile(r"^\s*\|.*\|\s*$")
+_TABLE_SEP_CELL_RE = re.compile(r"^:?-+:?$")
+
+
+def minify_markdown(text: str) -> str:
+    """Collapse blank-line runs, trailing whitespace, and inner padding
+    (table/column alignment, tree-style spacing) in prose. LLMs read
+    tokens, not columns, so visual alignment costs tokens for nothing.
+    Leading indentation is preserved everywhere (meaningful in code)."""
+    lines = text.splitlines()
+    out: list[str] = []
+    in_code_fence = False
+    for raw_line in lines:
+        line = raw_line.rstrip()
+        if line.lstrip().startswith("```"):
+            in_code_fence = not in_code_fence
+            out.append(line)
+            continue
+        if not in_code_fence and _TABLE_ROW_RE.match(line):
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if all(_TABLE_SEP_CELL_RE.match(c) for c in cells):
+                # Header separator row: alignment markers only, no padding needed.
+                cells = [
+                    c[0] + "-" + c[-1] if c[0] == ":" or c[-1] == ":" else "-"
+                    for c in cells
+                ]
+            line = "|" + "|".join(cells) + "|"
+        else:
+            stripped = line.lstrip(" ")
+            indent = line[: len(line) - len(stripped)]
+            line = indent + _MULTI_SPACE_RE.sub(" ", stripped)
+        if line == "" and out and out[-1] == "":
+            continue
+        out.append(line)
+    return "\n".join(out).strip()
+
+
 def emit_lint_output(
     stdin_data: str, lint_results: dict, logger: logging.Logger
 ) -> str:
     """Build the hook stdout payload, wrapping lint_results if any check ran."""
     if any(lint_results.values()):
-        output = json.dumps(
+        output = minify_json(
             {
                 "hookSpecificOutput": {
                     "hookEventName": "PostToolUse",
-                    "additionalContext": json.dumps(lint_results),
+                    "additionalContext": minify_json(lint_results),
                 }
             }
         )

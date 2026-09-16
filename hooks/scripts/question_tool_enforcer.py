@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger, minify_markdown  # noqa: E402
 
 LOG = get_hooks_logger("QuestionToolEnforcer")
 
@@ -88,7 +88,7 @@ def main() -> None:
     output = {
         "hookSpecificOutput": {
             "hookEventName": event,
-            "additionalContext": RULE,
+            "additionalContext": minify_markdown(RULE),
         }
     }
     LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
