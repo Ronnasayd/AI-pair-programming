@@ -48,6 +48,17 @@ Before finishing, verify each item:
 
 ---
 
+## Deterministic Validation
+
+Before the manual Quality Checklist below, run the stdlib-only gate scripts against every generated/updated file:
+
+```bash
+python3 <skill-dir>/scripts/validate_summary.py docs/
+python3 <skill-dir>/scripts/validate_doc_file.py docs/<file>.md
+```
+
+`validate_summary.py` checks docs/SUMMARY.md navigability (every doc linked, no plain-text file refs, no placeholders). `validate_doc_file.py` checks one generated file (placeholders, plain-text refs, Mermaid diagram in `architecture.md`, the 7 required sections in `docs/modules/<name>.md`). Both exit non-zero on failure — fix and re-run before moving to the manual checklist.
+
 ## Anti-patterns to Avoid
 
 - ❌ Referencing files as plain text (`docs/architecture.md`) — use links instead.
