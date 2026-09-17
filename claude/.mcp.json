@@ -53,9 +53,9 @@
         "git+https://github.com/Ronnasayd/mcp-manager.git",
         "mcp-manager",
         "--config",
-        "/home/ronnas/develop/personal/mcp-manager/backends.json",
+        "${HOME}/develop/personal/mcp-manager/backends.json",
         "--catalog",
-        "/home/ronnas/develop/personal/mcp-manager/catalog.json",
+        "${HOME}/develop/personal/mcp-manager/catalog.json",
         "--transport",
         "stdio"
       ],
@@ -145,7 +145,7 @@
     },
     "rag-rat": {
       "type": "stdio",
-      "command": "/home/ronnas/.cargo/bin/rag-rat",
+      "command": "${HOME}/.cargo/bin/rag-rat",
       "args": ["mcp"],
       "env": {}
     },
