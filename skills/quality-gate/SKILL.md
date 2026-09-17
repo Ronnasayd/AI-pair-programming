@@ -10,7 +10,7 @@ metadata:
 
 Ratchet-style quality gate for Node/TS projects. Compares four metrics against a frozen `baseline.json`; any regression (even 0.1 point) fails the run. Never improves the baseline on its own — only `--update-baseline` advances it.
 
-Script: `scripts/quality-gate.js` (this repo). Spec: `.specs/features/quality-gate/spec.md`.
+Script: `<skills-dir>/quality-gate/scripts/quality-gate.js` (this repo).
 
 ## Before running
 
@@ -27,7 +27,7 @@ Missing any of the three → the script fails with a clear message naming the ex
 ## Running it
 
 ```bash
-node <path-to>/scripts/quality-gate.js --root .
+node <skills-dir>/quality-gate/scripts/quality-gate.js --root .
 ```
 
 | Situation                                            | Behavior                                                           |
@@ -61,7 +61,7 @@ Run the three collection commands, then the script, in the same job — no TTY, 
 - run: npx eslint . --format json > eslint-report.json
 - run: npx jscpd . --reporters json
 - run: npx jest --coverage --coverageReporters=json-summary
-- run: node scripts/quality-gate.js --root .
+- run: node <skills-dir>/quality-gate/scripts/quality-gate.js --root .
   # non-zero exit here fails the job — that's the gate
 - if: always()
   run: cat quality-gate-report.md # or use it to post a PR comment

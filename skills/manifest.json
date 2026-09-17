@@ -764,7 +764,7 @@
   },
   "quality-gate": {
     "skill_md": "quality-gate/SKILL.md",
-    "files": []
+    "files": ["scripts/quality-gate.js", "scripts/quality-gate.test.js"]
   },
   "resolve-merge-conflicts": {
     "skill_md": "resolve-merge-conflicts/SKILL.md",
