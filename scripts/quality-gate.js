@@ -134,11 +134,117 @@ function collectMetrics(root, { maxLines }) {
   };
 }
 
+const BASELINE_REQUIRED_FIELDS = [
+  "lintViolations",
+  "duplicationPercent",
+  "coveragePercent",
+  "largeFilesCount"
+];
+
+/**
+ * Error thrown when baseline.json exists but is invalid JSON or missing a required field.
+ */
+class MalformedBaselineError extends Error {
+  /**
+   * Builds a MalformedBaselineError naming the exact problematic field or parse failure.
+   * @param baselinePath - Path to the malformed baseline file.
+   * @param reason - Human-readable description of what is wrong (missing field or parse error).
+   */
+  constructor(baselinePath, reason) {
+    super(
+      `quality-gate: malformed baseline at ${baselinePath}: ${reason}. The file was not overwritten.`
+    );
+    this.name = "MalformedBaselineError";
+    this.baselinePath = baselinePath;
+  }
+}
+
+/**
+ * Validates that a parsed baseline object contains every required field.
+ * @param baseline - Parsed baseline JSON content.
+ * @param baselinePath - Path to the baseline file, used for error reporting.
+ */
+function assertBaselineShape(baseline, baselinePath) {
+  const missingField = BASELINE_REQUIRED_FIELDS.find(
+    (field) => !(field in baseline)
+  );
+  if (missingField)
+    throw new MalformedBaselineError(
+      baselinePath,
+      `missing field "${missingField}"`
+    );
+}
+
+/**
+ * Reads the baseline file for a project, distinguishing "does not exist" from "malformed".
+ * @param baselinePath - Path to baseline.json.
+ * @returns { exists: false } when the file is absent, or { exists: true, baseline } when present and valid.
+ */
+function readBaseline(baselinePath) {
+  if (!fs.existsSync(baselinePath)) return { exists: false };
+
+  let baseline;
+  try {
+    baseline = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
+  } catch (error) {
+    throw new MalformedBaselineError(
+      baselinePath,
+      `invalid JSON (${error.message})`
+    );
+  }
+  assertBaselineShape(baseline, baselinePath);
+  return { exists: true, baseline };
+}
+
+/**
+ * Converts collected metrics into the flat shape stored in baseline.json.
+ * @param metrics - Metrics object from collectMetrics.
+ * @returns Flat baseline record with largeFilesCount instead of the full file list.
+ */
+function toBaselineRecord(metrics) {
+  return {
+    lintViolations: metrics.lintViolations,
+    duplicationPercent: metrics.duplicationPercent,
+    coveragePercent: metrics.coveragePercent,
+    largeFilesCount: metrics.largeFiles.length
+  };
+}
+
+/**
+ * Writes the baseline file, always overwriting any existing content.
+ * @param baselinePath - Path to baseline.json.
+ * @param metrics - Metrics object from collectMetrics to persist as the new baseline.
+ */
+function writeBaseline(baselinePath, metrics) {
+  fs.writeFileSync(
+    baselinePath,
+    JSON.stringify(toBaselineRecord(metrics), null, 2) + "\n"
+  );
+}
+
+/**
+ * Ensures a baseline exists, bootstrapping it from current metrics on first run.
+ * @param baselinePath - Path to baseline.json.
+ * @param metrics - Currently collected metrics, used to bootstrap when no baseline exists.
+ * @returns { bootstrapped: true } when a new baseline was just created, or { bootstrapped: false, baseline } when one already existed.
+ */
+function ensureBaseline(baselinePath, metrics) {
+  const read = readBaseline(baselinePath);
+  if (read.exists) return { bootstrapped: false, baseline: read.baseline };
+  writeBaseline(baselinePath, metrics);
+  return { bootstrapped: true };
+}
+
 module.exports = {
   MissingDependencyError,
+  MalformedBaselineError,
   collectLintViolations,
   collectDuplicationPercent,
   collectCoveragePercent,
   collectLargeFiles,
-  collectMetrics
+  collectMetrics,
+  readBaseline,
+  writeBaseline,
+  ensureBaseline,
+  toBaselineRecord
 };

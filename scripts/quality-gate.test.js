@@ -7,11 +7,15 @@ const os = require("os");
 const path = require("path");
 const {
   MissingDependencyError,
+  MalformedBaselineError,
   collectLintViolations,
   collectDuplicationPercent,
   collectCoveragePercent,
   collectLargeFiles,
-  collectMetrics
+  collectMetrics,
+  readBaseline,
+  writeBaseline,
+  ensureBaseline
 } = require("./quality-gate");
 
 function makeTempProject() {
@@ -121,5 +125,107 @@ test("collectMetrics aggregates all four metrics in one object (FR-001)", () => 
     duplicationPercent: 2,
     coveragePercent: 90,
     largeFiles: []
+  });
+});
+
+test("ensureBaseline bootstraps baseline.json from current metrics when file absent (FR-003)", () => {
+  const root = makeTempProject();
+  const baselinePath = path.join(root, "baseline.json");
+  const metrics = {
+    lintViolations: 3,
+    duplicationPercent: 1.5,
+    coveragePercent: 92,
+    largeFiles: [{ path: "a.js", lines: 10 }]
+  };
+
+  const result = ensureBaseline(baselinePath, metrics);
+
+  assert.equal(result.bootstrapped, true);
+  const written = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
+  assert.deepEqual(written, {
+    lintViolations: 3,
+    duplicationPercent: 1.5,
+    coveragePercent: 92,
+    largeFilesCount: 1
+  });
+});
+
+test("ensureBaseline does not bootstrap when baseline.json already exists (FR-005)", () => {
+  const root = makeTempProject();
+  const baselinePath = path.join(root, "baseline.json");
+  const existing = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFilesCount: 0
+  };
+  fs.writeFileSync(baselinePath, JSON.stringify(existing));
+
+  const result = ensureBaseline(baselinePath, {
+    lintViolations: 9,
+    duplicationPercent: 9,
+    coveragePercent: 1,
+    largeFiles: []
+  });
+
+  assert.equal(result.bootstrapped, false);
+  assert.deepEqual(result.baseline, existing);
+  assert.deepEqual(JSON.parse(fs.readFileSync(baselinePath, "utf8")), existing);
+});
+
+test("readBaseline throws MalformedBaselineError on invalid JSON without overwriting the file (FR-004)", () => {
+  const root = makeTempProject();
+  const baselinePath = path.join(root, "baseline.json");
+  fs.writeFileSync(baselinePath, "{ not valid json");
+
+  assert.throws(() => readBaseline(baselinePath), MalformedBaselineError);
+  assert.equal(fs.readFileSync(baselinePath, "utf8"), "{ not valid json");
+});
+
+test("readBaseline throws MalformedBaselineError naming the missing field (FR-004)", () => {
+  const root = makeTempProject();
+  const baselinePath = path.join(root, "baseline.json");
+  fs.writeFileSync(
+    baselinePath,
+    JSON.stringify({
+      lintViolations: 0,
+      duplicationPercent: 0,
+      coveragePercent: 100
+    })
+  );
+
+  assert.throws(
+    () => readBaseline(baselinePath),
+    (err) =>
+      err instanceof MalformedBaselineError &&
+      err.message.includes("largeFilesCount")
+  );
+});
+
+test("writeBaseline always overwrites regardless of prior content (--update-baseline path)", () => {
+  const root = makeTempProject();
+  const baselinePath = path.join(root, "baseline.json");
+  fs.writeFileSync(
+    baselinePath,
+    JSON.stringify({
+      lintViolations: 99,
+      duplicationPercent: 99,
+      coveragePercent: 0,
+      largeFilesCount: 99
+    })
+  );
+
+  writeBaseline(baselinePath, {
+    lintViolations: 1,
+    duplicationPercent: 1,
+    coveragePercent: 100,
+    largeFiles: []
+  });
+
+  assert.deepEqual(JSON.parse(fs.readFileSync(baselinePath, "utf8")), {
+    lintViolations: 1,
+    duplicationPercent: 1,
+    coveragePercent: 100,
+    largeFilesCount: 0
   });
 });
