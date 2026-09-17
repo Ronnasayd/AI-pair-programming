@@ -591,3 +591,45 @@ test("run exits 1 with a clear message when a required dependency is missing, no
   assert.equal(exitCode, 1);
   assert.ok(messages[0].includes("eslint-report.json"));
 });
+
+test("compareToBaseline fails when duplicationPercent regresses (higher is worse) (FR-007)", () => {
+  const baseline = {
+    lintViolations: 0,
+    duplicationPercent: 2,
+    coveragePercent: 90,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 0,
+    duplicationPercent: 3,
+    coveragePercent: 90,
+    largeFiles: []
+  };
+
+  const result = compareToBaseline(baseline, metrics);
+
+  assert.equal(result.passed, false);
+  assert.deepEqual(result.fields.duplicationPercent, {
+    ok: false,
+    baselineValue: 2,
+    currentValue: 3,
+    delta: 1
+  });
+});
+
+test("compareToBaseline passes when duplicationPercent improves (lower is better) (FR-008)", () => {
+  const baseline = {
+    lintViolations: 0,
+    duplicationPercent: 5,
+    coveragePercent: 90,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 0,
+    duplicationPercent: 2,
+    coveragePercent: 90,
+    largeFiles: []
+  };
+
+  assert.equal(compareToBaseline(baseline, metrics).passed, true);
+});
