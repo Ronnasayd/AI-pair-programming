@@ -282,5 +282,85 @@ module.exports = {
   writeBaseline,
   ensureBaseline,
   toBaselineRecord,
-  compareToBaseline
+  compareToBaseline,
+  renderReport
 };
+
+const METRIC_LABELS = {
+  lintViolations: "Lint violations",
+  duplicationPercent: "Duplication %",
+  coveragePercent: "Coverage %",
+  largeFilesCount: "Large files"
+};
+
+/**
+ * Renders the current-metrics and baseline summary tables as markdown.
+ * @param baseline - Baseline record read from baseline.json.
+ * @param current - Current metrics in baseline-record shape (see toBaselineRecord).
+ * @returns Markdown string with two tables: current metrics and baseline values.
+ */
+function renderSummaryTables(baseline, current) {
+  const rows = BASELINE_REQUIRED_FIELDS.map(
+    (field) =>
+      `| ${METRIC_LABELS[field]} | ${current[field]} | ${baseline[field]} |`
+  );
+  return [
+    "| Metric | Current | Baseline |",
+    "| --- | --- | --- |",
+    ...rows
+  ].join("\n");
+}
+
+/**
+ * Renders the failures section listing baseline, current, and delta for each regressed metric.
+ * @param fields - The `fields` map from compareToBaseline's result.
+ * @returns Markdown string: a failures table when any field regressed, otherwise a "no failures" line.
+ */
+function renderFailuresSection(fields) {
+  const failed = Object.entries(fields).filter(([, result]) => !result.ok);
+  if (failed.length === 0) return "## Failures\n\nNone.";
+
+  const rows = failed.map(
+    ([field, result]) =>
+      `| ${METRIC_LABELS[field]} | ${result.baselineValue} | ${result.currentValue} | ${result.delta} |`
+  );
+  return [
+    "## Failures",
+    "",
+    "| Metric | Baseline | Current | Delta |",
+    "| --- | --- | --- | --- |",
+    ...rows
+  ].join("\n");
+}
+
+/**
+ * Renders the large-files section, explicitly stating "none" when the list is empty.
+ * @param largeFiles - List of { path, lines } from collectMetrics.
+ * @returns Markdown string listing each large file, or a "none" line when the list is empty.
+ */
+function renderLargeFilesSection(largeFiles) {
+  if (largeFiles.length === 0) return "## Files over the line limit\n\nNone.";
+  const rows = largeFiles.map((file) => `- ${file.path} (${file.lines} lines)`);
+  return ["## Files over the line limit", "", ...rows].join("\n");
+}
+
+/**
+ * Renders the full quality-gate report as markdown.
+ * @param baseline - Baseline record read from baseline.json.
+ * @param metrics - Currently collected metrics from collectMetrics.
+ * @param comparison - Result of compareToBaseline(baseline, metrics).
+ * @returns Full markdown report: summary tables, failures section, and large-files section.
+ */
+function renderReport(baseline, metrics, comparison) {
+  const current = toBaselineRecord(metrics);
+  return [
+    "# Quality Gate Report",
+    "",
+    renderSummaryTables(baseline, current),
+    "",
+    renderFailuresSection(comparison.fields),
+    "",
+    renderLargeFilesSection(metrics.largeFiles),
+    ""
+  ].join("\n");
+}
