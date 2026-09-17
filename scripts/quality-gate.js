@@ -283,7 +283,9 @@ module.exports = {
   ensureBaseline,
   toBaselineRecord,
   compareToBaseline,
-  renderReport
+  renderReport,
+  parseArgs,
+  run
 };
 
 const METRIC_LABELS = {
@@ -363,4 +365,92 @@ function renderReport(baseline, metrics, comparison) {
     renderLargeFilesSection(metrics.largeFiles),
     ""
   ].join("\n");
+}
+
+const DEFAULT_MAX_LINES = 500;
+const DEFAULT_BASELINE_PATH = "baseline.json";
+const DEFAULT_REPORT_PATH = "quality-gate-report.md";
+
+/**
+ * Parses CLI flags into structured options. Never reads stdin or prompts.
+ * @param argv - Argument list, typically process.argv.slice(2).
+ * @returns { root, maxLines, updateBaseline, baselinePath, reportPath } parsed options.
+ */
+function parseArgs(argv) {
+  const getFlagValue = (name, fallback) => {
+    const index = argv.indexOf(name);
+    return index === -1 ? fallback : argv[index + 1];
+  };
+
+  return {
+    root: getFlagValue("--root", process.cwd()),
+    maxLines: Number(getFlagValue("--max-lines", DEFAULT_MAX_LINES)),
+    updateBaseline: argv.includes("--update-baseline"),
+    baselinePath: getFlagValue("--baseline-path", DEFAULT_BASELINE_PATH),
+    reportPath: getFlagValue("--report-path", DEFAULT_REPORT_PATH)
+  };
+}
+
+/**
+ * Handles the ratchet-comparison path once a valid baseline is confirmed present.
+ * @param baseline - Baseline record read from baseline.json.
+ * @param metrics - Currently collected metrics.
+ * @param reportPath - Absolute path to write the markdown report to.
+ * @param logger - Function used to print status messages.
+ * @returns The process exit code (0 pass, 1 regression).
+ */
+function runComparison(baseline, metrics, reportPath, logger) {
+  const comparison = compareToBaseline(baseline, metrics);
+  fs.writeFileSync(reportPath, renderReport(baseline, metrics, comparison));
+  logger(`quality-gate: report written to ${reportPath}`);
+  return comparison.passed ? 0 : 1;
+}
+
+/**
+ * Runs the full quality-gate flow: collect, bootstrap-or-compare, report, exit.
+ * Never prompts for input, so it behaves identically local and in CI (FR-013, FR-014).
+ * @param argv - Argument list, typically process.argv.slice(2).
+ * @param logger - Function used to print status messages (defaults to console.log).
+ * @returns The process exit code (0 success, 1 regression or error).
+ */
+function run(argv, logger = console.log) {
+  const options = parseArgs(argv);
+  const baselinePath = path.resolve(options.root, options.baselinePath);
+  const reportPath = path.resolve(options.root, options.reportPath);
+
+  let metrics;
+  try {
+    metrics = collectMetrics(options.root, { maxLines: options.maxLines });
+  } catch (error) {
+    logger(error.message);
+    return 1;
+  }
+
+  if (options.updateBaseline) {
+    writeBaseline(baselinePath, metrics);
+    logger(`quality-gate: baseline updated at ${baselinePath}`);
+    return 0;
+  }
+
+  let read;
+  try {
+    read = readBaseline(baselinePath);
+  } catch (error) {
+    logger(error.message);
+    return 1;
+  }
+
+  if (!read.exists) {
+    writeBaseline(baselinePath, metrics);
+    logger(
+      `quality-gate: no baseline found, created ${baselinePath} from current metrics`
+    );
+    return 0;
+  }
+
+  return runComparison(read.baseline, metrics, reportPath, logger);
+}
+
+if (require.main === module) {
+  process.exit(run(process.argv.slice(2)));
 }

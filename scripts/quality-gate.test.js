@@ -17,7 +17,9 @@ const {
   writeBaseline,
   ensureBaseline,
   compareToBaseline,
-  renderReport
+  renderReport,
+  parseArgs,
+  run
 } = require("./quality-gate");
 
 function makeTempProject() {
@@ -433,4 +435,159 @@ test("renderReport lists each large file with its line count when present (FR-00
   const report = renderReport(baseline, metrics, comparison);
 
   assert.match(report, /- big\.js \(900 lines\)/);
+});
+
+test("parseArgs applies defaults and respects --max-lines, --baseline-path, --report-path, --root (FR-011)", () => {
+  const options = parseArgs([
+    "--root",
+    "/proj",
+    "--max-lines",
+    "300",
+    "--baseline-path",
+    "b.json",
+    "--report-path",
+    "r.md"
+  ]);
+  assert.deepEqual(options, {
+    root: "/proj",
+    maxLines: 300,
+    updateBaseline: false,
+    baselinePath: "b.json",
+    reportPath: "r.md"
+  });
+});
+
+test("parseArgs sets updateBaseline true when --update-baseline is present (FR-006)", () => {
+  assert.equal(parseArgs(["--update-baseline"]).updateBaseline, true);
+});
+
+test("run bootstraps baseline on first execution and exits 0 without prompting (FR-003, FR-014)", () => {
+  const root = makeTempProject();
+  fs.writeFileSync(
+    path.join(root, "eslint-report.json"),
+    JSON.stringify([{ errorCount: 0, warningCount: 0 }])
+  );
+  fs.writeFileSync(
+    path.join(root, "jscpd-report.json"),
+    JSON.stringify({ statistics: { total: { percentage: 0 } } })
+  );
+  fs.mkdirSync(path.join(root, "coverage"));
+  fs.writeFileSync(
+    path.join(root, "coverage", "coverage-summary.json"),
+    JSON.stringify({ total: { lines: { pct: 100 } } })
+  );
+
+  const messages = [];
+  const exitCode = run(["--root", root], (msg) => messages.push(msg));
+
+  assert.equal(exitCode, 0);
+  assert.ok(fs.existsSync(path.join(root, "baseline.json")));
+  assert.ok(messages.some((m) => m.includes("created")));
+});
+
+test("run exits 1 and writes the report when a metric regresses (FR-007, FR-011)", () => {
+  const root = makeTempProject();
+  fs.writeFileSync(
+    path.join(root, "baseline.json"),
+    JSON.stringify({
+      lintViolations: 0,
+      duplicationPercent: 0,
+      coveragePercent: 100,
+      largeFilesCount: 0
+    })
+  );
+  fs.writeFileSync(
+    path.join(root, "eslint-report.json"),
+    JSON.stringify([{ errorCount: 1, warningCount: 0 }])
+  );
+  fs.writeFileSync(
+    path.join(root, "jscpd-report.json"),
+    JSON.stringify({ statistics: { total: { percentage: 0 } } })
+  );
+  fs.mkdirSync(path.join(root, "coverage"));
+  fs.writeFileSync(
+    path.join(root, "coverage", "coverage-summary.json"),
+    JSON.stringify({ total: { lines: { pct: 100 } } })
+  );
+
+  const exitCode = run(["--root", root, "--report-path", "out.md"], () => {});
+
+  assert.equal(exitCode, 1);
+  assert.ok(fs.existsSync(path.join(root, "out.md")));
+});
+
+test("run exits 0 when metrics match the baseline exactly (FR-008)", () => {
+  const root = makeTempProject();
+  fs.writeFileSync(
+    path.join(root, "baseline.json"),
+    JSON.stringify({
+      lintViolations: 0,
+      duplicationPercent: 0,
+      coveragePercent: 100,
+      largeFilesCount: 0
+    })
+  );
+  fs.writeFileSync(
+    path.join(root, "eslint-report.json"),
+    JSON.stringify([{ errorCount: 0, warningCount: 0 }])
+  );
+  fs.writeFileSync(
+    path.join(root, "jscpd-report.json"),
+    JSON.stringify({ statistics: { total: { percentage: 0 } } })
+  );
+  fs.mkdirSync(path.join(root, "coverage"));
+  fs.writeFileSync(
+    path.join(root, "coverage", "coverage-summary.json"),
+    JSON.stringify({ total: { lines: { pct: 100 } } })
+  );
+
+  assert.equal(
+    run(["--root", root], () => {}),
+    0
+  );
+});
+
+test("run with --update-baseline overwrites baseline.json and exits 0 regardless of regression (FR-006)", () => {
+  const root = makeTempProject();
+  fs.writeFileSync(
+    path.join(root, "baseline.json"),
+    JSON.stringify({
+      lintViolations: 0,
+      duplicationPercent: 0,
+      coveragePercent: 100,
+      largeFilesCount: 0
+    })
+  );
+  fs.writeFileSync(
+    path.join(root, "eslint-report.json"),
+    JSON.stringify([{ errorCount: 5, warningCount: 0 }])
+  );
+  fs.writeFileSync(
+    path.join(root, "jscpd-report.json"),
+    JSON.stringify({ statistics: { total: { percentage: 0 } } })
+  );
+  fs.mkdirSync(path.join(root, "coverage"));
+  fs.writeFileSync(
+    path.join(root, "coverage", "coverage-summary.json"),
+    JSON.stringify({ total: { lines: { pct: 100 } } })
+  );
+
+  const exitCode = run(["--root", root, "--update-baseline"], () => {});
+
+  assert.equal(exitCode, 0);
+  assert.equal(
+    JSON.parse(fs.readFileSync(path.join(root, "baseline.json"), "utf8"))
+      .lintViolations,
+    5
+  );
+});
+
+test("run exits 1 with a clear message when a required dependency is missing, no crash (FR-002)", () => {
+  const root = makeTempProject();
+  const messages = [];
+
+  const exitCode = run(["--root", root], (msg) => messages.push(msg));
+
+  assert.equal(exitCode, 1);
+  assert.ok(messages[0].includes("eslint-report.json"));
 });
