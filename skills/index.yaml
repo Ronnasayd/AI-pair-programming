@@ -52,19 +52,16 @@ skills:
     scores the result 0-10 and demands fixes. Use when the user wants a task "executed
     and evaluated by 2 agents", "adversarial dev", "generator/evaluator loop", higher-reliability
     implementation with independent review, or says "turn this into an adversarial
-    workflow". Do NOT use for simple one-shot edits, multi-task wave orchestration
-    (use orchestrate), or single-pass code review of existing code (use code-review).
+    workflow".
 - name:
   - create-validation-scripts
   description: Create a deterministic, stdlib-only Python validation script that checks
-    a generated markdown artifact (spec, requirements table, tasks list, report, ...)
-    against explicit rules — turning a skill's prose "verification" checklist into
-    a checkable pass/fail gate instead of relying on the model to self-audit. Use
-    when the user says "create a validation script for this skill/artifact", "crie
-    um script de validação", "turn this checklist into a script", "add a validator",
-    "make this a deterministic gate", or when a skill's output has a verification/anti-patterns
-    section but no script enforcing it. Do NOT use for validating code (use a linter/type-checker/test
-    suite instead) or for one-off ad hoc checks with no reusable artifact shape.
+    a generated markdown artifact (spec, requirements table, tasks list, report) against
+    explicit rules, turning a skill's prose verification checklist into a checkable
+    pass/fail gate. Use when user says "create a validation script for this skill",
+    "turn this checklist into a script", "add a validator", "make this a deterministic
+    gate", "enforce this verification section with code", or a skill's output has
+    a verification or anti-patterns section but no script enforcing it.
 - name:
   - leet-code-patterns
   description: 'Expert guidance on solving LeetCode and coding interview problems
@@ -137,8 +134,7 @@ skills:
     a README", "generate architecture docs", "write a contribution guide", "create
     an ADR", "document this codebase", "update the docs", "sync the docs with the
     latest diff", or "update the README after this PR". Also triggers when a git diff,
-    patch, or modified file is provided and docs need to stay in sync. Do NOT use
-    for code generation, debugging, or non-documentation writing tasks.
+    patch, or modified file is provided and docs need to stay in sync.
 - name:
   - plan-generator
   description: Generate structured plans for tasks and projects, saved as date-stamped
@@ -193,9 +189,14 @@ skills:
     count against coverage metrics. Use when the user says "audit test coverage",
     "which files actually need tests", "reduce coverage noise", "why is coverage low",
     "exclude files from coverage", or asks to review/clean up `collectCoverageFrom`.
-    Do NOT use for writing the missing tests themselves (that's a separate follow-up
-    step this skill hands off explicitly), and do NOT use for non-Jest runners (vitest/pytest/go
-    test) — this skill's commands are Jest-specific.
+- name:
+  - quality-gate
+  description: Run or explain the ratchet-style quality gate (scripts/quality-gate.js)
+    for Node/TS projects — lint violations, code duplication %, test coverage %, and
+    files over a line-count limit compared against a frozen baseline. Use when the
+    user says "run the quality gate", "check quality-gate.js", "set up the ratchet
+    gate", "update the baseline", "why did the quality gate fail", or wants to wire
+    it into CI so PRs never regress quality metrics silently.
 - name:
   - domain-modeling
   description: Build and sharpen a project's domain model. Use when discussing codebase
@@ -214,19 +215,15 @@ skills:
     the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
 - name:
   - generate-design-md
-  description: 'Use this skill to generate, refactor, or update a DESIGN.md file —
-    the Google Labs open format that documents a project''s design system as machine-readable
-    tokens (YAML front matter) plus human/AI-readable rationale (Markdown body). Triggers
-    include: "create a DESIGN.md", "generate a design.md", "document the design system",
-    "gerar DESIGN.md", "criar design.md", "write design tokens doc", "extract our
-    design system into DESIGN.md", "update DESIGN.md after these style changes", or
-    being handed CSS/Tailwind config/theme files and asked to capture the visual language.
-    Auto-detects create mode (no DESIGN.md exists — scaffold from the codebase) vs
-    update mode (a DESIGN.md exists — sync it with new styles or a diff). Do NOT use
-    for building component libraries, generating UI code, or writing general prose
-    docs (use generate-docs).
-
-    '
+  description: Generate, refactor, or update a DESIGN.md file, the Google Labs open
+    format that documents a project's design system as machine-readable tokens in
+    YAML front matter plus human-readable rationale in the Markdown body. Auto-detects
+    create mode when no DESIGN.md exists, scaffolding from the codebase, or update
+    mode when one exists, syncing it with new styles or a diff. Use when user says
+    "create a DESIGN.md", "generate a design.md", "document the design system", "write
+    design tokens doc", "extract our design system into DESIGN.md", "update DESIGN.md
+    after these style changes", or hands over CSS, Tailwind config, or theme files
+    and asks to capture the visual language.
 - name:
   - document-summarizer
   description: Extract and condense key information from any document or text while
@@ -254,11 +251,11 @@ skills:
     subagents, ensuring dependencies are respected and parallelization is maximized.
 - name:
   - resolve-merge-conflicts
-  description: Use this skill immediately when the user mentions merge conflicts that
-    need to be resolved. Do not attempt to resolve conflicts directly - invoke this
-    skill first. This skill specializes in providing a structured framework for merging
-    imports, tests, lock files (regeneration), configuration files, and handling deleted-but-modified
-    files with backup and analysis.
+  description: Resolve Git merge conflicts with a structured plan-first framework
+    covering imports, tests, lock files, config files, and deleted-but-modified files
+    with backup and analysis. Use when user says 'resolve merge conflicts', 'fix merge
+    conflicts', 'help me merge this branch', 'there are conflict markers in this file',
+    or 'rebase is failing with conflicts'.
 - name:
   - copilot-sdk
   description: 'Use this skill whenever the user wants to build Python applications
@@ -288,15 +285,11 @@ skills:
     '
 - name:
   - sd-insert-taskmaster
-  description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json).
-    When only spec.md exists (no formal tasks.md, e.g. Small/Medium features where
-    tlc-spec-driven's auto-sizing skipped the Tasks phase), derives one taskmaster
-    task per requirement/acceptance-criterion from spec.md instead, purely for tracking/registry
-    purposes. Use when user says "convert tasks.md to taskmaster json", "transform
-    tasks.md to .taskmaster format", "converta tasks.md em tasks.json", "registra
-    essa spec no taskmaster", or wants to generate TaskMaster JSON from a tasks or
-    spec file. Do NOT use for creating task specs, executing tasks, or non-TaskMaster
-    conversions.
+  description: Convert tasks.md spec files into TaskMaster JSON format (.taskmaster/tasks/tasks.json),
+    falling back to one synthetic task per requirement from spec.md when tasks.md
+    doesn't exist. Use when user says 'convert tasks.md to taskmaster json', 'transform
+    tasks.md to .taskmaster format', 'generate taskmaster json from this spec', or
+    'register this feature in taskmaster'.
 - name:
   - prd-from-codebase
   description: 'Generates a complete Product Requirements Document (PRD) in Markdown
@@ -312,16 +305,11 @@ skills:
     '
 - name:
   - sd-execute
-  description: 'Thin wrapper around tlc-spec-driven''s Execute phase that adds taskmaster
-    status sync. Main agent reads tlc-spec-driven/SKILL.md, runs its normal Execute
-    flow (implement.md, auto-sized batching, always-on Verifier) unmodified, and after
-    each task/batch calls taskmaster''s set_task_status so the taskmaster tag mirrors
-    real progress. Taskmaster is a read-only dashboard here -- it never drives what
-    gets executed or in what order; tlc-spec-driven''s own auto-sizing and batching
-    decide that. Use: ''execute feature <tag>'' or run tasks for <tag> when the feature
-    already has a taskmaster tag to keep in sync. Do not use for direct task management
-    (taskmaster skill), spec creation (tlc-spec-driven), or when there is no taskmaster
-    tag to sync (just call tlc-spec-driven directly).'
+  description: Execute a spec-driven feature's implementation phase while syncing
+    taskmaster status after each task or batch, so the taskmaster tag mirrors real
+    progress without driving execution order itself. Use when user says 'execute feature',
+    'run tasks for this feature tag', 'implement this taskmaster feature', or 'continue
+    executing the spec and keep taskmaster in sync'.
 - name:
   - event-storming
   description: 'Use this skill whenever the user wants to create, document, or model
@@ -431,22 +419,17 @@ skills:
     snippet. Use when the user says "criar um hook", "fazer um hook que", "create
     a hook", "comando para colar no settings", or describes an automated behavior
     that should fire on a tool call / session event (PreToolUse, PostToolUse, SessionStart,
-    Stop, UserPromptSubmit, SubagentStart/Stop). Do NOT use for editing an existing
-    hook's logic (edit it directly), for non-hook settings changes, or for hooks in
-    a different repo that lacks this hooks/ structure.
+    Stop, UserPromptSubmit, SubagentStart/Stop).
 - name:
   - extract-automation-candidates
-  description: Mines a project's Claude Code session transcripts, git commit history,
-    and formal spec/PRD markdown files for recurring or high-cost manual workflows
-    that are worth turning into a reusable skill, slash command, or standing instruction
-    — then writes the actual artifact (SKILL.md, command markdown, or an AGENTS.md/CLAUDE.md
-    instruction line) instead of just describing it. Use when the user asks to "find
-    things worth automating", "extract skills from our sessions", "what should be
-    a command by now", "turn recurring patterns into skills", or wants a cross-source
-    audit of automation opportunities with traceability back to the conversations/commits/specs
-    that justified each one. Do NOT use for requirements extraction (use extract-software-requirements
-    instead), for scaffolding a skill the user has already fully specified (use skill-architect
-    instead), or for a one-off single-file edit with no recurring pattern behind it.
+  description: Mine Claude Code session transcripts, git commit history, and spec
+    or PRD markdown files for recurring or high-cost manual workflows worth turning
+    into a skill, slash command, or standing instruction, then write the real artifact
+    (SKILL.md, command markdown, or an AGENTS.md line) with traceability back to its
+    source. Use when user says "find things worth automating", "extract skills from
+    our sessions", "what should be a command by now", "turn recurring patterns into
+    skills", "audit our commits and conversations for automation opportunities", or
+    "mine our history for repeatable workflows".
 - name:
   - safe-refactor
   description: 'Guide safe refactoring of complex, untested code using a multi-phase
@@ -494,11 +477,10 @@ skills:
   description: Derive a flat, self-contained requirements review table from a feature's
     spec.md, design.md and tasks.md — one row per acceptance criterion, tagged success
     or error path — so a non-implementer can scan it and judge whether each rule makes
-    sense. Use when the user says "the spec is too technical", "quero uma tabela de
-    requisitos", "make a requirements table", "review sheet for these requirements",
-    "listar os requisitos para revisar", or supplies a table template and asks to
-    fill it from an existing spec. Do NOT use for authoring the spec, design or tasks
-    themselves, for generating test code, or for implementation planning.
+    sense. Use when the user says 'the spec is too technical', 'make a requirements
+    table', 'build a review sheet for these requirements', 'turn this spec into a
+    requirements table', or supplies a table template and asks to fill it from an
+    existing spec.
 - name:
   - react-composition-patterns
   description: React composition patterns that scale. Use when refactoring components
@@ -817,19 +799,13 @@ skills:
     this workflow", "map this comfyui json", "understand this workflow", "analise
     esse workflow", "what does this workflow do", or needs to audit node types, trace
     IMAGE/VIDEO/MODEL chains, or extract parameter values from a .json workflow file.
-    Do NOT use for editing workflow files, general JSON parsing, non-ComfyUI JSON
-    files, or generating new workflows.
 - name:
   - ste-pt
-  description: 'Rewrite, review, or check Portuguese text against ASD-STE100 (Simplified
-    Technical English) by translating through English and back. Use whenever the user
-    asks to check or rewrite Portuguese text for "STE", "ASD-STE100", "inglês técnico
-    simplificado", or similar, and wants the final result in Portuguese. Delegates
-    the actual rule/dictionary checking to the `ste` skill — do NOT reimplement STE
-    rules or dictionary lookups here. Do NOT use this skill if the user wants the
-    output in English (use `ste` directly).
-
-    '
+  description: Rewrite, review, or check Portuguese text against ASD-STE100 (Simplified
+    Technical English) by translating through English and back, delegating the actual
+    rule and dictionary checking to the `ste` skill. Use when user asks to check or
+    rewrite Portuguese text against "STE" or "ASD-STE100" and wants the final result
+    in Portuguese.
 - name:
   - tailwind-config-conformance
   description: 'Validate and refactor Tailwind CSS classes to conform with project''s
@@ -875,16 +851,14 @@ skills:
 - name:
   - mutation-survivor-triage
   description: Triage Stryker mutation testing survivors (mutation-report.json) into
-    false negatives (log-only/metadata mutants with no observable behavior) vs real
-    coverage gaps (mutants affecting return values, thrown errors, persisted data,
-    or side-effecting branches). Produces a per-file consolidated table of gaps with
-    concrete test recommendations, and maps false negatives to Stryker's native suppression
-    mechanisms (disable comments, mutate globs). Use when the user says "triage mutation
-    survivors", "review Stryker report", "why did these mutants survive", "reduce
-    mutation testing false negatives", or shares a Stryker JSON/HTML report asking
-    what to fix. Do NOT use for writing tests from scratch (use tdd-workflow), for
-    non-Stryker mutation tools without adapting the jq queries first, or for general
-    test coverage gap analysis unrelated to mutation testing (use coverage-gap-audit).
+    false negatives (log-only or metadata mutants with no observable behavior) vs
+    real coverage gaps (mutants affecting return values, thrown errors, persisted
+    data, or side-effecting branches). Produces a per-file consolidated table of gaps
+    with concrete test recommendations, and maps false negatives to Stryker's native
+    suppression mechanisms (disable comments, mutate globs). Use when user says "triage
+    mutation survivors", "review Stryker report", "why did these mutants survive",
+    "reduce mutation testing false negatives", or shares a Stryker JSON or HTML report
+    asking what to fix.
 - name:
   - agent-creator
   description: Create new specialist agents, modify and improve existing agents, and
@@ -905,25 +879,21 @@ skills:
     normally-sized files — adds unnecessary overhead.
 - name:
   - ste
-  description: 'Rewrite, review, or check text against ASD-STE100 (Simplified Technical
-    English), the aerospace/defense controlled-language specification. Use this skill
-    whenever the user asks to write, rewrite, or review text in "Simplified Technical
-    English", "STE", "ASD-STE100", or asks to check a document for unapproved words
-    / non-STE constructions. Also use when the user pastes technical/maintenance/procedural
-    text and asks to simplify it for non-native English readers, or asks about STE
-    dictionary approval status of a specific word. Do NOT use for general plain-language
-    editing unrelated to the STE spec.
-
-    '
+  description: Rewrite, review, or check text against ASD-STE100 (Simplified Technical
+    English), the aerospace/defense controlled-language specification. Use when user
+    asks to write, rewrite, or review text in "Simplified Technical English", "STE",
+    or "ASD-STE100", asks to check a document for unapproved words or non-STE constructions,
+    pastes technical or maintenance or procedural text and asks to simplify it for
+    non-native English readers, or asks about STE dictionary approval status of a
+    specific word.
 - name:
   - scan-codebase-rules-ai-memory
   description: Scan the current repo's structure, config files, and code to extract
     concrete conventions (lint/format rules, naming, folder layout, commit style,
     CI checks, testing conventions) and persist them as durable rule pages in ai-memory
-    for future sessions. Use when the user says "scan codebase for rules", "extract
-    conventions", "analyze repo and save to memory", "gera regras da codebase", or
-    "cria regras no ai memory". Do NOT use for one-off code questions, business-logic/architecture
-    deep dives (use codenavi), or bug diagnosis (use diagnosing-bugs).
+    for future sessions. Use when user says "scan codebase for rules", "extract conventions",
+    "analyze repo and save to memory", "record project conventions", or "generate
+    ai-memory rules from this repo".
 - name:
   - mcp-manager-instructions
   description: Provide practical guidance for discovering available MCP tools, understanding
@@ -939,22 +909,16 @@ skills:
     technical substance. Use when a SKILL.md has grown long (200+ lines of numbered
     prose, repeated Notes sections, verbatim templates inline) and the user asks to
     make it 'shorter but still effective', 'more direct', 'use tables/lists/graphs',
-    'split into reference files', or 'compress this skill'. Do NOT use for creating
-    a new skill from scratch (use skill-creator/skill-architect) or for editing skill
-    description-field triggering copy only (use skill-description-generator).
+    'split into reference files', or 'compress this skill'.
 - name:
   - extract-software-requirements
-  description: Extracts and consolidates software requirements from a project's Claude
-    Code session transcripts, git commit history, and formal spec/PRD markdown files
-    into a single traceable RF-xxx/RNF-xxx requirements document with an explicit
-    unresolved-conflicts section. Use when the user asks to "extract requirements
-    from this project", "generate a requirements doc from commits", "extract requirements
-    from transcripts", "consolidate PRD and specs into one doc", "what requirements
-    were implemented vs still pending", or wants a cross-source requirements audit
-    with traceability between conversations, code history, and formal specs. Do NOT
-    use for writing a brand-new PRD from scratch with no existing project history
-    (use prd-generator instead), or for pure implicit-requirement gap analysis on
-    a single already-written PRD (use prd-get-implicit-requirements instead).
+  description: Extract and consolidate software requirements from a project's Claude
+    Code session transcripts, git commit history, and spec or PRD markdown files into
+    a single traceable RF-xxx/RNF-xxx requirements document with an explicit unresolved-conflicts
+    section. Use when user says "extract requirements from this project", "generate
+    a requirements doc from commits", "extract requirements from transcripts", "consolidate
+    PRD and specs into one doc", "what requirements were implemented vs still pending",
+    or "audit requirements across conversations, code history, and formal specs".
 - name:
   - codebase-rules-extractor
   description: Extract and document coding rules, patterns, conventions, and anti-patterns
@@ -982,21 +946,26 @@ skills:
     '
 - name:
   - technical-decision-helper
-  description: Helps make informed technical decisions by presenting viable options
-    with pros/cons analysis, context searches, and decomposition of complex problems
-    into smaller sub-problems.
+  description: Present 2-3 viable technical options with pros/cons, trade-off comparisons,
+    and a recommendation with fallback, decomposing complex decisions into sub-problems
+    first. Use when user says 'help me choose between these technologies', 'should
+    I use X or Y', 'compare these architecture options', or 'build vs buy for this
+    feature'.
 - name:
   - sd-planning
-  description: step-by-step guide to generating a plan.
+  description: Generate a feature plan through iterative problem breakdown, codebase
+    research, and clarifying questions before handing off to tlc-spec-driven and requirements-table
+    generation. Use when user says 'plan this feature step by step', 'help me plan
+    this properly', 'generate a plan for this problem', or 'walk through planning
+    this feature'.
 - name:
   - generate-pr-description
   description: Generate structured Pull Request descriptions from git diffs (staged
     or branch) and commit history. Auto-detects .github/pull_request_template.md;
     falls back to Description/Impact/Task sections. Use when user says 'generate PR
-    description', 'write PR description', 'create pull request description', 'gera
-    descricao de PR', or 'crie descricao do PR'. Always asks user for output language
-    if not specified. Do NOT use for writing code, reviewing diffs (use code-review),
-    or generating commit messages (use caveman-commit).
+    description', 'write PR description', 'create pull request description', 'draft
+    the PR description', or 'summarize this branch for a PR'. Always asks user for
+    output language if not specified.
 - name:
   - prd-get-implicit-requirements
   description: 'Extract implicit requirements from product requirement documents (PRDs),
@@ -1006,9 +975,7 @@ skills:
     spec", "identify PRD holes", or "get clarification questions from PRD". Systematically
     covers: interface states, error handling, navigation, data persistence, network
     behavior, security, performance, platform behavior, content fallbacks, localization,
-    accessibility, legal compliance, deployment, and observability. Do NOT use for
-    creating PRDs (use tlc-spec-driven), technical design documents, architectural
-    decisions, or test planning.'
+    accessibility, legal compliance, deployment, and observability.'
 - name:
   - taskmaster-overview
   description: AI-driven task management and project tracking using Task Master. Use
@@ -1449,9 +1416,8 @@ skills:
   - pr-review
   description: Systematic PR review using GitHub MCP tools. Produces structured report
     with summary of changes, critical bugs, minor issues, code examples, and external
-    references. Use when asked to "review PR", "analyze PR", "check PR", "give feedback
-    on PR", or given a GitHub PR URL to evaluate. Works for any language or framework.
-    Do NOT use for creating PRs or making code changes.
+    references. Use when user says "review PR", "analyze PR", "check PR", "give feedback
+    on PR", or shares a GitHub PR URL to evaluate. Works for any language or framework.
 - name:
   - figma-design-system-to-tailwind
   description: Extract and convert a Figma Design System to Tailwind CSS v4 configuration
