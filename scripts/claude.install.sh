@@ -259,11 +259,6 @@ fi
 source $SOURCE/scripts/ignores.sh
 
 ###########################################################################################
-if  [ ! -f "$LOCAL/skills-lock.json" ]; then
-  npx -y skills add JuliusBrussee/caveman -a claude-code --yes
-  git_exclude ".agents/skills/*" "skills-lock.json"
-fi
-########################################################################################
 ## GITIGNORE
 # if ! grep -q "CLAUDE.md" .git/info/exclude; then
 #     echo "CLAUDE.md" >> .git/info/exclude
