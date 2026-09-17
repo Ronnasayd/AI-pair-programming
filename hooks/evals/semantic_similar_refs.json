@@ -1,7 +1,7 @@
 {
-  "hook": "scripts/similar_code_ref.py",
+  "hook": "scripts/semantic_similar_refs.py",
   "mode": "stdout",
-  "description": "Eval cases for similar_code_ref.py (PreToolUse Edit|Write ref-injection hook)",
+  "description": "Eval cases for semantic_similar_refs.py (PreToolUse Edit|Write rag-rat ref-injection hook)",
   "cases": [
     {
       "name": "non_edit_write_tool_no_output",
@@ -44,28 +44,6 @@
       "expect_output": false
     },
     {
-      "name": "only_denylisted_terms_no_output",
-      "input": {
-        "tool_name": "Write",
-        "tool_input": {
-          "file_path": "hooks/scripts/dummy_new.py",
-          "content": "import os\nimport sys\nimport json\n"
-        }
-      },
-      "expect_output": false
-    },
-    {
-      "name": "unmatched_term_no_output",
-      "input": {
-        "tool_name": "Write",
-        "tool_input": {
-          "file_path": "hooks/scripts/dummy_new.py",
-          "content": "import zzznonexistentlibzzz"
-        }
-      },
-      "expect_output": false
-    },
-    {
       "name": "py_snippet_matches_existing_usage_rag_rat",
       "input": {
         "tool_name": "Write",
@@ -83,7 +61,7 @@
         "tool_name": "Write",
         "tool_input": {
           "file_path": "hooks/scripts/dummy_new.py",
-          "content": "def extract_terms(content: str) -> list[str]:\n"
+          "content": "def call_rag_rat_tool(tool_name: str, arguments: dict) -> str | None:\n"
         }
       },
       "expect_output": true,

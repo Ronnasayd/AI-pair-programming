@@ -43,7 +43,7 @@ Scripts live in [`scripts/`](scripts) and run via
 | `Bash`              | `dev_server_tmux_check.py`    | Blocks dev-server commands run outside tmux/screen.                                                                           |
 | `Edit\|Write`       | `md_language_check.py`        | Reminds the agent to write markdown in English.                                                                               |
 | `Edit\|Write`       | `context_refs.py`             | Injects reference-file contents into context when a matched file is about to be edited.                                       |
-| `Edit\|Write`       | `similar_code_ref.py`         | Surfaces similar existing code (rag-rat or ripgrep) for content about to be written.                                          |
+| `Edit\|Write`       | `semantic_similar_refs.py`    | Surfaces semantically similar existing code (rag-rat) for content about to be written; skipped if `rag-rat` isn't installed.  |
 | `Write`             | `md_location_check.py`        | Warns when a `.md` file is created outside standard locations.                                                                |
 | `Read\|Edit\|Write` | `dir_context_refs.py`         | Walks parent dirs for `CONTEXT.md`/`CLAUDE.md`/`AGENTS.md` and announces them.                                                |
 | `Read`              | `large_file_read_warning.py`  | Warns when reading a large file without offset/limit.                                                                         |
@@ -55,20 +55,21 @@ Scripts live in [`scripts/`](scripts) and run via
 
 ## PostToolUse
 
-| Matcher           | Script                                      | Purpose                                                                                   |
-| ----------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `AskUserQuestion` | `skill_activation.py`, `context7_search.py` | Re-run after the question resolves.                                                       |
-| `EnterWorktree`   | `worktree_init.py`                          | Symlinks `node_modules` from the main repo into a new worktree.                           |
-| `Edit\|Write`     | `typescript_lint.py`                        | Runs `tsc`/ESLint on touched JS/TS files.                                                 |
-| `Edit\|Write`     | `python_lint.py`                            | Runs `mypy`/`ruff` on touched Python files.                                               |
-| `Edit\|Write`     | `golang_lint.py`                            | Runs `go vet`/`golangci-lint`/`gofmt` on touched Go files.                                |
-| `Edit\|Write`     | `jest_coverage_incremental.py`              | Runs scoped `jest --coverage` in the background and merges it into project coverage.      |
-| `Edit\|Write`     | `jest_coverage_report.py`                   | Reports the touched file's existing coverage numbers via `additionalContext`.             |
-| `Edit\|Write`     | `jest_related_files_report.py`              | Reports which tests cover a touched source file (or which sources a touched test covers). |
-| `Edit\|Write`     | `impact_surface_hint.py`                    | Asks rag-rat's `impact_surface` for blast-radius hints after an edit.                     |
-| _(all)_           | `checklist_context_watch.py`                | Re-checks active skill checklist state.                                                   |
-| _(all)_           | `tooluse_context_rules.py`                  | Same rule engine as PreToolUse.                                                           |
-| _(all)_           | `ai-memory` post-tool-use hook              | Records tool-result observation.                                                          |
+| Matcher           | Script                                      | Purpose                                                                                                                                     |
+| ----------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AskUserQuestion` | `skill_activation.py`, `context7_search.py` | Re-run after the question resolves.                                                                                                         |
+| `EnterWorktree`   | `worktree_init.py`                          | Symlinks `node_modules` from the main repo into a new worktree.                                                                             |
+| `Edit\|Write`     | `typescript_lint.py`                        | Runs `tsc`/ESLint on touched JS/TS files.                                                                                                   |
+| `Edit\|Write`     | `python_lint.py`                            | Runs `mypy`/`ruff` on touched Python files.                                                                                                 |
+| `Edit\|Write`     | `golang_lint.py`                            | Runs `go vet`/`golangci-lint`/`gofmt` on touched Go files.                                                                                  |
+| `Edit\|Write`     | `jest_coverage_incremental.py`              | Runs scoped `jest --coverage` in the background and merges it into project coverage.                                                        |
+| `Edit\|Write`     | `jest_coverage_report.py`                   | Reports the touched file's existing coverage numbers via `additionalContext`.                                                               |
+| `Edit\|Write`     | `jest_related_files_report.py`              | Reports which tests cover a touched source file (or which sources a touched test covers).                                                   |
+| `Edit\|Write`     | `impact_surface_hint.py`                    | Asks rag-rat's `impact_surface` for blast-radius hints after an edit.                                                                       |
+| `Edit\|Write`     | `structural_clone_ref.py`                   | Asks rag-rat's `clones_for_symbol` whether a written def/class is a structural clone found elsewhere; skipped if `rag-rat` isn't installed. |
+| _(all)_           | `checklist_context_watch.py`                | Re-checks active skill checklist state.                                                                                                     |
+| _(all)_           | `tooluse_context_rules.py`                  | Same rule engine as PreToolUse.                                                                                                             |
+| _(all)_           | `ai-memory` post-tool-use hook              | Records tool-result observation.                                                                                                            |
 
 ## Stop / SubagentStop
 
