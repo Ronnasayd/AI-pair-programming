@@ -235,6 +235,41 @@ function ensureBaseline(baselinePath, metrics) {
   return { bootstrapped: true };
 }
 
+const HIGHER_IS_WORSE_FIELDS = new Set([
+  "lintViolations",
+  "duplicationPercent",
+  "largeFilesCount"
+]);
+
+/**
+ * Compares one metric field's current value against its baseline value.
+ * @param field - Metric field name (determines whether higher or lower is worse).
+ * @param baselineValue - Value recorded in baseline.json for this field.
+ * @param currentValue - Value just collected for this field.
+ * @returns { ok, delta } where ok is false when the current value regressed past the baseline.
+ */
+function compareField(field, baselineValue, currentValue) {
+  const delta = currentValue - baselineValue;
+  const regressed = HIGHER_IS_WORSE_FIELDS.has(field) ? delta > 0 : delta < 0;
+  return { ok: !regressed, baselineValue, currentValue, delta };
+}
+
+/**
+ * Compares current metrics against a baseline record for every ratchet field.
+ * @param baseline - Baseline record read from baseline.json.
+ * @param metrics - Currently collected metrics from collectMetrics.
+ * @returns { passed, fields } where fields maps each metric field to its compareField result.
+ */
+function compareToBaseline(baseline, metrics) {
+  const current = toBaselineRecord(metrics);
+  const fields = {};
+  for (const field of BASELINE_REQUIRED_FIELDS) {
+    fields[field] = compareField(field, baseline[field], current[field]);
+  }
+  const passed = Object.values(fields).every((result) => result.ok);
+  return { passed, fields };
+}
+
 module.exports = {
   MissingDependencyError,
   MalformedBaselineError,
@@ -246,5 +281,6 @@ module.exports = {
   readBaseline,
   writeBaseline,
   ensureBaseline,
-  toBaselineRecord
+  toBaselineRecord,
+  compareToBaseline
 };

@@ -15,7 +15,8 @@ const {
   collectMetrics,
   readBaseline,
   writeBaseline,
-  ensureBaseline
+  ensureBaseline,
+  compareToBaseline
 } = require("./quality-gate");
 
 function makeTempProject() {
@@ -228,4 +229,106 @@ test("writeBaseline always overwrites regardless of prior content (--update-base
     coveragePercent: 100,
     largeFilesCount: 0
   });
+});
+
+test("compareToBaseline fails when lintViolations regresses by even 1 unit (FR-007)", () => {
+  const baseline = {
+    lintViolations: 5,
+    duplicationPercent: 2,
+    coveragePercent: 90,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 6,
+    duplicationPercent: 2,
+    coveragePercent: 90,
+    largeFiles: []
+  };
+
+  const result = compareToBaseline(baseline, metrics);
+
+  assert.equal(result.passed, false);
+  assert.deepEqual(result.fields.lintViolations, {
+    ok: false,
+    baselineValue: 5,
+    currentValue: 6,
+    delta: 1
+  });
+});
+
+test("compareToBaseline fails when coveragePercent regresses by 0.1 (FR-007)", () => {
+  const baseline = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 90,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 89.9,
+    largeFiles: []
+  };
+
+  const result = compareToBaseline(baseline, metrics);
+
+  assert.equal(result.passed, false);
+  assert.equal(result.fields.coveragePercent.ok, false);
+  assert.equal(result.fields.coveragePercent.baselineValue, 90);
+  assert.equal(result.fields.coveragePercent.currentValue, 89.9);
+  assert.ok(result.fields.coveragePercent.delta < 0);
+});
+
+test("compareToBaseline passes when all metrics equal the baseline (FR-008)", () => {
+  const baseline = {
+    lintViolations: 3,
+    duplicationPercent: 1,
+    coveragePercent: 95,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 3,
+    duplicationPercent: 1,
+    coveragePercent: 95,
+    largeFiles: []
+  };
+
+  assert.equal(compareToBaseline(baseline, metrics).passed, true);
+});
+
+test("compareToBaseline passes when all metrics improve on the baseline (FR-008)", () => {
+  const baseline = {
+    lintViolations: 5,
+    duplicationPercent: 5,
+    coveragePercent: 80,
+    largeFilesCount: 2
+  };
+  const metrics = {
+    lintViolations: 2,
+    duplicationPercent: 1,
+    coveragePercent: 95,
+    largeFiles: []
+  };
+
+  assert.equal(compareToBaseline(baseline, metrics).passed, true);
+});
+
+test("compareToBaseline treats fewer large files as an improvement, more as a regression (FR-007/FR-008)", () => {
+  const baseline = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFilesCount: 1
+  };
+  const worse = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFiles: [
+      { path: "a.js", lines: 1 },
+      { path: "b.js", lines: 1 }
+    ]
+  };
+
+  assert.equal(compareToBaseline(baseline, worse).passed, false);
 });
