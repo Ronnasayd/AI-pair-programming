@@ -40,11 +40,19 @@ else
       echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
     fi
 
+    claude plugin marketplace add cq27-dev/rag-rat
+    claude plugin install rag-rat@rag-rat
+
+    claude plugin marketplace add JuliusBrussee/caveman
+    claude plugin install caveman@caveman
+
+    claude plugin marketplace add DietrichGebert/ponytail
+    claude plugin install ponytail@ponytail
 
 
     install_tool "serena" "serena --version" "uv tool install serena-agent" "serena init"
     install_tool "rtk" "rtk --version" "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" "rtk init"
-    install_tool "rag-rat" "rag-rat --version" "bash $SOURCE/scripts/installs/rag-rat-installer.sh"
+    # install_tool "rag-rat" "rag-rat --version" "bash $SOURCE/scripts/installs/rag-rat-installer.sh"
     install_tool "bat" "bat --version" "sudo apt install bat"
     install_tool "jq" "jq --version" "sudo apt install jq"
     install_tool "fzf" "fzf --version" "sudo apt install fzf"

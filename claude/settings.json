@@ -620,7 +620,7 @@
   },
   "enabledPlugins": {
     "caveman@caveman": true,
-    "rag-rat@rag-rat": false,
+    "rag-rat@rag-rat": true,
     "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
