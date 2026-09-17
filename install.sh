@@ -21,19 +21,18 @@ else
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
     sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/iai"
     sudo ln -s "$SOURCE/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
-    if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo ".ai.alias.zshrc add at .bashrc [ok]"
-    fi
     if [ -f ~/.bashrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.bashrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc [ok]"
     fi
-    if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo ".ai.alias.zshrc add at .zshrc [ok]"
+    if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo ".ai.alias.zshrc add at .bashrc [ok]"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.zshrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.zshrc && echo "AI_PROJECT_ROOT_DIR add at .zshrc [ok]"
     fi
-
+    if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
+      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo ".ai.alias.zshrc add at .zshrc [ok]"
+    fi
     if [ -f ~/.bashrc ] && ! grep -q "export PATH=$HOME/.local/bin:$PATH" ~/.bashrc; then
       echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc
     fi
@@ -41,13 +40,14 @@ else
       echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
     fi
 
-    
+
 
     install_tool "serena" "serena --version" "uv tool install serena-agent" "serena init"
     install_tool "rtk" "rtk --version" "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" "rtk init"
-    install_tool "rag-rat" "rag-rat --version" "sudo apt install cargo && cargo install rag-rat"
+    install_tool "rag-rat" "rag-rat --version" "bash $AI_PROJECT_ROOT_DIR/scripts/installs/rag-rat-installer.sh"
     install_tool "bat" "bat --version" "sudo apt install bat"
     install_tool "jq" "jq --version" "sudo apt install jq"
+    install_tool "fzf" "fzf --version" "sudo apt install fzf"
     install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook && chmod +x ~/.local/bin/lefthook"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
