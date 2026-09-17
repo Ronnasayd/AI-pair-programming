@@ -615,7 +615,9 @@
       "references/templates/docs-setup.md",
       "references/templates/docs-techs.md",
       "references/templates/docs-usage.md",
-      "references/update.md"
+      "references/update.md",
+      "scripts/validate_doc_file.py",
+      "scripts/validate_summary.py"
     ]
   },
   "generate-pr-description": {
@@ -758,6 +760,10 @@
   },
   "python-style-guide": {
     "skill_md": "python/python-style-guide/SKILL.md",
+    "files": []
+  },
+  "quality-gate": {
+    "skill_md": "quality-gate/SKILL.md",
     "files": []
   },
   "resolve-merge-conflicts": {
