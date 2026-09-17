@@ -16,7 +16,8 @@ const {
   readBaseline,
   writeBaseline,
   ensureBaseline,
-  compareToBaseline
+  compareToBaseline,
+  renderReport
 } = require("./quality-gate");
 
 function makeTempProject() {
@@ -331,4 +332,105 @@ test("compareToBaseline treats fewer large files as an improvement, more as a re
   };
 
   assert.equal(compareToBaseline(baseline, worse).passed, false);
+});
+
+test("renderReport includes current-metrics table and baseline table (FR-009)", () => {
+  const baseline = {
+    lintViolations: 2,
+    duplicationPercent: 1,
+    coveragePercent: 90,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 2,
+    duplicationPercent: 1,
+    coveragePercent: 90,
+    largeFiles: []
+  };
+  const comparison = compareToBaseline(baseline, metrics);
+
+  const report = renderReport(baseline, metrics, comparison);
+
+  assert.match(report, /\| Metric \| Current \| Baseline \|/);
+  assert.match(report, /\| Lint violations \| 2 \| 2 \|/);
+});
+
+test("renderReport lists each failing metric with baseline, current, and delta (FR-010)", () => {
+  const baseline = {
+    lintViolations: 2,
+    duplicationPercent: 1,
+    coveragePercent: 90,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 5,
+    duplicationPercent: 1,
+    coveragePercent: 90,
+    largeFiles: []
+  };
+  const comparison = compareToBaseline(baseline, metrics);
+
+  const report = renderReport(baseline, metrics, comparison);
+
+  assert.match(report, /\| Lint violations \| 2 \| 5 \| 3 \|/);
+});
+
+test('renderReport shows "None." for failures when nothing regressed (FR-009)', () => {
+  const baseline = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFiles: []
+  };
+  const comparison = compareToBaseline(baseline, metrics);
+
+  const report = renderReport(baseline, metrics, comparison);
+
+  assert.match(report, /## Failures\n\nNone\./);
+});
+
+test('renderReport shows large files section explicitly as "None." when empty (FR-012)', () => {
+  const baseline = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFiles: []
+  };
+  const comparison = compareToBaseline(baseline, metrics);
+
+  const report = renderReport(baseline, metrics, comparison);
+
+  assert.match(report, /## Files over the line limit\n\nNone\./);
+});
+
+test("renderReport lists each large file with its line count when present (FR-001)", () => {
+  const baseline = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFilesCount: 0
+  };
+  const metrics = {
+    lintViolations: 0,
+    duplicationPercent: 0,
+    coveragePercent: 100,
+    largeFiles: [{ path: "big.js", lines: 900 }]
+  };
+  const comparison = compareToBaseline(baseline, metrics);
+
+  const report = renderReport(baseline, metrics, comparison);
+
+  assert.match(report, /- big\.js \(900 lines\)/);
 });
