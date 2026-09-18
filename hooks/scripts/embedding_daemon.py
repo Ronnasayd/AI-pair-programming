@@ -4,12 +4,12 @@
 import json
 import logging
 import os
+from pathlib import Path
 import signal
 import socket
 import sys
 import time
 import traceback
-from pathlib import Path
 
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 SPACY_MODELS = {"pt": "pt_core_news_sm", "en": "en_core_web_sm"}
@@ -158,8 +158,8 @@ def main():
             LOG.warning(traceback.format_exc())
             try:
                 conn.sendall((json.dumps({"error": str(e)}) + "\n").encode())
-            except Exception:
-                pass
+            except OSError as send_exc:
+                LOG.debug(f"Failed to send error response: {send_exc}")
         finally:
             conn.close()
 

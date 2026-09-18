@@ -1,16 +1,17 @@
 #!/usr/bin/python3
-"""
-Context-Refs Hook
+"""Context-Refs Hook.
 
 PreToolUse hook for Edit|Write. Auto-injects reference file contents into Claude
 context when a matched file is about to be edited.
 """
 
+from contextlib import suppress
+import fnmatch
 import json
 import os
+from pathlib import Path, PurePosixPath
 import subprocess
 import sys
-from pathlib import Path, PurePosixPath
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -28,33 +29,57 @@ logger = get_hooks_logger("ContextRefs")
 MAX_STDIN = 1024 * 1024
 CONFIG_FILE = ".claude/context-refs.json"
 DEFAULT_REFRESH_AFTER = 3
-GIT_CACHE_ROOT = Path("/tmp/context_refs_git_cache")
+GIT_CACHE_ROOT = Path("/tmp/context_refs_git_cache")  # noqa: S108
 
 
 def _cache_path(session_id: str) -> Path:
-    return Path(f"/tmp/context_refs_{session_id}.json")
+    """Build the per-session skip-count cache file path.
+
+    Args:
+        session_id: Short session identifier.
+
+    Returns:
+        Path to this session's context-refs cache file.
+    """
+    return Path(f"/tmp/context_refs_{session_id}.json")  # noqa: S108
 
 
 def _load_cache(cache_path: Path) -> dict:
+    """Load the skip-count cache from disk.
+
+    Args:
+        cache_path: Cache file to read.
+
+    Returns:
+        Parsed cache dict, or {} if missing or invalid.
+    """
     if cache_path.exists():
-        try:
-            return json.loads(cache_path.read_text())
-        except (json.JSONDecodeError, OSError):
-            pass
+        with suppress(json.JSONDecodeError, OSError):
+            return json.loads(cache_path.read_text(encoding="utf-8"))
     return {}
 
 
 def _save_cache(cache_path: Path, cache: dict) -> None:
-    try:
-        cache_path.write_text(json.dumps(cache))
-    except OSError:
-        pass
+    """Persist the skip-count cache to disk, ignoring write failures.
+
+    Args:
+        cache_path: Cache file to write.
+        cache: Cache dict to serialize.
+    """
+    with suppress(OSError):
+        cache_path.write_text(json.dumps(cache), encoding="utf-8")
 
 
 def _glob_match(file_path: str, glob: str) -> bool:
-    """Match file_path against glob pattern using fnmatch."""
-    import fnmatch
+    """Match file_path against a comma-separated list of glob patterns.
 
+    Args:
+        file_path: Path to test.
+        glob: Comma-separated glob patterns.
+
+    Returns:
+        True if file_path matches any of the patterns.
+    """
     p = PurePosixPath(file_path.replace("\\", "/"))
     for g in glob.split(","):
         g = g.strip().replace("\\", "/")
@@ -64,26 +89,43 @@ def _glob_match(file_path: str, glob: str) -> bool:
 
 
 def _git_cache_dir(repo_url: str) -> Path:
+    """Build the bare-mirror cache directory path for a repo URL.
+
+    Args:
+        repo_url: Git remote URL.
+
+    Returns:
+        Path to the cached bare mirror for repo_url.
+    """
     name = PurePosixPath(repo_url.rstrip("/")).name or "repo"
     return GIT_CACHE_ROOT / name
 
 
 def _ensure_git_cache(repo_url: str) -> Path | None:
-    """Clone or update the cached bare mirror of the repo. Returns the cache dir on success."""
+    """Clone or fetch-update the cached bare mirror of a repo.
+
+    Args:
+        repo_url: Git remote URL to mirror.
+
+    Returns:
+        Path to the cache directory on success, None on failure.
+    """
     cache_dir = _git_cache_dir(repo_url)
     try:
         if cache_dir.exists():
-            result = subprocess.run(
-                ["git", "--git-dir", str(cache_dir), "fetch", "--quiet", "origin"],
+            result = subprocess.run(  # noqa: S603
+                ["git", "--git-dir", str(cache_dir), "fetch", "--quiet", "origin"],  # noqa: S607
                 capture_output=True,
                 timeout=30,
+                check=False,
             )
             return cache_dir if result.returncode == 0 else None
         cache_dir.parent.mkdir(parents=True, exist_ok=True)
-        result = subprocess.run(
-            ["git", "clone", "--quiet", "--bare", repo_url, str(cache_dir)],
+        result = subprocess.run(  # noqa: S603
+            ["git", "clone", "--quiet", "--bare", repo_url, str(cache_dir)],  # noqa: S607
             capture_output=True,
             timeout=60,
+            check=False,
         )
         return cache_dir if result.returncode == 0 else None
     except (OSError, subprocess.SubprocessError):
@@ -91,7 +133,17 @@ def _ensure_git_cache(repo_url: str) -> Path | None:
 
 
 def _read_ref_from_git(ref: str, repo_url: str) -> str | None:
-    """Fetch a ref's content from the cached repo clone when the local file is missing."""
+    """Fetch a ref's content from the cached repo clone.
+
+    Used when the local file is missing on disk.
+
+    Args:
+        ref: Repo-relative path to read.
+        repo_url: Git remote URL backing the cache.
+
+    Returns:
+        File contents at HEAD, or None if unavailable.
+    """
     if not repo_url:
         return None
     rel_path = ref.replace("\\", "/")
@@ -99,11 +151,12 @@ def _read_ref_from_git(ref: str, repo_url: str) -> str | None:
     if cache_dir is None:
         return None
     try:
-        result = subprocess.run(
-            ["git", "--git-dir", str(cache_dir), "show", f"HEAD:{rel_path}"],
+        result = subprocess.run(  # noqa: S603
+            ["git", "--git-dir", str(cache_dir), "show", f"HEAD:{rel_path}"],  # noqa: S607
             capture_output=True,
             text=True,
             timeout=15,
+            check=False,
         )
         if result.returncode != 0:
             return None
@@ -113,7 +166,14 @@ def _read_ref_from_git(ref: str, repo_url: str) -> str | None:
 
 
 def _normalize_path(path: str) -> str:
-    """Make path relative to cwd for consistent cache keys."""
+    """Make a path relative to cwd for consistent cache keys.
+
+    Args:
+        path: Path to normalize.
+
+    Returns:
+        Path relative to cwd, or path unchanged if it isn't under cwd.
+    """
     try:
         return str(Path(path).resolve().relative_to(Path.cwd()))
     except ValueError:
@@ -121,7 +181,14 @@ def _normalize_path(path: str) -> str:
 
 
 def _extract_description(contents: str) -> str:
-    """Pull the `description:` field out of a file's YAML frontmatter."""
+    """Pull the `description:` field out of a file's YAML frontmatter.
+
+    Args:
+        contents: File contents to scan.
+
+    Returns:
+        The description value, or "" if absent.
+    """
     lines = contents.splitlines()
     if not lines or lines[0].strip() != "---":
         return ""
@@ -135,139 +202,137 @@ def _extract_description(contents: str) -> str:
     return ""
 
 
-def main() -> None:
-    stdin_data = ""
-    try:
-        stdin_data = sys.stdin.read(MAX_STDIN)
-    except OSError:
-        pass
+def _read_stdin_payload() -> dict | None:
+    """Read and parse the hook's JSON stdin payload.
 
-    data: dict = {}
+    Returns:
+        Parsed payload dict, or None if unreadable/invalid.
+    """
+    stdin_data = ""
+    with suppress(OSError):
+        stdin_data = sys.stdin.read(MAX_STDIN)
     try:
-        data = json.loads(stdin_data)
-        tool_name = data.get("tool_name", "")
-        tool_input = data.get("tool_input", {})
+        return json.loads(stdin_data)
     except (json.JSONDecodeError, AttributeError):
         logger.debug("Failed to parse stdin JSON, exiting.")
-        sys.exit(0)
+        return None
 
-    logger.debug("tool_name=%s", tool_name)
 
-    if tool_name not in ("Edit", "Write"):
-        logger.debug("Tool %s not in scope, skipping.", tool_name)
-        sys.exit(0)
+def _rel_to_cwd(file_path: str) -> str:
+    """Normalize file_path to a cwd-relative, forward-slash path.
 
-    file_path = tool_input.get("file_path", "")
-    if not file_path:
-        logger.debug("No file_path in tool_input, skipping.")
-        sys.exit(0)
+    Args:
+        file_path: Path to normalize.
 
-    logger.debug("file_path=%s", file_path)
-
-    # Normalize to relative path for glob matching
+    Returns:
+        file_path relative to cwd when possible, otherwise unchanged.
+    """
     try:
         rel_path = str(Path(file_path).resolve().relative_to(Path.cwd()))
     except ValueError:
         rel_path = file_path
-    rel_path = rel_path.replace("\\", "/")
-    logger.debug("rel_path=%s", rel_path)
+    return rel_path.replace("\\", "/")
 
-    config_path = Path(CONFIG_FILE)
-    if not config_path.exists():
-        logger.debug("Config %s not found, exiting silently.", CONFIG_FILE)
-        sys.exit(0)
 
-    try:
-        config = json.loads(config_path.read_text())
-    except (json.JSONDecodeError, OSError):
-        logger.debug("Failed to parse config %s, exiting.", CONFIG_FILE)
-        sys.exit(0)
+def _collect_matched_refs(rel_path: str, rules: list[dict]) -> list[tuple[str, str]]:
+    """Build the ordered, deduplicated list of refs matching rel_path.
 
-    refresh_after = config.get("refresh_after", DEFAULT_REFRESH_AFTER)
-    git_repo_url = config.get("git_repo_url", "")
-    rules = config.get("rules", [])
-    logger.debug("refresh_after=%d, rules_count=%d", refresh_after, len(rules))
+    Args:
+        rel_path: Candidate file path to test against each rule's glob.
+        rules: Config rules, each with a `glob` and a `refs` list.
 
-    # Build ordered deduplicated union of matching refs, keeping track of the glob(s)
-    # that matched each ref so we can report it as a "matcher".
+    Returns:
+        (ref, glob) pairs for every matching, deduplicated ref.
+    """
     seen: set[str] = set()
     matched_refs: list[tuple[str, str]] = []
     for rule in rules:
         glob = rule.get("glob", "")
-        if not glob:
-            continue
-        matched = _glob_match(rel_path, glob)
-        logger.debug("glob=%s matched=%s", glob, matched)
-        if not matched:
+        if not glob or not _glob_match(rel_path, glob):
             continue
         for ref in rule.get("refs", []):
             if ref not in seen:
                 seen.add(ref)
                 matched_refs.append((ref, glob))
+    return matched_refs
 
-    logger.debug("matched_refs=%s", matched_refs)
 
-    if not matched_refs:
-        logger.debug("No refs matched for %s, exiting.", rel_path)
-        sys.exit(0)
+def _should_inject(cache: dict, ref_key: str, refresh_after: int) -> bool:
+    """Decide whether ref_key should be injected now, updating its skip count.
 
-    session_id = get_session_id_short(get_by_key(data, "session_id") or "")
-    cache_path = _cache_path(session_id)
-    logger.debug("session_id=%s cache_path=%s", session_id, cache_path)
-    cache = _load_cache(cache_path)
+    Args:
+        cache: Mutable skip-count cache, updated in place.
+        ref_key: Cache key for the ref being considered.
+        refresh_after: Number of skips before forcing a re-injection.
 
+    Returns:
+        True if the ref should be injected this time.
+    """
+    skip_count = cache.get(ref_key)
+    if skip_count is None or skip_count >= refresh_after:
+        cache[ref_key] = 0
+        return True
+    cache[ref_key] = skip_count + 1
+    return False
+
+
+def _resolve_ref(ref: str, git_repo_url: str) -> tuple[str | None, Path]:
+    """Resolve a ref's contents from disk, falling back to the git cache.
+
+    Args:
+        ref: Repo-relative or absolute path to resolve.
+        git_repo_url: Git remote URL to fall back to when the file is missing.
+
+    Returns:
+        A (contents, ref_path) pair; contents is None if unresolvable.
+    """
+    ref_path = Path(ref)
+    if not ref_path.is_absolute():
+        ref_path = Path("/tmp") / ref_path  # noqa: S108
+
+    if ref_path.exists():
+        try:
+            return ref_path.read_text(encoding="utf-8"), ref_path
+        except OSError:
+            logger.debug("Could not read ref: %s", ref)
+            return None, ref_path
+
+    logger.debug("ref not found locally, trying git cache: %s", ref)
+    contents = _read_ref_from_git(ref, git_repo_url)
+    if contents is not None:
+        try:
+            ref_path.parent.mkdir(parents=True, exist_ok=True)
+            ref_path.write_text(contents, encoding="utf-8")
+            logger.debug("Saved fetched ref locally: %s", ref_path)
+        except OSError:
+            logger.debug("Could not save ref locally: %s", ref_path)
+    return contents, ref_path
+
+
+def _build_files(
+    matched_refs: list[tuple[str, str]],
+    cache: dict,
+    refresh_after: int,
+    git_repo_url: str,
+) -> list[dict]:
+    """Resolve each matched ref and build the additionalContext file entries.
+
+    Args:
+        matched_refs: (ref, glob) pairs to process.
+        cache: Mutable skip-count cache, updated in place.
+        refresh_after: Number of skips before forcing a re-injection.
+        git_repo_url: Git remote URL to fall back to for missing refs.
+
+    Returns:
+        File entries ready to embed in additionalContext.
+    """
     files: list[dict] = []
     for ref, glob in matched_refs:
         ref_key = _normalize_path(ref)
-        skip_count = cache.get(ref_key)
-        logger.debug(
-            "ref=%s skip_count=%s refresh_after=%d",
-            ref,
-            skip_count,
-            refresh_after,
-        )
-
-        if skip_count is None:
-            inject = True
-            cache[ref_key] = 0
-        elif skip_count < refresh_after:
-            inject = False
-            cache[ref_key] = skip_count + 1
-        else:
-            inject = True
-            cache[ref_key] = 0
-
-        logger.debug(
-            "ref=%s inject=%s new_skip_count=%s",
-            ref,
-            inject,
-            cache[ref_key],
-        )
-
-        if not inject:
+        if not _should_inject(cache, ref_key, refresh_after):
             continue
 
-        ref_path = Path(ref)
-        if not ref_path.is_absolute():
-            ref_path = Path("/tmp") / ref_path
-
-        contents: str | None = None
-        if ref_path.exists():
-            try:
-                contents = ref_path.read_text()
-            except OSError:
-                logger.debug("Could not read ref: %s", ref)
-        else:
-            logger.debug("ref not found locally, trying git cache: %s", ref)
-            contents = _read_ref_from_git(ref, git_repo_url)
-            if contents is not None:
-                try:
-                    ref_path.parent.mkdir(parents=True, exist_ok=True)
-                    ref_path.write_text(contents)
-                    logger.debug("Saved fetched ref locally: %s", ref_path)
-                except OSError:
-                    logger.debug("Could not save ref locally: %s", ref_path)
-
+        contents, ref_path = _resolve_ref(ref, git_repo_url)
         if contents is None:
             logger.debug("ref not found: %s", ref)
             files.append(
@@ -280,40 +345,96 @@ def main() -> None:
             continue
 
         description = _extract_description(contents) or ref
-        logger.debug("ref=%s description=%s", ref, description)
         files.append(
-            {
-                "matcher": glob,
-                "description": description,
-                "location": str(ref_path),
-            }
+            {"matcher": glob, "description": description, "location": str(ref_path)}
         )
+    return files
+
+
+_INSTRUCTIONS = (
+    "The following files contain instructions for matching file types. Before "
+    "editing or creating a file, find all matching entries, read the rule file "
+    "at `location`, and follow those rules."
+)
+
+
+def _emit_files(files: list[dict]) -> None:
+    """Write the additionalContext payload for the matched files to stdout.
+
+    Args:
+        files: File entries built by _build_files.
+    """
+    if not files:
+        return
+    output = json.dumps(
+        {
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "additionalContext": minify_json(
+                    {"instructions": _INSTRUCTIONS, "files": files}
+                ),
+            }
+        }
+    )
+    logger.debug("[additionalContext]: %s", output)
+    sys.stdout.write(output)
+
+
+def main() -> None:
+    """Match the edited file against configured refs and re-surface their content."""
+    data = _read_stdin_payload()
+    if data is None:
+        sys.exit(0)
+
+    tool_name = data.get("tool_name", "")
+    if tool_name not in ("Edit", "Write"):
+        logger.debug("Tool %s not in scope, skipping.", tool_name)
+        sys.exit(0)
+
+    file_path = data.get("tool_input", {}).get("file_path", "")
+    if not file_path:
+        logger.debug("No file_path in tool_input, skipping.")
+        sys.exit(0)
+
+    rel_path = _rel_to_cwd(file_path)
+    logger.debug("file_path=%s rel_path=%s", file_path, rel_path)
+
+    config_path = Path(CONFIG_FILE)
+    if not config_path.exists():
+        logger.debug("Config %s not found, exiting silently.", CONFIG_FILE)
+        sys.exit(0)
+
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        logger.debug("Failed to parse config %s, exiting.", CONFIG_FILE)
+        sys.exit(0)
+
+    matched_refs = _collect_matched_refs(rel_path, config.get("rules", []))
+    logger.debug("matched_refs=%s", matched_refs)
+    if not matched_refs:
+        logger.debug("No refs matched for %s, exiting.", rel_path)
+        sys.exit(0)
+
+    session_id = get_session_id_short(get_by_key(data, "session_id") or "")
+    cache_path = _cache_path(session_id)
+    cache = _load_cache(cache_path)
+
+    files = _build_files(
+        matched_refs,
+        cache,
+        config.get("refresh_after", DEFAULT_REFRESH_AFTER),
+        config.get("git_repo_url", ""),
+    )
 
     _save_cache(cache_path, cache)
     logger.debug("Cache saved. files=%d.", len(files))
-
-    if files:
-        output = json.dumps(
-            {
-                "hookSpecificOutput": {
-                    "hookEventName": "PreToolUse",
-                    "additionalContext": minify_json(
-                        {
-                            "instructions": "The following files contain instructions for matching file types. Before editing or creating a file, find all matching entries, read the rule file at `location`, and follow those rules.",
-                            "files": files,
-                        }
-                    ),
-                }
-            }
-        )
-        logger.debug("[additionalContext]: %s", output)
-        sys.stdout.write(output)
-
+    _emit_files(files)
     sys.exit(0)
 
 
 if __name__ == "__main__":
     try:
         main()
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         sys.exit(0)

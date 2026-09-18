@@ -13,8 +13,8 @@ raced against that read (report could see a half-written file).
 import fcntl
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 
 
 def _write_json_atomic(path: Path, data: object, **dump_kwargs) -> None:
@@ -37,7 +37,7 @@ def _merge_branch_counter_map(base: dict, partial: dict) -> dict:
         if key not in merged:
             merged[key] = list(counts)
             continue
-        merged[key] = [a + b for a, b in zip(merged[key], counts)]
+        merged[key] = [a + b for a, b in zip(merged[key], counts, strict=True)]
     return merged
 
 

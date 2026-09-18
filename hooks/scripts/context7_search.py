@@ -1,12 +1,14 @@
 #!/usr/bin/python3
+"""UserPromptSubmit/PostToolUse hook that surfaces relevant context7 libraries."""
+
 import json
+from pathlib import Path
 import socket
 import subprocess
 import sys
 import time
 import urllib.parse
 import urllib.request
-from pathlib import Path
 
 import numpy as np
 
@@ -32,11 +34,24 @@ DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 DAEMON_START_TIMEOUT = 90
 
 
-def getDaemonSocketPath() -> str:
-    return f"/tmp/embedding-daemon-{get_project_name()}.sock"
+def get_daemon_socket_path() -> str:
+    """Build the embedding daemon's Unix socket path for this project.
+
+    Returns:
+        Path to the daemon's socket file.
+    """
+    return f"/tmp/embedding-daemon-{get_project_name()}.sock"  # noqa: S108
 
 
-def isDaemonRunning(sock_path: str) -> bool:
+def is_daemon_running(sock_path: str) -> bool:
+    """Check whether the embedding daemon is listening on sock_path.
+
+    Args:
+        sock_path: Unix socket path to probe.
+
+    Returns:
+        True if a connection succeeds.
+    """
     try:
         conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         conn.connect(sock_path)
@@ -46,31 +61,56 @@ def isDaemonRunning(sock_path: str) -> bool:
         return False
 
 
-def startDaemon(sock_path: str) -> None:
-    subprocess.Popen(
+def start_daemon(sock_path: str) -> None:
+    """Launch the embedding daemon as a detached background process.
+
+    Args:
+        sock_path: Unix socket path the daemon is expected to bind to.
+    """
+    with subprocess.Popen(  # noqa: S603
         [sys.executable, str(DAEMON_SCRIPT)],
         start_new_session=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
-    )
-    LOG.debug(f"Daemon started — socket={sock_path}")
+    ):
+        pass
+    LOG.debug("Daemon started — socket=%s", sock_path)
 
 
-def waitForDaemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
+def wait_for_daemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
+    """Poll until the embedding daemon is accepting connections.
+
+    Args:
+        sock_path: Unix socket path to probe.
+        timeout: Max seconds to wait.
+
+    Returns:
+        True if the daemon became reachable before timeout.
+    """
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        if isDaemonRunning(sock_path):
+        if is_daemon_running(sock_path):
             return True
         time.sleep(0.2)
     return False
 
 
-def encodeViaDaemon(text: str) -> np.ndarray | None:
-    sock_path = getDaemonSocketPath()
-    if not isDaemonRunning(sock_path):
+def encode_via_daemon(text: str) -> np.ndarray | None:
+    """Encode text into an embedding vector via the local daemon.
+
+    Starts the daemon on demand if it isn't already running.
+
+    Args:
+        text: Text to embed.
+
+    Returns:
+        The embedding vector, or None on failure.
+    """
+    sock_path = get_daemon_socket_path()
+    if not is_daemon_running(sock_path):
         LOG.debug("Daemon not running — starting")
-        startDaemon(sock_path)
-        if not waitForDaemon(sock_path):
+        start_daemon(sock_path)
+        if not wait_for_daemon(sock_path):
             LOG.warning("Daemon failed to start within timeout")
             return None
     try:
@@ -86,25 +126,44 @@ def encodeViaDaemon(text: str) -> np.ndarray | None:
         conn.close()
         response = json.loads(data.decode())
         if "error" in response:
-            LOG.warning(f"Daemon error: {response['error']}")
+            LOG.warning("Daemon error: %s", response["error"])
             return None
         return np.array(response["vector"], dtype=np.float32)
-    except Exception as e:
-        LOG.warning(f"Daemon communication failed: {e}")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        LOG.warning("Daemon communication failed: %s", e)
         return None
 
 
-def cosineSimilarity(a: np.ndarray, b: np.ndarray) -> float:
+def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    """Compute the cosine similarity between two vectors.
+
+    Args:
+        a: First vector.
+        b: Second vector.
+
+    Returns:
+        Cosine similarity in [-1, 1], or 0.0 if either vector is zero.
+    """
     denom = np.linalg.norm(a) * np.linalg.norm(b)
     if denom == 0:
         return 0.0
     return float(np.dot(a, b) / denom)
 
 
-def fetchResults(query: str) -> list[dict]:
+def fetch_results(query: str) -> list[dict]:
+    """Query the context7 search API for libraries matching query.
+
+    Args:
+        query: Free-text search query.
+
+    Returns:
+        Raw result entries from the API, or [] if none.
+    """
     url = f"{SEARCH_URL}?query={urllib.parse.quote(query)}"
-    req = urllib.request.Request(url, headers={"User-Agent": "claude-code-hook"})
-    with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
+    req = urllib.request.Request(  # noqa: S310
+        url, headers={"User-Agent": "claude-code-hook"}
+    )
+    with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:  # noqa: S310
         payload = json.load(resp)
     return get_by_key(payload, "results") or []
 
@@ -127,7 +186,17 @@ def _passes_quality_floor(s: dict) -> bool:
     return stars >= MIN_STARS or trust >= MIN_TRUST_SCORE
 
 
-def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dict]:
+def top_results(results: list[dict], query_vector: np.ndarray | None) -> list[dict]:
+    """Filter and rank library results, keeping the top matches.
+
+    Args:
+        results: Raw context7 search results.
+        query_vector: Embedding of the user's query, or None to skip
+            similarity-based filtering and ranking.
+
+    Returns:
+        Up to ``TOP_N`` result settings objects, best match first.
+    """
     settings = [get_by_key(r, "settings") or r for r in results]
     filtered = [s for s in settings if _passes_quality_floor(s)]
 
@@ -136,9 +205,9 @@ def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dic
         log_scores = []
         for s in filtered:
             description = get_by_key(s, "description") or ""
-            desc_vector = encodeViaDaemon(description) if description else None
+            desc_vector = encode_via_daemon(description) if description else None
             similarity = (
-                cosineSimilarity(query_vector, desc_vector)
+                cosine_similarity(query_vector, desc_vector)
                 if desc_vector is not None
                 else 0.0
             )
@@ -156,7 +225,7 @@ def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dic
                 scored.append(s)
         filtered = scored
         log_scores.sort(key=lambda x: x[0], reverse=True)
-        LOG.debug(f"Scores: {log_scores}")
+        LOG.debug("Scores: %s", log_scores)
 
     filtered.sort(
         key=lambda s: s.get(
@@ -169,7 +238,15 @@ def topResults(results: list[dict], query_vector: np.ndarray | None) -> list[dic
     return filtered[:TOP_N]
 
 
-def toContext(r: dict) -> dict:
+def to_context(r: dict) -> dict:
+    """Project a context7 result settings object into the hook's output shape.
+
+    Args:
+        r: A context7 search-result settings object.
+
+    Returns:
+        Dict with the fields surfaced to the model.
+    """
     return {
         "title": get_by_key(r, "title"),
         "project": get_by_key(r, "project"),
@@ -185,11 +262,12 @@ def toContext(r: dict) -> dict:
     }
 
 
-def main():
+def main() -> None:
+    """Search context7 for libraries relevant to the prompt and emit matches."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse stdin JSON: {e}")
+        LOG.debug("Failed to parse stdin JSON: %s", e)
         sys.exit(0)
 
     prompt = extract_query_text(payload)
@@ -198,16 +276,16 @@ def main():
         sys.exit(0)
 
     try:
-        results = fetchResults(prompt)
-    except Exception as e:
-        LOG.warning(f"context7 search failed: {e}")
+        results = fetch_results(prompt)
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        LOG.warning("context7 search failed: %s", e)
         sys.exit(0)
 
-    query_vector = encodeViaDaemon(prompt)
+    query_vector = encode_via_daemon(prompt)
     if query_vector is None:
         LOG.warning("Failed to get prompt embedding — skipping similarity filter")
 
-    matches = topResults(results, query_vector)
+    matches = top_results(results, query_vector)
     if not matches:
         LOG.debug("No context7 matches above benchmark threshold")
         sys.exit(0)
@@ -221,18 +299,19 @@ def main():
             "additionalContext": minify_json(
                 {
                     "instruction": (
-                        "these context7 libraries match the user's query; if relevant "
-                        "to the task, call the context7 MCP tools "
-                        "(resolve-library-id then get-library-docs) using the library's "
-                        "project id to fetch up-to-date docs before answering"
+                        "these context7 libraries match the user's query; if "
+                        "relevant to the task, call the context7 MCP tools "
+                        "(resolve-library-id then get-library-docs) using the "
+                        "library's project id to fetch up-to-date docs before "
+                        "answering"
                     ),
-                    "context7_libraries": [toContext(r) for r in matches],
+                    "context7_libraries": [to_context(r) for r in matches],
                 }
             ),
         }
     }
-    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201
     sys.exit(0)
 
 
