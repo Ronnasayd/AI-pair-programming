@@ -5,24 +5,24 @@ import json
 from pathlib import Path
 
 disabled_mcp_servers = [
-    "sqlite",
-    "canva",
-    "atlassian",
-    "mongodb",
-    "postgresql",
-    "mysql",
-    "keycloak",
+    "aipp:sqlite",
+    "aipp:canva",
+    "aipp:atlassian",
+    "aipp:mongodb",
+    "aipp:postgresql",
+    "aipp:mysql",
+    "aipp:keycloak",
     "claude.ai Canva",
     "claude.ai Google Drive",
     "claude.ai Google Calendar",
+    "claude.ai Claude Docs",
     "claude.ai Gmail",
     "caveman-shrink",
-    "figma",
-    "github-L",
-    "github",
-    "omniroute",
-    "ssh-mcp",
-    "notion",
+    "aipp:figma",
+    "aipp:github",
+    "aipp:omniroute",
+    "aipp:ssh-mcp",
+    "aipp:notion",
 ]
 
 parser = argparse.ArgumentParser()
