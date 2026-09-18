@@ -225,9 +225,11 @@ def build_output(file_path: str, findings: list[dict]) -> dict:
                 {
                     "instruction": (
                         f"HEADS UP: {len(findings)} comment(s) added without a "
-                        "declared reason — delete them, or restate with "
-                        "why:/hazard:/invariant: (this is a hint, not a block; "
-                        "cheaper to fix now)"
+                        "declared reason — delete them, or restate as "
+                        "'# why: <reason>' / '# hazard: <reason>' / "
+                        "'# invariant: <reason>' "
+                        f"(max {MAX_DECLARED_LINES} lines each; this is a "
+                        "hint, not a block; cheaper to fix now)"
                     ),
                     "file": file_path,
                     "findings": findings,
