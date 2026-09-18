@@ -98,20 +98,38 @@ def find_config_files(payload):
 
     ignored_dirs = {".git", "node_modules", ".venv", "__pycache__", ".stryker"}
     glob_hits = []
+    docker_hits = []
     for root, _dirs, files in walk_respecting_gitignore(cwd, ignored_dirs):
         for name in files:
-            if "config" in name.lower():
+            lname = name.lower()
+            if "config" in lname:
                 glob_hits.append(os.path.relpath(os.path.join(root, name), cwd))
+            if (
+                lname == "dockerfile"
+                or lname.startswith("dockerfile.")
+                or (
+                    lname.startswith("docker-compose")
+                    and lname.endswith((".yml", ".yaml"))
+                )
+            ):
+                docker_hits.append(os.path.relpath(os.path.join(root, name), cwd))
     glob_hits.sort()
+    docker_hits.sort()
 
     known_hits = sorted(
-        name for name in KNOWN_CONFIG_FILES if os.path.exists(os.path.join(cwd, name))
+        name
+        for name in KNOWN_CONFIG_FILES
+        if name not in ("Dockerfile", "docker-compose.yml")
+        and os.path.exists(os.path.join(cwd, name))
     )
 
-    if not glob_hits and not known_hits:
+    if not glob_hits and not known_hits and not docker_hits:
         return ""
 
     lines = ["## Configuration files found"]
+    if docker_hits:
+        lines.append("\n### Docker\n")
+        lines.extend(f"- `{p}`" for p in docker_hits)
     if glob_hits:
         lines.append("\n### Matching `*config*`\n")
         lines.extend(f"- `{p}`" for p in glob_hits)
