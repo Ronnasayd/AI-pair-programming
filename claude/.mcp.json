@@ -1,10 +1,10 @@
 {
   "mcpServers": {
-    "notion": {
+    "aipp:notion": {
       "url": "https://mcp.notion.com/mcp",
       "type": "http"
     },
-    "ssh-mcp": {
+    "aipp:ssh-mcp": {
       "command": "npx",
       "args": [
         "-y",
@@ -17,36 +17,29 @@
         "SSH_MCP_PASSWORD": "${SSH_MCP_PASSWORD:-add-value-to-env-vars}"
       }
     },
-    "omniroute": {
+    "aipp:omniroute": {
       "url": "http://localhost:20128/api/mcp/stream",
       "type": "http",
       "headers": {
         "Authorization": "Bearer ${OMNIROUTE_ADMIN_TOKEN:-add-value-to-env-vars}"
       }
     },
-    "figma": {
+    "aipp:figma": {
       "url": "https://mcp.figma.com/mcp",
       "type": "http"
     },
-    "github-L": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "Bearer ${GITHUB_PAT_TOKEN_L:-add-value-to-env-vars}"
-      }
-    },
-    "github": {
+    "aipp:github": {
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",
       "headers": {
         "Authorization": "Bearer ${GITHUB_PAT_TOKEN:-add-value-to-env-vars}"
       }
     },
-    "atlassian": {
+    "aipp:atlassian": {
       "type": "http",
       "url": "https://mcp.atlassian.com/v1/mcp"
     },
-    "mcp-manager": {
+    "aipp:mcp-manager": {
       "command": "uvx",
       "args": [
         "--from",
@@ -61,7 +54,7 @@
       ],
       "type": "stdio"
     },
-    "postgresql": {
+    "aipp:postgresql": {
       "command": "uvx",
       "args": [
         "--from",
@@ -72,7 +65,7 @@
         "POSTGRES_URL": "${MCP_POSTGRES_URL:-add-value-to-env-vars}"
       }
     },
-    "mysql": {
+    "aipp:mysql": {
       "type": "stdio",
       "command": "uvx",
       "args": [
@@ -84,7 +77,7 @@
         "MYSQL_URL": "${MCP_MYSQL_URL:-add-value-to-env-vars}"
       }
     },
-    "mongodb": {
+    "aipp:mongodb": {
       "type": "stdio",
       "command": "uvx",
       "args": [
@@ -97,7 +90,7 @@
         "MONGODB_DATABASE": "${MCP_MONGODB_DATABASE:-add-value-to-env-vars}"
       }
     },
-    "sqlite": {
+    "aipp:sqlite": {
       "type": "stdio",
       "command": "uvx",
       "args": [
@@ -109,7 +102,7 @@
         "SQLITEDB_PATH": "${MCP_SQLITEDB_PATH:-add-value-to-env-vars}"
       }
     },
-    "skill-loader": {
+    "aipp:skill-loader": {
       "type": "stdio",
       "command": "uvx",
       "args": [
@@ -118,7 +111,7 @@
         "skill-loader-mcp"
       ]
     },
-    "keycloak": {
+    "aipp:keycloak": {
       "command": "uvx",
       "args": [
         "--from",
@@ -134,7 +127,7 @@
         "MCP_KEYCLOAK_ADMIN_PASSWORD": "${MCP_KEYCLOAK_ADMIN_PASSWORD:-add-value-to-env-vars}"
       }
     },
-    "context7": {
+    "aipp:context7": {
       "command": "npx",
       "args": [
         "-y",
@@ -143,13 +136,7 @@
         "${CONTEXT7_API_KEY:-add-value-to-env-vars}"
       ]
     },
-    "rag-rat": {
-      "type": "stdio",
-      "command": "${HOME}/.cargo/bin/rag-rat",
-      "args": ["mcp"],
-      "env": {}
-    },
-    "serena": {
+    "aipp:serena": {
       "type": "stdio",
       "command": "serena",
       "args": [
