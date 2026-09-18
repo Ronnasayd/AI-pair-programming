@@ -292,6 +292,10 @@
           {
             "type": "command",
             "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/structural_clone_ref.py"
+          },
+          {
+            "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/comment_policy_hint.py"
           }
         ]
       },
