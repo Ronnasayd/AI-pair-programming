@@ -130,19 +130,51 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
     }
 
 
+def _run_pylint(resolved: Path, project_root: str) -> dict:
+    """Run pylint linting. Returns {success, output, error}.
+
+    `output` is parsed from pylint's `--output-format=json` (structured
+    violations list) since agents parse structured data far more reliably
+    than the default text output.
+    """
+    if not _check_tool_installed("pylint", project_root):
+        logger.debug("pylint not installed, skipping lint for %s", resolved)
+        return {"success": True, "output": "", "error": "", "installed": False}
+
+    cmd = f"pylint --output-format=json {str(resolved)}"
+    logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
+    result = _exec("pylint", ["--output-format=json", str(resolved)], cwd=project_root)
+    logger.debug("pylint result: success=%s", result["success"])
+    output = parse_json_output(result.get("output", ""), "PythonLint", "pylint", logger)
+    if result["success"]:
+        logger.debug("pylint passed for %s", resolved)
+    else:
+        logger.warning("pylint found issues in %s:\n%s", resolved, output)
+    if result.get("error"):
+        logger.warning("pylint stderr: %s", result.get("error", ""))
+    output = truncate_large_output(output, "pylint")
+    return {
+        "success": result["success"],
+        "output": output,
+        "error": result.get("error", ""),
+        "installed": True,
+    }
+
+
 def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | None]:
     """
-    Run mypy, ruff and jscpd checks for Python files.
+    Run mypy, ruff, pylint and jscpd checks for Python files.
 
     Args:
         file_path: Path to the edited file.
 
     Returns:
-        Dict with mypy, ruff and jscpd results.
+        Dict with mypy, ruff, pylint and jscpd results.
     """
     result: dict[str, dict[str, Any] | None] = {
         "mypy": None,
         "ruff": None,
+        "pylint": None,
         "jscpd": None,
     }
 
@@ -165,6 +197,7 @@ def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | N
 
     result["mypy"] = _run_mypy(resolved, project_root)
     result["ruff"] = _run_ruff(resolved, project_root)
+    result["pylint"] = _run_pylint(resolved, project_root)
     result["jscpd"] = run_jscpd(resolved, project_root, logger, "PythonLint")
     return result
 
