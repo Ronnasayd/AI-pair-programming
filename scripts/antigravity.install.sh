@@ -89,10 +89,14 @@ EOF
 # fi
 # ln -s "$SOURCE/gemini/policies"* "$HOME/$DEFAULT_FOLDER/policies"
 #######################################################################################
-if [ -L "$LOCAL/$DEFAULT_FOLDER/mcp_config.json" ] || [ -f "$LOCAL/$DEFAULT_FOLDER/mcp_config.json" ]; then
+if [ -L "$LOCAL/$DEFAULT_FOLDER/mcp_config.json" ]; then
 rm $LOCAL/$DEFAULT_FOLDER/mcp_config.json
 fi
-ln -s "$SOURCE/antigravity/mcp_config.json" "$LOCAL/$DEFAULT_FOLDER/mcp_config.json"
+if [ -f "$LOCAL/$DEFAULT_FOLDER/mcp_config.json" ]; then
+    python3 "$(dirname "${BASH_SOURCE[0]}")/merge_config.py" "$SOURCE/antigravity/mcp_config.json" "$LOCAL/$DEFAULT_FOLDER/mcp_config.json" "$LOCAL/$DEFAULT_FOLDER/mcp_config.json"
+else
+    ln -s "$SOURCE/antigravity/mcp_config.json" "$LOCAL/$DEFAULT_FOLDER/mcp_config.json"
+fi
 #######################################################################################
 mkdir -p $LOCAL/$DEFAULT_FOLDER/skills/
 find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; do

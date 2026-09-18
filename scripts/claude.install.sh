@@ -117,7 +117,11 @@ fi
 if [ -L "$LOCAL/.mcp.json" ] || [ -d "$LOCAL/.mcp.json" ]; then
 rm -rf $LOCAL/.mcp.json
 fi
-ln -s "$SOURCE/claude/.mcp.json" "$LOCAL/.mcp.json"
+if [ -f "$LOCAL/.mcp.json" ]; then
+    python3 "$SOURCE/scripts/merge_config.py" "$SOURCE/claude/.mcp.json" "$LOCAL/.mcp.json" "$LOCAL/.mcp.json"
+else
+    ln -s "$SOURCE/claude/.mcp.json" "$LOCAL/.mcp.json"
+fi
 ########################################################################################
 mkdir -p "$HOME/$DEFAULT_FOLDER"
 if [ -L "$HOME/$DEFAULT_FOLDER/settings.json" ] || [ -f "$HOME/$DEFAULT_FOLDER/settings.json" ]; then
