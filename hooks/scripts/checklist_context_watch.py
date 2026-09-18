@@ -1,12 +1,14 @@
 #!/usr/bin/python3
-"""PostToolUse hook: track the active skill's CHECKLIST.md and re-surface it
-every time total context usage crosses a new % bucket.
+"""PostToolUse hook.
+
+Track the active skill's CHECKLIST.md and re-surface it every time total
+context usage crosses a new % bucket.
 """
 
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
@@ -35,10 +37,26 @@ SKILLS_ROOT = (
 
 
 def state_path(session_id: str) -> Path:
-    return Path(f"/tmp/checklist-watch-{get_session_id_short(session_id)}.json")
+    """Build the per-session state file path.
+
+    Args:
+        session_id: Full Claude Code session identifier.
+
+    Returns:
+        Path to this session's checklist-watch state file.
+    """
+    return Path(f"/tmp/checklist-watch-{get_session_id_short(session_id)}.json")  # noqa: S108
 
 
 def load_state(path: Path) -> dict:
+    """Load JSON state from a file.
+
+    Args:
+        path: State file to read.
+
+    Returns:
+        Parsed state dict, or {} if the file is missing or invalid.
+    """
     content = read_file(path)
     if not content:
         return {}
@@ -49,26 +67,49 @@ def load_state(path: Path) -> dict:
 
 
 def save_state(path: Path, state: dict) -> None:
+    """Persist state as JSON to a file.
+
+    Args:
+        path: State file to write.
+        state: State dict to serialize.
+    """
     write_file(path, json.dumps(state))
 
 
 def find_checklist(skill_name: str | None) -> str | None:
+    """Locate the CHECKLIST.md for a skill.
+
+    Args:
+        skill_name: Name of the skill to look up, or None.
+
+    Returns:
+        String path to the skill's CHECKLIST.md, or None if not found.
+    """
     LOG.debug(
-        f"find_checklist: skill_name={skill_name!r} "
-        f"CLAUDE_PROJECT_DIR={_CLAUDE_PROJECT_DIR_RAW!r} SKILLS_ROOT={SKILLS_ROOT} "
-        f"SKILLS_ROOT.exists()={SKILLS_ROOT.exists()} cwd={Path.cwd()}"
+        "find_checklist: skill_name=%r CLAUDE_PROJECT_DIR=%r SKILLS_ROOT=%s "
+        "SKILLS_ROOT.exists()=%s cwd=%s",
+        skill_name,
+        _CLAUDE_PROJECT_DIR_RAW,
+        SKILLS_ROOT,
+        SKILLS_ROOT.exists(),
+        Path.cwd(),
     )
     if not skill_name:
         LOG.debug("find_checklist: no skill_name given, returning None")
         return None
     candidate = SKILLS_ROOT / skill_name / "CHECKLIST.md"
-    LOG.debug(f"find_checklist: candidate={candidate} exists={candidate.exists()}")
+    LOG.debug("find_checklist: candidate=%s exists=%s", candidate, candidate.exists())
     if candidate.exists():
         return str(candidate)
     return None
 
 
 def read_context_pct() -> float | None:
+    """Read the current context usage percentage from the statusline file.
+
+    Returns:
+        The used_percentage value, or None if unavailable.
+    """
     content = read_file(STATUSLINE_PATH)
     if not content:
         return None
@@ -82,7 +123,59 @@ def read_context_pct() -> float | None:
     return pct.get("used_percentage")
 
 
+def _track_checklist(path: Path, state: dict, skill_name: str | None) -> None:
+    """Record skill_name's checklist in state, if one exists.
+
+    Args:
+        path: State file to persist to.
+        state: Mutable state dict to update in place.
+        skill_name: Name of the skill whose checklist should be tracked.
+    """
+    checklist = find_checklist(skill_name)
+    LOG.debug("Tracking check: skill_name=%r checklist=%r", skill_name, checklist)
+    if checklist:
+        state["checklist_path"] = checklist
+        state.setdefault("last_bucket", -1)
+        save_state(path, state)
+        LOG.debug("Tracking checklist for skill '%s': %s", skill_name, checklist)
+
+
+def _emit_checklist(path: Path, state: dict, checklist_path: str, bucket: int) -> None:
+    """Emit the checklist as additionalContext and persist the new bucket.
+
+    Args:
+        path: State file to persist to.
+        state: Mutable state dict to update in place.
+        checklist_path: Path to the CHECKLIST.md to re-surface.
+        bucket: New context-usage bucket that triggered this emission.
+    """
+    checklist_content = read_file(Path(checklist_path))
+    state["last_bucket"] = bucket
+    save_state(path, state)
+    if not checklist_content:
+        LOG.debug("checklist_path=%s unreadable/empty", checklist_path)
+        return
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PostToolUse",
+            "additionalContext": minify_json(
+                {
+                    "reason": (
+                        f"context usage crossed {bucket * PERCENTAGE_BUCKET_SIZE}%"
+                    ),
+                    "checklist_path": checklist_path,
+                    "checklist": minify_markdown(checklist_content),
+                }
+            ),
+        }
+    }
+    LOG.debug("[additionalContext]: %s", output)
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201
+
+
 def main() -> None:
+    """Read the hook payload and re-surface the tracked checklist on context jumps."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError):
@@ -93,33 +186,21 @@ def main() -> None:
     path = state_path(session_id)
     state = load_state(path)
     LOG.debug(
-        f"tool_name={tool_name!r} session={session_id!r} state_path={path} state={state}"
+        "tool_name=%r session=%r state_path=%s state=%s",
+        tool_name,
+        session_id,
+        path,
+        state,
     )
 
     if tool_name == "Skill":
         tool_input = get_by_key(payload, "tool_input") or {}
-        skill_name = get_by_key(tool_input, "skill")
-        checklist = find_checklist(skill_name)
-        LOG.debug(f"Skill invoked: skill_name={skill_name!r} checklist={checklist!r}")
-        if checklist:
-            state["checklist_path"] = checklist
-            state.setdefault("last_bucket", -1)
-            save_state(path, state)
-            LOG.debug(f"Tracking checklist for skill '{skill_name}': {checklist}")
+        _track_checklist(path, state, get_by_key(tool_input, "skill"))
         sys.exit(0)
 
     if not tool_name:
         prompt = extract_query_text(payload) or ""
-        skill_name = detect_skill(prompt)
-        checklist = find_checklist(skill_name)
-        LOG.debug(
-            f"Prompt referenced skill: skill_name={skill_name!r} checklist={checklist!r}"
-        )
-        if checklist:
-            state["checklist_path"] = checklist
-            state.setdefault("last_bucket", -1)
-            save_state(path, state)
-            LOG.debug(f"Tracking checklist for skill '{skill_name}': {checklist}")
+        _track_checklist(path, state, detect_skill(prompt))
         sys.exit(0)
 
     checklist_path = state.get("checklist_path")
@@ -128,40 +209,17 @@ def main() -> None:
         sys.exit(0)
 
     pct = read_context_pct()
-    LOG.debug(f"read_context_pct -> {pct!r} (statusline={STATUSLINE_PATH})")
+    LOG.debug("read_context_pct -> %r (statusline=%s)", pct, STATUSLINE_PATH)
     if pct is None:
         sys.exit(0)
 
     bucket = int(pct) // PERCENTAGE_BUCKET_SIZE
     last_bucket = state.get("last_bucket", -1)
-    LOG.debug(f"bucket={bucket} last_bucket={last_bucket}")
+    LOG.debug("bucket=%s last_bucket=%s", bucket, last_bucket)
     if bucket <= last_bucket:
         sys.exit(0)
 
-    checklist_content = read_file(Path(checklist_path))
-    if not checklist_content:
-        LOG.debug(f"checklist_path={checklist_path} unreadable/empty")
-        state["last_bucket"] = bucket
-        save_state(path, state)
-        sys.exit(0)
-
-    state["last_bucket"] = bucket
-    save_state(path, state)
-
-    output = {
-        "hookSpecificOutput": {
-            "hookEventName": "PostToolUse",
-            "additionalContext": minify_json(
-                {
-                    "reason": f"context usage crossed {bucket * PERCENTAGE_BUCKET_SIZE}%",
-                    "checklist_path": checklist_path,
-                    "checklist": minify_markdown(checklist_content),
-                }
-            ),
-        }
-    }
-    LOG.debug(f"[additionalContext]: {output}")
-    print(json.dumps(output, ensure_ascii=False))
+    _emit_checklist(path, state, checklist_path, bucket)
     sys.exit(0)
 
 

@@ -772,7 +772,7 @@ def deny(file_path: str, pattern: str, source: str) -> None:
         ),
         file=sys.stderr,
     )
-    logger.debug(f"Denied '{file_path}' ({source}) due to pattern '{pattern}'")
+    logger.debug("Denied '%s' (%s) due to pattern '%s'", file_path, source, pattern)
     sys.exit(2)
 
 
@@ -863,7 +863,7 @@ def deny_secret(file_path: str, findings: list[dict]) -> None:
         ),
         file=sys.stderr,
     )
-    logger.debug(f"Denied '{file_path}' — secrets found: {findings}")
+    logger.debug("Denied '%s' — secrets found: %s", file_path, findings)
     sys.exit(2)
 
 
@@ -888,15 +888,16 @@ def scan_content_for_secrets(content: str, file_path: str) -> list[dict]:
                 capture_output=True,
                 text=True,
                 timeout=15,
+                check=False,
             )
         except (subprocess.TimeoutExpired, OSError) as exc:
-            logger.debug(f"detect-secrets invocation failed: {exc}")
+            logger.debug("detect-secrets invocation failed: %s", exc)
             return []
 
         try:
             report = json.loads(result.stdout)
         except json.JSONDecodeError:
-            logger.debug(f"detect-secrets non-JSON output: {result.stdout[:500]}")
+            logger.debug("detect-secrets non-JSON output: %s", result.stdout[:500])
             return []
 
         return report.get("results", {}).get(suffix, [])
@@ -936,14 +937,14 @@ def main():
     try:
         payload = json.load(sys.stdin)
     except json.JSONDecodeError as e:
-        logger.debug(f"Invalid JSON: {e}")
+        logger.debug("Invalid JSON: %s", e)
         sys.exit(1)
 
     tool_name = get_by_key(payload, "tool_name")
     tool_input = get_by_key(payload, "tool_input")
 
     if is_allowlisted_mcp_tool(tool_name):
-        logger.debug(f"Allowed MCP tool (allowlisted server): {tool_name}")
+        logger.debug("Allowed MCP tool (allowlisted server): %s", tool_name)
         sys.exit(0)
 
     # ── 1. Direct file access (Read/Write/Edit/NotebookEdit tools)
@@ -975,7 +976,7 @@ def main():
             if findings:
                 deny_secret(file_path, findings)
 
-        logger.debug(f"Allowed file access: {file_path}")
+        logger.debug("Allowed file access: %s", file_path)
 
     # ── 1b. Non-allowlisted MCP tools with unrecognized path arg names
     # (e.g. serena's "relative_path") skip check #1 entirely since it only
@@ -1026,7 +1027,7 @@ def main():
                     if findings:
                         deny_secret(target, findings)
 
-            logger.debug(f"Allowed command: {command} access: {target}")
+            logger.debug("Allowed command: %s access: %s", command, target)
 
     sys.exit(0)
 

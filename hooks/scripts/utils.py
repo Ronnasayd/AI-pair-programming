@@ -58,7 +58,7 @@ def walk_respecting_gitignore(root: str, ignored_dirs: set[str] | None = None):
             ignored = set(result.stdout.splitlines())
             return [
                 n
-                for n, p in zip(names, paths)
+                for n, p in zip(names, paths, strict=True)
                 if p not in ignored and p.rstrip("/") not in ignored
             ]
 
