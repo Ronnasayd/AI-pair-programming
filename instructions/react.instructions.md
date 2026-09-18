@@ -1,5 +1,5 @@
 ---
-description: React/JSX rules — functional components only, .tsx + typed props, local state placement, explicit prop passing, ~100-line component limit, Tailwind styling, useMemo, use-prefixed hooks, purity/idempotency, hooks-only-at-top-level, no mutating props/state. Apply to any .jsx/.tsx file.
+description: React/JSX rules.
 applyTo: "**/*.jsx, **/*.tsx"
 ---
 

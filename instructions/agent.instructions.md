@@ -1,11 +1,7 @@
 ---
-description: Repo-specific dev conventions for all files — package managers (yarn/pip), mandatory AskUserQuestion for every interaction, task tracking tools, naming (<5-grep-hit names), exception-message content, named-fake mocking. Apply to every code task, always.
+description: Agent behavior rules.
 applyTo: "**/*"
 ---
-
-## Environments
-
-JS/TS: `yarn`, not `npm`, unless project says otherwise. Python: `pip` + `venv`.
 
 ## Always Use Interactive Question Tools
 
@@ -15,30 +11,6 @@ Every user question → interactive tool, never plain text. Claude:
 ## Task Tracking
 
 When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate` to give user feedback. Mark tasks complete as done, don't batch.
-
-## Code style
-
-Standard conventions apply (SRP, early returns, no duplication, explicit
-types). Repo-specific deviations only:
-
-- Names: specific and unique. Avoid `data`, `handler`, `Manager`.
-  Prefer names that return <5 grep hits in the codebase.
-- Exception messages must include the offending value and expected shape.
-  Why: past debugging sessions wasted time on bare `ValueError` with no
-  context — see git history on `src/mcps/`.
-
-## Comments
-
-Keep own comments on refactor — they carry intent/provenance. Beyond that,
-standard WHY-not-WHAT applies.
-
-## Tests
-
-- Tests run with a single command: `<project-specific>`.
-- Mock external I/O (API, DB, filesystem) with named fake classes,
-  not inline stubs.
-  Why: inline stubs drift silently from the real interface; a named
-  fake class fails loudly when the real dependency's contract changes.
 
 ## Relevant Skills
 

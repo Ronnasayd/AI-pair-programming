@@ -1,5 +1,5 @@
 ---
-description: JSDoc requirements for JS/TS functions/methods — mandatory block description, one @param per parameter (incl. destructured fields), @returns when function has explicit return. Apply when writing/reviewing any .ts/.js/.jsx/.tsx function. Test files (*.spec.ts, *.test.ts) exempt.
+description: JSDoc rules.
 applyTo: "**/*.ts, **/*.js, **/*.jsx, **/*.tsx"
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: Checklist for authoring *.openapi.ts with @asteasolutions/zod-to-openapi — verify real controller response shape, trace errors per layer, reuse existing .openapi() schemas, register securitySchemes before paths, complete registerPath structure, always document 500, @modules/ before @src/ import order. Apply only to *.openapi.ts files.
+description: Openapi rules.
 applyTo: "**/*.openapi.ts"
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: TS/Node backend testing — integration-first with real SQLite (Prisma), mock only external services (email/storage/3rd-party APIs/logger/clock), controller tests via supertest, error-path coverage, cleanup in beforeEach/afterEach, no mocked Prisma. Apply to *.test.ts/js in backend projects.
+description: TS/Node backend testing rules.
 applyTo: "**/*.test.ts,**/*.test.js"
 ---
 
