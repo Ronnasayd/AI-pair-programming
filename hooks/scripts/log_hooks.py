@@ -16,7 +16,7 @@ from utils import colorize_json, get_hooks_logger  # noqa: E402
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--log-file", default=str(Path.home() / ".claude" / "logs" / "hooks.log")
+        "--log-file", default=str(Path.home() / ".claude" / "logs" / "hooks-tools.log")
     )
     return parser.parse_args()
 
