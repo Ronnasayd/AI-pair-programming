@@ -1,5 +1,5 @@
 ---
-description: Mutation-testing rules — how to write assertions that survive Stryker mutants (exact values not shape, isolate && / || operands, explicit default/fallback tests, boundary comparisons, no skipped specs). Apply to any *.test.ts/js or *.spec.ts/js file. Complements test.instructions.md (general test structure) — use this one when chasing mutation-score gaps.
+description: Mutation-testing rules.
 applyTo: "**/*.test.ts,**/*.test.js,**/*.spec.ts,**/*.spec.js"
 ---
 

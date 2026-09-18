@@ -1,5 +1,5 @@
 ---
-description: Python code standards — English identifiers, snake_case/PascalCase, type hints on public functions, no mutable defaults, f-strings, context managers, specific exceptions (no bare except), dataclasses, Enum over magic values, exception messages with offending value. Apply to any .py file.
+description: Python code rules.
 applyTo: "**/*.py"
 ---
 
