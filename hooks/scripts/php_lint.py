@@ -1,8 +1,8 @@
 #!/usr/bin/python3
-"""Runs Laravel Pint (https://laravel.com/docs/pint) on PHP files after edit.
+"""Runs PHPStan (https://phpstan.org) on PHP files after edit.
 
-- Skips if pint not installed locally (vendor/bin/pint)
-- Reports style violations (dry-run via --test -v)
+- Skips if phpstan not installed locally (vendor/bin/phpstan)
+- Reports static analysis errors (--error-format=json)
 - Falls back to no-op when tool unavailable
 
 Cross-platform (Windows, macOS, Linux)
@@ -19,6 +19,7 @@ if script_dir not in sys.path:
 from utils import (  # noqa: E402
     find_project_root,
     get_hooks_logger,
+    parse_json_output,
     run_command_cwd,
     run_jscpd,
     run_lint_hook_main,
@@ -41,35 +42,38 @@ def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
 
 
 def _check_tool_installed(project_root: str) -> bool:
-    """Check if pint is installed locally via composer."""
-    local_bin = Path(project_root) / "vendor" / "bin" / "pint"
+    """Check if phpstan is installed locally via composer."""
+    local_bin = Path(project_root) / "vendor" / "bin" / "phpstan"
     return local_bin.exists()
 
 
-def _run_pint(resolved: Path, project_root: str) -> dict:
-    """Run Pint in dry-run mode.
+def _run_phpstan(resolved: Path, project_root: str) -> dict:
+    """Run PHPStan analyse. Returns {success, output, error, installed}.
 
-    Returns {success, output, error}. Pint has no structured JSON output
-    format, so `--test -v` (dry-run, verbose) text output is reported as-is;
-    violations make it exit non-zero.
+    `output` is parsed from phpstan's `--error-format=json` since agents
+    parse structured data far more reliably than the default text output.
     """
     if not _check_tool_installed(project_root):
-        logger.debug("pint not installed, skipping lint for %s", resolved)
+        logger.debug("phpstan not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    pint_bin = Path(project_root) / "vendor" / "bin" / "pint"
-    cmd = f"{pint_bin} --test -v {resolved!s}"
+    phpstan_bin = Path(project_root) / "vendor" / "bin" / "phpstan"
+    cmd = f"{phpstan_bin} analyse --error-format=json --no-progress {resolved!s}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
-    result = _exec(str(pint_bin), ["--test", "-v", str(resolved)], cwd=project_root)
-    logger.debug("pint result: success=%s", result["success"])
-    output = result.get("output", "")
+    result = _exec(
+        str(phpstan_bin),
+        ["analyse", "--error-format=json", "--no-progress", str(resolved)],
+        cwd=project_root,
+    )
+    logger.debug("phpstan result: success=%s", result["success"])
+    output = parse_json_output(result.get("output", ""), "PhpLint", "phpstan", logger)
     if result["success"]:
-        logger.debug("pint passed for %s", resolved)
+        logger.debug("phpstan passed for %s", resolved)
     else:
-        logger.warning("pint found style issues in %s:\n%s", resolved, output)
+        logger.warning("phpstan found issues in %s:\n%s", resolved, output)
     if result.get("error"):
-        logger.warning("pint stderr: %s", result.get("error", ""))
-    output = truncate_large_output(output, "pint")
+        logger.warning("phpstan stderr: %s", result.get("error", ""))
+    output = truncate_large_output(output, "phpstan")
     return {
         "success": result["success"],
         "output": output,
@@ -79,15 +83,15 @@ def _run_pint(resolved: Path, project_root: str) -> dict:
 
 
 def maybe_run_php_lint(file_path: str | None) -> dict:
-    """Run Pint and jscpd checks for PHP files.
+    """Run PHPStan and jscpd checks for PHP files.
 
     Args:
         file_path: Path to the edited file.
 
     Returns:
-        Dict with pint and jscpd results.
+        Dict with phpstan and jscpd results.
     """
-    result: dict[str, dict | None] = {"pint": None, "jscpd": None}
+    result: dict[str, dict | None] = {"phpstan": None, "jscpd": None}
 
     if not file_path:
         logger.debug("No file_path provided, skipping.")
@@ -106,7 +110,7 @@ def maybe_run_php_lint(file_path: str | None) -> dict:
     project_root = find_project_root(str(resolved.parent))
     logger.debug("Project root for %s: %s", resolved, project_root)
 
-    result["pint"] = _run_pint(resolved, project_root)
+    result["phpstan"] = _run_phpstan(resolved, project_root)
     result["jscpd"] = run_jscpd(resolved, project_root, logger, "PhpLint")
     return result
 
