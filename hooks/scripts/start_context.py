@@ -97,12 +97,13 @@ def find_config_files(payload):
         return ""
 
     ignored_dirs = {".git", "node_modules", ".venv", "__pycache__", ".stryker"}
+    non_config_exts = (".md", ".markdown", ".txt", ".rst")
     glob_hits = []
     docker_hits = []
     for root, _dirs, files in walk_respecting_gitignore(cwd, ignored_dirs):
         for name in files:
             lname = name.lower()
-            if "config" in lname:
+            if "config" in lname and not lname.endswith(non_config_exts):
                 glob_hits.append(os.path.relpath(os.path.join(root, name), cwd))
             if (
                 lname == "dockerfile"
