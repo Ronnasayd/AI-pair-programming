@@ -42,11 +42,11 @@ function readJsonOrThrow(filePath) {
 
 /**
  * Counts total ESLint violations (errors + warnings) from an eslint --format json report.
- * @param root - Root directory containing eslint-report.json.
+ * @param eslintReportPath - Path to the eslint --format json report.
  * @returns Total count of lint violations across all files.
  */
-function collectLintViolations(root) {
-  const results = readJsonOrThrow(path.join(root, "eslint-report.json"));
+function collectLintViolations(eslintReportPath) {
+  const results = readJsonOrThrow(eslintReportPath);
   return results.reduce(
     (sum, file) => sum + file.errorCount + file.warningCount,
     0
@@ -55,23 +55,21 @@ function collectLintViolations(root) {
 
 /**
  * Reads the overall duplication percentage from a jscpd JSON report.
- * @param root - Root directory containing jscpd-report.json.
+ * @param jscpdReportPath - Path to the jscpd JSON report.
  * @returns Duplication percentage as reported by jscpd.
  */
-function collectDuplicationPercent(root) {
-  const report = readJsonOrThrow(path.join(root, "jscpd-report.json"));
+function collectDuplicationPercent(jscpdReportPath) {
+  const report = readJsonOrThrow(jscpdReportPath);
   return report.statistics.total.percentage;
 }
 
 /**
  * Reads the total line coverage percentage from an Istanbul/nyc coverage summary.
- * @param root - Root directory containing coverage/coverage-summary.json.
+ * @param coverageSummaryPath - Path to the coverage-summary.json file.
  * @returns Line coverage percentage.
  */
-function collectCoveragePercent(root) {
-  const summary = readJsonOrThrow(
-    path.join(root, "coverage", "coverage-summary.json")
-  );
+function collectCoveragePercent(coverageSummaryPath) {
+  const summary = readJsonOrThrow(coverageSummaryPath);
   return summary.total.lines.pct;
 }
 
@@ -123,13 +121,19 @@ function collectLargeFiles(root, maxLines) {
  * @param root - Project root directory.
  * @param options - Collection options.
  * @param options.maxLines - Maximum allowed line count per source file.
+ * @param options.eslintReportPath - Path to the eslint --format json report.
+ * @param options.jscpdReportPath - Path to the jscpd JSON report.
+ * @param options.coverageSummaryPath - Path to the coverage-summary.json file.
  * @returns Object with lintViolations, duplicationPercent, coveragePercent, and largeFiles.
  */
-function collectMetrics(root, { maxLines }) {
+function collectMetrics(
+  root,
+  { maxLines, eslintReportPath, jscpdReportPath, coverageSummaryPath }
+) {
   return {
-    lintViolations: collectLintViolations(root),
-    duplicationPercent: collectDuplicationPercent(root),
-    coveragePercent: collectCoveragePercent(root),
+    lintViolations: collectLintViolations(eslintReportPath),
+    duplicationPercent: collectDuplicationPercent(jscpdReportPath),
+    coveragePercent: collectCoveragePercent(coverageSummaryPath),
     largeFiles: collectLargeFiles(root, maxLines)
   };
 }
@@ -370,11 +374,14 @@ function renderReport(baseline, metrics, comparison) {
 const DEFAULT_MAX_LINES = 500;
 const DEFAULT_BASELINE_PATH = "baseline.json";
 const DEFAULT_REPORT_PATH = "quality-gate-report.md";
+const DEFAULT_ESLINT_REPORT_PATH = "eslint-report.json";
+const DEFAULT_JSCPD_REPORT_PATH = "jscpd-report.json";
+const DEFAULT_COVERAGE_SUMMARY_PATH = "coverage/coverage-summary.json";
 
 /**
  * Parses CLI flags into structured options. Never reads stdin or prompts.
  * @param argv - Argument list, typically process.argv.slice(2).
- * @returns { root, maxLines, updateBaseline, baselinePath, reportPath } parsed options.
+ * @returns { root, maxLines, updateBaseline, baselinePath, reportPath, eslintReportPath, jscpdReportPath, coverageSummaryPath } parsed options.
  */
 function parseArgs(argv) {
   const getFlagValue = (name, fallback) => {
@@ -387,7 +394,16 @@ function parseArgs(argv) {
     maxLines: Number(getFlagValue("--max-lines", DEFAULT_MAX_LINES)),
     updateBaseline: argv.includes("--update-baseline"),
     baselinePath: getFlagValue("--baseline-path", DEFAULT_BASELINE_PATH),
-    reportPath: getFlagValue("--report-path", DEFAULT_REPORT_PATH)
+    reportPath: getFlagValue("--report-path", DEFAULT_REPORT_PATH),
+    eslintReportPath: getFlagValue(
+      "--eslint-report",
+      DEFAULT_ESLINT_REPORT_PATH
+    ),
+    jscpdReportPath: getFlagValue("--jscpd-report", DEFAULT_JSCPD_REPORT_PATH),
+    coverageSummaryPath: getFlagValue(
+      "--coverage-summary",
+      DEFAULT_COVERAGE_SUMMARY_PATH
+    )
   };
 }
 
@@ -417,10 +433,21 @@ function run(argv, logger = console.log) {
   const options = parseArgs(argv);
   const baselinePath = path.resolve(options.root, options.baselinePath);
   const reportPath = path.resolve(options.root, options.reportPath);
+  const eslintReportPath = path.resolve(options.root, options.eslintReportPath);
+  const jscpdReportPath = path.resolve(options.root, options.jscpdReportPath);
+  const coverageSummaryPath = path.resolve(
+    options.root,
+    options.coverageSummaryPath
+  );
 
   let metrics;
   try {
-    metrics = collectMetrics(options.root, { maxLines: options.maxLines });
+    metrics = collectMetrics(options.root, {
+      maxLines: options.maxLines,
+      eslintReportPath,
+      jscpdReportPath,
+      coverageSummaryPath
+    });
   } catch (error) {
     logger(error.message);
     return 1;
