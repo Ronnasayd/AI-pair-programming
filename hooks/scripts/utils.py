@@ -219,11 +219,17 @@ def _filter_jscpd_duplicates_for_file(
 
     duplicates = report.get("duplicates", [])
     matched = [
-        d
+        {
+            "firstFile": f"{d['firstFile']['name']}:{d['firstFile']['start']}-{d['firstFile']['end']}",
+            "secondFile": f"{d['secondFile']['name']}:{d['secondFile']['start']}-{d['secondFile']['end']}",
+            "lines": d["lines"],
+        }
         for d in duplicates
         if d["firstFile"]["name"] == rel or d["secondFile"]["name"] == rel
     ]
-    return {**report, "duplicates": matched}
+    # Drop `statistics` (repo-wide totals) and `fragment` (raw code snippet) —
+    # irrelevant to a single-file hook; agent reads the file:line pair itself.
+    return {"duplicates": matched}
 
 
 def run_jscpd(
@@ -1176,6 +1182,8 @@ def split_on_operators(command: str, protect_exec: bool = False) -> list[str]:
     being treated as command separators.
     """
     if protect_exec:
+        # \x00 sentinel: never appears in shell text, safe stand-in for the
+        # protected ';' until restored at the end.
         command = EXEC_TERMINATOR_RE.sub(lambda m: m.group(1) + "\x00", command)
     command = strip_heredocs(command)
     command = command.replace("\\\n", " ")
