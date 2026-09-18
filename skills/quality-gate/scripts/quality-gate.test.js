@@ -35,13 +35,13 @@ test("collectLintViolations sums errorCount and warningCount across files (FR-00
       { errorCount: 0, warningCount: 3 }
     ])
   );
-  assert.equal(collectLintViolations(root), 6);
+  assert.equal(collectLintViolations(path.join(root, "eslint-report.json")), 6);
 });
 
 test("collectLintViolations throws MissingDependencyError naming the missing file (FR-002)", () => {
   const root = makeTempProject();
   assert.throws(
-    () => collectLintViolations(root),
+    () => collectLintViolations(path.join(root, "eslint-report.json")),
     (err) =>
       err instanceof MissingDependencyError &&
       err.missingPath.endsWith("eslint-report.json")
@@ -54,13 +54,16 @@ test("collectDuplicationPercent reads statistics.total.percentage (FR-001)", () 
     path.join(root, "jscpd-report.json"),
     JSON.stringify({ statistics: { total: { percentage: 4.2 } } })
   );
-  assert.equal(collectDuplicationPercent(root), 4.2);
+  assert.equal(
+    collectDuplicationPercent(path.join(root, "jscpd-report.json")),
+    4.2
+  );
 });
 
 test("collectDuplicationPercent throws MissingDependencyError naming the missing file (FR-002)", () => {
   const root = makeTempProject();
   assert.throws(
-    () => collectDuplicationPercent(root),
+    () => collectDuplicationPercent(path.join(root, "jscpd-report.json")),
     (err) =>
       err instanceof MissingDependencyError &&
       err.missingPath.endsWith("jscpd-report.json")
@@ -74,13 +77,21 @@ test("collectCoveragePercent reads total.lines.pct (FR-001)", () => {
     path.join(root, "coverage", "coverage-summary.json"),
     JSON.stringify({ total: { lines: { pct: 87.5 } } })
   );
-  assert.equal(collectCoveragePercent(root), 87.5);
+  assert.equal(
+    collectCoveragePercent(
+      path.join(root, "coverage", "coverage-summary.json")
+    ),
+    87.5
+  );
 });
 
 test("collectCoveragePercent throws MissingDependencyError naming the missing file (FR-002)", () => {
   const root = makeTempProject();
   assert.throws(
-    () => collectCoveragePercent(root),
+    () =>
+      collectCoveragePercent(
+        path.join(root, "coverage", "coverage-summary.json")
+      ),
     (err) =>
       err instanceof MissingDependencyError &&
       err.missingPath.endsWith("coverage-summary.json")
@@ -123,7 +134,12 @@ test("collectMetrics aggregates all four metrics in one object (FR-001)", () => 
     JSON.stringify({ total: { lines: { pct: 90 } } })
   );
 
-  const metrics = collectMetrics(root, { maxLines: 500 });
+  const metrics = collectMetrics(root, {
+    maxLines: 500,
+    eslintReportPath: path.join(root, "eslint-report.json"),
+    jscpdReportPath: path.join(root, "jscpd-report.json"),
+    coverageSummaryPath: path.join(root, "coverage", "coverage-summary.json")
+  });
   assert.deepEqual(metrics, {
     lintViolations: 1,
     duplicationPercent: 2,
@@ -453,8 +469,28 @@ test("parseArgs applies defaults and respects --max-lines, --baseline-path, --re
     maxLines: 300,
     updateBaseline: false,
     baselinePath: "b.json",
-    reportPath: "r.md"
+    reportPath: "r.md",
+    eslintReportPath: "eslint-report.json",
+    jscpdReportPath: "jscpd-report.json",
+    coverageSummaryPath: "coverage/coverage-summary.json"
   });
+});
+
+test("parseArgs respects --eslint-report, --jscpd-report, --coverage-summary overrides", () => {
+  const options = parseArgs([
+    "--eslint-report",
+    ".quality-gate/eslint-report.json",
+    "--jscpd-report",
+    ".quality-gate/jscpd-report.json",
+    "--coverage-summary",
+    ".quality-gate/coverage/coverage-summary.json"
+  ]);
+  assert.equal(options.eslintReportPath, ".quality-gate/eslint-report.json");
+  assert.equal(options.jscpdReportPath, ".quality-gate/jscpd-report.json");
+  assert.equal(
+    options.coverageSummaryPath,
+    ".quality-gate/coverage/coverage-summary.json"
+  );
 });
 
 test("parseArgs sets updateBaseline true when --update-baseline is present (FR-006)", () => {
