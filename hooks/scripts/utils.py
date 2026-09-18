@@ -208,23 +208,47 @@ JSCPD_THRESHOLD = float(os.environ.get("JSCPD_THRESHOLD", "10"))
 JSCPD_MIN_LINES = int(os.environ.get("JSCPD_MIN_LINES", "15"))
 
 
+def _filter_jscpd_duplicates_for_file(
+    report: dict, resolved: Path, scan_root: str
+) -> dict:
+    """Keep only duplicate pairs that reference `resolved` (either side)."""
+    try:
+        rel = str(resolved.relative_to(Path(scan_root).resolve()))
+    except ValueError:
+        rel = str(resolved)
+
+    duplicates = report.get("duplicates", [])
+    matched = [
+        d
+        for d in duplicates
+        if d["firstFile"]["name"] == rel or d["secondFile"]["name"] == rel
+    ]
+    return {**report, "duplicates": matched}
+
+
 def run_jscpd(
     resolved: Path, project_root: str, logger: logging.Logger, tag: str
 ) -> dict:
-    """Run jscpd duplication check via npx. Returns {success, output, error, installed}.
+    """Run jscpd duplication check via npx over $CLAUDE_PROJECT_DIR (the repo
+    root), then filter the report down to pairs involving `resolved`. Returns
+    {success, output, error, installed}.
 
-    Only reports when duplication exceeds JSCPD_THRESHOLD percent; below that
-    `output` is empty so the hook stays quiet. `output` is the parsed
-    jscpd-report.json (structured duplicates list) when available, since agents
-    parse structured data far more reliably than the console reporter's text
-    table.
+    Scanning the fixed repo root (not `find_project_root`'s marker-based
+    walk-up, which can escape the repo onto an unrelated ancestor config) is
+    required to catch cross-file duplication — jscpd only compares fragments
+    within the files it is given. Only reports when duplication exceeds
+    JSCPD_THRESHOLD percent; below that `output` is empty so the hook stays
+    quiet. `output` is the parsed jscpd-report.json (structured duplicates
+    list) when available, since agents parse structured data far more
+    reliably than the console reporter's text table.
     """
+    scan_root = os.environ.get("CLAUDE_PROJECT_DIR", project_root)
     report_dir = tmp_project_dir(project_root, "jscpd-reports") / tag
     ensure_dir(report_dir)
     cmd = (
-        f"npx jscpd --no-tips --exit-code 1 --reporters json "
+        f"npx jscpd --no-tips --exit-code 1 --reporters json --ignore '**/.git/**' "
         f"--threshold {JSCPD_THRESHOLD} --min-lines {JSCPD_MIN_LINES} "
-        f"--output {report_dir} {str(resolved)}"
+        f"--output {report_dir} {shlex.quote(scan_root)}"
     )
     logger.debug("[%s] Executing: %s (cwd=%s)", tag, cmd, project_root)
     result = run_command_cwd(cmd, cwd=project_root)
@@ -239,7 +263,11 @@ def run_jscpd(
         except json.JSONDecodeError:
             logger.warning("[%s] Failed to parse jscpd report at %s", tag, report_path)
 
-    if result["success"]:
+    if isinstance(output, dict) and "duplicates" in output:
+        output = _filter_jscpd_duplicates_for_file(output, resolved, scan_root)
+
+    no_matches = isinstance(output, dict) and not output.get("duplicates")
+    if result["success"] or no_matches:
         return {"success": True, "output": "", "error": "", "installed": True}
 
     logger.warning("[%s] jscpd found issues in %s:\n%s", tag, resolved, output)
