@@ -229,10 +229,14 @@ fi
 ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
 ###########################################################################################
 ## GIT HOOKS (lefthook manages .git/hooks/ directly, no manual symlinking).
-if [ -L "$LOCAL/lefthook.yml" ] || [ -f "$LOCAL/lefthook.yml" ]; then
-  rm -f "$LOCAL/lefthook.yml"
+if [ -L "$LOCAL/lefthook.yml" ] || [ -d "$LOCAL/lefthook.yml" ]; then
+  rm -rf "$LOCAL/lefthook.yml"
 fi
-ln -s "$SOURCE/lefthook/lefthook.yml" "$LOCAL/lefthook.yml"
+if [ -f "$LOCAL/lefthook.yml" ]; then
+    python3 "$SOURCE/scripts/merge_config.py" "$SOURCE/lefthook/lefthook.yml" "$LOCAL/lefthook.yml" "$LOCAL/lefthook.yml"
+else
+    ln -s "$SOURCE/lefthook/lefthook.yml" "$LOCAL/lefthook.yml"
+fi
 if command -v lefthook &>/dev/null; then
   (cd "$LOCAL" && lefthook install)
 else
