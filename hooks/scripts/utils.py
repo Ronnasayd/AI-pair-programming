@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -18,6 +19,53 @@ from typing import Any, Mapping, Optional
 
 def log(msg: str) -> None:
     print(msg, file=sys.stderr)
+
+
+def walk_respecting_gitignore(root: str, ignored_dirs: set[str] | None = None):
+    """os.walk(root) that skips .gitignore'd files/dirs (git repos only).
+
+    Falls back to plain os.walk if root isn't a git repo or git is unavailable.
+    ignored_dirs: extra dir names to always prune (e.g. {"node_modules"}).
+    """
+    ignored_dirs = ignored_dirs or set()
+
+    is_repo = run_command(
+        f"git -C {shlex.quote(root)} rev-parse --is-inside-work-tree"
+    ).get("success")
+
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in ignored_dirs and d != ".git"]
+
+        if not is_repo:
+            yield dirpath, dirnames, filenames
+            continue
+
+        rel_dirpath = os.path.relpath(dirpath, root)
+
+        def _not_ignored(names: list[str], is_dir: bool) -> list[str]:
+            if not names:
+                return []
+            candidates = [
+                os.path.join(rel_dirpath, n) if rel_dirpath != "." else n for n in names
+            ]
+            paths = [c + "/" if is_dir else c for c in candidates]
+            result = subprocess.run(
+                ["git", "-C", root, "check-ignore", "--stdin"],
+                input="\n".join(paths),
+                capture_output=True,
+                text=True,
+            )
+            ignored = set(result.stdout.splitlines())
+            return [
+                n
+                for n, p in zip(names, paths)
+                if p not in ignored and p.rstrip("/") not in ignored
+            ]
+
+        dirnames[:] = _not_ignored(dirnames, is_dir=True)
+        filenames = _not_ignored(filenames, is_dir=False)
+
+        yield dirpath, dirnames, filenames
 
 
 def strip_ansi(text: str) -> str:

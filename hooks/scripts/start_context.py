@@ -9,7 +9,12 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_by_key, get_hooks_logger, minify_markdown  # noqa: E402
+from utils import (  # noqa: E402
+    get_by_key,
+    get_hooks_logger,
+    minify_markdown,
+    walk_respecting_gitignore,
+)
 
 LOG = get_hooks_logger("StartContext")
 
@@ -93,8 +98,7 @@ def find_config_files(payload):
 
     ignored_dirs = {".git", "node_modules", ".venv", "__pycache__", ".stryker"}
     glob_hits = []
-    for root, dirs, files in os.walk(cwd):
-        dirs[:] = [d for d in dirs if d not in ignored_dirs]
+    for root, _dirs, files in walk_respecting_gitignore(cwd, ignored_dirs):
         for name in files:
             if "config" in name.lower():
                 glob_hits.append(os.path.relpath(os.path.join(root, name), cwd))
