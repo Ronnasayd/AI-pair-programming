@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # log-tool-calls.py
+"""Inject project context (config files, ports, disabled MCPs) at session start."""
 
 import json
 import os
@@ -18,16 +19,26 @@ from utils import (  # noqa: E402
 
 LOG = get_hooks_logger("StartContext")
 
-with open(os.path.join(script_dir, "..", "markdown/START.md")) as f:
+with open(os.path.join(script_dir, "..", "markdown/START.md"), encoding="utf-8") as f:
     RULES = f.read()
 
 
-def package_json(payload):
+def package_json(payload: dict) -> str:
+    """Render package.json scripts as a markdown section.
+
+    Args:
+        payload: Hook payload containing the project `cwd`.
+
+    Returns:
+        Markdown section listing package.json scripts, or "" if absent.
+    """
     cwd = get_by_key(payload, "cwd")
+    if not cwd:
+        return ""
     package_json_path = os.path.join(cwd, "package.json")
     if not os.path.exists(package_json_path):
         return ""
-    with open(package_json_path) as f:
+    with open(package_json_path, encoding="utf-8") as f:
         package_data = json.loads(f.read())
     scripts = package_data.get("scripts", {})
     if not scripts:
@@ -91,7 +102,15 @@ KNOWN_CONFIG_FILES = [
 ]
 
 
-def find_config_files(payload):
+def find_config_files(payload: dict) -> str:
+    """Render a markdown section listing detected config/Docker files.
+
+    Args:
+        payload: Hook payload containing the project `cwd`.
+
+    Returns:
+        Markdown section of detected config files, or "" if none found.
+    """
     cwd = get_by_key(payload, "cwd")
     if not cwd:
         return ""
@@ -140,16 +159,16 @@ def find_config_files(payload):
     return "\n".join(lines)
 
 
-def _listen_ports_by_pid():
-    """Parse /proc/net/tcp{,6} -> {pid: set(ports)} for LISTEN sockets (state 0A).
+def _inode_to_listen_port() -> dict:
+    """Map socket inode -> listening TCP port from /proc/net/tcp{,6}.
 
-    ponytail: reads the global tables once and maps sockets to pids via
-    /proc/[pid]/fd inode scan. Only pids owned by the current user are visible.
+    Returns:
+        Mapping of socket inode (str) to listening port (int).
     """
     inode_to_port = {}
     for proto in ("tcp", "tcp6"):
         try:
-            with open(f"/proc/net/{proto}") as f:
+            with open(f"/proc/net/{proto}", encoding="utf-8") as f:
                 next(f, None)  # header
                 for line in f:
                     parts = line.split()
@@ -159,6 +178,47 @@ def _listen_ports_by_pid():
                     inode_to_port[parts[9]] = port
         except (OSError, ValueError):
             continue
+    return inode_to_port
+
+
+def _pid_ports_from_fds(pid: str, inode_to_port: dict) -> set:
+    """Resolve the listening ports a pid holds open via its /proc fd inodes.
+
+    Args:
+        pid: Process id to inspect.
+        inode_to_port: Mapping of socket inode to listening port.
+
+    Returns:
+        Set of listening ports owned by this pid.
+    """
+    fd_dir = f"/proc/{pid}/fd"
+    try:
+        fds = os.listdir(fd_dir)
+    except OSError:
+        return set()
+    ports = set()
+    for fd in fds:
+        try:
+            target = os.readlink(os.path.join(fd_dir, fd))
+        except OSError:
+            continue
+        if target.startswith("socket:["):
+            inode = target[8:-1]
+            if inode in inode_to_port:
+                ports.add(inode_to_port[inode])
+    return ports
+
+
+def _listen_ports_by_pid() -> dict:
+    """Map pid -> set(listening ports) for the current user's processes.
+
+    ponytail: reads the global tables once and maps sockets to pids via
+    /proc/[pid]/fd inode scan. Only pids owned by the current user are visible.
+
+    Returns:
+        Mapping of pid (str) to the set of listening ports it holds.
+    """
+    inode_to_port = _inode_to_listen_port()
     if not inode_to_port:
         return {}
 
@@ -166,24 +226,21 @@ def _listen_ports_by_pid():
     for pid in os.listdir("/proc"):
         if not pid.isdigit():
             continue
-        fd_dir = f"/proc/{pid}/fd"
-        try:
-            fds = os.listdir(fd_dir)
-        except OSError:
-            continue
-        for fd in fds:
-            try:
-                target = os.readlink(os.path.join(fd_dir, fd))
-            except OSError:
-                continue
-            if target.startswith("socket:["):
-                inode = target[8:-1]
-                if inode in inode_to_port:
-                    pid_ports.setdefault(pid, set()).add(inode_to_port[inode])
+        ports = _pid_ports_from_fds(pid, inode_to_port)
+        if ports:
+            pid_ports[pid] = ports
     return pid_ports
 
 
-def project_ports(payload):
+def project_ports(payload: dict) -> str:
+    """Render a markdown section of listening ports owned by project processes.
+
+    Args:
+        payload: Hook payload containing the project `cwd`.
+
+    Returns:
+        Markdown section listing pid/port/cmdline rows, or "" if none found.
+    """
     cwd = get_by_key(payload, "cwd")
     if not cwd or not os.path.isdir("/proc/self"):
         return ""
@@ -219,14 +276,19 @@ def project_ports(payload):
     return "\n".join(lines)
 
 
-def disabled_mcp_servers():
+def disabled_mcp_servers() -> str:
+    """Render a markdown section listing MCP servers disabled for this project.
+
+    Returns:
+        Markdown section listing disabled MCP server names, or "" if none.
+    """
     project_dir = os.environ.get("AI_PROJECT_DIR")
     if not project_dir:
         return ""
     claude_json_path = os.path.join(os.path.expanduser("~"), ".claude.json")
     if not os.path.exists(claude_json_path):
         return ""
-    with open(claude_json_path) as f:
+    with open(claude_json_path, encoding="utf-8") as f:
         config = json.load(f)
     servers = (
         config.get("projects", {}).get(project_dir, {}).get("disabledMcpServers", [])
@@ -240,7 +302,8 @@ def disabled_mcp_servers():
     )
 
 
-def main():
+def main() -> None:
+    """Assemble session-start context sections and emit the hook output."""
     try:
         payload = json.load(sys.stdin)
     except json.JSONDecodeError:
@@ -264,8 +327,8 @@ def main():
             "additionalContext": minify_markdown(additional_context),
         }
     }
-    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201
     sys.exit(0)
 
 
