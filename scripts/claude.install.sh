@@ -95,8 +95,8 @@ fi
 
 if [[ "${CLAUDE_INSTALL_SKIP_AUTO_CONTEXT:-}" != "1" ]]; then
     replace_between \
-      "<!-- INIT AUTO-CONTEXT -->" \
-      "<!-- END AUTO-CONTEXT -->" \
+      "<!-- INIT:AUTO-GENERATED-CONTEXT:DO-NOT-MODIFY -->" \
+      "<!-- END:AUTO-GENERATED-CONTEXT:DO-NOT-MODIFY -->" \
       "$instructions" \
       "$LOCAL/AGENTS.md"
 fi
@@ -110,6 +110,8 @@ canonical agent instruction file for Claude Code, OpenCode, Codex, Cursor,
 Gemini CLI, and other AGENTS-aware harnesses.
 
 Do not duplicate project rules here. Update `AGENTS.md` instead.
+
+@AGENTS.md
 EOF
 fi
 
