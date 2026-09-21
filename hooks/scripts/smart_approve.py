@@ -34,6 +34,7 @@ PERMISSIONS: dict[str, list[str]] = {
         "Bash(eval:*)",
         "Bash(xargs:*)",
         "Bash(rm:*)",
+        "Bash(gh:*)",
         "Bash(rmdir:*)",
         "Bash(rm -rf:*)",
         "Bash(rm -r:*)",
