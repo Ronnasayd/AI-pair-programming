@@ -1,46 +1,72 @@
 #!/usr/bin/python3
-"""Stop / SubagentStop hook: if the last assistant message asked a plain-text
-question (contains '?'), remind the agent to use an interactive question tool."""
+"""Stop / SubagentStop hook.
+
+If the last assistant message asked a plain-text question (contains '?'),
+remind the agent to use an interactive question tool.
+"""
 
 import json
-import sys
+import os
 from pathlib import Path
+import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger, minify_markdown  # noqa: E402
+from utils import get_by_key, get_hooks_logger, minify_markdown
 
 LOG = get_hooks_logger("QuestionToolEnforcer")
 
-RULE = (
-    "## Always Use Interactive Question Tools\n\n"
-    "For every user question, use an interactive question tool. No exceptions "
-    "for context, type, or intent.\n\n"
-    "Use this for clarifications, options, confirmations, preference checks, "
-    "all user interactions.\n\n"
-    "- **Claude**: Use `AskUserQuestion`\n"
-    "- **Other environments**: Use the equivalent interactive question tools "
-    "available in your context\n"
-    "- **Fallback**: if no interactive tools exist, use labeled options "
-    "(A, B, C... Z)\n\n"
-    "If an interactive tool exists, never ask a plain-text question.\n\n"
-    "If there are multiple questions, use the `grilling` skill.\n"
-    "Ask questions using clear, technical language.\n"
-    "Use the same language used by the user.\n"
-)
+
+def build_rule() -> str:
+    """Build the interactive-question-tool reminder, honoring QUESTION_TOOL_LANG.
+
+    Returns:
+        str: the markdown rule text to inject as additional context.
+    """
+    lang = os.environ.get("QUESTION_TOOL_LANG", "").strip()
+    lang_line = (
+        f"Ask questions in {lang}.\n"
+        if lang
+        else "Use the same language used by the user.\n"
+    )
+    return (
+        "## Always Use Interactive Question Tools\n\n"
+        "For every user question, use an interactive question tool. No exceptions "
+        "for context, type, or intent.\n\n"
+        "Use this for clarifications, options, confirmations, preference checks, "
+        "all user interactions.\n\n"
+        "- **Claude**: Use `AskUserQuestion`\n"
+        "- **Other environments**: Use the equivalent interactive question tools "
+        "available in your context\n"
+        "- **Fallback**: if no interactive tools exist, use labeled options "
+        "(A, B, C... Z)\n\n"
+        "If an interactive tool exists, never ask a plain-text question.\n\n"
+        "If there are multiple questions, use the `grilling` skill.\n"
+        "Ask questions using clear, technical language.\n"
+        f"{lang_line}"
+    )
 
 
-def last_assistant_from_transcript(path):
+RULE = build_rule()
+
+
+def last_assistant_from_transcript(path: str | None) -> str | None:
     """Reconstruct the last assistant turn's text from the JSONL transcript.
 
     Used when the payload's ``last_assistant_message`` is missing or truncated
     (Claude Code drops/clips that field for very large messages).
+
+    Args:
+        path: path to the JSONL transcript file, or None.
+
+    Returns:
+        str | None: the joined assistant text, or None if unavailable.
     """
     if not path:
         return None
     try:
         lines = Path(path).read_text(encoding="utf-8").splitlines()
     except OSError as e:
-        LOG.debug(f"Failed to read transcript {path}: {e}")
+        LOG.debug("Failed to read transcript %s: %s", path, e)
         return None
 
     collected = []
@@ -65,10 +91,11 @@ def last_assistant_from_transcript(path):
 
 
 def main() -> None:
+    """Read the hook payload from stdin and emit the reminder if warranted."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse JSON: {e}")
+        LOG.debug("Failed to parse JSON: %s", e)
         sys.exit(0)
 
     if get_by_key(payload, "stop_hook_active"):
@@ -91,8 +118,8 @@ def main() -> None:
             "additionalContext": minify_markdown(RULE),
         }
     }
-    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201 - hook stdout protocol
     sys.exit(0)
 
 
