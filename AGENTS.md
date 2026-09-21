@@ -68,7 +68,6 @@ When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`
 
 | When                                                   | Use                                          |
 | ------------------------------------------------------ | -------------------------------------------- |
-| Creating/editing a skill under `skills/`               | `skill-creator` / `skill-architect`          |
 | New skill's description doesn't trigger reliably       | `skill-description-generator`                |
 | Writing a commit message                               | `semantic-commit-message` / `caveman-commit` |
 | Opening a PR                                           | `generate-pr-description`                    |
@@ -77,6 +76,7 @@ When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`
 | Generate/update project docs from code or diff         | `generate-docs`                              |
 | Write PR description from diff/commits                 | `generate-pr-description`                    |
 | Review a PR                                            | `pr-review`                                  |
+| Judge PR w/ evidence-first review + inline GH comments | `the-judge`                                  |
 | Resolve merge conflicts                                | `resolve-merge-conflicts`                    |
 | Execute tasks for a spec-driven feature (taskmaster)   | `sd-execute`                                 |
 | Generate a plan step-by-step                           | `sd-planning`                                |
