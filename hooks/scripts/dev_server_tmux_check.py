@@ -1,17 +1,19 @@
 #!/usr/bin/python3
-"""PreToolUse hook: block dev-server commands run outside tmux/screen, to
-avoid orphaned background processes."""
+"""PreToolUse hook: block dev-server commands run outside tmux/screen.
+
+Avoids orphaned background processes.
+"""
 
 import io
 import json
 import os
+from pathlib import Path
 import re
 import shlex
 import sys
-from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger, split_on_operators  # noqa: E402
+from utils import get_by_key, get_hooks_logger, split_on_operators
 
 LOG = get_hooks_logger("DevServerTmuxCheck")
 
@@ -39,6 +41,12 @@ def _unquoted_text(segment: str) -> str:
     Drops any token that came from inside '...' or "..." (e.g. the commit
     message in `git commit -m "npm run dev"`), so quoted text can't trigger
     a false match against DEV_SERVER_PATTERNS.
+
+    Args:
+        segment: A single shell command segment (already split on operators).
+
+    Returns:
+        The segment's unquoted tokens rejoined with spaces.
     """
     stream = io.StringIO(segment)
     lexer = shlex.shlex(stream, posix=True)
@@ -86,6 +94,11 @@ def is_dev_server(command: str) -> bool:
 
 
 def in_multiplexer() -> str | None:
+    """Detect whether the current shell runs inside tmux or screen.
+
+    Returns:
+        "tmux" or "screen" when detected, else None.
+    """
     tmux_val = os.environ.get("TMUX", "")
     if tmux_val and Path(tmux_val.split(",")[0]).exists():
         return "tmux"
@@ -95,10 +108,11 @@ def in_multiplexer() -> str | None:
 
 
 def main() -> None:
+    """Read the PreToolUse payload from stdin and deny non-tmux dev servers."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse JSON: {e}")
+        LOG.debug("Failed to parse JSON: %s", e)
         sys.exit(0)
 
     if get_by_key(payload, "tool_name") != "Bash":
@@ -111,7 +125,7 @@ def main() -> None:
 
     multiplexer = in_multiplexer()
     if multiplexer:
-        LOG.debug(f"dev server command allowed inside {multiplexer}")
+        LOG.debug("dev server command allowed inside %s", multiplexer)
         sys.exit(0)
 
     output = {
@@ -125,8 +139,8 @@ def main() -> None:
             ),
         }
     }
-    LOG.debug(f"[blocked]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[blocked]: %s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201
     sys.exit(0)
 
 
