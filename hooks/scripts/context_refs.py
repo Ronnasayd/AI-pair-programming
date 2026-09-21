@@ -28,12 +28,13 @@ logger = get_hooks_logger("ContextRefs")
 
 MAX_STDIN = 1024 * 1024
 CONFIG_FILE = ".claude/context-refs.json"
-DEFAULT_REFRESH_AFTER = 3
 GIT_CACHE_ROOT = Path("/tmp/context_refs_git_cache")  # noqa: S108
+CACHE_DIR = Path("/tmp/context_refs_cache")  # noqa: S108
+REFS_DIR = Path("/tmp/context_refs")  # noqa: S108
 
 
 def _cache_path(session_id: str) -> Path:
-    """Build the per-session skip-count cache file path.
+    """Build the per-session seen-set cache file path.
 
     Args:
         session_id: Short session identifier.
@@ -41,7 +42,7 @@ def _cache_path(session_id: str) -> Path:
     Returns:
         Path to this session's context-refs cache file.
     """
-    return Path(f"/tmp/context_refs_{session_id}.json")  # noqa: S108
+    return CACHE_DIR / f"{session_id}.json"
 
 
 def _load_cache(cache_path: Path) -> dict:
@@ -67,6 +68,7 @@ def _save_cache(cache_path: Path, cache: dict) -> None:
         cache: Cache dict to serialize.
     """
     with suppress(OSError):
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
         cache_path.write_text(json.dumps(cache), encoding="utf-8")
 
 
@@ -257,23 +259,20 @@ def _collect_matched_refs(rel_path: str, rules: list[dict]) -> list[tuple[str, s
     return matched_refs
 
 
-def _should_inject(cache: dict, ref_key: str, refresh_after: int) -> bool:
-    """Decide whether ref_key should be injected now, updating its skip count.
+def _is_first_time(cache: dict, ref_key: str) -> bool:
+    """Check whether ref_key has already been fully injected this session.
 
     Args:
-        cache: Mutable skip-count cache, updated in place.
+        cache: Mutable seen-set cache, updated in place.
         ref_key: Cache key for the ref being considered.
-        refresh_after: Number of skips before forcing a re-injection.
 
     Returns:
-        True if the ref should be injected this time.
+        True the first time ref_key is seen, False on every later call.
     """
-    skip_count = cache.get(ref_key)
-    if skip_count is None or skip_count >= refresh_after:
-        cache[ref_key] = 0
-        return True
-    cache[ref_key] = skip_count + 1
-    return False
+    if cache.get(ref_key):
+        return False
+    cache[ref_key] = True
+    return True
 
 
 def _resolve_ref(ref: str, git_repo_url: str) -> tuple[str | None, Path]:
@@ -288,7 +287,7 @@ def _resolve_ref(ref: str, git_repo_url: str) -> tuple[str | None, Path]:
     """
     ref_path = Path(ref)
     if not ref_path.is_absolute():
-        ref_path = Path("/tmp") / ref_path  # noqa: S108
+        ref_path = REFS_DIR / ref_path
 
     if ref_path.exists():
         try:
@@ -312,15 +311,16 @@ def _resolve_ref(ref: str, git_repo_url: str) -> tuple[str | None, Path]:
 def _build_files(
     matched_refs: list[tuple[str, str]],
     cache: dict,
-    refresh_after: int,
     git_repo_url: str,
 ) -> list[dict]:
     """Resolve each matched ref and build the additionalContext file entries.
 
+    First time a ref is seen this session, its full content is embedded.
+    Every later time, only a pointer (description + location) is sent.
+
     Args:
         matched_refs: (ref, glob) pairs to process.
-        cache: Mutable skip-count cache, updated in place.
-        refresh_after: Number of skips before forcing a re-injection.
+        cache: Mutable seen-set cache, updated in place.
         git_repo_url: Git remote URL to fall back to for missing refs.
 
     Returns:
@@ -329,8 +329,7 @@ def _build_files(
     files: list[dict] = []
     for ref, glob in matched_refs:
         ref_key = _normalize_path(ref)
-        if not _should_inject(cache, ref_key, refresh_after):
-            continue
+        first_time = _is_first_time(cache, ref_key)
 
         contents, ref_path = _resolve_ref(ref, git_repo_url)
         if contents is None:
@@ -345,16 +344,17 @@ def _build_files(
             continue
 
         description = _extract_description(contents) or ref
-        files.append(
-            {"matcher": glob, "description": description, "location": str(ref_path)}
-        )
+        entry = {"matcher": glob, "description": description, "location": str(ref_path)}
+        if first_time:
+            entry["content"] = contents
+        files.append(entry)
     return files
 
 
 _INSTRUCTIONS = (
-    "The following files contain instructions for matching file types. Before "
-    "editing or creating a file, find all matching entries, read the rule file "
-    "at `location`, and follow those rules."
+    "MANDATORY: before this edit/write proceeds, you MUST read each rule file "
+    "at `location` below (matched by file type) and apply its rules to the "
+    "content you are about to write."
 )
 
 
@@ -420,12 +420,7 @@ def main() -> None:
     cache_path = _cache_path(session_id)
     cache = _load_cache(cache_path)
 
-    files = _build_files(
-        matched_refs,
-        cache,
-        config.get("refresh_after", DEFAULT_REFRESH_AFTER),
-        config.get("git_repo_url", ""),
-    )
+    files = _build_files(matched_refs, cache, config.get("git_repo_url", ""))
 
     _save_cache(cache_path, cache)
     logger.debug("Cache saved. files=%d.", len(files))

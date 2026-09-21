@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Dir-Context-Refs Hook
+"""Dir-Context-Refs Hook.
 
 PreToolUse hook for Read|Edit|Write. Walks every directory between cwd and the
 target file's parent, checking each for CONTEXT.md/CLAUDE.md/AGENTS.md. If any
@@ -11,10 +10,11 @@ Dedupe: per session, a given directory's set of found files is only
 re-announced once NOTIFY_EVERY calls have passed since it was last announced.
 """
 
+import contextlib
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -35,7 +35,7 @@ CANDIDATE_NAMES = ("CONTEXT.md", "CLAUDE.md", "AGENTS.md")
 
 
 def _cache_path(session_id: str) -> Path:
-    return Path(f"/tmp/dir_context_refs_{session_id}.json")
+    return Path(f"/tmp/dir_context_refs_{session_id}.json")  # noqa: S108
 
 
 def _load_cache(cache_path: Path) -> dict:
@@ -48,10 +48,8 @@ def _load_cache(cache_path: Path) -> dict:
 
 
 def _save_cache(cache_path: Path, cache: dict) -> None:
-    try:
+    with contextlib.suppress(OSError):
         cache_path.write_text(json.dumps(cache))
-    except OSError:
-        pass
 
 
 def _intermediate_dirs(cwd: Path, file_path: Path) -> list[Path]:
@@ -70,7 +68,51 @@ def _intermediate_dirs(cwd: Path, file_path: Path) -> list[Path]:
     return dirs
 
 
+def _find_context_files(dirs: list[Path]) -> dict[str, list[str]]:
+    found: dict[str, list[str]] = {}
+    for d in dirs:
+        matches = [name for name in CANDIDATE_NAMES if (d / name).is_file()]
+        if matches:
+            found[str(d)] = matches
+    return found
+
+
+def _select_unreported(cache_path: Path, found: dict[str, list[str]]) -> list[dict]:
+    cache = _load_cache(cache_path)
+    to_report: list[dict] = []
+    for dir_str, names in found.items():
+        for name in names:
+            key = str(Path(dir_str) / name)
+            skip_count = cache.get(key)
+
+            if skip_count is None or skip_count >= NOTIFY_EVERY:
+                cache[key] = 0
+                to_report.append({"path": key})
+            else:
+                cache[key] = skip_count + 1
+
+    _save_cache(cache_path, cache)
+    return to_report
+
+
+def _emit(to_report: list[dict]) -> None:
+    if not to_report:
+        return
+    note = "Directory-level context files exist. Read them if relevant."
+    output = json.dumps(
+        {
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "additionalContext": minify_json({"note": note, "files": to_report}),
+            }
+        }
+    )
+    logger.debug("[additionalContext]: %s", output)
+    sys.stdout.write(output)
+
+
 def main() -> None:
+    """Read hook stdin, find directory-level context files, report new ones."""
     try:
         stdin_data = sys.stdin.read(MAX_STDIN)
     except OSError:
@@ -92,57 +134,18 @@ def main() -> None:
         sys.exit(0)
 
     cwd = get_by_key(data, "cwd") or str(Path.cwd())
-    cwd_path = Path(cwd)
-    file_path_obj = Path(file_path)
-
-    dirs = _intermediate_dirs(cwd_path, file_path_obj)
+    dirs = _intermediate_dirs(Path(cwd), Path(file_path))
     logger.debug("cwd=%s file_path=%s dirs=%s", cwd, file_path, dirs)
     if not dirs:
         sys.exit(0)
 
-    found: dict[str, list[str]] = {}
-    for d in dirs:
-        matches = [name for name in CANDIDATE_NAMES if (d / name).is_file()]
-        if matches:
-            found[str(d)] = matches
-
+    found = _find_context_files(dirs)
     if not found:
         sys.exit(0)
 
     session_id = get_session_id_short(get_by_key(data, "session_id") or "")
-    cache_path = _cache_path(session_id)
-    cache = _load_cache(cache_path)
-
-    to_report: list[dict] = []
-    for dir_str, names in found.items():
-        for name in names:
-            key = str(Path(dir_str) / name)
-            skip_count = cache.get(key)
-
-            if skip_count is None or skip_count >= NOTIFY_EVERY:
-                cache[key] = 0
-                to_report.append({"path": key})
-            else:
-                cache[key] = skip_count + 1
-
-    _save_cache(cache_path, cache)
-
-    if to_report:
-        output = json.dumps(
-            {
-                "hookSpecificOutput": {
-                    "hookEventName": "PreToolUse",
-                    "additionalContext": minify_json(
-                        {
-                            "note": "The following directory-level context files exist. Read them if their content seems relevant.",
-                            "files": to_report,
-                        }
-                    ),
-                }
-            }
-        )
-        logger.debug("[additionalContext]: %s", output)
-        sys.stdout.write(output)
+    to_report = _select_unreported(_cache_path(session_id), found)
+    _emit(to_report)
 
     sys.exit(0)
 
@@ -150,6 +153,6 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         logger.exception("dir_context_refs hook failed")
         sys.exit(0)
