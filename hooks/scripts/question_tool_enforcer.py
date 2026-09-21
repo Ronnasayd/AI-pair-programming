@@ -24,24 +24,21 @@ def build_rule() -> str:
     """
     lang = os.environ.get("QUESTION_TOOL_LANG", "").strip()
     lang_line = (
-        f"Ask questions in {lang}.\n"
+        f"MANDATORY: Ask questions in {lang}.\n"
         if lang
         else "Use the same language used by the user.\n"
     )
     return (
         "## Always Use Interactive Question Tools\n\n"
-        "For every user question, use an interactive question tool. No exceptions "
-        "for context, type, or intent.\n\n"
-        "Use this for clarifications, options, confirmations, preference checks, "
+        "Use an interactive question tool for every user question — no exceptions.\n\n"
+        "Covers clarifications, options, confirmations, preference checks, "
         "all user interactions.\n\n"
-        "- **Claude**: Use `AskUserQuestion`\n"
-        "- **Other environments**: Use the equivalent interactive question tools "
-        "available in your context\n"
-        "- **Fallback**: if no interactive tools exist, use labeled options "
-        "(A, B, C... Z)\n\n"
-        "If an interactive tool exists, never ask a plain-text question.\n\n"
-        "If there are multiple questions, use the `grilling` skill.\n"
-        "Ask questions using clear, technical language.\n"
+        "- **Claude**: `AskUserQuestion`\n"
+        "- **Other environments**: equivalent interactive tool\n"
+        "- **Fallback**: labeled options (A, B, C... Z)\n\n"
+        "Never ask a plain-text question if an interactive tool exists.\n"
+        "Multiple questions: use `grilling` skill.\n"
+        "Ask in clear, technical language.\n"
         f"{lang_line}"
     )
 
