@@ -18,7 +18,8 @@ import traceback
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 SPACY_MODELS = {"pt": "pt_core_news_sm", "en": "en_core_web_sm"}
 INACTIVITY_TIMEOUT = 30 * 60  # 30 min
-RUNTIME_DIR = Path(os.environ.get("XDG_RUNTIME_DIR", "/tmp"))  # noqa: S108
+# why: /tmp survives login-session teardown; XDG_RUNTIME_DIR does not (killed daemon early)
+RUNTIME_DIR = Path("/tmp")  # noqa: S108
 
 
 def load_nlp(logger: logging.Logger) -> dict:
