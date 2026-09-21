@@ -1,19 +1,23 @@
 #!/usr/bin/python3
-"""PreToolUse hook: remind the agent to write in English when a .md file is
-being written into a directory that requires English-only docs."""
+"""PreToolUse hook.
+
+Reminds the agent to write in the configured language when a .md file is
+being written into a directory that requires language-controlled docs.
+"""
 
 import fnmatch
 import json
-import sys
+import os
 from pathlib import Path
+import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger
 
 LOG = get_hooks_logger("MdLanguageCheck")
 
 # Glob patterns (matched against the file path with fnmatch) whose targets
-# require English-only markdown content.
+# require language-controlled markdown content.
 ENGLISH_ONLY_DIRS = [
     "*/.spec/**",
     ".spec/**",
@@ -21,12 +25,15 @@ ENGLISH_ONLY_DIRS = [
     "docs/**",
 ]
 
+MD_LANGUAGE = os.environ.get("MD_LANGUAGE", "English")
+
 
 def main() -> None:
+    """Read the tool payload from stdin and emit a language reminder."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse JSON: {e}")
+        LOG.debug("Failed to parse JSON: %s", e)
         sys.exit(0)
 
     tool_input = get_by_key(payload, "tool_input") or {}
@@ -43,14 +50,14 @@ def main() -> None:
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "additionalContext": (
-                f"Writing {file_name} into an English-only documentation "
-                "directory. Write this file's content in English, "
+                f"Writing {file_name} into a language-controlled documentation "
+                f"directory. Write this file's content in {MD_LANGUAGE}, "
                 "regardless of the conversation language."
             ),
         }
     }
-    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201
     sys.exit(0)
 
 
