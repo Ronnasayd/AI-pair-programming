@@ -584,6 +584,16 @@ def get_by_key(data: Mapping[str, Any], target_key: str) -> Optional[Any]:
     return None
 
 
+def project_dir(payload: Mapping[str, Any]) -> str:
+    """
+    Root dir for hook logic (config/index scans, rag-rat calls, etc).
+
+    Prefer $CLAUDE_PROJECT_DIR over payload cwd: the agent can `cd` mid-session,
+    changing cwd, while CLAUDE_PROJECT_DIR stays pinned to the project root.
+    """
+    return os.environ.get("CLAUDE_PROJECT_DIR") or get_by_key(payload, "cwd") or "."
+
+
 def extract_query_text(payload: Mapping[str, Any]) -> Optional[str]:
     """
     Return text to embed/search for, from either a UserPromptSubmit

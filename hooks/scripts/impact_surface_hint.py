@@ -19,6 +19,7 @@ from utils import (  # noqa: E402
     get_by_key,
     get_hooks_logger,
     minify_json,
+    project_dir,
 )
 
 LOG = get_hooks_logger("ImpactSurfaceHint")
@@ -229,7 +230,7 @@ def main():
         sys.exit(0)
 
     try:
-        cwd = get_by_key(payload, "cwd") or "."
+        cwd = project_dir(payload)
         if not is_rag_rat_available(cwd):
             LOG.debug(f"rag-rat not installed/configured in {cwd} — skipping")
             sys.exit(0)

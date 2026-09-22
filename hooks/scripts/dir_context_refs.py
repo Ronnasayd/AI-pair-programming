@@ -25,6 +25,7 @@ from utils import (  # noqa: E402
     get_hooks_logger,
     get_session_id_short,
     minify_json,
+    project_dir,
 )
 
 logger = get_hooks_logger("DirContextRefs")
@@ -133,7 +134,7 @@ def main() -> None:
     if not file_path:
         sys.exit(0)
 
-    cwd = get_by_key(data, "cwd") or str(Path.cwd())
+    cwd = project_dir(data)
     dirs = _intermediate_dirs(Path(cwd), Path(file_path))
     logger.debug("cwd=%s file_path=%s dirs=%s", cwd, file_path, dirs)
     if not dirs:

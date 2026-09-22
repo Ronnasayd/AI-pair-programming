@@ -10,7 +10,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
-from utils import get_hooks_logger  # noqa: E402
+from utils import get_hooks_logger, project_dir  # noqa: E402
 
 logger = get_hooks_logger("TaskmasterNextTask")
 
@@ -61,7 +61,7 @@ def build_context(workspace_root: str) -> str | None:
 def main() -> None:
     try:
         payload = json.load(sys.stdin)
-        workspace_root = payload.get("cwd", ".")
+        workspace_root = project_dir(payload)
 
         context = build_context(workspace_root)
         if context:
