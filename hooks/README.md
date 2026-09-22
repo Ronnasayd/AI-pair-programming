@@ -25,6 +25,7 @@ Scripts live in [`scripts/`](scripts) and run via
 
 | Script                              | Purpose                                                            |
 | ----------------------------------- | ------------------------------------------------------------------ |
+| `turn_base_sha.py`                  | Pins the turn's starting commit SHA for the Stop-time lint gate.   |
 | `skill_activation.py`               | Matches the prompt against local skills, suggests which to invoke. |
 | `checklist_context_watch.py`        | Re-surfaces the active skill's `CHECKLIST.md`.                     |
 | `context7_search.py`                | Looks up Context7 docs relevant to the prompt.                     |
@@ -75,6 +76,7 @@ Scripts live in [`scripts/`](scripts) and run via
 
 | Script                               | Purpose                                                                                             |
 | ------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `stop_lint_gate.py`                  | Re-runs lint on files changed this turn and blocks the stop if any fail.                            |
 | `question_tool_enforcer.py`          | If the last assistant message asked a plain-text question, nudges toward `AskUserQuestion` instead. |
 | `ai-memory` stop/subagent-stop hooks | Closes out the session/subagent observation stream.                                                 |
 
