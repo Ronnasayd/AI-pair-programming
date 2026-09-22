@@ -161,9 +161,6 @@ def main() -> None:
     project_root = project_dir(payload)
     session_id = get_by_key(payload, "session_id") or ""
 
-    if get_by_key(payload, "stop_hook_active"):
-        sys.exit(0)
-
     files = changed_files(project_root, session_id)
     if not files:
         sys.exit(0)
