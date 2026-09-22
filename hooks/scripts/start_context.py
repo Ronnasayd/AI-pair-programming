@@ -1,9 +1,10 @@
 #!/usr/bin/python3
-# log-tool-calls.py
 """Inject project context (config files, ports, disabled MCPs) at session start."""
 
 import json
 import os
+import shutil
+import subprocess
 import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -271,6 +272,36 @@ def project_ports(payload: dict) -> str:
     return "\n".join(lines)
 
 
+def docker_containers() -> str:
+    """Render a markdown section listing running Docker containers and their ports.
+
+    Returns:
+        Markdown section listing container name/port rows, or "" if docker
+        is unavailable or no containers are running.
+    """
+    docker_bin = shutil.which("docker")
+    if not docker_bin:
+        return ""
+    try:
+        result = subprocess.run(  # noqa: S603
+            [docker_bin, "ps", "--format", "{{.Names}}\t{{.Ports}}"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+    if result.returncode != 0 or not result.stdout.strip():
+        return ""
+
+    lines = ["## Docker containers running\n"]
+    for line in result.stdout.strip().splitlines():
+        name, _, ports = line.partition("\t")
+        lines.append(f"- `{name}` | ports: {ports or 'none'}")
+    return "\n".join(lines)
+
+
 def disabled_mcp_servers() -> str:
     """Render a markdown section listing MCP servers disabled for this project.
 
@@ -316,6 +347,9 @@ def main() -> None:
     disabled_mcp_text = disabled_mcp_servers()
     if disabled_mcp_text:
         additional_context += f"\n\n{disabled_mcp_text}"
+    docker_text = docker_containers()
+    if docker_text:
+        additional_context += f"\n\n{docker_text}"
     output = {
         "hookSpecificOutput": {
             "hookEventName": "SessionStart",
