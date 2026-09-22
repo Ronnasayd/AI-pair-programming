@@ -13,6 +13,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 from golang_lint import maybe_run_golang_lint
+from php_lint import maybe_run_php_lint
 from python_lint import maybe_run_python_lint
 from typescript_lint import maybe_run_typescript_lint
 from utils import (
@@ -29,12 +30,13 @@ from utils import (
 LOG = get_hooks_logger("StopLintGate")
 
 MAX_FILES = 50
-LINT_EXTS = {".py", ".ts", ".tsx", ".go"}
+LINT_EXTS = {".py", ".ts", ".tsx", ".go", ".php"}
 _LINT_DISPATCH = {
     ".py": maybe_run_python_lint,
     ".ts": maybe_run_typescript_lint,
     ".tsx": maybe_run_typescript_lint,
     ".go": maybe_run_golang_lint,
+    ".php": maybe_run_php_lint,
 }
 
 
