@@ -31,6 +31,7 @@ from utils import (  # noqa: E402
     get_by_key,
     get_hooks_logger,
     is_rag_rat_available,
+    project_dir,
 )
 
 logger = get_hooks_logger("StructuralCloneRef")
@@ -161,7 +162,7 @@ def main() -> None:
         sys.exit(0)
 
     if not resolved.is_absolute():
-        cwd_hint = get_by_key(data, "cwd") or "."
+        cwd_hint = project_dir(data)
         resolved = Path(cwd_hint) / resolved
     resolved = resolved.resolve()
 
@@ -175,7 +176,7 @@ def main() -> None:
         logger.debug("failed to read %s: %s", resolved, exc)
         sys.exit(0)
 
-    cwd = get_by_key(data, "cwd") or "."
+    cwd = project_dir(data)
     cwd_resolved = Path(cwd).resolve()
     try:
         rel_path = resolved.relative_to(cwd_resolved).as_posix()

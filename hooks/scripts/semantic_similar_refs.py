@@ -24,6 +24,7 @@ from utils import (  # noqa: E402
     get_by_key,
     get_hooks_logger,
     is_rag_rat_available,
+    project_dir,
 )
 
 logger = get_hooks_logger("SemanticSimilarRefs")
@@ -124,7 +125,7 @@ def main() -> None:
         logger.debug("skipping: %s is not a source file", file_path)
         sys.exit(0)
 
-    cwd = get_by_key(data, "cwd") or "."
+    cwd = project_dir(data)
     context = build_context(content, file_path, cwd)
     if context:
         output = json.dumps(

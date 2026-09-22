@@ -20,10 +20,10 @@ if script_dir not in sys.path:
 from utils import (  # noqa: E402
     acquire_lock,
     find_project_root,
-    get_by_key,
     get_hooks_logger,
     jest_installed,
     lock_path_for,
+    project_dir,
     spawn_background,
     tmp_project_dir,
 )
@@ -65,7 +65,7 @@ def main() -> None:
 
     try:
         data = json.loads(stdin_data)
-        cwd = get_by_key(data, "cwd") or os.getcwd()
+        cwd = project_dir(data)
         project_root = find_project_root(cwd)
         maybe_run_full_coverage(project_root)
     except (json.JSONDecodeError, AttributeError) as exc:
