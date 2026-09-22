@@ -48,6 +48,12 @@ def main() -> None:
     else:
         LOG.debug("git rev-parse HEAD failed, skipping SHA pin: %s", result)
 
+    loop_count_path = (
+        tmp_project_dir(project_root, "stop-loop-count")
+        / f"{get_session_id_short(session_id)}.txt"
+    )
+    loop_count_path.write_text("0", encoding="utf-8")
+
     sys.stdout.write(stdin_data)
     sys.exit(0)
 

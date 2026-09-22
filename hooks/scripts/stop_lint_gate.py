@@ -30,6 +30,7 @@ from utils import (
 LOG = get_hooks_logger("StopLintGate")
 
 MAX_FILES = 50
+MAX_LOOPS = 5
 LINT_EXTS = {".py", ".ts", ".tsx", ".go", ".php"}
 _LINT_DISPATCH = {
     ".py": maybe_run_python_lint,
@@ -38,6 +39,30 @@ _LINT_DISPATCH = {
     ".go": maybe_run_golang_lint,
     ".php": maybe_run_php_lint,
 }
+
+
+def _loop_count_path(project_root: str, session_id: str) -> Path:
+    """Path to this session's stop-loop counter, reset each turn by turn_base_sha.py."""
+    return (
+        tmp_project_dir(project_root, "stop-loop-count")
+        / f"{get_session_id_short(session_id)}.txt"
+    )
+
+
+def _read_loop_count(project_root: str, session_id: str) -> int:
+    """Current stop-loop count for this session, defaulting to 0 if absent/invalid."""
+    path = _loop_count_path(project_root, session_id)
+    if not path.exists():
+        return 0
+    try:
+        return int(path.read_text(encoding="utf-8").strip())
+    except ValueError:
+        return 0
+
+
+def _bump_loop_count(project_root: str, session_id: str, count: int) -> None:
+    """Persist the incremented stop-loop count for this session."""
+    _loop_count_path(project_root, session_id).write_text(str(count), encoding="utf-8")
 
 
 def _pinned_sha(project_root: str, session_id: str) -> str | None:
@@ -126,9 +151,6 @@ def main() -> None:
         LOG.debug("Failed to parse JSON: %s", e)
         sys.exit(0)
 
-    if get_by_key(payload, "stop_hook_active"):
-        sys.exit(0)
-
     LOG.debug(
         "payload debug: event=%s session_id=%s agent_id=%s",
         get_by_key(payload, "hook_event_name"),
@@ -139,6 +161,9 @@ def main() -> None:
     project_root = project_dir(payload)
     session_id = get_by_key(payload, "session_id") or ""
 
+    if get_by_key(payload, "stop_hook_active"):
+        sys.exit(0)
+
     files = changed_files(project_root, session_id)
     if not files:
         sys.exit(0)
@@ -147,12 +172,18 @@ def main() -> None:
     if not failures:
         sys.exit(0)
 
+    loop_count = _read_loop_count(project_root, session_id) + 1
+    if loop_count > MAX_LOOPS:
+        LOG.debug("Loop cap hit (%d/%d), letting turn end", loop_count, MAX_LOOPS)
+        sys.exit(0)
+    _bump_loop_count(project_root, session_id, loop_count)
+
     reason = truncate_large_output(minify_json(failures), "stop_lint_gate")
     if isinstance(reason, dict):
         reason = minify_json(reason)
 
     output = {"decision": "block", "reason": reason}
-    LOG.debug("[block]: %s", minify_json(output))
+    LOG.debug("[block] (%d/%d): %s", loop_count, MAX_LOOPS, minify_json(output))
     print(minify_json(output))  # noqa: T201 - hook stdout protocol
     sys.exit(0)
 
