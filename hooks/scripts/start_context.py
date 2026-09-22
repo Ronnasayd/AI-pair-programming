@@ -11,9 +11,9 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
-    get_by_key,
     get_hooks_logger,
     minify_markdown,
+    project_dir,
     walk_respecting_gitignore,
 )
 
@@ -32,9 +32,7 @@ def package_json(payload: dict) -> str:
     Returns:
         Markdown section listing package.json scripts, or "" if absent.
     """
-    cwd = get_by_key(payload, "cwd")
-    if not cwd:
-        return ""
+    cwd = project_dir(payload)
     package_json_path = os.path.join(cwd, "package.json")
     if not os.path.exists(package_json_path):
         return ""
@@ -111,9 +109,7 @@ def find_config_files(payload: dict) -> str:
     Returns:
         Markdown section of detected config files, or "" if none found.
     """
-    cwd = get_by_key(payload, "cwd")
-    if not cwd:
-        return ""
+    cwd = project_dir(payload)
 
     ignored_dirs = {".git", "node_modules", ".venv", "__pycache__", ".stryker"}
     non_config_exts = (".md", ".markdown", ".txt", ".rst")
@@ -241,10 +237,9 @@ def project_ports(payload: dict) -> str:
     Returns:
         Markdown section listing pid/port/cmdline rows, or "" if none found.
     """
-    cwd = get_by_key(payload, "cwd")
-    if not cwd or not os.path.isdir("/proc/self"):
+    if not os.path.isdir("/proc/self"):
         return ""
-    cwd = os.path.realpath(cwd)
+    cwd = os.path.realpath(project_dir(payload))
 
     pid_ports = _listen_ports_by_pid()
     if not pid_ports:
@@ -282,8 +277,8 @@ def disabled_mcp_servers() -> str:
     Returns:
         Markdown section listing disabled MCP server names, or "" if none.
     """
-    project_dir = os.environ.get("AI_PROJECT_DIR")
-    if not project_dir:
+    ai_project_dir = os.environ.get("AI_PROJECT_DIR")
+    if not ai_project_dir:
         return ""
     claude_json_path = os.path.join(os.path.expanduser("~"), ".claude.json")
     if not os.path.exists(claude_json_path):
@@ -291,7 +286,7 @@ def disabled_mcp_servers() -> str:
     with open(claude_json_path, encoding="utf-8") as f:
         config = json.load(f)
     servers = (
-        config.get("projects", {}).get(project_dir, {}).get("disabledMcpServers", [])
+        config.get("projects", {}).get(ai_project_dir, {}).get("disabledMcpServers", [])
     )
     if not servers:
         return ""
