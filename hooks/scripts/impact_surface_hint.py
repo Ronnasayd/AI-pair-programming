@@ -1,23 +1,28 @@
 #!/usr/bin/python3
-"""PostToolUse hook: after Edit/Write/MultiEdit, ask rag-rat's impact_surface
-(via raw MCP JSON-RPC over stdio) which symbols call into / are called by the
-top-level functions and classes just touched, so the agent sees the blast
-radius without a separate tool round-trip.
+"""PostToolUse hook: after Edit/Write/MultiEdit, ask rag-rat's impact_surface.
+
+Queries rag-rat's MCP `impact_surface` tool (via `utils.call_rag_rat_tool`) for
+which symbols call into / are called by the top-level functions and classes
+just touched, so the agent sees the blast radius without a separate tool
+round-trip.
 """
 
+# pylint: disable=missing-param-doc,missing-return-doc
+# justified: private hook helpers, docstrings cover intent, not full param/return spec
+
 import json
-import re
-import shutil
-import subprocess
-import sys
 from pathlib import Path
+import re
+import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import (  # noqa: E402
+from utils import (
+    call_rag_rat_tool,
     enclosing_def_name,
     extract_code_info,
     get_by_key,
     get_hooks_logger,
+    is_rag_rat_available,
     minify_json,
     project_dir,
 )
@@ -36,10 +41,6 @@ SOURCE_SUFFIXES = {
 }
 
 
-def is_rag_rat_available(cwd: str) -> bool:
-    return shutil.which("rag-rat") is not None and (Path(cwd) / "rag-rat.toml").exists()
-
-
 def changed_symbols_from_payload(
     tool_name: str, tool_input: dict, file_path: str
 ) -> list[str]:
@@ -56,7 +57,7 @@ def changed_symbols_from_payload(
         return []
 
     try:
-        file_text = Path(file_path).read_text()
+        file_text = Path(file_path).read_text(encoding="utf-8")
     except OSError:
         file_text = ""
 
@@ -82,6 +83,7 @@ def changed_symbols_from_payload(
 
 
 def qualified_ref(file_path: str, symbol: str, cwd: str) -> str:
+    """Build rag-rat's `path::symbol` ref, path relative to `cwd` when possible."""
     try:
         rel = str(Path(file_path).resolve().relative_to(Path(cwd).resolve()))
     except ValueError:
@@ -90,83 +92,10 @@ def qualified_ref(file_path: str, symbol: str, cwd: str) -> str:
 
 
 def call_impact_surface(symbol: str, cwd: str) -> str | None:
-    try:
-        proc = subprocess.Popen(
-            ["rag-rat", "mcp"],
-            cwd=cwd,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            bufsize=1,
-        )
-    except OSError as e:
-        LOG.warning(f"Failed to spawn rag-rat mcp: {e}")
-        return None
-
-    try:
-        _send(
-            proc,
-            {
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "initialize",
-                "params": {
-                    "protocolVersion": "2024-11-05",
-                    "capabilities": {},
-                    "clientInfo": {"name": "impact-surface-hook", "version": "0.0.1"},
-                },
-            },
-        )
-        _recv(proc, MCP_TIMEOUT_SECONDS)
-
-        _send(proc, {"jsonrpc": "2.0", "method": "notifications/initialized"})
-
-        _send(
-            proc,
-            {
-                "jsonrpc": "2.0",
-                "id": 2,
-                "method": "tools/call",
-                "params": {"name": "impact_surface", "arguments": {"symbol": symbol}},
-            },
-        )
-        resp = _recv(proc, MCP_TIMEOUT_SECONDS)
-    except (TimeoutError, EOFError, json.JSONDecodeError) as e:
-        LOG.warning(f"impact_surface MCP call failed for {symbol!r}: {e}")
-        return None
-    finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=3)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-
-    if "error" in resp:
-        LOG.debug(f"impact_surface error for {symbol!r}: {resp['error']}")
-        return None
-    content = resp.get("result", {}).get("content", [])
-    return content[0]["text"] if content else None
-
-
-def _send(proc: subprocess.Popen, msg: dict) -> None:
-    assert proc.stdin is not None
-    proc.stdin.write(json.dumps(msg) + "\n")
-    proc.stdin.flush()
-
-
-def _recv(proc: subprocess.Popen, timeout: int) -> dict:
-    import select
-
-    assert proc.stdout is not None
-    ready, _, _ = select.select([proc.stdout], [], [], timeout)
-    if not ready:
-        raise TimeoutError("no response from rag-rat mcp")
-    line = proc.stdout.readline()
-    if not line:
-        stderr = proc.stderr.read()[:500] if proc.stderr else ""
-        raise EOFError("rag-rat mcp closed: " + stderr)
-    return json.loads(line)
+    """Call rag-rat's `impact_surface` MCP tool for one symbol."""
+    return call_rag_rat_tool(
+        "impact_surface", {"symbol": symbol}, cwd, LOG, timeout=MCP_TIMEOUT_SECONDS
+    )
 
 
 FROM_SYMBOL_RE = re.compile(r'from_symbol:\s*"([^"]+)"')
@@ -186,7 +115,7 @@ def _section(toon_text: str, header: str) -> str:
 
 
 def _refs_from_edges(section_text: str, want_key: str) -> list[str]:
-    """Compact 'edge_id: ... from_symbol: ... callsite: path/line' blocks to 'symbol (path:line)'."""
+    """Compact 'edge_id: ...' blocks to 'symbol (path:line)' strings."""
     refs = []
     for block in re.split(r"^  - edge_id:", section_text, flags=re.MULTILINE)[1:]:
         m = (FROM_SYMBOL_RE if want_key == "from_symbol" else TO_SYMBOL_RE).search(
@@ -205,6 +134,7 @@ def _refs_from_paths(section_text: str) -> list[str]:
 
 
 def summarize(symbol: str, toon_text: str) -> dict | None:
+    """Extract callers/callees/dependents from rag-rat's toon impact_surface output."""
     callers = _refs_from_edges(
         _section(toon_text, "direct_semantic_callers"), "from_symbol"
     )
@@ -222,34 +152,37 @@ def summarize(symbol: str, toon_text: str) -> dict | None:
     }
 
 
-def main():
+def main() -> None:
+    """Entry point: read the PostToolUse payload and emit impact_surface hints."""
+    # why: spawns own rag-rat mcp subprocess per call — stdio JSON-RPC needs a fresh
+    # handshake even if a server instance is already running elsewhere
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse stdin JSON: {e}")
+        LOG.debug("Failed to parse stdin JSON: %s", e)
         sys.exit(0)
 
     try:
         cwd = project_dir(payload)
         if not is_rag_rat_available(cwd):
-            LOG.debug(f"rag-rat not installed/configured in {cwd} — skipping")
+            LOG.debug("rag-rat not installed/configured in %s — skipping", cwd)
             sys.exit(0)
 
         tool_name = get_by_key(payload, "tool_name")
         if tool_name not in ("Edit", "MultiEdit"):
             sys.exit(0)
 
-        tool_input = get_by_key(payload, "tool_input")
+        tool_input = get_by_key(payload, "tool_input") or {}
         file_path = get_by_key(tool_input, "file_path") if tool_input else None
         if not file_path or Path(file_path).suffix not in SOURCE_SUFFIXES:
             sys.exit(0)
 
         symbols = changed_symbols_from_payload(tool_name, tool_input, file_path)
         if not symbols:
-            LOG.debug(f"No public top-level symbols found in {file_path}")
+            LOG.debug("No public top-level symbols found in %s", file_path)
             sys.exit(0)
 
-        LOG.debug(f"Checking impact surface for {symbols} in {file_path}")
+        LOG.debug("Checking impact surface for %s in %s", symbols, file_path)
 
         results = []
         for symbol in symbols:
@@ -270,9 +203,10 @@ def main():
                 "additionalContext": minify_json(
                     {
                         "instruction": (
-                            "the file you just modified has these dependents/dependencies "
-                            "per symbol (from rag-rat impact_surface) — consider whether "
-                            "your change breaks any callers listed"
+                            "the file you just modified has these "
+                            "dependents/dependencies per symbol (from rag-rat "
+                            "impact_surface) — consider whether your change "
+                            "breaks any callers listed"
                         ),
                         "file": file_path,
                         "results": results,
@@ -281,12 +215,12 @@ def main():
             }
         }
         LOG.debug(
-            f"[additionalContext]: {json.dumps(output, ensure_ascii=False)[:500]}"
+            "[additionalContext]: %s", json.dumps(output, ensure_ascii=False)[:500]
         )
-        print(json.dumps(output, ensure_ascii=False))
+        print(json.dumps(output, ensure_ascii=False))  # noqa: T201 - hook stdout protocol
 
-    except Exception as e:
-        LOG.warning(f"Unexpected error: {type(e).__name__}: {e}", exc_info=True)
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        LOG.warning("Unexpected error: %s: %s", type(e).__name__, e, exc_info=True)
 
     sys.exit(0)
 
