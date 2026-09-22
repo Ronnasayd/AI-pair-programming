@@ -3,6 +3,11 @@ description: Agent behavior rules.
 applyTo: "**/*"
 ---
 
+## Linters
+
+- For `python` files use ruff+pylint
+- For `javascript/typescript` files use eslint
+
 ## Always Use Interactive Question Tools
 
 Every user question → interactive tool, never plain text. Claude:

@@ -1,19 +1,18 @@
 #!/usr/bin/python3
-"""
-Go Lint Hook
+"""Go Lint Hook.
 
 Runs go vet, golangci-lint (if installed) and gofmt checks on Go files after edit.
 - Skips if go toolchain not installed
 - golangci-lint is optional (falls back to no-op when unavailable)
 - Reports vet errors, lint issues and formatting diffs
 
-Cross-platform (Windows, macOS, Linux)
+Cross-platform (Windows, macOS, Linux).
 """
 
 import os
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 from typing import Any
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -47,10 +46,11 @@ def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
 
 def _check_tool_installed(tool: str) -> bool:
     """Check if tool is installed via system PATH."""
-    result = subprocess.run(
-        ["which", tool],
+    result = subprocess.run(  # noqa: S603 -- args are fixed literals, not untrusted input
+        ["which", tool],  # noqa: S607 -- fixed lookup binary, trusted internal tool name
         capture_output=True,
         timeout=5,
+        check=False,
     )
     return result.returncode == 0
 
@@ -61,7 +61,7 @@ def _run_govet(resolved: Path, project_root: str) -> dict:
         logger.debug("go not installed, skipping vet for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"go vet {str(resolved)}"
+    cmd = f"go vet {resolved!s}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("go", ["vet", str(resolved)], cwd=project_root)
     logger.debug("go vet result: success=%s", result["success"])
@@ -95,7 +95,7 @@ def _run_golangci_lint(resolved: Path, project_root: str) -> dict:
         logger.debug("golangci-lint not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"golangci-lint run --out-format json {str(resolved)}"
+    cmd = f"golangci-lint run --out-format json {resolved!s}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec(
         "golangci-lint",
@@ -127,10 +127,11 @@ def _run_gofmt(resolved: Path, project_root: str) -> dict:
         logger.debug("gofmt not installed, skipping fmt check for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"gofmt -l {str(resolved)}"
+    cmd = f"gofmt -l {resolved!s}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("gofmt", ["-l", str(resolved)], cwd=project_root)
-    # gofmt -l exits 0 even when files need formatting; non-empty output means unformatted.
+    # why: gofmt -l exits 0 even when files need formatting;
+    # non-empty output means unformatted.
     unformatted = bool(result.get("output", "").strip())
     if unformatted:
         logger.warning("gofmt found unformatted file: %s", resolved)
@@ -144,8 +145,7 @@ def _run_gofmt(resolved: Path, project_root: str) -> dict:
 
 
 def maybe_run_golang_lint(file_path: str | None) -> dict[str, dict[str, Any] | None]:
-    """
-    Run go vet, golangci-lint, gofmt and jscpd checks for Go files.
+    """Run go vet, golangci-lint, gofmt and jscpd checks for Go files.
 
     Args:
         file_path: Path to the edited file.
@@ -190,6 +190,7 @@ def maybe_run_golang_lint(file_path: str | None) -> dict[str, dict[str, Any] | N
 
 
 def main() -> None:
+    """Entry point for the Go lint hook."""
     run_lint_hook_main("GolangLint", logger, maybe_run_golang_lint)
 
 
