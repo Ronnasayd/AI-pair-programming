@@ -129,6 +129,13 @@ def main() -> None:
     if get_by_key(payload, "stop_hook_active"):
         sys.exit(0)
 
+    LOG.debug(
+        "payload debug: event=%s session_id=%s agent_id=%s",
+        get_by_key(payload, "hook_event_name"),
+        get_by_key(payload, "session_id"),
+        get_by_key(payload, "agent_id"),
+    )
+
     project_root = project_dir(payload)
     session_id = get_by_key(payload, "session_id") or ""
 
