@@ -1,5 +1,6 @@
 {
   "git_repo_url": "https://github.com/Ronnasayd/AI-pair-programming.git",
+  "repeat_every": 10,
   "rules": [
     {
       "glob": "*.ts,*.js,*.py,*.java,*.go,*.css,*.cpp,*.c,*.vue,*.jsx,*.tsx",
