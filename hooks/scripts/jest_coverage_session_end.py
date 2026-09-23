@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Session-end full Jest coverage hook.
+"""Session-end full Jest coverage hook.
 
 When a session ends, if the project has jest installed, spawns a detached
 background process that runs `jest --coverage` for the whole project so the
@@ -9,6 +8,7 @@ coverage dir reflects a full, non-incremental run.
 Fire-and-forget: does not block the SessionEnd hook response.
 """
 
+import contextlib
 import json
 import os
 import sys
@@ -32,6 +32,11 @@ logger = get_hooks_logger("CoverageSessionEnd")
 
 
 def maybe_run_full_coverage(project_root: str) -> None:
+    """Spawn a background full-project Jest coverage run for the ended session.
+
+    Args:
+        project_root: Root directory of the project.
+    """
     if not jest_installed(project_root):
         logger.debug("Jest not installed in %s, skipping.", project_root)
         return
@@ -56,12 +61,11 @@ def maybe_run_full_coverage(project_root: str) -> None:
 
 
 def main() -> None:
+    """Read the hook payload from stdin, run full coverage, and echo stdin back."""
     max_stdin = 1024 * 1024
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(max_stdin)
-    except OSError:
-        pass
 
     try:
         data = json.loads(stdin_data)
