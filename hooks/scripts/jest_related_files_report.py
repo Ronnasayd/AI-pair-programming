@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Jest related-files hook.
+"""Jest related-files hook.
 
 After a JS/TS file is edited/created:
   - if it's a test file (*.test.*, *.spec.*), report which source files it
@@ -13,12 +12,13 @@ available for accurate, alias-aware resolution; falls back to a plain
 ripgrep-based import scan otherwise.
 """
 
+import contextlib
 import json
 import os
+from pathlib import Path
 import re
 import subprocess
 import sys
-from pathlib import Path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -96,13 +96,14 @@ def _grep_imports_in_file(path: Path, project_root: str) -> list[Path]:
 def _grep_tests_importing(target: Path, project_root: str) -> list[Path]:
     """Find test files under project_root whose relative import resolves to target."""
     try:
-        result = subprocess.run(
-            ["rg", "-l", "--glob", "*.test.*", "--glob", "*.spec.*", target.stem],
+        result = subprocess.run(  # noqa: S603
+            ["rg", "-l", "--glob", "*.test.*", "--glob", "*.spec.*", target.stem],  # noqa: S607
             capture_output=True,
             text=True,
             timeout=8,
             cwd=project_root,
             stdin=subprocess.DEVNULL,
+            check=False,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
         logger.debug("rg search for tests failed: %s", exc)
@@ -134,7 +135,7 @@ def _fallback_for_source_file(resolved: Path, project_root: str) -> list[str]:
 _PATH_LIKE_RE = re.compile(r'"([^"\n]+\.(?:ts|tsx|js|jsx))"|path:\s*"?([^"\n,]+)"?')
 
 
-def _rag_rat_paths_from_impact(text: str, key: str) -> list[str]:
+def _rag_rat_paths_from_impact(text: str) -> list[str]:
     """Pull file-path values out of an impact_surface/find_callers text blob.
 
     rag-rat's tool output shape varies (e.g. `imported_by`/`called_by`/`calls`
@@ -159,12 +160,20 @@ def _rag_rat_for_source_file(resolved: Path, project_root: str) -> list[str] | N
     )
     if not text:
         return None
-    paths = _rag_rat_paths_from_impact(text, "tests")
+    paths = _rag_rat_paths_from_impact(text)
     filtered = [p for p in paths if _is_test_file(Path(p))]
     return filtered[:MAX_RESULTS]
 
 
 def build_related_files_context(file_path: str | None) -> str | None:
+    """Build the additionalContext message linking a JS/TS file to its related tests.
+
+    Args:
+        file_path: Path to the edited file, or None.
+
+    Returns:
+        The related-files summary message, or None if nothing applies.
+    """
     if not file_path:
         return None
 
@@ -214,12 +223,11 @@ def build_related_files_context(file_path: str | None) -> str | None:
 
 
 def main() -> None:
+    """Read the hook payload from stdin and emit related-files additionalContext."""
     max_stdin = 1024 * 1024
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(max_stdin)
-    except OSError:
-        pass
 
     try:
         data = json.loads(stdin_data)
@@ -235,8 +243,8 @@ def main() -> None:
                     }
                 }
             )
-            logger.debug(f"[additionalContext]: {output}")
-            print(output)
+            logger.debug("[additionalContext]: %s", output)
+            print(output)  # noqa: T201 - hook stdout protocol
         else:
             logger.debug("No related-files context produced for %s", file_path)
     except (json.JSONDecodeError, AttributeError) as exc:

@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Incremental Jest coverage hook.
+"""Incremental Jest coverage hook.
 
 After a JS/TS file is edited, if the project has jest installed, spawns a
 detached background process that:
@@ -13,10 +12,11 @@ detached background process that:
 Fire-and-forget: does not block the PostToolUse hook response.
 """
 
+import contextlib
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -51,6 +51,11 @@ _JS_TS_EXTS = {".js", ".jsx", ".ts", ".tsx"}
 
 
 def maybe_run_incremental_coverage(file_path: str | None) -> None:
+    """Spawn a background incremental Jest coverage run for an edited JS/TS file.
+
+    Args:
+        file_path: Path to the edited file, or None.
+    """
     if not file_path:
         return
 
@@ -87,8 +92,9 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
         f"--coverage --coverageDirectory={json.dumps(partial_dir)} "
         f"--collectCoverageFrom={json.dumps(rel_path)} --passWithNoTests --runInBand"
     )
+    merge_script = json.dumps(str(Path(script_dir) / "merge_coverage.py"))
     merge_cmd = (
-        f"{json.dumps(sys.executable)} {json.dumps(str(Path(script_dir) / 'merge_coverage.py'))} "
+        f"{json.dumps(sys.executable)} {merge_script} "
         f"{json.dumps(partial_dir)} {json.dumps(coverage_dir)} {json.dumps(rel_path)}"
     )
     nyc_report_cmd = _nyc_report_cmd(project_root, coverage_dir)
@@ -100,12 +106,11 @@ def maybe_run_incremental_coverage(file_path: str | None) -> None:
 
 
 def main() -> None:
+    """Read the hook payload from stdin, run coverage, and echo stdin back through."""
     max_stdin = 1024 * 1024
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(max_stdin)
-    except OSError:
-        pass
 
     try:
         data = json.loads(stdin_data)

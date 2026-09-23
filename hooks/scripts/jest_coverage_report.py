@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Jest coverage report hook.
+"""Jest coverage report hook.
 
 After a JS/TS file is edited/created, if the project has jest and an existing
 coverage-final.json, computes that file's per-file coverage summary and
@@ -11,10 +10,11 @@ Read-only: does not run jest, just reads whatever coverage data already
 exists on disk (populated by jest_coverage_incremental.py / session-end runs).
 """
 
+import contextlib
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -100,23 +100,26 @@ def _load_uncovered_lines(
 def _format_message(
     file_path: str, entry: dict, uncovered_lines: list[int] | None
 ) -> str:
-    lines_ = entry.get("lines", {})
-    stmts = entry.get("statements", {})
-    funcs = entry.get("functions", {})
-    branches = entry.get("branches", {})
+    def _fmt(metric: dict) -> str:
+        pct = metric.get("pct", "?")
+        covered = metric.get("covered", "?")
+        total = metric.get("total", "?")
+        return f"{pct}% ({covered}/{total})"
+
     message = (
         f"Jest coverage for {file_path}: "
-        f"lines {lines_.get('pct', '?')}% ({lines_.get('covered', '?')}/{lines_.get('total', '?')}), "
-        f"functions {funcs.get('pct', '?')}% ({funcs.get('covered', '?')}/{funcs.get('total', '?')}), "
-        f"branches {branches.get('pct', '?')}% ({branches.get('covered', '?')}/{branches.get('total', '?')}), "
-        f"statements {stmts.get('pct', '?')}% ({stmts.get('covered', '?')}/{stmts.get('total', '?')})."
+        f"lines {_fmt(entry.get('lines', {}))}, "
+        f"functions {_fmt(entry.get('functions', {}))}, "
+        f"branches {_fmt(entry.get('branches', {}))}, "
+        f"statements {_fmt(entry.get('statements', {}))}."
     )
     if uncovered_lines:
         message += f" Uncovered lines: {_format_line_ranges(uncovered_lines)}."
     return message
 
 
-def build_coverage_context(file_path: str | None) -> str | None:
+def _resolve_target(file_path: str | None) -> tuple[Path, str] | None:
+    """Validate the edited file and return (resolved path, project root)."""
     if not file_path:
         logger.debug("No file_path in tool_input, skipping.")
         return None
@@ -135,13 +138,30 @@ def build_coverage_context(file_path: str | None) -> str | None:
         logger.debug("Jest not installed in %s, skipping.", project_root)
         return None
 
+    return resolved, project_root
+
+
+def build_coverage_context(file_path: str | None) -> str | None:
+    """Build the additionalContext message with this file's current Jest coverage.
+
+    Args:
+        file_path: Path to the edited file, or None.
+
+    Returns:
+        The coverage summary message, or None if no coverage data applies.
+    """
+    target = _resolve_target(file_path)
+    if not target:
+        return None
+    resolved, project_root = target
+
     rel_path_for_lock = os.path.relpath(str(resolved), project_root)
     tmp_dir = tmp_project_dir(project_root, "jest-coverage-incremental")
     lock_file = lock_path_for(tmp_dir, rel_path_for_lock)
     stale = lock_file.exists()
     if stale:
         logger.debug(
-            "Incremental coverage run still in progress for %s, showing last known coverage.",
+            "Incremental coverage run still in progress for %s, showing last known.",
             rel_path_for_lock,
         )
 
@@ -169,12 +189,11 @@ def build_coverage_context(file_path: str | None) -> str | None:
 
 
 def main() -> None:
+    """Read the hook payload from stdin and emit coverage additionalContext."""
     max_stdin = 1024 * 1024
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(max_stdin)
-    except OSError:
-        pass
 
     try:
         data = json.loads(stdin_data)
@@ -191,8 +210,8 @@ def main() -> None:
                     }
                 }
             )
-            logger.debug(f"[additionalContext]: {output}")
-            print(output)
+            logger.debug("[additionalContext]: %s", output)
+            print(output)  # noqa: T201 - hook stdout protocol
         else:
             logger.debug("No coverage context produced for %s", file_path)
     except (json.JSONDecodeError, AttributeError) as exc:
