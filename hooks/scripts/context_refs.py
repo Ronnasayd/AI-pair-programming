@@ -28,6 +28,7 @@ logger = get_hooks_logger("ContextRefs")
 
 MAX_STDIN = 1024 * 1024
 CONFIG_FILE = ".claude/context-refs.json"
+DEFAULT_REPEAT_EVERY = 10
 GIT_CACHE_ROOT = Path("/tmp/context_refs_git_cache")  # noqa: S108
 CACHE_DIR = Path("/tmp/context_refs_cache")  # noqa: S108
 REFS_DIR = Path("/tmp/context_refs")  # noqa: S108
@@ -259,20 +260,27 @@ def _collect_matched_refs(rel_path: str, rules: list[dict]) -> list[tuple[str, s
     return matched_refs
 
 
-def _is_first_time(cache: dict, ref_key: str) -> bool:
-    """Check whether ref_key has already been fully injected this session.
+def _next_emit_kind(cache: dict, ref_key: str, repeat_every: int) -> str | None:
+    """Decide what to emit for ref_key on this call, bumping its counter.
+
+    First call embeds full content. Every `repeat_every`th call after that
+    emits just a pointer. All other calls emit nothing.
 
     Args:
-        cache: Mutable seen-set cache, updated in place.
+        cache: Mutable per-ref call-count cache, updated in place.
         ref_key: Cache key for the ref being considered.
+        repeat_every: How often (in calls) to re-surface the pointer.
 
     Returns:
-        True the first time ref_key is seen, False on every later call.
+        "full", "pointer", or None (skip this ref entirely).
     """
-    if cache.get(ref_key):
-        return False
-    cache[ref_key] = True
-    return True
+    count = cache.get(ref_key, 0) + 1
+    cache[ref_key] = count
+    if count == 1:
+        return "full"
+    if repeat_every > 0 and count % repeat_every == 0:
+        return "pointer"
+    return None
 
 
 def _resolve_ref(ref: str, git_repo_url: str) -> tuple[str | None, Path]:
@@ -312,16 +320,19 @@ def _build_files(
     matched_refs: list[tuple[str, str]],
     cache: dict,
     git_repo_url: str,
+    repeat_every: int,
 ) -> list[dict]:
     """Resolve each matched ref and build the additionalContext file entries.
 
     First time a ref is seen this session, its full content is embedded.
-    Every later time, only a pointer (description + location) is sent.
+    Every `repeat_every`th call after that re-sends just a pointer
+    (description + location). All other calls emit nothing for that ref.
 
     Args:
         matched_refs: (ref, glob) pairs to process.
-        cache: Mutable seen-set cache, updated in place.
+        cache: Mutable per-ref call-count cache, updated in place.
         git_repo_url: Git remote URL to fall back to for missing refs.
+        repeat_every: How often (in calls) to re-surface the pointer.
 
     Returns:
         File entries ready to embed in additionalContext.
@@ -329,7 +340,9 @@ def _build_files(
     files: list[dict] = []
     for ref, glob in matched_refs:
         ref_key = _normalize_path(ref)
-        first_time = _is_first_time(cache, ref_key)
+        emit_kind = _next_emit_kind(cache, ref_key, repeat_every)
+        if emit_kind is None:
+            continue
 
         contents, ref_path = _resolve_ref(ref, git_repo_url)
         if contents is None:
@@ -345,7 +358,7 @@ def _build_files(
 
         description = _extract_description(contents) or ref
         entry = {"matcher": glob, "description": description, "location": str(ref_path)}
-        if first_time:
+        if emit_kind == "full":
             entry["content"] = contents
         files.append(entry)
     return files
@@ -420,7 +433,9 @@ def main() -> None:
     cache_path = _cache_path(session_id)
     cache = _load_cache(cache_path)
 
-    files = _build_files(matched_refs, cache, config.get("git_repo_url", ""))
+    repeat_every = config.get("repeat_every", DEFAULT_REPEAT_EVERY)
+    git_repo_url = config.get("git_repo_url", "")
+    files = _build_files(matched_refs, cache, git_repo_url, repeat_every)
 
     _save_cache(cache_path, cache)
     logger.debug("Cache saved. files=%d.", len(files))
