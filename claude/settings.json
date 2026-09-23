@@ -117,6 +117,36 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "",
+        "hooks": [
+          {
+            "timeout": 10,
+            "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
+          },
+          {
+            "timeout": 10,
+            "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
+          },
+          {
+            "timeout": 10,
+            "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py"
+          },
+          {
+            "timeout": 10,
+            "type": "command",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee $HOME/.claude/logs/external.log"
+          },
+          {
+            "timeout": 10,
+            "type": "command",
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+          }
+        ]
+      },
+      {
         "matcher": "AskUserQuestion",
         "hooks": [
           {
@@ -199,36 +229,6 @@
             "timeout": 10,
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/large_file_read_warning.py"
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "timeout": 10,
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
-          },
-          {
-            "timeout": 10,
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py"
-          },
-          {
-            "timeout": 10,
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
-          },
-          {
-            "timeout": 10,
-            "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee $HOME/.claude/logs/external.log"
-          },
-          {
-            "timeout": 10,
-            "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
           }
         ]
       },
