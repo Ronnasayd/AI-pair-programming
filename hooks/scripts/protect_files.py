@@ -13,10 +13,7 @@ import os
 from pathlib import Path
 import re
 import shlex
-import shutil
-import subprocess
 import sys
-import tempfile
 import unicodedata
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -1124,211 +1121,15 @@ def deny(file_path: str, pattern: str, source: str) -> None:
 
 
 # ─────────────────────────────────────────────────────────────
-# CONTENT-BASED SECRET SCAN (complements the path-based checks above:
-# a secret can sit in a file whose path doesn't match PROTECTED_PATTERNS)
-# ─────────────────────────────────────────────────────────────
-
-DETECT_SECRETS_BIN = shutil.which("detect-secrets")
-
-# Regex fallback used only when detect-secrets isn't installed, so content
-# scanning doesn't silently no-op on a machine without the binary. Ported
-# from the project's JS secret-scan hook.
-FALLBACK_SECRET_PATTERNS = [
-    ("AWS Access Key", re.compile(r"AKIA[0-9A-Z]{16}")),
-    (
-        "AWS Secret Key",
-        re.compile(
-            r"aws_secret_access_key\s*=\s*[\"']?[A-Za-z0-9/+=]{40}", re.IGNORECASE
-        ),
-    ),
-    ("GitHub Token", re.compile(r"(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}")),
-    (
-        "Private Key",
-        re.compile(r"-----BEGIN (RSA|EC|OPENSSH|PGP) PRIVATE KEY-----"),
-    ),
-    (
-        "Generic API Key",
-        re.compile(r"api[_-]?key\s*[:=]\s*[\"'][a-zA-Z0-9]{20,}[\"']", re.IGNORECASE),
-    ),
-    ("Slack Token", re.compile(r"xox[bpors]-[0-9a-zA-Z-]{10,}")),
-    (
-        "Database URL",
-        re.compile(r"(postgres|mysql|mongodb|redis)://[^:]+:[^@\s]+@"),
-    ),
-    (
-        "JWT Token",
-        re.compile(r"eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"),
-    ),
-]
-
-
-ALLOWLIST_PRAGMA = re.compile(r"pragma:\s*allowlist\s*secret", re.IGNORECASE)
-
-
-def is_allowlisted_line(lines: list[str], line_no: int) -> bool:
-    """True if the finding's own line or the line above carries the bypass pragma.
-
-    The `pragma: allowlist secret` comment matches detect-secrets' own
-    inline-allowlist convention, so one marker works for both scan paths.
-
-    Args:
-        lines: The scanned content split into lines.
-        line_no: 1-based line number of the finding.
-
-    Returns:
-        True if the finding is allowlisted via the bypass pragma.
-    """
-    idx = line_no - 1
-    for candidate in (idx, idx - 1):
-        if 0 <= candidate < len(lines) and ALLOWLIST_PRAGMA.search(lines[candidate]):
-            return True
-    return False
-
-
-def scan_content_fallback(content: str) -> list[dict]:
-    """Regex-based secret scan used when detect-secrets isn't installed.
-
-    Args:
-        content: File content to scan.
-
-    Returns:
-        A finding dict (type, line) for each regex match not allowlisted.
-    """
-    findings = []
-    lines = content.split("\n")
-    for name, regex in FALLBACK_SECRET_PATTERNS:
-        for i, line in enumerate(lines):
-            if regex.search(line) and not is_allowlisted_line(lines, i + 1):
-                findings.append({"type": name, "line": i + 1})
-    return findings
-
-
-def deny_secret(file_path: str, findings: list[dict]) -> None:
-    """Emit a deny decision for detected secrets in a file and exit.
-
-    Args:
-        file_path: The scanned file's path.
-        findings: Secret findings from detect-secrets or the regex fallback.
-    """
-    types = ", ".join(sorted({f["type"] for f in findings}))
-    lines = sorted(
-        {f["line_number"] for f in findings if "line_number" in f}
-        | {f["line"] for f in findings if "line" in f}
-    )
-    location = f" at line(s) {', '.join(map(str, lines))}" if lines else ""
-    print(  # noqa: T201 - hook protocol: decision JSON goes on stderr
-        json.dumps(
-            {
-                "decision": "deny",
-                "file": file_path,
-                "source": "secret_scan",
-                "reason": (
-                    f"potential secret detected ({types}){location}. "
-                    "If this is a false positive or test fixture, add "
-                    "`# pragma: allowlist secret` on the flagged line (or "
-                    "the line above it) to bypass."
-                ),
-            }
-        ),
-        file=sys.stderr,
-    )
-    logger.debug("Denied '%s' — secrets found: %s", file_path, findings)
-    sys.exit(2)
-
-
-def scan_content_for_secrets(content: str, file_path: str) -> list[dict]:
-    """Run detect-secrets against `content` as if it were `file_path`.
-
-    Scans by writing to a tempdir under the target's basename and cwd'ing
-    into it — scanning by absolute path silently yields empty results, since
-    detect-secrets' filters key off a repo-relative path.
-
-    Args:
-        content: The text to scan.
-        file_path: Path used only to derive the scanned file's basename.
-
-    Returns:
-        Secret findings from detect-secrets, or the regex fallback's list.
-    """
-    if not DETECT_SECRETS_BIN:
-        return scan_content_fallback(content)
-
-    suffix = Path(file_path).name or "scanned_file"
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        target = Path(tmpdir) / suffix
-        target.write_text(content, encoding="utf-8")
-
-        try:
-            result = subprocess.run(  # noqa: S603 - fixed argv, no shell, trusted local binary
-                [DETECT_SECRETS_BIN, "scan", suffix],
-                cwd=tmpdir,
-                capture_output=True,
-                text=True,
-                timeout=15,
-                check=False,
-            )
-        except (subprocess.TimeoutExpired, OSError) as exc:
-            logger.debug("detect-secrets invocation failed: %s", exc)
-            return []
-
-        try:
-            report = json.loads(result.stdout)
-        except json.JSONDecodeError:
-            logger.debug("detect-secrets non-JSON output: %s", result.stdout[:500])
-            return []
-
-        return report.get("results", {}).get(suffix, [])
-
-
-def get_write_content(
-    tool_input: Mapping, tool_name: str, file_path: str
-) -> str | None:
-    """Content about to enter the file.
-
-    Falls back to the file's current content on disk when the tool is only
-    reading it (Read, or a Bash command target).
-
-    Args:
-        tool_input: The tool call's input mapping.
-        tool_name: The tool name ("Write", "Edit", or "Bash"/"Read").
-        file_path: Path to fall back to reading from disk.
-
-    Returns:
-        The content that will enter (or that already sits in) the file, or
-        None if it can't be determined.
-    """
-    if tool_name == "Write":
-        return get_by_key(tool_input, "content")
-    if tool_name == "Edit":
-        return get_by_key(tool_input, "new_string")
-    try:
-        return Path(file_path).read_text(encoding="utf-8")
-    except UnicodeDecodeError:
-        # Non-UTF-8 content (UTF-16, latin-1, or a few stray bad bytes) must
-        # still reach the secret scanner — silently returning None here let
-        # any secret stored in a differently-encoded file skip detect-secrets
-        # entirely. errors="replace" degrades gracefully instead of losing
-        # the scan outright.
-        try:
-            return Path(file_path).read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            return None
-    except OSError:
-        return None
-
-
-# ─────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────
 
 
-def _check_direct_file_access(tool_input: Mapping, tool_name: str) -> str | None:
+def _check_direct_file_access(tool_input: Mapping) -> str | None:
     """Deny direct Read/Write/Edit/NotebookEdit/Grep/Glob access to protected paths.
 
     Args:
         tool_input: The tool call's input mapping.
-        tool_name: The tool name.
 
     Returns:
         The resolved file_path if one was present in tool_input, else None.
@@ -1355,12 +1156,6 @@ def _check_direct_file_access(tool_input: Mapping, tool_name: str) -> str | None
     blocked, pattern = matches_pattern(norm)
     if blocked:
         deny(file_path, pattern, "file_path")
-
-    content = get_write_content(tool_input, tool_name, file_path)
-    if content:
-        findings = scan_content_for_secrets(content, file_path)
-        if findings:
-            deny_secret(file_path, findings)
 
     logger.debug("Allowed file access: %s", file_path)
     return file_path
@@ -1395,11 +1190,6 @@ def _check_mcp_string_args(
             continue
         if not is_allowed(norm) and not is_within_project(norm):
             deny(candidate, "outside_project", "mcp_path_escape")
-        content = get_write_content({}, tool_name, norm)
-        if content:
-            findings = scan_content_for_secrets(content, norm)
-            if findings:
-                deny_secret(candidate, findings)
 
 
 def _check_shell_command(tool_input: Mapping) -> None:
@@ -1416,14 +1206,13 @@ def _check_shell_command(tool_input: Mapping) -> None:
     targets = expand_targets(targets)
 
     for target in targets:
-        _check_shell_command_target(tool_input, command, target)
+        _check_shell_command_target(command, target)
 
 
-def _check_shell_command_target(tool_input: Mapping, command: str, target: str) -> None:
-    """Deny one shell-command target that resolves to a protected path or secret.
+def _check_shell_command_target(command: str, target: str) -> None:
+    """Deny one shell-command target that resolves to a protected path.
 
     Args:
-        tool_input: The tool call's input mapping (for content scanning).
         command: The raw shell command text, used only for the debug log.
         target: One file-like target extracted from command.
     """
@@ -1438,13 +1227,6 @@ def _check_shell_command_target(tool_input: Mapping, command: str, target: str) 
     blocked, pattern = matches_pattern(norm)
     if blocked:
         deny(target, pattern, "command_read")
-
-    if os.path.isfile(target):
-        content = get_write_content(tool_input, "Bash", target)
-        if content:
-            findings = scan_content_for_secrets(content, target)
-            if findings:
-                deny_secret(target, findings)
 
     logger.debug("Allowed command: %s access: %s", command, target)
 
@@ -1468,7 +1250,7 @@ def main() -> None:
         sys.exit(0)
     tool_name = str(tool_name) if tool_name is not None else ""
 
-    file_path = _check_direct_file_access(tool_input, tool_name)
+    file_path = _check_direct_file_access(tool_input)
     _check_mcp_string_args(tool_input, tool_name, file_path)
     _check_shell_command(tool_input)
 
