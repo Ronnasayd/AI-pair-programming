@@ -17,6 +17,10 @@ Every user question → interactive tool, never plain text. Claude:
 
 When task list exists (multi-step work), use `TaskCreate`, `TaskGet`, `TaskList`, `TaskUpdate` to give user feedback. Mark tasks complete as done, don't batch.
 
+## UI Testing
+
+Touching a component or screen → run tests via Playwright (or similar E2E tool) before done.
+
 ## Relevant Skills
 
 | When                                                   | Use                                          |
