@@ -11,7 +11,8 @@
     "CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS": "1",
     "PROTECT_FILES_MCP_ALLOWLIST": "ssh-mcp",
     "QUESTION_TOOL_LANG": "Portuguese",
-    "MD_LANGUAGE": "English"
+    "MD_LANGUAGE": "English",
+    "PROTECT_FILES_EXTRA_ALLOWED": ""
   },
   "attribution": {
     "commit": "",

@@ -1,16 +1,17 @@
+from collections.abc import Mapping
+from datetime import datetime
 import hashlib
 import json
 import logging
 import os
+from pathlib import Path
 import re
 import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Mapping, Optional
+from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
 # Utility helpers
@@ -413,7 +414,9 @@ def _get_ts_parser(lang: str):
     if lang in _ts_parser_cache:
         return _ts_parser_cache[lang]
     try:
-        from tree_sitter_language_pack import get_parser  # type: ignore[import-not-found]
+        from tree_sitter_language_pack import (
+            get_parser,  # type: ignore[import-not-found]
+        )
 
         parser = get_parser(lang)
     except Exception:
@@ -638,7 +641,15 @@ _PRETTIER_CONFIGS = [
     "prettier.config.cjs",
     "prettier.config.mjs",
 ]
-_PROJECT_ROOT_MARKERS = ["package.json", *_BIOME_CONFIGS, *_PRETTIER_CONFIGS]
+_PROJECT_ROOT_MARKERS = [
+    "package.json",
+    "pyproject.toml",
+    "setup.py",
+    "go.mod",
+    ".git",
+    *_BIOME_CONFIGS,
+    *_PRETTIER_CONFIGS,
+]
 _WIN_CMD_SHIMS = {
     "npx": "npx.cmd",
     "pnpm": "pnpm.cmd",
