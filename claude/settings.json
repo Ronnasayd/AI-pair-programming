@@ -103,15 +103,15 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/notify_sound.py",
+            "timeout": 10,
             "async": true
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       }
@@ -121,29 +121,29 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/protect_files.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/protect_files.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/subagent_guidelines.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       },
@@ -151,9 +151,9 @@
         "matcher": "AskUserQuestion",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/notify_sound.py",
+            "timeout": 10,
             "async": true
           }
         ]
@@ -162,24 +162,24 @@
         "matcher": "Bash",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "/home/ronnas/.claude/hooks/rtk-rewrite.sh | tee $HOME/.claude/logs/external.log"
+            "command": "/home/ronnas/.claude/hooks/rtk-rewrite.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/smart_approve.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/smart_approve.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/protect_branches.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/protect_branches.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/dev_server_tmux_check.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/dev_server_tmux_check.py",
+            "timeout": 10
           }
         ]
       },
@@ -187,19 +187,19 @@
         "matcher": "Edit|Write",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/md_language_check.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/md_language_check.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/context_refs.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/context_refs.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/semantic_similar_refs.py"
+            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/semantic_similar_refs.py",
+            "timeout": 10
           }
         ]
       },
@@ -207,9 +207,9 @@
         "matcher": "Write",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/md_location_check.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/md_location_check.py",
+            "timeout": 10
           }
         ]
       },
@@ -217,9 +217,9 @@
         "matcher": "Read|Edit|Write",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/dir_context_refs.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/dir_context_refs.py",
+            "timeout": 10
           }
         ]
       },
@@ -227,18 +227,18 @@
         "matcher": "Read",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/large_file_read_warning.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/large_file_read_warning.py",
+            "timeout": 10
           }
         ]
       },
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -248,21 +248,21 @@
         "matcher": "AskUserQuestion",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
+            "timeout": 10,
             "statusMessage": "Finding relevant skills..."
           },
           {
-            "timeout": 10,
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
+            "timeout": 10,
             "statusMessage": "Searching context7..."
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       },
@@ -270,9 +270,9 @@
         "matcher": "EnterWorktree",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/worktree_init.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/worktree_init.py",
+            "timeout": 10
           }
         ]
       },
@@ -280,9 +280,9 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py",
+            "timeout": 10
           }
         ]
       },
@@ -290,54 +290,54 @@
         "matcher": "Edit|Write",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/typescript_lint.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/typescript_lint.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/python_lint.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/python_lint.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/golang_lint.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/golang_lint.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/php_lint.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/php_lint.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_incremental.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_incremental.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_report.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_report.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_related_files_report.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_related_files_report.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/impact_surface_hint.py"
+            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/impact_surface_hint.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/structural_clone_ref.py"
+            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/structural_clone_ref.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/comment_policy_hint.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/comment_policy_hint.py",
+            "timeout": 10
           }
         ]
       },
@@ -345,33 +345,33 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/scan_secrets_output.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/scan_secrets_output.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/tooluse_context_rules.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       },
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -380,40 +380,40 @@
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
             "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-activate.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10,
             "statusMessage": "Loading caveman mode..."
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/start_context.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/start_context.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/start_memory_rules.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/start_memory_rules.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/taskmaster_next_task.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/taskmaster_next_task.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee $HOME/.claude/logs/external.log"
+            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       },
@@ -421,18 +421,18 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       },
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -442,33 +442,33 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/stop_lint_gate.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/stop_lint_gate.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       },
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -477,9 +477,9 @@
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       }
@@ -488,42 +488,42 @@
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/turn_base_sha.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/turn_base_sha.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/skill_activation.py",
+            "timeout": 10,
             "statusMessage": "Finding relevant skills..."
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
+            "timeout": 10,
             "statusMessage": "Searching context7..."
           },
           {
-            "timeout": 10,
             "type": "command",
             "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10,
             "statusMessage": "Tracking caveman mode..."
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee $HOME/.claude/logs/external.log"
+            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       },
@@ -531,9 +531,9 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -543,14 +543,14 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       }
@@ -560,23 +560,23 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log",
+            "timeout": 10
           }
         ]
       },
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       },
@@ -584,9 +584,9 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-start.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-start.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -596,33 +596,33 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/stop_lint_gate.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/stop_lint_gate.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file /tmp/hooks_subagents.log",
+            "timeout": 10
           }
         ]
       },
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       },
@@ -630,9 +630,9 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-stop.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-stop.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -642,28 +642,28 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh | tee $HOME/.claude/logs/external.log"
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_session_end.py"
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_session_end.py",
+            "timeout": 10
           }
         ]
       },
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           }
         ]
       }
@@ -673,9 +673,9 @@
         "matcher": "",
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       }
@@ -684,19 +684,19 @@
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file ~/.claude/logs/hooks-fails.log"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file ~/.claude/logs/hooks-fails.log",
+            "timeout": 10
           }
         ]
       }
@@ -705,14 +705,14 @@
       {
         "hooks": [
           {
-            "timeout": 10,
             "type": "command",
-            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log"
+            "command": "\"node\" \"/home/ronnas/.claude/agent-flow/hook.js\" | tee $HOME/.claude/logs/external.log",
+            "timeout": 10
           },
           {
-            "timeout": 10,
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py"
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
+            "timeout": 10
           }
         ]
       }
@@ -722,12 +722,10 @@
     "baseRef": "head"
   },
   "statusLine": {
-    "timeout": 10,
     "type": "command",
     "command": "bash \"$AI_PROJECT_ROOT_DIR/scripts/statusline-command.sh\""
   },
   "subagentStatusLine": {
-    "timeout": 10,
     "type": "command",
     "command": "bash \"$AI_PROJECT_ROOT_DIR/scripts/subagent-statusline.sh\""
   },
