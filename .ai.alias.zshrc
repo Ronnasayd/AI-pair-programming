@@ -62,5 +62,7 @@ alias aimat="ai-memory generate-auth-token" # Generate AI Memory auth token: ai-
 alias aimpl="ai-memory pending-writes list" # List AI Memory pending writes: ai-memory-pending-writes
 alias rc="exec $SHELL -c \"claude --continue;exec $SHELL\""
 alias lhi="LEFTHOOK_CONFIG=$AI_PROJECT_ROOT_DIR/lefthook/lefthook.yml lefthook install" # Install lefthook hooks: lefthook-install
+alias scvm="export CAVEMAN_DEFAULT_MODE=off && echo 'off' > $HOME/.claude/.caveman-active" # stop caveman
+alias acvm="export CAVEMAN_DEFAULT_MODE=full && echo 'full' > $HOME/.claude/.caveman-active" # activate  caveman
 
 
