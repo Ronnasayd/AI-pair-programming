@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Python Lint Hook
+"""Python Lint Hook.
 
 Runs mypy (type checking) and ruff (linting) on Python files after edit.
 - Skips if mypy or ruff not installed locally
@@ -11,9 +10,9 @@ Cross-platform (Windows, macOS, Linux)
 """
 
 import os
-import subprocess
-import sys
 from pathlib import Path
+import shutil
+import sys
 from typing import Any
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -42,23 +41,35 @@ _PY_EXTS = {".py"}
 
 
 def _exec(bin_: str, args: list[str], cwd: str | None = None) -> dict:
-    """Wrapper for tool invocations."""
-    cmd = " ".join([bin_, *args])
+    """Wrapper for tool invocations. Prefers the project venv's binary if present."""
+    resolved_bin = _resolve_tool_bin(bin_, cwd) if cwd else bin_
+    cmd = " ".join([resolved_bin, *args])
     return run_command_cwd(cmd, cwd=cwd)
+
+
+_VENV_DIRS = (".venv", "venv")
+
+
+def _venv_tool_bin(tool: str, project_root: str) -> Path | None:
+    """Return first existing venv binary for `tool`, checking .venv then venv."""
+    for venv_dir in _VENV_DIRS:
+        candidate = Path(project_root) / venv_dir / "bin" / tool
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def _resolve_tool_bin(tool: str, project_root: str) -> str:
+    """Return project venv's binary path for `tool` if present, else `tool` bare."""
+    local_bin = _venv_tool_bin(tool, project_root)
+    return str(local_bin) if local_bin else tool
 
 
 def _check_tool_installed(tool: str, project_root: str) -> bool:
     """Check if tool is installed locally via pip."""
-    local_bin = Path(project_root) / "venv" / "bin" / tool
-    if local_bin.exists():
+    if _venv_tool_bin(tool, project_root):
         return True
-    # Also check system PATH
-    result = subprocess.run(
-        ["which", tool],
-        capture_output=True,
-        timeout=5,
-    )
-    return result.returncode == 0
+    return shutil.which(tool) is not None
 
 
 def _run_mypy(resolved: Path, project_root: str) -> dict:
@@ -75,7 +86,7 @@ def _run_mypy(resolved: Path, project_root: str) -> dict:
         )
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"mypy --output json {str(resolved)}"
+    cmd = f"mypy --output json {resolved!s}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("mypy", ["--output", "json", str(resolved)], cwd=project_root)
     logger.debug("mypy result: success=%s", result["success"])
@@ -108,7 +119,7 @@ def _run_ruff(resolved: Path, project_root: str) -> dict:
         logger.debug("ruff not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"ruff check --output-format json {str(resolved)}"
+    cmd = f"ruff check --output-format json {resolved!s}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec(
         "ruff", ["check", "--output-format", "json", str(resolved)], cwd=project_root
@@ -141,7 +152,7 @@ def _run_pylint(resolved: Path, project_root: str) -> dict:
         logger.debug("pylint not installed, skipping lint for %s", resolved)
         return {"success": True, "output": "", "error": "", "installed": False}
 
-    cmd = f"pylint --output-format=json {str(resolved)}"
+    cmd = f"pylint --output-format=json {resolved!s}"
     logger.debug("Executing: %s (cwd=%s)", cmd, project_root)
     result = _exec("pylint", ["--output-format=json", str(resolved)], cwd=project_root)
     logger.debug("pylint result: success=%s", result["success"])
@@ -162,8 +173,7 @@ def _run_pylint(resolved: Path, project_root: str) -> dict:
 
 
 def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | None]:
-    """
-    Run mypy, ruff, pylint and jscpd checks for Python files.
+    """Run mypy, ruff, pylint and jscpd checks for Python files.
 
     Args:
         file_path: Path to the edited file.
@@ -208,6 +218,7 @@ def maybe_run_python_lint(file_path: str | None) -> dict[str, dict[str, Any] | N
 
 
 def main() -> None:
+    """Entry point: run mypy/ruff/pylint/jscpd against the changed Python file."""
     run_lint_hook_main("PythonLint", logger, maybe_run_python_lint)
 
 
