@@ -1,4 +1,17 @@
-from collections.abc import Mapping
+"""Shared helpers for Claude Code hook scripts."""
+
+# pylint: disable=missing-param-doc,missing-return-doc,missing-yield-doc,missing-yield-type-doc
+# justified: private hook helpers, docstrings cover intent, not full param/return spec
+# pylint: disable=broad-exception-caught,import-outside-toplevel,import-error
+# why: tree-sitter parsing walks untrusted source and must degrade gracefully on
+# any failure; tree_sitter_language_pack is an optional dep, lazily imported
+# pylint: disable=too-many-lines,too-many-nested-blocks,too-many-statements,consider-using-with
+# why: shared utility module for hook scripts, grouped by concern rather than
+# split into many files; the flagged Popen calls intentionally outlive their
+# function (background process / long-lived subprocess handle)
+
+from collections.abc import Callable, Iterator, Mapping
+import contextlib
 from datetime import datetime
 import hashlib
 import json
@@ -11,7 +24,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any, Optional
+from typing import Any
 
 # ---------------------------------------------------------------------------
 # Utility helpers
@@ -19,10 +32,13 @@ from typing import Any, Optional
 
 
 def log(msg: str) -> None:
-    print(msg, file=sys.stderr)
+    """Write msg to stderr (stdout is reserved for hook JSON output)."""
+    print(msg, file=sys.stderr)  # noqa: T201
 
 
-def walk_respecting_gitignore(root: str, ignored_dirs: set[str] | None = None):
+def walk_respecting_gitignore(
+    root: str, ignored_dirs: set[str] | None = None
+) -> Iterator[tuple[str, list[str], list[str]]]:
     """os.walk(root) that skips .gitignore'd files/dirs (git repos only).
 
     Falls back to plain os.walk if root isn't a git repo or git is unavailable.
@@ -43,18 +59,21 @@ def walk_respecting_gitignore(root: str, ignored_dirs: set[str] | None = None):
 
         rel_dirpath = os.path.relpath(dirpath, root)
 
-        def _not_ignored(names: list[str], is_dir: bool) -> list[str]:
+        def _not_ignored(
+            names: list[str], is_dir: bool, rel_dirpath: str = rel_dirpath
+        ) -> list[str]:
             if not names:
                 return []
             candidates = [
                 os.path.join(rel_dirpath, n) if rel_dirpath != "." else n for n in names
             ]
             paths = [c + "/" if is_dir else c for c in candidates]
-            result = subprocess.run(
-                ["git", "-C", root, "check-ignore", "--stdin"],
+            result = subprocess.run(  # noqa: S603 - git subcommand, args are literals
+                ["git", "-C", root, "check-ignore", "--stdin"],  # noqa: S607
                 input="\n".join(paths),
                 capture_output=True,
                 text=True,
+                check=False,
             )
             ignored = set(result.stdout.splitlines())
             return [
@@ -82,10 +101,12 @@ def get_sessions_dir() -> Path:
 
 
 def get_date_string() -> str:
+    """Return today's date as YYYY-MM-DD."""
     return datetime.now().strftime("%Y-%m-%d")
 
 
 def get_time_string() -> str:
+    """Return the current time as HH:MM:SS."""
     return datetime.now().strftime("%H:%M:%S")
 
 
@@ -100,59 +121,69 @@ def get_project_name() -> str:
 
 
 def ensure_dir(directory: Path) -> None:
+    """Create directory (and parents) if it doesn't exist."""
     directory.mkdir(parents=True, exist_ok=True)
 
 
 def read_file(path: Path) -> str | None:
+    """Return path's text content, or None if it can't be read."""
     try:
         return path.read_text(encoding="utf-8")
-    except (OSError, IOError):
+    except OSError:
         return None
 
 
 def write_file(path: Path, content: str) -> None:
+    """Write content to path as UTF-8 text."""
     path.write_text(content, encoding="utf-8")
 
 
 def run_command(cmd: str) -> dict:
     """Run a shell command and return {success, output}."""
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S602 - cmd is caller-constructed, not user input
             cmd,
             shell=True,
             capture_output=True,
             text=True,
             timeout=10,
+            check=False,
         )
         return {
             "success": result.returncode == 0,
             "output": result.stdout.strip(),
         }
-    except Exception as err:
+    # why: subprocess.run can raise many exception types; caller wants {success, output}
+    except Exception as err:  # pylint: disable=broad-exception-caught
         return {"success": False, "output": str(err)}
 
 
 def run_command_cwd(cmd: str, cwd: str | None = None, timeout: int = 30) -> dict:
-    """Run a shell command with cwd/timeout support and return {success, output, error}."""
+    """Run a shell command with cwd/timeout support.
+
+    Returns {success, output, error}.
+    """
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S602 - cmd is caller-constructed, not user input
             cmd,
             shell=True,
             capture_output=True,
             text=True,
             timeout=timeout,
             cwd=cwd,
+            check=False,
         )
         return {
             "success": result.returncode == 0,
             "output": result.stdout.strip(),
             "error": result.stderr.strip(),
         }
-    except Exception as exc:
+    # why: subprocess.run can raise many exception types; caller wants a result dict
+    except Exception as exc:  # pylint: disable=broad-exception-caught
         return {"success": False, "output": "", "error": str(exc)}
 
 
-def parse_json_output(raw: str, tag: str, source: str, logger: logging.Logger) -> Any:
+def parse_json_output(raw: str, tag: str, source: str, logger: logging.Logger) -> Any:  # noqa: ANN401 - linter output shape varies (dict/list/str)
     """Parse a linter's stdout as JSON, falling back to the raw string on failure."""
     if not raw.strip():
         return raw
@@ -166,15 +197,18 @@ def parse_json_output(raw: str, tag: str, source: str, logger: logging.Logger) -
 OUTPUT_TRUNCATE_THRESHOLD = int(os.environ.get("OUTPUT_TRUNCATE_THRESHOLD", "2000"))
 
 
-def truncate_large_output(output: Any, tool: str) -> Any:
-    """If output (as text) exceeds OUTPUT_TRUNCATE_THRESHOLD chars, save the
+def truncate_large_output(output: Any, tool: str) -> Any:  # noqa: ANN401 - passthrough str/dict/list
+    """Save output to a tmp file and return a preview dict if it's too large.
+
+    If output (as text) exceeds OUTPUT_TRUNCATE_THRESHOLD chars, save the
     full text to /tmp/<tool>-<hash>.output and return a preview dict pointing
-    to it; otherwise return output unchanged."""
+    to it; otherwise return output unchanged.
+    """
     text = output if isinstance(output, str) else json.dumps(output)
     if len(text) <= OUTPUT_TRUNCATE_THRESHOLD:
         return output
 
-    digest = hashlib.sha1(text.encode()).hexdigest()[:12]
+    digest = hashlib.sha1(text.encode()).hexdigest()[:12]  # noqa: S324 - id, not security
     out_path = Path(tempfile.gettempdir()) / f"{tool}-{digest}.output"
     out_path.write_text(text, encoding="utf-8")
 
@@ -182,13 +216,16 @@ def truncate_large_output(output: Any, tool: str) -> Any:
         "truncated": True,
         "preview": text[:OUTPUT_TRUNCATE_THRESHOLD],
         "full_output_path": str(out_path),
-        "note": f"Output truncated ({len(text)} chars total). Read full output at full_output_path if needed.",
+        "note": (
+            f"Output truncated ({len(text)} chars total). "
+            "Read full output at full_output_path if needed."
+        ),
     }
 
 
 def parse_jsonlines_output(
     raw: str, tag: str, source: str, logger: logging.Logger
-) -> Any:
+) -> Any:  # noqa: ANN401 - list of parsed JSON records or raw str fallback
     """Parse a linter's stdout as one JSON object per line (e.g. mypy --output json)."""
     lines = [line for line in raw.splitlines() if line.strip()]
     if not lines:
@@ -221,8 +258,12 @@ def _filter_jscpd_duplicates_for_file(
     duplicates = report.get("duplicates", [])
     matched = [
         {
-            "firstFile": f"{d['firstFile']['name']}:{d['firstFile']['start']}-{d['firstFile']['end']}",
-            "secondFile": f"{d['secondFile']['name']}:{d['secondFile']['start']}-{d['secondFile']['end']}",
+            "firstFile": (
+                f"{d['firstFile']['name']}:{d['firstFile']['start']}-{d['firstFile']['end']}"
+            ),
+            "secondFile": (
+                f"{d['secondFile']['name']}:{d['secondFile']['start']}-{d['secondFile']['end']}"
+            ),
             "lines": d["lines"],
         }
         for d in duplicates
@@ -236,8 +277,9 @@ def _filter_jscpd_duplicates_for_file(
 def run_jscpd(
     resolved: Path, project_root: str, logger: logging.Logger, tag: str
 ) -> dict:
-    """Run jscpd duplication check via npx over $CLAUDE_PROJECT_DIR (the repo
-    root), then filter the report down to pairs involving `resolved`. Returns
+    """Run jscpd duplication check via npx over $CLAUDE_PROJECT_DIR.
+
+    Filters the report down to pairs involving `resolved`. Returns
     {success, output, error, installed}.
 
     Scanning the fixed repo root (not `find_project_root`'s marker-based
@@ -288,14 +330,14 @@ def run_jscpd(
     }
 
 
-def run_lint_hook_main(tag: str, logger: logging.Logger, maybe_run_lint) -> None:
+def run_lint_hook_main(
+    tag: str, logger: logging.Logger, maybe_run_lint: Callable[[str | None], dict]
+) -> None:
     """Shared PostToolUse hook entrypoint: read stdin, run lint checks, emit output."""
     max_stdin = 1024 * 1024  # 1 MB
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(max_stdin)
-    except OSError:
-        pass
 
     output_data = stdin_data
     try:
@@ -312,7 +354,7 @@ def run_lint_hook_main(tag: str, logger: logging.Logger, maybe_run_lint) -> None
     sys.exit(0)
 
 
-def minify_json(data: Any) -> str:
+def minify_json(data: Any) -> str:  # noqa: ANN401 - any JSON-serializable value
     """Serialize with no extra whitespace (compact separators)."""
     return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
 
@@ -323,10 +365,12 @@ _TABLE_SEP_CELL_RE = re.compile(r"^:?-+:?$")
 
 
 def minify_markdown(text: str) -> str:
-    """Collapse blank-line runs, trailing whitespace, and inner padding
-    (table/column alignment, tree-style spacing) in prose. LLMs read
+    """Collapse blank-line runs, trailing whitespace, and inner padding in prose.
+
+    Covers table/column alignment and tree-style spacing. LLMs read
     tokens, not columns, so visual alignment costs tokens for nothing.
-    Leading indentation is preserved everywhere (meaningful in code)."""
+    Leading indentation is preserved everywhere (meaningful in code).
+    """
     lines = text.splitlines()
     out: list[str] = []
     in_code_fence = False
@@ -374,6 +418,7 @@ def emit_lint_output(
 
 
 def escape_regexp(value: str) -> str:
+    """Escape value for use as a literal fragment in a regex pattern."""
     return re.escape(value)
 
 
@@ -410,7 +455,7 @@ _STRING_NODE_TYPES = {"string", "interpreted_string_literal", "string_fragment"}
 _ts_parser_cache: dict[str, Any] = {}
 
 
-def _get_ts_parser(lang: str):
+def _get_ts_parser(lang: str) -> Any:  # noqa: ANN401 - tree_sitter.Parser, lazily imported
     if lang in _ts_parser_cache:
         return _ts_parser_cache[lang]
     try:
@@ -425,7 +470,7 @@ def _get_ts_parser(lang: str):
     return parser
 
 
-def _collect_defs(node, out: list[str]) -> None:
+def _collect_defs(node: Any, out: list[str]) -> None:  # noqa: ANN401 - tree_sitter.Node
     if node.type in _DEF_NODE_TYPES:
         name_node = node.child_by_field_name("name")
         if name_node is not None:
@@ -434,7 +479,7 @@ def _collect_defs(node, out: list[str]) -> None:
         _collect_defs(child, out)
 
 
-def _collect_import_strings(node, out: list[str]) -> None:
+def _collect_import_strings(node: Any, out: list[str]) -> None:  # noqa: ANN401 - tree_sitter.Node
     if node.type in _STRING_NODE_TYPES and node.type != "string_fragment":
         text = node.text.decode("utf-8", errors="ignore").strip("\"'")
         if text:
@@ -444,7 +489,7 @@ def _collect_import_strings(node, out: list[str]) -> None:
         _collect_import_strings(child, out)
 
 
-def _collect_dotted_names(node, out: list[str]) -> None:
+def _collect_dotted_names(node: Any, out: list[str]) -> None:  # noqa: ANN401 - tree_sitter.Node
     if node.type == "dotted_name":
         out.append(node.text.decode("utf-8", errors="ignore"))
         return  # don't descend into a dotted_name's own identifier/./ children
@@ -452,7 +497,7 @@ def _collect_dotted_names(node, out: list[str]) -> None:
         _collect_dotted_names(child, out)
 
 
-def _collect_imports(node, out: list[str]) -> None:
+def _collect_imports(node: Any, out: list[str]) -> None:  # noqa: ANN401 - tree_sitter.Node
     if node.type == "import_from_statement":
         # python: from <dotted_name> import ... — first dotted_name is the module
         module = node.child_by_field_name("module_name")
@@ -472,10 +517,11 @@ def _collect_imports(node, out: list[str]) -> None:
 
 
 def extract_code_info(content: str, file_path: str) -> dict[str, list[str]]:
-    """Extract top-level def/class names and imported module paths from source
-    text via tree-sitter. Tolerates partial/invalid syntax (tree-sitter parses
-    incrementally and still yields well-formed sibling nodes around an error);
-    returns empty lists on unsupported extension or any parse failure.
+    """Extract top-level def/class names and imported module paths via tree-sitter.
+
+    Tolerates partial/invalid syntax (tree-sitter parses incrementally and
+    still yields well-formed sibling nodes around an error); returns empty
+    lists on unsupported extension or any parse failure.
     """
     empty: dict[str, list[str]] = {"defs": [], "imports": []}
 
@@ -542,13 +588,13 @@ def get_hooks_logger(
     name: str = "Hooks",
     log_file: str = str(Path.home() / ".claude" / "logs" / "hooks.log"),
 ) -> logging.Logger:
-    LOG_FILE = log_file
-    Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
+    """Return a DEBUG-level logger writing to log_file."""
+    Path(log_file).parent.mkdir(parents=True, exist_ok=True)
 
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
 
-    file_handler = logging.FileHandler(LOG_FILE)
+    file_handler = logging.FileHandler(log_file)
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(
         logging.Formatter("%(asctime)s [%(levelname)s]-[%(name)s]: %(message)s")
@@ -558,11 +604,11 @@ def get_hooks_logger(
 
 
 def normalize_key(key: str) -> str:
-    """
-    Normaliza:
+    """Normalize a key for comparison.
+
     - camelCase / PascalCase → snake_case
     - remove separadores inconsistentes
-    - lower case
+    - lower case.
     """
     # camelCase → snake_case
     s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", key)
@@ -572,11 +618,11 @@ def normalize_key(key: str) -> str:
     return s2.replace("-", "_").lower()
 
 
-def get_by_key(data: Mapping[str, Any], target_key: str) -> Optional[Any]:
-    """
-    Busca valor independente do formato da chave.
+def get_by_key(data: Mapping[str, Any], target_key: str) -> Any | None:  # noqa: ANN401 - value shape varies with source key
+    """Busca valor independente do formato da chave.
+
     Ex:
-        tool_input, toolInput, ToolInput, TOOL_INPUT → todos equivalentes
+        tool_input, toolInput, ToolInput, TOOL_INPUT → todos equivalentes.
     """
     target_norm = normalize_key(target_key)
 
@@ -588,8 +634,7 @@ def get_by_key(data: Mapping[str, Any], target_key: str) -> Optional[Any]:
 
 
 def project_dir(payload: Mapping[str, Any]) -> str:
-    """
-    Root dir for hook logic (config/index scans, rag-rat calls, etc).
+    """Root dir for hook logic (config/index scans, rag-rat calls, etc).
 
     Prefer $CLAUDE_PROJECT_DIR over payload cwd: the agent can `cd` mid-session,
     changing cwd, while CLAUDE_PROJECT_DIR stays pinned to the project root.
@@ -597,11 +642,12 @@ def project_dir(payload: Mapping[str, Any]) -> str:
     return os.environ.get("CLAUDE_PROJECT_DIR") or get_by_key(payload, "cwd") or "."
 
 
-def extract_query_text(payload: Mapping[str, Any]) -> Optional[str]:
-    """
-    Return text to embed/search for, from either a UserPromptSubmit
-    payload ("prompt") or a PostToolUse payload for AskUserQuestion
-    (question + selected answers from "tool_response").
+def extract_query_text(payload: Mapping[str, Any]) -> str | None:
+    """Return text to embed/search for.
+
+    Comes from either a UserPromptSubmit payload ("prompt") or a
+    PostToolUse payload for AskUserQuestion (question + selected
+    answers from "tool_response").
     """
     prompt = get_by_key(payload, "prompt")
     if prompt:
@@ -663,10 +709,10 @@ _FORMATTER_PACKAGES = {
 
 
 def find_project_root(start_dir: str) -> str:
-    """
-    Walk up from start_dir until a directory containing a known project-root
-    marker (package.json or formatter config) is found.
-    Returns start_dir as a fallback when no marker exists above it.
+    """Walk up from start_dir to the nearest directory with a project-root marker.
+
+    A marker is package.json or a formatter config. Returns start_dir as a
+    fallback when no marker exists above it.
     """
     if start_dir in _project_root_cache:
         return _project_root_cache[start_dir]
@@ -693,7 +739,7 @@ def jest_installed(project_root: str) -> bool:
 
 def tmp_project_dir(project_root: str, namespace: str) -> Path:
     """Per-project scratch dir under the OS tmp dir, keyed by project path hash."""
-    key = hashlib.sha1(project_root.encode()).hexdigest()[:12]
+    key = hashlib.sha1(project_root.encode()).hexdigest()[:12]  # noqa: S324 - id, not security
     tmp_dir = Path(tempfile.gettempdir()) / namespace / key
     tmp_dir.mkdir(parents=True, exist_ok=True)
     return tmp_dir
@@ -807,8 +853,8 @@ def find_last_coverage_dir(project_root: str) -> str:
 def spawn_background(cmd: str, cwd: str, log_path: Path) -> None:
     """Detach a shell command so it survives after the calling process exits."""
     with open(log_path, "ab") as log_file:
-        subprocess.Popen(
-            ["nohup", "bash", "-c", cmd],
+        subprocess.Popen(  # noqa: S603
+            ["nohup", "bash", "-c", cmd],  # noqa: S607 - nohup resolved via PATH
             cwd=cwd,
             stdout=log_file,
             stderr=log_file,
@@ -819,12 +865,15 @@ def spawn_background(cmd: str, cwd: str, log_path: Path) -> None:
 
 def lock_path_for(tmp_dir: Path, rel_path: str) -> Path:
     """Lockfile path for a given project-relative file, under tmp_dir/locks."""
-    key = hashlib.sha1(rel_path.encode()).hexdigest()[:16]
+    key = hashlib.sha1(rel_path.encode()).hexdigest()[:16]  # noqa: S324 - id, not security
     return tmp_dir / "locks" / f"{key}.lock"
 
 
 def acquire_lock(lock_file: Path) -> bool:
-    """Create lock_file if absent or its owning PID is dead. Returns True if acquired."""
+    """Create lock_file if absent or its owning PID is dead.
+
+    Returns True if acquired.
+    """
     lock_file.parent.mkdir(parents=True, exist_ok=True)
     if lock_file.exists():
         try:
@@ -838,27 +887,24 @@ def acquire_lock(lock_file: Path) -> bool:
 
 
 def release_lock(lock_file: Path) -> None:
-    try:
+    """Remove lock_file, ignoring errors if it's already gone."""
+    with contextlib.suppress(OSError):
         lock_file.unlink()
-    except OSError:
-        pass
 
 
 def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
-    """
-    Detect the formatter configured in the project.
-    Biome takes priority over Prettier.
-    Returns 'biome', 'prettier', or None.
+    """Detect the formatter configured in the project.
+
+    Biome takes priority over Prettier. Returns 'biome', 'prettier', or None.
     """
     if project_root in _formatter_cache:
-        logger.debug(
-            f"[detect_formatter] Cache hit for {project_root}: {_formatter_cache[project_root]}"
-        )
-        return _formatter_cache[project_root]
+        cached = _formatter_cache[project_root]
+        logger.debug("[detect_formatter] Cache hit for %s: %s", project_root, cached)
+        return cached
 
     root = Path(project_root)
     logger.debug(
-        f"[detect_formatter] Detecting formatter for {project_root} with root {root}"
+        "[detect_formatter] Detecting formatter for %s with root %s", project_root, root
     )
 
     # Biome config files take top priority
@@ -866,20 +912,22 @@ def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
         if (root / cfg).exists():
             _formatter_cache[project_root] = "biome"
             logger.debug(
-                f"[detect_formatter] Detected Biome config for {project_root}: {cfg}"
+                "[detect_formatter] Detected Biome config for %s: %s", project_root, cfg
             )
             return "biome"
 
     # package.json "prettier" key before standalone config files
     pkg_path = root / "package.json"
-    logger.debug(f"[detect_formatter] Checking for package.json at {pkg_path}")
+    logger.debug("[detect_formatter] Checking for package.json at %s", pkg_path)
     if pkg_path.exists():
         try:
             pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
             if "prettier" in pkg:
                 _formatter_cache[project_root] = "prettier"
                 logger.debug(
-                    f"[detect_formatter] Detected Prettier config in package.json for {project_root}"
+                    "[detect_formatter] Detected Prettier config in package.json"
+                    " for %s",
+                    project_root,
                 )
                 return "prettier"
         except (json.JSONDecodeError, OSError):
@@ -889,19 +937,21 @@ def detect_formatter(project_root: str, logger: logging.Logger) -> str | None:
         if (root / cfg).exists():
             _formatter_cache[project_root] = "prettier"
             logger.debug(
-                f"[detect_formatter] Detected Prettier config file for {project_root}: {cfg}"
+                "[detect_formatter] Detected Prettier config file for %s: %s",
+                project_root,
+                cfg,
             )
             return "prettier"
 
     _formatter_cache[project_root] = None
-    logger.debug(f"[detect_formatter] No formatter detected for {project_root}")
+    logger.debug("[detect_formatter] No formatter detected for %s", project_root)
     return None
 
 
 def _get_runner_from_package_manager(project_root: str) -> dict:
-    """
-    Resolve the runner binary and prefix args for the configured package
-    manager. Respects the CLAUDE_PACKAGE_MANAGER env var; falls back to npx.
+    """Resolve the runner binary and prefix args for the configured package manager.
+
+    Respects the CLAUDE_PACKAGE_MANAGER env var; falls back to npx.
     """
     is_win = sys.platform == "win32"
 
@@ -937,23 +987,20 @@ def _get_runner_from_package_manager(project_root: str) -> dict:
 def resolve_formatter_bin(
     project_root: str, formatter: str, logger: logging.Logger
 ) -> dict | None:
-    """
-    Resolve the formatter binary, preferring the local node_modules/.bin
-    installation over the package-manager exec command.
+    """Resolve the formatter binary, preferring node_modules/.bin over the exec command.
 
     Returns {"bin": str, "prefix": list[str]} or None.
     """
     cache_key = f"{project_root}:{formatter}"
     if cache_key in _bin_cache:
-        logger.debug(
-            f"[resolve_formatter_bin] Cache hit for {cache_key}: {_bin_cache[cache_key]}"
-        )
-        return _bin_cache[cache_key]
+        cached = _bin_cache[cache_key]
+        logger.debug("[resolve_formatter_bin] Cache hit for %s: %s", cache_key, cached)
+        return cached
 
     pkg = _FORMATTER_PACKAGES.get(formatter)
     if not pkg:
         logger.debug(
-            f"[resolve_formatter_bin] No package info for formatter '{formatter}'"
+            "[resolve_formatter_bin] No package info for formatter '%s'", formatter
         )
         _bin_cache[cache_key] = None
         return None
@@ -966,7 +1013,9 @@ def resolve_formatter_bin(
         result = {"bin": str(local_bin), "prefix": []}
         _bin_cache[cache_key] = result
         logger.debug(
-            f"[resolve_formatter_bin] Found local binary for {formatter} at {local_bin}"
+            "[resolve_formatter_bin] Found local binary for %s at %s",
+            formatter,
+            local_bin,
         )
         return result
 
@@ -974,7 +1023,9 @@ def resolve_formatter_bin(
     result = {"bin": runner["bin"], "prefix": [*runner["prefix"], pkg["pkg_name"]]}
     _bin_cache[cache_key] = result
     logger.debug(
-        f"[resolve_formatter_bin] Using package manager runner for {formatter}: {result}"
+        "[resolve_formatter_bin] Using package manager runner for %s: %s",
+        formatter,
+        result,
     )
     return result
 
@@ -985,6 +1036,7 @@ def resolve_formatter_bin(
 
 
 def is_rag_rat_available(cwd: str) -> bool:
+    """Return True if the rag-rat binary and a rag-rat.toml exist for cwd."""
     return shutil.which("rag-rat") is not None and (Path(cwd) / "rag-rat.toml").exists()
 
 
@@ -996,10 +1048,12 @@ def call_rag_rat_tool(
     timeout: int = 15,
 ) -> str | None:
     """Call one rag-rat MCP tool via a throwaway `rag-rat mcp` subprocess.
-    Returns the first content block's text, or None on any failure."""
+
+    Returns the first content block's text, or None on any failure.
+    """
     try:
         proc = subprocess.Popen(
-            ["rag-rat", "mcp"],
+            ["rag-rat", "mcp"],  # noqa: S607 - rag-rat resolved via PATH by design
             cwd=cwd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
@@ -1057,15 +1111,17 @@ def call_rag_rat_tool(
 
 
 def _rag_rat_send(proc: subprocess.Popen, msg: dict) -> None:
-    assert proc.stdin is not None
+    """Write one JSON-RPC message to proc's stdin, newline-terminated."""
+    assert proc.stdin is not None  # noqa: S101 - invariant: proc opened with stdin=PIPE
     proc.stdin.write(json.dumps(msg) + "\n")
     proc.stdin.flush()
 
 
 def _rag_rat_recv(proc: subprocess.Popen, timeout: int) -> dict:
+    """Read and parse one JSON-RPC response line from proc's stdout."""
     import select
 
-    assert proc.stdout is not None
+    assert proc.stdout is not None  # noqa: S101 - invariant: proc opened with stdout=PIPE
     ready, _, _ = select.select([proc.stdout], [], [], timeout)
     if not ready:
         raise TimeoutError("no response from rag-rat mcp")
@@ -1076,15 +1132,18 @@ def _rag_rat_recv(proc: subprocess.Popen, timeout: int) -> dict:
     return json.loads(line)
 
 
-def rgb_to_ansi(r, g, b):
+def rgb_to_ansi(r: int, g: int, b: int) -> str:
+    """Return the ANSI 24-bit foreground color escape sequence for r,g,b."""
     return f"\033[38;2;{r};{g};{b}m"
 
 
-def colorize_json(payload, indent: int = 0) -> str:
+_JSON_KEY_COLOR = "\033[36m"
+_JSON_VALUE_COLOR = "\033[32m"
+_JSON_RESET = "\033[0m"
+
+
+def colorize_json(payload: Any, indent: int = 0) -> str:  # noqa: ANN401 - any JSON value
     """Dump JSON with ANSI-colored keys and values (recursive, no regex)."""
-    _KEY_COLOR = "\033[36m"  # cyan
-    _VALUE_COLOR = "\033[32m"  # green
-    _RESET = "\033[0m"
     pad = "  " * indent
     child_pad = "  " * (indent + 1)
 
@@ -1093,7 +1152,7 @@ def colorize_json(payload, indent: int = 0) -> str:
             return "{}"
         items = []
         for key, value in payload.items():
-            key_str = f"{_KEY_COLOR}{json.dumps(key)}{_RESET}"
+            key_str = f"{_JSON_KEY_COLOR}{json.dumps(key)}{_JSON_RESET}"
             value_str = colorize_json(value, indent + 1)
             items.append(f"{child_pad}{key_str}: {value_str}")
         return "{\n" + ",\n".join(items) + "\n" + pad + "}"
@@ -1104,7 +1163,7 @@ def colorize_json(payload, indent: int = 0) -> str:
         items = [f"{child_pad}{colorize_json(v, indent + 1)}" for v in payload]
         return "[\n" + ",\n".join(items) + "\n" + pad + "]"
 
-    return f"{_VALUE_COLOR}{json.dumps(payload)}{_RESET}"
+    return f"{_JSON_VALUE_COLOR}{json.dumps(payload)}{_JSON_RESET}"
 
 
 # ---------------------------------------------------------------------------
@@ -1122,8 +1181,10 @@ _FRONTMATTER_RE = re.compile(r"\A---\s*\n.*?\n---\s*\n?", re.DOTALL)
 
 
 def resolve_command_text(text: str, project_dir: Path) -> str | None:
-    """If text is a /command invocation matching commands/<name>.md, return
-    the file's body (frontmatter stripped) as embeddable text. Else None.
+    """Resolve a /command invocation to its embeddable body, or None.
+
+    If text matches commands/<name>.md, returns the file's body
+    (frontmatter stripped) as embeddable text. Else None.
 
     Raw slash-command tokens (e.g. "/create-commit.prompt") embed poorly —
     they read as a filename, not the instruction the command actually runs —
@@ -1179,17 +1240,16 @@ def strip_heredocs(command: str) -> str:
 
 
 def _demo_truncate_large_output() -> None:
-    """Self-check for truncate_large_output. Run: python3 utils.py"""
+    """Self-check for truncate_large_output. Run: python3 utils.py."""
     small = "ok"
-    assert truncate_large_output(small, "demo") == small
+    assert truncate_large_output(small, "demo") == small  # noqa: S101 - self-check, not prod code
 
     big = "x" * (OUTPUT_TRUNCATE_THRESHOLD + 1)
     result = truncate_large_output(big, "demo")
-    assert isinstance(result, dict) and result["truncated"] is True
+    assert isinstance(result, dict) and result["truncated"] is True  # noqa: S101
     saved = Path(result["full_output_path"])
-    assert saved.read_text(encoding="utf-8") == big
+    assert saved.read_text(encoding="utf-8") == big  # noqa: S101
     saved.unlink()
-    print("truncate_large_output: OK")
 
 
 def split_on_operators(command: str, protect_exec: bool = False) -> list[str]:
