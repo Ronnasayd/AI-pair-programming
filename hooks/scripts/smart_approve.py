@@ -46,25 +46,38 @@ PERMISSIONS: dict[str, list[str]] = {
 }
 
 
-def load_settings(path=None):
-    """Load and return the permissions dict from settings.json."""
+def load_settings(path: str | None = None) -> dict:
+    """Load and return the permissions dict from settings.json.
+
+    Args:
+        path: Optional path to settings.json. Defaults to ~/.claude/settings.json.
+
+    Returns:
+        dict: The loaded settings dictionary, or empty dict if file not found.
+    """
     if path is None:
         path = os.path.expanduser("~/.claude/settings.json")
     path = os.path.expanduser(path)
     try:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
 
 
-def load_merged_settings(global_path=None):
+def load_merged_settings(global_path: str | None = None) -> dict:
     """Load and merge all settings layers matching Claude Code's behavior.
 
     Loads up to three sources and merges their permissions.allow/deny arrays:
       1. Global:        ~/.claude/settings.json (or $CLAUDE_SETTINGS_PATH)
       2. Project:       $CLAUDE_PROJECT_DIR/.claude/settings.json (committed)
       3. Project-local: $CLAUDE_PROJECT_DIR/.claude/settings.local.json (gitignored)
+
+    Args:
+        global_path: Optional override path for the global settings file.
+
+    Returns:
+        dict: Merged settings with deduplicated permission patterns.
     """
     settings = load_settings(global_path)
 
@@ -118,7 +131,7 @@ def load_merged_settings(global_path=None):
     return _merge_custom_permissions(settings)
 
 
-def _merge_custom_permissions(settings):
+def _merge_custom_permissions(settings: dict) -> dict:
     """Merge the hardcoded PERMISSIONS dict into settings.permissions.
 
     Custom patterns are appended after the settings-file patterns
@@ -133,7 +146,7 @@ def _merge_custom_permissions(settings):
     return settings
 
 
-def parse_bash_patterns(patterns):
+def parse_bash_patterns(patterns: list[str]) -> list[tuple[str, str]]:
     """Extract command prefixes from Bash(...) permission patterns.
 
     "Bash(git status:*)" -> "git status"
@@ -142,6 +155,12 @@ def parse_bash_patterns(patterns):
 
     Returns a list of (prefix_string, glob_pattern) tuples.
     The glob_pattern is what fnmatch should match against.
+
+    Args:
+        patterns: List of permission pattern strings.
+
+    Returns:
+        list[tuple[str, str]]: List of (prefix, glob_pattern) tuples.
     """
     result = []
     for pat in patterns:
@@ -165,13 +184,20 @@ def parse_bash_patterns(patterns):
     return result
 
 
-def command_matches_pattern(cmd, patterns):
+def command_matches_pattern(cmd: str, patterns: list[tuple[str, str]]) -> bool:
     """Check if a command matches any of the parsed Bash patterns.
 
     Each pattern is (prefix, glob_pattern).
     A command matches if:
       - It equals the prefix exactly (bare command, no args), OR
       - fnmatch(cmd, glob_pattern) is True
+
+    Args:
+        cmd: The command string to check.
+        patterns: List of (prefix, glob_pattern) tuples.
+
+    Returns:
+        bool: True if command matches any pattern, False otherwise.
     """
     for prefix, glob_pat in patterns:
         if cmd == prefix:
@@ -181,10 +207,14 @@ def command_matches_pattern(cmd, patterns):
     return False
 
 
-def extract_subshells(command):
+def extract_subshells(command: str) -> list[str]:
     """Extract contents of $() and backtick subshells, recursively.
 
-    Returns a list of subshell content strings.
+    Args:
+        command: The command string to extract subshells from.
+
+    Returns:
+        list[str]: List of subshell content strings.
     """
     subshells = []
 
@@ -229,7 +259,7 @@ def extract_subshells(command):
     return subshells
 
 
-def _skip_shell_value(cmd, i):
+def _skip_shell_value(cmd: str, i: int) -> int:
     """Skip past one shell 'word' value starting at position i.
 
     Handles quoted strings, $() subshells (tracking paren depth), and
@@ -282,11 +312,17 @@ def _skip_shell_value(cmd, i):
     return i
 
 
-def strip_env_vars(cmd):
+def strip_env_vars(cmd: str) -> str:
     """Strip leading environment variable assignments (FOO=bar cmd ...).
 
     Returns the command with env var prefixes removed.
     Correctly handles values containing $() subshells.
+
+    Args:
+        cmd: The command string to process.
+
+    Returns:
+        str: Command with environment variable assignments stripped.
     """
     while True:
         m = re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", cmd)
@@ -302,10 +338,16 @@ def strip_env_vars(cmd):
     return cmd
 
 
-def strip_redirections(cmd):
+def strip_redirections(cmd: str) -> str:
     """Strip output/input redirections from a command.
 
     Removes patterns like >file, >>file, 2>&1, <file, etc.
+
+    Args:
+        cmd: The command string to process.
+
+    Returns:
+        str: Command with redirections removed and stripped.
     """
     # Remove redirections: N>file, N>>file, N>&N, <file, <<word, <<<word
     cmd = re.sub(r"\d*>>?\s*&?\d*\S*", "", cmd)
@@ -342,11 +384,17 @@ _KEYWORD_PREFIX_RE = re.compile(r"^(do|then|else|elif)\s+")
 _COMPOUND_HEADER_RE = re.compile(r"^(for|while|until|if|case|select)\b")
 
 
-def strip_keyword_prefix(cmd):
+def strip_keyword_prefix(cmd: str) -> str:
     """Strip leading shell keyword prefix from a command.
 
     "do echo hello" -> "echo hello"
     "then git status" -> "git status"
+
+    Args:
+        cmd: The command string to process.
+
+    Returns:
+        str: Command with keyword prefix removed.
     """
     m = _KEYWORD_PREFIX_RE.match(cmd)
     if m:
@@ -354,20 +402,31 @@ def strip_keyword_prefix(cmd):
     return cmd
 
 
-def is_shell_structural(cmd):
-    """Return True if cmd is a shell keyword or compound-statement header."""
+def is_shell_structural(cmd: str) -> bool:
+    """Return True if cmd is a shell keyword or compound-statement header.
+
+    Args:
+        cmd: The command string to check.
+
+    Returns:
+        bool: True if cmd is a shell keyword or compound statement, False otherwise.
+    """
     if cmd in SHELL_KEYWORDS:
         return True
-    if _COMPOUND_HEADER_RE.match(cmd):
-        return True
-    return False
+    return bool(_COMPOUND_HEADER_RE.match(cmd))
 
 
-def is_standalone_assignment(cmd):
+def is_standalone_assignment(cmd: str) -> bool:
     """Return True if cmd is purely a variable assignment (no following command).
 
     e.g. "result=$(curl ...)" or "FOO=bar" — these are not commands to check.
     The subshell contents, if any, are extracted and checked separately.
+
+    Args:
+        cmd: The command string to check.
+
+    Returns:
+        bool: True if cmd is a standalone assignment, False otherwise.
     """
     m = re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", cmd)
     if not m:
@@ -378,11 +437,17 @@ def is_standalone_assignment(cmd):
     return rest == ""
 
 
-def strip_rtk_prefix(cmd):
+def strip_rtk_prefix(cmd: str) -> str:
     """Strip a leading 'rtk ' proxy prefix so 'rtk git status' matches 'git status'.
 
     'rtk proxy <cmd>' also unwraps to '<cmd>'. Bare 'rtk' (meta command like
     'rtk gain') is left untouched.
+
+    Args:
+        cmd: The command string to process.
+
+    Returns:
+        str: Command with rtk proxy prefix removed.
     """
     m = re.match(r"^rtk\s+(?:proxy\s+)?(\S.*)$", cmd)
     if m:
@@ -390,8 +455,15 @@ def strip_rtk_prefix(cmd):
     return cmd
 
 
-def normalize_command(cmd):
-    """Normalize a command by stripping env vars, redirections, and whitespace."""
+def normalize_command(cmd: str) -> str:
+    """Normalize a command by stripping env vars, redirections, and whitespace.
+
+    Args:
+        cmd: The command string to normalize.
+
+    Returns:
+        str: Normalized command string.
+    """
     cmd = cmd.strip()
     if not cmd:
         return cmd
@@ -404,14 +476,19 @@ def normalize_command(cmd):
     return cmd.strip()
 
 
-def decompose_command(command):
+def decompose_command(command: str) -> list[str]:
     """Decompose a compound command into all individual sub-commands.
 
     Splits on operators, extracts subshell contents, normalizes each.
     Filters out shell structural keywords (for/do/done/etc.) and
     standalone variable assignments (whose subshell contents are checked
     separately).
-    Returns a list of normalized command strings.
+
+    Args:
+        command: The compound command string to decompose.
+
+    Returns:
+        list[str]: List of normalized command strings.
     """
     all_commands = []
 
@@ -441,7 +518,9 @@ def decompose_command(command):
     ]
 
 
-def decide(command, settings, bypass_permissions=False):
+def decide(
+    command: str, settings: dict, bypass_permissions: bool = False
+) -> tuple[str | None, str | None]:
     """Make a permission decision for a compound command.
 
     Sub-commands are normalized (which strips any leading ``rtk`` proxy
@@ -452,11 +531,14 @@ def decide(command, settings, bypass_permissions=False):
     "bypassPermissions"), an "ask" decision is promoted to "allow";
     "deny" is still honored.
 
+    Args:
+        command: The command string to check.
+        settings: Dictionary containing permissions configuration.
+        bypass_permissions: Whether to promote "ask" decisions to "allow".
+
     Returns:
-        ("allow", reason) if all sub-commands match allow patterns
-        ("deny", reason) if any sub-command matches a deny pattern
-        ("ask", reason) if any sub-command matches an ask pattern
-        (None, None) if we should fall through to normal prompting
+        tuple[str | None, str | None]: (decision, reason) tuple, where decision is
+            "allow", "deny", "ask", or None; reason is the explanation or None.
     """
     if not command or not command.strip():
         return None, None
@@ -500,10 +582,10 @@ def decide(command, settings, bypass_permissions=False):
     return None, None
 
 
-_log_lines = []
+_log_lines: list[str] = []
 
 
-def _verbose_enabled():
+def _verbose_enabled() -> bool:
     """Check if verbose logging is enabled.
 
     Controlled by SMART_APPROVE_VERBOSE env var:
@@ -513,13 +595,17 @@ def _verbose_enabled():
     return os.environ.get("SMART_APPROVE_VERBOSE", "").lower() in ("1", "true", "yes")
 
 
-def log(msg):
-    """Collect verbose log line when enabled."""
+def log(msg: str) -> None:
+    """Collect verbose log line when enabled.
+
+    Args:
+        msg: The log message to collect.
+    """
     if _verbose_enabled():
         _log_lines.append(msg)
 
 
-def _build_reason(reason):
+def _build_reason(reason: str | None) -> str | None:
     """Build the permissionDecisionReason, appending verbose logs if any."""
     if not _log_lines:
         return reason
@@ -529,7 +615,8 @@ def _build_reason(reason):
     return verbose
 
 
-def main():
+def main() -> None:
+    """Read hook input from stdin and emit a PreToolUse permission decision."""
     try:
         input_data = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError):

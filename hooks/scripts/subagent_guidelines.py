@@ -2,11 +2,11 @@
 """PreToolUse hook: inject guidelines when a subagent is started."""
 
 import json
-import sys
 from pathlib import Path
+import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger, minify_markdown  # noqa: E402
+from utils import get_by_key, get_hooks_logger, minify_markdown
 
 LOG = get_hooks_logger("SubagentGuidelines")
 
@@ -22,10 +22,11 @@ AGENT_TOOL_NAMES = {"agent", "task"}
 
 
 def main() -> None:
+    """Execute the subagent guidelines hook."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse JSON: {e}")
+        LOG.debug("Failed to parse JSON: %s", e)
         sys.exit(0)
 
     tool_name = get_by_key(payload, "tool_name")
@@ -38,8 +39,8 @@ def main() -> None:
             "additionalContext": minify_markdown(GUIDELINES),
         }
     }
-    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
+    LOG.info("%s", json.dumps(output, ensure_ascii=False))
     sys.exit(0)
 
 

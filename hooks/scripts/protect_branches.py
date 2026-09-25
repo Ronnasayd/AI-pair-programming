@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""protect_branches.py
+"""protect_branches.py.
 
 Deny git operations that would mutate a protected branch (main, master,
 develop, homolog, ...) without the user going through a normal PR flow.
@@ -26,7 +26,11 @@ DEFAULT_PROTECTED_BRANCHES = {"main", "master", "develop", "homolog"}
 
 
 def get_protected_branches() -> set[str]:
-    """PROTECTED_BRANCHES env var overrides the default list (comma-separated)."""
+    """PROTECTED_BRANCHES env var overrides the default list (comma-separated).
+
+    Returns:
+        Set of protected branch names
+    """
     override = os.environ.get("PROTECTED_BRANCHES", "").strip()
     if not override:
         return DEFAULT_PROTECTED_BRANCHES
@@ -41,21 +45,34 @@ DESTRUCTIVE_PUSH_FLAGS = {"-f", "--force", "--force-with-lease", "--force-if-inc
 
 
 def current_branch() -> str | None:
+    """Get the current git branch name.
+
+    Returns:
+        Current branch name or None if not in a git repo or on error.
+    """
     try:
         result = subprocess.run(
             ["git", "-C", PROJECT_ROOT, "branch", "--show-current"],
             capture_output=True,
             text=True,
             timeout=5,
+            check=False,
         )
         branch = result.stdout.strip()
         return branch or None
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         return None
 
 
 def deny(command: str, reason: str, branch: str) -> None:
-    print(
+    """Write deny decision to stderr and exit with code 2.
+
+    Args:
+        command: Git command that was denied.
+        reason: Reason for the denial.
+        branch: Protected branch name involved in the operation.
+    """
+    print(  # noqa: T201
         json.dumps(
             {
                 "decision": "deny",
@@ -66,16 +83,28 @@ def deny(command: str, reason: str, branch: str) -> None:
         ),
         file=sys.stderr,
     )
-    logger.debug(f"Denied '{command}' — {reason} on branch '{branch}'")
+    logger.debug("Denied '%s' — %s on branch '%s'", command, reason, branch)
     sys.exit(2)
 
 
 def strip_flags(tokens: list[str]) -> list[str]:
+    """Remove command-line flags from token list.
+
+    Args:
+        tokens: List of command tokens.
+
+    Returns:
+        Tokens with flags (starting with -) removed.
+    """
     return [t for t in tokens if not t.startswith("-")]
 
 
 def check_git_segment(tokens: list[str]) -> None:
-    """Inspect one tokenized `git ...` command for protected-branch operations."""
+    """Inspect one tokenized `git ...` command for protected-branch operations.
+
+    Args:
+        tokens: Tokenized command.
+    """
     if not tokens or os.path.basename(tokens[0]) != "git":
         return
 
@@ -169,10 +198,11 @@ def check_git_segment(tokens: list[str]) -> None:
 
 
 def main() -> None:
+    """Parse hook payload and check git commands for protected-branch violations."""
     try:
         payload = json.load(sys.stdin)
     except json.JSONDecodeError as e:
-        logger.debug(f"Invalid JSON: {e}")
+        logger.debug("Invalid JSON: %s", e)
         sys.exit(1)
 
     tool_input = get_by_key(payload, "tool_input")

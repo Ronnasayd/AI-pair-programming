@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Structural-Clone-Ref Hook (POC)
+"""Structural-Clone-Ref Hook (POC).
 
 PostToolUse hook for Edit|Write. After a source file is written, extracts
 its top-level def/class names and asks rag-rat's clones_for_symbol whether
@@ -13,13 +12,14 @@ edit. Requires a rag-rat index; the caller (claude/settings.json) gates
 execution on `rag-rat` being installed and `rag-rat.toml` existing.
 """
 
+import contextlib
 import csv
 import io
 import json
 import os
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -52,9 +52,17 @@ MEMBERS_BLOCK_RE = re.compile(
 
 
 def parse_members(text: str) -> list[tuple[str, str, str, str]]:
-    """Parse the `members[N]{ref,path,start_line,end_line,...}:` CSV block
-    from a clones_for_symbol response into (ref, path, start_line, end_line)
-    tuples."""
+    """Parse the `members[N]{ref,path,start_line,end_line,...}:` CSV block.
+
+    Parses a clones_for_symbol response into (ref, path, start_line, end_line)
+    tuples.
+
+    Args:
+        text: CSV block response text to parse.
+
+    Returns:
+        List of (ref, path, start_line, end_line) tuples.
+    """
     block_m = MEMBERS_BLOCK_RE.search(text)
     if not block_m:
         return []
@@ -77,9 +85,20 @@ def parse_members(text: str) -> list[tuple[str, str, str, str]]:
 def clone_block_for_def(
     def_name: str, rel_path: str, target_file: str, cwd: str
 ) -> str | None:
-    """Query clones_for_symbol for one def/class name; returns a formatted
-    block listing the OTHER members of its clone class, or None if it's not
-    part of one."""
+    """Query clones_for_symbol for one def/class name.
+
+    Returns a formatted block listing the OTHER members of its clone class,
+    or None if it's not part of one.
+
+    Args:
+        def_name: Name of the definition or class to query.
+        rel_path: Relative path to the source file.
+        target_file: Absolute path to the target file.
+        cwd: Current working directory (project root).
+
+    Returns:
+        Formatted block with clone members, or None if not part of a clone class.
+    """
     ref = f"{rel_path}::{def_name}"
     text = call_rag_rat_tool(
         "clones_for_symbol",
@@ -103,6 +122,17 @@ def clone_block_for_def(
 
 
 def build_context(content: str, target_file: str, rel_path: str, cwd: str) -> str:
+    """Build context string with clone block references.
+
+    Args:
+        content: Source file content.
+        target_file: Absolute path to the target file.
+        rel_path: Relative path to the source file.
+        cwd: Current working directory (project root).
+
+    Returns:
+        Formatted string with clone blocks, or empty string if none found.
+    """
     if not is_rag_rat_available(cwd):
         logger.debug("rag-rat not available (binary or rag-rat.toml missing)")
         return ""
@@ -133,11 +163,10 @@ def build_context(content: str, target_file: str, rel_path: str, cwd: str) -> st
 
 
 def main() -> None:
+    """Main entry point for the structural clone ref hook."""
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(MAX_STDIN)
-    except OSError:
-        pass
 
     try:
         data = json.loads(stdin_data)
@@ -195,8 +224,8 @@ def main() -> None:
                 }
             }
         )
-        logger.debug(f"[additionalContext]: {output}")
-        print(output)
+        logger.debug("[additionalContext]: %s", output)
+        print(output)  # noqa: T201
     else:
         logger.debug("no clone context found, emitting nothing")
 
@@ -206,6 +235,6 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception as exc:
+    except (OSError, json.JSONDecodeError) as exc:
         logger.debug("Error: %s", exc, exc_info=True)
         sys.exit(0)

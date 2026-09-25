@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""
-Semantic-Similar-Refs Hook (POC)
+"""Semantic-Similar-Refs Hook (POC).
 
 PreToolUse hook for Edit|Write. Queries rag-rat's semantic_search with the
 content about to be written and surfaces similar existing code, so the agent
@@ -9,11 +8,12 @@ doesn't duplicate what's already there. Requires a rag-rat index; the caller
 script additionally requires a `rag-rat.toml` in cwd — no other fallback.
 """
 
+import contextlib
 import json
 import os
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -36,7 +36,7 @@ SEMANTIC_SEARCH_TIMEOUT = 10
 
 SOURCE_EXTS = {".py", ".ts", ".tsx", ".js", ".jsx", ".go"}
 
-# Each hit is a "  - chunk_id: ...\n    path: ...\n    ...\n    summary: \"...\"\n" block.
+# Each hit is a "  - chunk_id: ...\n    path: ...\n" block (with summary).
 PATH_RE = re.compile(r'^\s*path:\s*"?([^"\n]+)"?', re.MULTILINE)
 SUMMARY_RE = re.compile(r'^\s*summary:\s*"(.*?)"\s*$', re.MULTILINE)
 
@@ -45,7 +45,15 @@ def semantic_search_blocks(
     content: str, target_file: str, cwd: str
 ) -> list[str] | None:
     """Query rag-rat's semantic_search with the new code as the query text.
-    Returns formatted blocks, or None if rag-rat errors."""
+
+    Args:
+        content: The source code to query.
+        target_file: The file being edited (excluded from results).
+        cwd: Current working directory for rag-rat execution.
+
+    Returns:
+        Formatted blocks of similar code, or None if rag-rat errors.
+    """
     query = content[:MAX_EMBED_CHARS]
     text = call_rag_rat_tool(
         "semantic_search",
@@ -76,6 +84,16 @@ def semantic_search_blocks(
 
 
 def build_context(content: str, target_file: str, cwd: str) -> str:
+    """Build semantic context from similar code in the repository.
+
+    Args:
+        content: The source code to find similar code for.
+        target_file: The file being edited (excluded from results).
+        cwd: Current working directory for rag-rat execution.
+
+    Returns:
+        Formatted string of similar code blocks, or empty string if none found.
+    """
     if not is_rag_rat_available(cwd):
         logger.debug("rag-rat not available (binary or rag-rat.toml missing)")
         return ""
@@ -90,11 +108,10 @@ def build_context(content: str, target_file: str, cwd: str) -> str:
 
 
 def main() -> None:
+    """Main entry point for PreToolUse hook."""
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(MAX_STDIN)
-    except OSError:
-        pass
 
     try:
         data = json.loads(stdin_data)
@@ -136,8 +153,8 @@ def main() -> None:
                 }
             }
         )
-        logger.debug(f"[additionalContext]: {output}")
-        print(output)
+        logger.debug("[additionalContext]: %s", output)
+        print(output)  # noqa: T201
     else:
         logger.debug("no context found, emitting nothing")
 
@@ -147,6 +164,6 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception as exc:
+    except (OSError, ValueError, KeyError) as exc:
         logger.debug("Error: %s", exc, exc_info=True)
         sys.exit(0)

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# worktree_init.py — symlink node_modules from main repo into new worktree
+"""Symlink node_modules from main repo into new worktree."""
 
 import json
 import os
@@ -18,13 +18,22 @@ LOCKFILES = ("package-lock.json", "pnpm-lock.yaml", "yarn.lock")
 
 
 def git_common_dir(cwd: str) -> str | None:
+    """Get git common directory for the given working directory.
+
+    Args:
+        cwd: Working directory to query for git common directory.
+
+    Returns:
+        str | None: Absolute path to git common directory, or None on error.
+    """
     try:
         result = subprocess.run(
-            ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            ["/usr/bin/git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
             cwd=cwd,
             capture_output=True,
             text=True,
             timeout=10,
+            check=False,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         LOG.warning("git rev-parse failed: %s", exc)
@@ -38,6 +47,14 @@ def git_common_dir(cwd: str) -> str | None:
 
 
 def find_lockfile(root: str) -> str | None:
+    """Find a Node.js lockfile in the given directory.
+
+    Args:
+        root: Directory to search for lockfiles.
+
+    Returns:
+        str | None: Path to the first matching lockfile, or None if not found.
+    """
     for name in LOCKFILES:
         path = os.path.join(root, name)
         if os.path.isfile(path):
@@ -45,7 +62,8 @@ def find_lockfile(root: str) -> str | None:
     return None
 
 
-def main():
+def main() -> None:
+    """Initialize worktree by symlinking node_modules and checking lockfiles."""
     try:
         payload = json.load(sys.stdin)
     except json.JSONDecodeError:
@@ -95,9 +113,13 @@ def main():
     worktree_lock = find_lockfile(worktree_path)
     if main_lock and worktree_lock:
         try:
+            with open(main_lock, "rb") as f_main:
+                main_content = f_main.read()
+            with open(worktree_lock, "rb") as f_worktree:
+                worktree_content = f_worktree.read()
             same = (
                 os.path.basename(main_lock) == os.path.basename(worktree_lock)
-                and open(main_lock, "rb").read() == open(worktree_lock, "rb").read()
+                and main_content == worktree_content
             )
         except OSError:
             same = True  # não bloqueia em erro de leitura

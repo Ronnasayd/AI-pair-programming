@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-# start_memory_rules.py
-# SessionStart hook: inject a list of durable ai-memory pages (rules, feedback,
-# gotchas, procedures) so the agent knows what permanent memory exists without
-# having to query for it.
+"""SessionStart hook: inject durable ai-memory pages at session start."""
 
 import json
 import os
@@ -27,28 +24,36 @@ FTS_QUERY = "rules OR rule OR feedback OR gotcha OR gotchas OR procedure OR proc
 LIMIT = "60"
 
 
-def fetch_pages():
+def fetch_pages() -> list[tuple[str, str]]:
+    """Fetch durable memory pages from ai-memory CLI.
+
+    Returns:
+        List of (path, title) tuples for durable pages matching prefixes.
+    """
     env = {**os.environ, "AI_MEMORY_PROJECT_STRATEGY": "repo-root"}
     try:
-        proc = subprocess.run(
-            ["ai-memory", "search", FTS_QUERY, "--json", "-n", LIMIT],
+        proc = subprocess.run(  # noqa: S603
+            ["ai-memory", "search", FTS_QUERY, "--json", "-n", LIMIT],  # noqa: S607
             capture_output=True,
             text=True,
             timeout=15,
             env=env,
+            check=False,
         )
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
-        LOG.debug(f"[fetch_pages] ai-memory unavailable: {exc!r}")
+        LOG.debug("[fetch_pages] ai-memory unavailable: %r", exc)
         return []
     if proc.returncode != 0:
         LOG.debug(
-            f"[fetch_pages] ai-memory exit {proc.returncode}: {proc.stderr.strip()}"
+            "[fetch_pages] ai-memory exit %d: %s",
+            proc.returncode,
+            proc.stderr.strip(),
         )
     # CLI prints an INFO log line to stderr; JSON is on stdout.
     try:
         hits = json.loads(proc.stdout)
     except json.JSONDecodeError:
-        LOG.debug(f"[fetch_pages] non-JSON stdout: {proc.stdout[:200]!r}")
+        LOG.debug("[fetch_pages] non-JSON stdout: %r", proc.stdout[:200])
         return []
     seen = {}
     for h in hits:
@@ -58,14 +63,15 @@ def fetch_pages():
     return sorted(seen.items())
 
 
-def main():
+def main() -> None:
+    """Process stdin and output hook-specific context with durable pages."""
     try:
         json.load(sys.stdin)
     except json.JSONDecodeError:
         sys.exit(0)
 
     pages = fetch_pages()
-    LOG.debug(f"[main] {len(pages)} durable pages matched")
+    LOG.debug("[main] %d durable pages matched", len(pages))
     if not pages:
         sys.exit(0)
 
@@ -73,7 +79,8 @@ def main():
         "## ai-memory: durable pages in this project",
         "",
         "Permanent memory (rules, feedback, gotchas, procedures). "
-        "Read a page with `ai-memory read-page --path <path>` or `memory_read_page` when relevant.",
+        "Read a page with `ai-memory read-page --path <path>` or "
+        "`memory_read_page` when relevant.",
         "",
     ]
     lines.extend(f"- `{path}` — {title}" for path, title in pages)
@@ -84,8 +91,8 @@ def main():
             "additionalContext": "\n".join(lines),
         }
     }
-    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201
     sys.exit(0)
 
 

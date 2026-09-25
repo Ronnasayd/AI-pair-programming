@@ -1,14 +1,16 @@
 #!/usr/bin/python3
+"""UserPromptSubmit hook: suggest matching skills via embedding + BM25 fusion."""
+
+from datetime import datetime, timedelta
 import json
 import os
+from pathlib import Path
 import re
 import socket
 import sqlite3
 import subprocess
 import sys
 import time
-from datetime import datetime, timedelta
-from pathlib import Path
 
 import numpy as np
 
@@ -37,11 +39,24 @@ DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 DAEMON_START_TIMEOUT = 90
 
 
-def getDaemonSocketPath() -> str:
-    return f"/tmp/embedding-daemon-{get_project_name()}.sock"
+def get_daemon_socket_path() -> str:
+    """Return the per-project unix socket path for the embedding daemon.
+
+    Returns:
+        str: Absolute path to the daemon's unix socket.
+    """
+    return f"/tmp/embedding-daemon-{get_project_name()}.sock"  # noqa: S108 hook temp socket path, per-project isolation
 
 
-def isDaemonRunning(sock_path: str) -> bool:
+def is_daemon_running(sock_path: str) -> bool:
+    """Return True if a socket connection to the daemon succeeds.
+
+    Args:
+        sock_path: Path to the daemon's unix socket.
+
+    Returns:
+        bool: True if the socket accepts a connection, False otherwise.
+    """
     try:
         conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         conn.connect(sock_path)
@@ -51,31 +66,53 @@ def isDaemonRunning(sock_path: str) -> bool:
         return False
 
 
-def startDaemon(sock_path: str) -> None:
-    subprocess.Popen(
+def start_daemon(sock_path: str) -> None:
+    """Spawn the embedding daemon as a detached background process.
+
+    Args:
+        sock_path: Path to the daemon's unix socket, used only for logging.
+    """
+    subprocess.Popen(  # noqa: S603 controlled daemon script path via DAEMON_SCRIPT constant
         [sys.executable, str(DAEMON_SCRIPT)],
         start_new_session=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    LOG.debug(f"Daemon started — socket={sock_path}")
+    LOG.debug("Daemon started — socket=%s", sock_path)
 
 
-def waitForDaemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
+def wait_for_daemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
+    """Poll until the daemon socket accepts connections or timeout elapses.
+
+    Args:
+        sock_path: Path to the daemon's unix socket.
+        timeout: Max seconds to poll before giving up.
+
+    Returns:
+        bool: True if the daemon became reachable, False on timeout.
+    """
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        if isDaemonRunning(sock_path):
+        if is_daemon_running(sock_path):
             return True
         time.sleep(0.2)
     return False
 
 
-def encodeViaDaemon(text: str) -> np.ndarray | None:
-    sock_path = getDaemonSocketPath()
-    if not isDaemonRunning(sock_path):
+def encode_via_daemon(text: str) -> np.ndarray | None:
+    """Request an embedding vector for text from the daemon, starting it if needed.
+
+    Args:
+        text: Text to embed.
+
+    Returns:
+        np.ndarray | None: The embedding vector, or None on failure.
+    """
+    sock_path = get_daemon_socket_path()
+    if not is_daemon_running(sock_path):
         LOG.debug("Daemon not running — starting")
-        startDaemon(sock_path)
-        if not waitForDaemon(sock_path):
+        start_daemon(sock_path)
+        if not wait_for_daemon(sock_path):
             LOG.warning("Daemon failed to start within timeout")
             return None
     try:
@@ -91,33 +128,56 @@ def encodeViaDaemon(text: str) -> np.ndarray | None:
         conn.close()
         response = json.loads(data.decode())
         if "error" in response:
-            LOG.warning(f"Daemon error: {response['error']}")
+            LOG.warning("Daemon error: %s", response["error"])
             return None
         return np.array(response["vector"], dtype=np.float32)
     except Exception as e:
-        LOG.warning(f"Daemon communication failed: {e}")
+        LOG.warning("Daemon communication failed: %s", e)
         return None
 
 
-def loadRecLog(rec_log_path: Path):
+def load_rec_log(rec_log_path: Path) -> dict:
+    """Load the per-session skill recommendation log, or {} if absent/invalid.
+
+    Args:
+        rec_log_path: Path to the recommendation log JSON file.
+
+    Returns:
+        dict: The parsed recommendation log, or {} if absent/invalid.
+    """
     try:
         if rec_log_path.exists():
             content = read_file(rec_log_path)
             if content:
                 return json.loads(content)
     except (json.JSONDecodeError, Exception) as e:
-        LOG.debug(f"Failed to load rec log: {e}")
+        LOG.debug("Failed to load rec log: %s", e)
     return {}
 
 
-def saveRecLog(rec_log_path: Path, rec_log):
+def save_rec_log(rec_log_path: Path, rec_log: dict) -> None:
+    """Persist the per-session skill recommendation log.
+
+    Args:
+        rec_log_path: Path to write the recommendation log JSON file to.
+        rec_log: The recommendation log to persist.
+    """
     try:
         write_file(rec_log_path, json.dumps(rec_log))
     except Exception as e:
-        LOG.debug(f"Failed to save rec log: {e}")
+        LOG.debug("Failed to save rec log: %s", e)
 
 
-def shouldSuggest(skill_name, rec_log):
+def should_suggest(skill_name: str, rec_log: dict) -> bool:
+    """Return True if skill_name hasn't been suggested within DEDUP_HOURS.
+
+    Args:
+        skill_name: Name of the skill to check.
+        rec_log: The recommendation log mapping skill name to last-suggested timestamp.
+
+    Returns:
+        bool: True if the skill should be suggested again, False otherwise.
+    """
     if skill_name not in rec_log:
         return True
     try:
@@ -129,8 +189,15 @@ def shouldSuggest(skill_name, rec_log):
     return False
 
 
-def loadDbSkills(db_path: Path):
-    """Return list of (name, hint, embedding_array)."""
+def load_db_skills(db_path: Path) -> list[tuple[str, str, np.ndarray]]:
+    """Return list of (name, hint, embedding_array).
+
+    Args:
+        db_path: Path to the skills sqlite database.
+
+    Returns:
+        list[tuple[str, str, np.ndarray]]: Rows of (name, hint, embedding_array).
+    """
     conn = sqlite3.connect(db_path)
     rows = conn.execute("SELECT name, hint, embedding FROM skills").fetchall()
     conn.close()
@@ -139,7 +206,16 @@ def loadDbSkills(db_path: Path):
     ]
 
 
-def cosineSimilarity(a: np.ndarray, b: np.ndarray) -> float:
+def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    """Return the cosine similarity between two vectors, 0.0 if either is zero.
+
+    Args:
+        a: First vector.
+        b: Second vector.
+
+    Returns:
+        float: Cosine similarity in [-1.0, 1.0], or 0.0 if either vector is zero.
+    """
     denom = np.linalg.norm(a) * np.linalg.norm(b)
     if denom == 0:
         return 0.0
@@ -188,10 +264,8 @@ _BM25_STOPWORDS = {
     "you",
     "eu",
     "de",
-    "do",
     "da",
     "o",
-    "a",
     "os",
     "as",
     "que",
@@ -210,13 +284,21 @@ _BM25_STOPWORDS = {
 }
 
 
-def bm25Search(db_path: Path, query: str, limit: int):
+def bm25_search(db_path: Path, query: str, limit: int) -> list[tuple[str, str]]:
     """Return skills ranked by FTS5 BM25, best first: [(name, hint)].
 
     OR-joins query tokens (an AND-all match rarely fires on full prompts), then
     requires >=MIN_BM25_TERM_OVERLAP tokens actually present in name+description —
     a single incidental word overlap (e.g. "sandwich" in an unrelated hint) is
     lexical noise, not a real match.
+
+    Args:
+        db_path: Path to the skills database file.
+        query: Search query text to tokenize and match.
+        limit: Maximum number of results to return.
+
+    Returns:
+        List of (name, hint) tuples ranked by BM25 score.
     """
     tokens = [
         t for t in _FTS_TOKEN_RE.findall(query) if t.lower() not in _BM25_STOPWORDS
@@ -235,7 +317,7 @@ def bm25Search(db_path: Path, query: str, limit: int):
             (fts_query, limit * 3),
         ).fetchall()
     except sqlite3.OperationalError as e:
-        LOG.debug(f"BM25 query failed (likely FTS5 syntax): {e}")
+        LOG.debug("BM25 query failed (likely FTS5 syntax): %s", e)
         return []
     finally:
         conn.close()
@@ -250,7 +332,7 @@ def bm25Search(db_path: Path, query: str, limit: int):
     return results[:limit]
 
 
-def reciprocalRankFuse(
+def reciprocal_rank_fuse(
     *ranked_lists: list[str], k: int = 60, weights: list[float] | None = None
 ) -> dict[str, float]:
     """RRF-merge ranked name lists into a single {name: fused_score} map.
@@ -258,24 +340,45 @@ def reciprocalRankFuse(
     weights scales each list's contribution (default 1.0 each) — used to make
     BM25 a tie-breaker/booster rather than cosine's equal, since lexical
     overlap alone is a weaker relevance signal than semantic similarity.
+
+    Args:
+        *ranked_lists: Variable number of ranked name lists to merge.
+        k: RRF parameter for rank-based score calculation (default 60).
+        weights: Per-list weights (default 1.0 for each list).
+
+    Returns:
+        Dictionary mapping skill names to their fused RRF scores.
     """
     if weights is None:
         weights = [1.0] * len(ranked_lists)
     fused: dict[str, float] = {}
-    for ranked, weight in zip(ranked_lists, weights):
+    for ranked, weight in zip(ranked_lists, weights, strict=False):
         for rank, name in enumerate(ranked, start=1):
             fused[name] = fused.get(name, 0.0) + weight / (k + rank)
     return fused
 
 
-def findSkills(
+def find_skills(
     db_path: Path, query: str, query_vector: np.ndarray, min_sim: float, limit: int
-):
-    """Fuse cosine-similarity and BM25 rankings via RRF, return sorted [(score, name, hint)]."""
-    skills = loadDbSkills(db_path)
+) -> list[tuple[float, str, str]]:
+    """Fuse cosine-similarity and BM25 rankings via RRF.
+
+    Returns sorted [(score, name, hint)].
+
+    Args:
+        db_path: Path to the skills database file.
+        query: Search query text for BM25 matching.
+        query_vector: Embedding vector for cosine similarity search.
+        min_sim: Minimum cosine similarity threshold to include a skill.
+        limit: Maximum number of results to return.
+
+    Returns:
+        List of (score, name, hint) tuples sorted by fused score descending.
+    """
+    skills = load_db_skills(db_path)
     hints = {name: hint for name, hint, _emb in skills}
     cosine_scored = sorted(
-        ((cosineSimilarity(query_vector, emb), name) for name, _hint, emb in skills),
+        ((cosine_similarity(query_vector, emb), name) for name, _hint, emb in skills),
         key=lambda x: x[0],
         reverse=True,
     )
@@ -283,23 +386,29 @@ def findSkills(
     cosine_name_set = set(cosine_names)
     bm25_names = [
         name
-        for name, _hint in bm25Search(db_path, query, limit * 2)
+        for name, _hint in bm25_search(db_path, query, limit * 2)
         if name in cosine_name_set
     ]
     LOG.debug(
-        f"cosine_names ({len(cosine_names)}): {[(name, sim) for sim, name in cosine_scored if sim >= min_sim]}"
+        "cosine_names (%d): %s",
+        len(cosine_names),
+        [(name, sim) for sim, name in cosine_scored if sim >= min_sim],
     )
-    LOG.debug(f"bm25_names ({len(bm25_names)}, cosine-gated): {bm25_names}")
+    LOG.debug("bm25_names (%d, cosine-gated): %s", len(bm25_names), bm25_names)
 
-    fused = reciprocalRankFuse(cosine_names, bm25_names, weights=[1.0, BM25_RRF_WEIGHT])
+    fused = reciprocal_rank_fuse(
+        cosine_names, bm25_names, weights=[1.0, BM25_RRF_WEIGHT]
+    )
     ranked = sorted(fused.items(), key=lambda x: x[1], reverse=True)
     LOG.debug(
-        f"Top fused skills: {[(name, f'{score:.4f}') for name, score in ranked[:5]]}"
+        "Top fused skills: %s",
+        [(name, f"{score:.4f}") for name, score in ranked[:5]],
     )
     return [(score, name, hints[name]) for name, score in ranked[:limit]]
 
 
-def main():
+def main() -> None:
+    """UserPromptSubmit/PostToolUse hook entrypoint: suggest matching skills."""
     if not DB_PATH.exists():
         LOG.warning("skills.db not found — run scripts/build-skill-index.py")
         sys.exit(0)
@@ -310,13 +419,13 @@ def main():
         if importlib.util.find_spec("fastembed") is None:
             LOG.warning("fastembed not installed")
             sys.exit(0)
-    except Exception:
-        pass
+    except Exception as e:
+        LOG.debug("Failed to check fastembed availability: %s", e)
 
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse stdin JSON: {e}")
+        LOG.debug("Failed to parse stdin JSON: %s", e)
         sys.exit(0)
 
     try:
@@ -325,7 +434,7 @@ def main():
             LOG.debug("No prompt/answer text in payload — skipping")
             sys.exit(0)
 
-        LOG.debug(f"Processing prompt ({len(prompt)} chars): {prompt[:80]!r}...")
+        LOG.debug("Processing prompt (%d chars): %r...", len(prompt), prompt[:80])
 
         command_text = resolve_command_text(
             prompt, Path(os.environ["CLAUDE_PROJECT_DIR"])
@@ -333,28 +442,31 @@ def main():
         query_text = command_text if command_text is not None else prompt
         if command_text is not None:
             LOG.debug(
-                f"Resolved /command to body ({len(command_text)} chars): {command_text[:80]!r}..."
+                "Resolved /command to body (%d chars): %r...",
+                len(command_text),
+                command_text[:80],
             )
 
         session_id = get_session_id_short(get_by_key(payload, "session_id") or "")
-        rec_log_path = Path(f"/tmp/skill-rec-log-{session_id}.json")
-        LOG.debug(f"Session: {session_id} | rec_log: {rec_log_path}")
-        rec_log = loadRecLog(rec_log_path)
-        LOG.debug(f"Rec log has {len(rec_log)} entries: {list(rec_log.keys())}")
+        rec_log_path = Path(f"/tmp/skill-rec-log-{session_id}.json")  # noqa: S108 hook temp session log, isolated per-session
+        LOG.debug("Session: %s | rec_log: %s", session_id, rec_log_path)
+        rec_log = load_rec_log(rec_log_path)
+        LOG.debug("Rec log has %d entries: %s", len(rec_log), list(rec_log.keys()))
 
-        query_vector = encodeViaDaemon(query_text)
+        query_vector = encode_via_daemon(query_text)
         if query_vector is None:
             LOG.warning("Failed to get embedding — skipping")
             sys.exit(0)
 
-        skills_raw = loadDbSkills(DB_PATH)
-        LOG.debug(f"Loaded {len(skills_raw)} skills from DB")
+        skills_raw = load_db_skills(DB_PATH)
+        LOG.debug("Loaded %d skills from DB", len(skills_raw))
 
-        candidates = findSkills(
+        candidates = find_skills(
             DB_PATH, query_text, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
         )
         LOG.debug(
-            f"Fused candidates: {[(name, f'{score:.4f}') for score, name, _ in candidates]}"
+            "Fused candidates: %s",
+            [(name, f"{score:.4f}") for score, name, _ in candidates],
         )
 
         referenced_skill = detect_skill(prompt)
@@ -363,17 +475,18 @@ def main():
             and Path(f".claude/skills/{referenced_skill}").exists()
         )
         LOG.debug(
-            f"Referenced skill in prompt: {referenced_skill!r} "
-            f"(local={referenced_skill_local})"
+            "Referenced skill in prompt: %r (local=%s)",
+            referenced_skill,
+            referenced_skill_local,
         )
         matches = [
             (name, hint)
             for _, name, hint in candidates
-            if shouldSuggest(name, rec_log)
+            if should_suggest(name, rec_log)
             and not (referenced_skill_local and name == referenced_skill)
         ]
         skipped_dedup = [
-            name for _, name, _ in candidates if not shouldSuggest(name, rec_log)
+            name for _, name, _ in candidates if not should_suggest(name, rec_log)
         ]
         skipped_referenced = [
             name
@@ -382,11 +495,14 @@ def main():
         ]
         if skipped_dedup:
             LOG.debug(
-                f"Skipped (already suggested within {DEDUP_HOURS}h): {skipped_dedup}"
+                "Skipped (already suggested within %dh): %s",
+                DEDUP_HOURS,
+                skipped_dedup,
             )
         if skipped_referenced:
             LOG.debug(
-                f"Skipped (explicitly referenced + present locally): {skipped_referenced}"
+                "Skipped (explicitly referenced + present locally): %s",
+                skipped_referenced,
             )
         matches = matches[:MAX_SUGGESTIONS]
 
@@ -394,8 +510,8 @@ def main():
             rec_log[name] = datetime.now().isoformat()
 
         if matches:
-            LOG.debug(f"Final matches ({len(matches)}): {[m[0] for m in matches]}")
-            saveRecLog(rec_log_path, rec_log)
+            LOG.debug("Final matches (%d): %s", len(matches), [m[0] for m in matches])
+            save_rec_log(rec_log_path, rec_log)
             suggestions = [
                 {
                     "skill": name,
@@ -415,24 +531,27 @@ def main():
                     "additionalContext": minify_json(
                         {
                             "instruction": (
-                                "check if these skills match user request; if present_locally, "
-                                "invoke via Skill tool; if not, call the skill-loader MCP tool "
-                                "get_remote_skill(name) to fetch it and follow its instructions "
-                                "inline — if the returned files list has entries SKILL.md "
-                                "references, fetch them with get_remote_skill_file(name, relpath)"
+                                "check if these skills match user request; "
+                                "if present_locally, invoke via Skill tool; "
+                                "if not, call the skill-loader MCP tool "
+                                "get_remote_skill(name) to fetch it and "
+                                "follow its instructions inline — if the "
+                                "returned files list has entries SKILL.md "
+                                "references, fetch them with "
+                                "get_remote_skill_file(name, relpath)"
                             ),
                             "suggestions": suggestions,
                         }
                     ),
                 }
             }
-            LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-            print(json.dumps(output, ensure_ascii=False))
+            LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
+            print(json.dumps(output, ensure_ascii=False))  # noqa: T201 hook stdout protocol
         else:
             LOG.debug("No skill matches after dedup filter")
 
     except Exception as e:
-        LOG.warning(f"Unexpected error: {type(e).__name__}: {e}", exc_info=True)
+        LOG.warning("Unexpected error: %s: %s", type(e).__name__, e, exc_info=True)
 
     sys.exit(0)
 

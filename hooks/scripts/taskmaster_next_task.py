@@ -3,8 +3,8 @@
 
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -18,6 +18,14 @@ TASKS_PATH = ".taskmaster/tasks/tasks.json"
 
 
 def find_next_pending(tasks: list) -> dict | None:
+    """Find the first pending task in a list of tasks.
+
+    Args:
+        tasks: List of task dictionaries to search.
+
+    Returns:
+        dict | None: The first pending task, or None if no pending task found.
+    """
     for task in tasks:
         if task.get("status") == "pending":
             return task
@@ -25,6 +33,14 @@ def find_next_pending(tasks: list) -> dict | None:
 
 
 def build_context(workspace_root: str) -> str | None:
+    """Build SessionStart context from taskmaster tasks.
+
+    Args:
+        workspace_root: Root directory path of the workspace.
+
+    Returns:
+        str | None: Formatted markdown context or None if no pending tasks.
+    """
     tasks_file = Path(workspace_root) / TASKS_PATH
     if not tasks_file.is_file():
         return None
@@ -59,6 +75,7 @@ def build_context(workspace_root: str) -> str | None:
 
 
 def main() -> None:
+    """Execute hook to surface next pending taskmaster task."""
     try:
         payload = json.load(sys.stdin)
         workspace_root = project_dir(payload)
@@ -73,9 +90,9 @@ def main() -> None:
             }
             logger.debug("Taskmaster next-task hook produced context.")
             logger.debug(
-                f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}"
+                "[additionalContext]: %s", json.dumps(output, ensure_ascii=False)
             )
-            print(json.dumps(output, ensure_ascii=False))
+            sys.stdout.write(json.dumps(output, ensure_ascii=False))
         else:
             logger.debug("Taskmaster next-task hook: nothing to report.")
 

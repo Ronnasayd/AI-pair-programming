@@ -6,10 +6,11 @@ a fixed set of fields (event/tool_name/tool_input/...) — add whatever check
 you need directly in the rule's `match` lambda/function.
 """
 
+from collections.abc import Generator
 import json
+from os import path
 import re
 import sys
-from os import path
 
 script_dir = path.dirname(path.abspath(__file__))
 if script_dir not in sys.path:
@@ -19,25 +20,50 @@ from utils import get_by_key, get_hooks_logger, minify_markdown  # noqa: E402
 LOG = get_hooks_logger("ToolUseContextRules")
 
 
-def read_file(filepath: str):
-    with open(filepath) as f:
+def read_file(filepath: str) -> str:
+    """Read file contents.
+
+    Args:
+        filepath: Path to file to read.
+
+    Returns:
+        str: File contents.
+    """
+    with open(filepath, encoding="utf-8") as f:
         return f.read()
 
 
-def iterStringValues(value):
+def iter_string_values(value: str | dict | list) -> Generator[str, None, None]:
+    """Recursively yield string values from nested structures.
+
+    Args:
+        value: Value to extract strings from (str, dict, or list).
+
+    Yields:
+        str: String values found in value or nested dicts/lists.
+    """
     if isinstance(value, str):
         yield value
     elif isinstance(value, dict):
         for v in value.values():
-            yield from iterStringValues(v)
+            yield from iter_string_values(v)
     elif isinstance(value, list):
         for v in value:
-            yield from iterStringValues(v)
+            yield from iter_string_values(v)
 
 
-def toolInputMatches(payload, pattern: re.Pattern):
+def tool_input_matches(payload: dict, pattern: re.Pattern) -> bool:
+    """Check if pattern matches any string in tool_input.
+
+    Args:
+        payload: Hook payload dict.
+        pattern: Compiled regex pattern to search for.
+
+    Returns:
+        bool: True if pattern matches any string value in tool_input.
+    """
     tool_input = get_by_key(payload, "tool_input") or {}
-    return any(pattern.search(v) for v in iterStringValues(tool_input))
+    return any(pattern.search(v) for v in iter_string_values(tool_input))
 
 
 # Add new rules here. Each rule: a name, and a `match(payload)` predicate that
@@ -62,11 +88,12 @@ RULES = [
 ]
 
 
-def main():
+def main() -> None:
+    """Entry point: inject additionalContext based on matching rules."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse JSON: {e}")
+        LOG.debug("Failed to parse JSON: %s", e)
         sys.exit(0)
 
     hook_event_name = get_by_key(payload, "hook_event_name")
@@ -76,11 +103,10 @@ def main():
 
     matched = [rule for rule in RULES if rule["match"](payload)]
     if not matched:
-        # LOG.debug(f"No rule matched payload={payload!r}")
         sys.exit(0)
 
     contexts = [rule["additionalContext"] for rule in matched]
-    LOG.debug(f"Matched rules: {[r['name'] for r in matched]}")
+    LOG.debug("Matched rules: %s", [r["name"] for r in matched])
 
     output = {
         "hookSpecificOutput": {
@@ -88,8 +114,9 @@ def main():
             "additionalContext": minify_markdown("\n\n".join(contexts)),
         }
     }
-    LOG.debug(f"[additionalContext]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    output_json = json.dumps(output, ensure_ascii=False)
+    LOG.debug("[additionalContext]: %s", output_json)
+    sys.stdout.write(output_json + "\n")
     sys.exit(0)
 
 

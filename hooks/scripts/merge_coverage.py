@@ -17,8 +17,8 @@ from pathlib import Path
 import sys
 
 
-def _write_json_atomic(path: Path, data: object, **dump_kwargs) -> None:
-    """Write via temp file + os.replace so concurrent readers never see a partial write."""
+def _write_json_atomic(path: Path, data: object, **dump_kwargs: object) -> None:
+    """Write atomically via temp file + os.replace to prevent partial write races."""
     tmp = path.with_suffix(path.suffix + f".tmp{os.getpid()}")
     tmp.write_text(json.dumps(data, **dump_kwargs))
     os.replace(tmp, path)
@@ -50,6 +50,15 @@ def _merge_file_coverage(base: dict, partial: dict) -> dict:
 
 
 def merge_coverage(base: dict, partial: dict) -> dict:
+    """Merge partial coverage into base coverage, combining counters.
+
+    Args:
+        base: Base coverage object to merge into.
+        partial: Partial coverage object to merge from.
+
+    Returns:
+        Merged coverage dict with combined statement/function/branch counts.
+    """
     merged = dict(base)
     for file_path, file_coverage in partial.items():
         if file_path in merged:
@@ -60,6 +69,7 @@ def merge_coverage(base: dict, partial: dict) -> dict:
 
 
 def main() -> None:
+    """Merge partial Istanbul coverage into the project's coverage directory."""
     partial_dir = Path(sys.argv[1])
     coverage_dir = Path(sys.argv[2])
     coverage_dir.mkdir(parents=True, exist_ok=True)
@@ -75,7 +85,7 @@ def main() -> None:
     # concurrent per-file merges (each holds only its own per-file lock, so
     # without this two edits race and one merge is lost).
     merge_lock = coverage_dir / ".merge.lock"
-    with open(merge_lock, "w") as lock_fh:
+    with open(merge_lock, "w", encoding="utf-8") as lock_fh:
         fcntl.flock(lock_fh, fcntl.LOCK_EX)
         base = json.loads(coverage_file.read_text()) if coverage_file.exists() else {}
         merged = merge_coverage(base, partial)

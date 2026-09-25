@@ -1,18 +1,17 @@
 #!/usr/bin/python3
-"""
-TypeScript/ESLint Lint Hook
+"""TypeScript/ESLint Lint Hook.
 
 Runs TypeScript and ESLint checks on JS/TS files after edit.
 - Skips if typescript or eslint not installed locally
 - Reports type errors and lint issues
 - Falls back to no-op when tools unavailable
 
-Cross-platform (Windows, macOS, Linux)
+Cross-platform (Windows, macOS, Linux).
 """
 
 import os
-import sys
 from pathlib import Path
+import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -117,8 +116,7 @@ def _run_eslint(resolved: Path, project_root: str) -> dict:
 
 
 def maybe_run_typescript_lint(file_path: str | None) -> dict:
-    """
-    Run TypeScript, ESLint and jscpd checks for JS/TS files.
+    """Run TypeScript, ESLint and jscpd checks for JS/TS files.
 
     Args:
         file_path: Path to the edited file.
@@ -157,6 +155,7 @@ def maybe_run_typescript_lint(file_path: str | None) -> dict:
 
 
 def main() -> None:
+    """Execute TypeScript/ESLint lint hook."""
     run_lint_hook_main("TypeScriptLint", logger, maybe_run_typescript_lint)
 
 
