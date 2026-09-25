@@ -414,8 +414,8 @@ def _get_ts_parser(lang: str):
     if lang in _ts_parser_cache:
         return _ts_parser_cache[lang]
     try:
-        from tree_sitter_language_pack import (
-            get_parser,  # type: ignore[import-not-found]
+        from tree_sitter_language_pack import (  # type: ignore[import-not-found]
+            get_parser,
         )
 
         parser = get_parser(lang)
