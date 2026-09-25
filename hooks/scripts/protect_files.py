@@ -20,6 +20,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 
+from secret_scan import scan_content_for_secrets  # noqa: E402
 from utils import get_by_key, get_hooks_logger, split_on_operators  # noqa: E402
 
 logger = get_hooks_logger("ProtectFiles")
@@ -304,7 +305,7 @@ def normalize(path: str) -> str:
     path = unicodedata.normalize("NFKC", path).replace("\x00", "")
     try:
         return os.path.realpath(os.path.abspath(path))
-    except OSError:
+    except (OSError, ValueError):
         return path
 
 
@@ -1120,6 +1121,59 @@ def deny(file_path: str, pattern: str, source: str) -> None:
     sys.exit(2)
 
 
+def deny_secret(file_path: str, findings: list[dict]) -> None:
+    """Emit a deny decision for detected secrets in a file and exit.
+
+    Args:
+        file_path: The scanned file's path.
+        findings: Secret findings from detect-secrets or the regex fallback.
+    """
+    types = ", ".join(sorted({f["type"] for f in findings}))
+    lines = sorted(
+        {f["line_number"] for f in findings if "line_number" in f}
+        | {f["line"] for f in findings if "line" in f}
+    )
+    location = f" at line(s) {', '.join(map(str, lines))}" if lines else ""
+    print(  # noqa: T201 - hook protocol: decision JSON goes on stderr
+        json.dumps(
+            {
+                "decision": "deny",
+                "file": file_path,
+                "source": "secret_scan",
+                "reason": (
+                    f"potential secret detected ({types}){location}. "
+                    "If this is a false positive or test fixture, add "
+                    "`# pragma: allowlist secret` on the flagged line (or "
+                    "the line above it) to bypass."
+                ),
+            }
+        ),
+        file=sys.stderr,
+    )
+    logger.debug("Denied '%s' — secrets found: %s", file_path, findings)
+    sys.exit(2)
+
+
+def _check_write_content(tool_input: Mapping, tool_name: str, file_path: str) -> None:
+    """Deny a Write/Edit whose new content carries a secret.
+
+    Reads are covered after the fact by scan_secrets_output.py (redaction);
+    writes must be blocked before the secret lands on disk.
+
+    Args:
+        tool_input: The tool call's input mapping.
+        tool_name: The tool name.
+        file_path: The target file path.
+    """
+    key = {"Write": "content", "Edit": "new_string"}.get(tool_name)
+    content = get_by_key(tool_input, key) if key else None
+    if not isinstance(content, str) or not content:
+        return
+    findings = scan_content_for_secrets(content, file_path, logger)
+    if findings:
+        deny_secret(file_path, findings)
+
+
 # ─────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────
@@ -1251,6 +1305,8 @@ def main() -> None:
     tool_name = str(tool_name) if tool_name is not None else ""
 
     file_path = _check_direct_file_access(tool_input)
+    if file_path:
+        _check_write_content(tool_input, tool_name, file_path)
     _check_mcp_string_args(tool_input, tool_name, file_path)
     _check_shell_command(tool_input)
 
