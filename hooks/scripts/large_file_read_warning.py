@@ -1,16 +1,16 @@
 #!/usr/bin/python3
-"""
-Large-File-Read-Warning Hook
+"""Large-File-Read-Warning Hook.
 
 PreToolUse hook for Read. Warns via additionalContext when the target file
 has more than LINE_THRESHOLD lines and no offset/limit was given, encouraging
 partial reads (offset/limit) or grep-style tools instead of a full read.
 """
 
+import contextlib
 import json
 import os
-import sys
 from pathlib import Path
+import sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -25,6 +25,7 @@ LINE_THRESHOLD = 500
 
 
 def _count_lines(path: Path) -> int:
+    """Count lines in a file."""
     count = 0
     with path.open("r", errors="ignore") as f:
         for _ in f:
@@ -33,11 +34,10 @@ def _count_lines(path: Path) -> int:
 
 
 def main() -> None:
+    """Run the large-file-read warning hook."""
     stdin_data = ""
-    try:
+    with contextlib.suppress(OSError):
         stdin_data = sys.stdin.read(MAX_STDIN)
-    except OSError:
-        pass
 
     try:
         data = json.loads(stdin_data)
@@ -62,26 +62,26 @@ def main() -> None:
     if not path.exists() or not path.is_file():
         sys.exit(0)
 
-    try:
+    line_count = 0
+    with contextlib.suppress(OSError):
         line_count = _count_lines(path)
-    except OSError:
-        sys.exit(0)
 
     logger.debug("file_path=%s line_count=%d", file_path, line_count)
 
     if line_count <= LINE_THRESHOLD:
         sys.exit(0)
 
+    msg = (
+        f"File {file_path} has {line_count} lines (>{LINE_THRESHOLD}). "
+        "Prefer reading only the relevant part via `offset`/`limit`, "
+        "or use tools like Grep, rag-rat, serena to locate the sections "
+        "instead of reading the whole file."
+    )
     output = json.dumps(
         {
             "hookSpecificOutput": {
                 "hookEventName": "PreToolUse",
-                "additionalContext": (
-                    f"File {file_path} has {line_count} lines (>{LINE_THRESHOLD}). "
-                    "Prefer reading only the relevant part via `offset`/`limit`, "
-                    "or use tools like Grep, rag-rat, serena to locate the sections instead of reading "
-                    "the whole file."
-                ),
+                "additionalContext": msg,
             }
         }
     )

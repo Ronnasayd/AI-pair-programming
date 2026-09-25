@@ -1,13 +1,15 @@
 #!/usr/bin/python3
-"""PreToolUse hook: warn when a .md file is created outside standard
-documentation directories, in case it's unintended boilerplate."""
+"""PreToolUse hook: warn on .md files outside standard documentation dirs.
+
+In case it's unintended boilerplate.
+"""
 
 import json
-import sys
 from pathlib import Path
+import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger  # noqa: E402
+from utils import get_by_key, get_hooks_logger
 
 LOG = get_hooks_logger("MdLocationCheck")
 
@@ -31,10 +33,11 @@ ALLOWED_PATTERNS = [
 
 
 def main() -> None:
+    """Check if .md file creation is outside allowed documentation directories."""
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError) as e:
-        LOG.debug(f"Failed to parse JSON: {e}")
+        LOG.debug("Failed to parse JSON: %s", e)
         sys.exit(0)
 
     tool_input = get_by_key(payload, "tool_input") or {}
@@ -57,8 +60,8 @@ def main() -> None:
             ),
         }
     }
-    LOG.debug(f"[warning]: {json.dumps(output, ensure_ascii=False)}")
-    print(json.dumps(output, ensure_ascii=False))
+    LOG.debug("[warning]: %s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201
     sys.exit(0)
 
 

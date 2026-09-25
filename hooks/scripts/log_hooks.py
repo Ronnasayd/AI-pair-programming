@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""Log hooks utility for capturing and formatting hook execution logs."""
 
 import argparse
 import json
@@ -13,7 +14,12 @@ if script_dir not in sys.path:
 from utils import colorize_json, get_hooks_logger  # noqa: E402
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments.
+
+    Returns:
+        Parsed arguments namespace.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--log-file", default=str(Path.home() / ".claude" / "logs" / "hooks-tools.log")
@@ -21,7 +27,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Process JSON log input from stdin and write to log file."""
     args = parse_args()
     logger = get_hooks_logger("Hooks", log_file=args.log_file)
     colorized_logger = get_hooks_logger(
