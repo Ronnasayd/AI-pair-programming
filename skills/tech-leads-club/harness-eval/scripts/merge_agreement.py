@@ -140,13 +140,7 @@ def main() -> int:
             f"| {cid} | {claim['tier']} | `{claim['source']}` | {a['class']} | {b['cost']}/{b['class']} | {q} |"
         )
 
-    lines += [
-        "",
-        "## Hold",
-        "",
-        "| ID | Tier | Reason | J1 | J2 | Quote |",
-        "|----|------|--------|----|----|-------|",
-    ]
+    lines += ["", "## Hold", "", "| ID | Tier | Reason | J1 | J2 | Quote |", "|----|------|--------|----|----|-------|"]
     for cid, claim, a, b, reason in hold:
         q = claim["quote"][:100].replace("|", "\\|")
         a_s = a["class"] if a else "—"
@@ -169,18 +163,7 @@ def main() -> int:
     ]
     out = run / "07-agreement.md"
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(
-        json.dumps(
-            {
-                "trap_pass": trap_pass,
-                "ship": len(ship),
-                "review": len(review),
-                "hold": len(hold),
-                "report": str(out),
-            },
-            indent=2,
-        )
-    )
+    print(json.dumps({"trap_pass": trap_pass, "ship": len(ship), "review": len(review), "hold": len(hold), "report": str(out)}, indent=2))
     return 0 if trap_pass else 2
 
 

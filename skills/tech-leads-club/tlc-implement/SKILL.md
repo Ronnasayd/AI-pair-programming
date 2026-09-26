@@ -31,11 +31,11 @@ handoff: on
 
 `profile` is one of `light`, `standard`, `ui`; `handoff` is `on` or `off`, and absent it is `on`. A batch packs whole slices up to **150k tokens** of estimated reading; a project on a smaller window overrides that with `handoff: on, budget 90k`. Which slices land in which batch is not configured - that is decided per feature, from the slices in front of you, and written down before any code.
 
-| Profile           | Adds                                                                                                                                                    | Cannot catch                                                                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `light` (default) | proofs batched at `HEAD`, each named test shown to exist and run, one located assertion per check, level and sampling gaps, `Swept existing` re-read    | a set member with no proof; a test that would pass under a wrong implementation                                                                  |
-| `standard`        | the `Coverage` join, `Test policy` rows with a verdict each, one fault per assertion surface                                                            | a check that contradicts the design; a screen nobody built                                                                                       |
-| `ui`              | binding sources opened and compared, per-screen enumeration of copy **and arrangement**, the designed-screens row - [screens.md](references/screens.md) | **only** spacing, colour and type weight, enumerated per screen - never layout, which a selector reaches and which is checked like anything else |
+| Profile | Adds | Cannot catch |
+|---|---|---|
+| `light` (default) | proofs batched at `HEAD`, each named test shown to exist and run, one located assertion per check, level and sampling gaps, `Swept existing` re-read | a set member with no proof; a test that would pass under a wrong implementation |
+| `standard` | the `Coverage` join, `Test policy` rows with a verdict each, one fault per assertion surface | a check that contradicts the design; a screen nobody built |
+| `ui` | binding sources opened and compared, per-screen enumeration of copy **and arrangement**, the designed-screens row - [screens.md](references/screens.md) | **only** spacing, colour and type weight, enumerated per screen - never layout, which a selector reaches and which is checked like anything else |
 
 Each step adds a **class of failure detected**, so read the right column before choosing: the cheap profile is not a discount on the same product. Absent a declaration, `light` - a review nobody runs because it outlasts the build protects nothing, so the default is the one that gets run rather than the one that catches most.
 
@@ -47,7 +47,7 @@ Under `standard` or `ui`, read `references/test-policy.md` when writing Coverage
 
 **The profile is a floor and it is not a secret.** The verification report names it, or "no faults injected" reads the same as forgetting. Where the profile looks too thin for the feature in hand, say so in one line and let the user raise it - doing more than the profile in silence costs the predictability that made it worth declaring.
 
-`handoff: on` is the default and governs the build alone: `off` keeps the whole build in one agent, and what that changes is in _When one agent is not enough_. It does not reach the Verifier, which is a separate agent because the author cannot check their own work rather than because the build ran long.
+`handoff: on` is the default and governs the build alone: `off` keeps the whole build in one agent, and what that changes is in *When one agent is not enough*. It does not reach the Verifier, which is a separate agent because the author cannot check their own work rather than because the build ran long.
 
 ## Critical rules
 
@@ -84,7 +84,7 @@ Read `references/checklist-format.md` when you write the `.checks/<feature>.md` 
 
 You decide how. Write the tests from the checklist, implement, run each proof, commit in coherent pieces with Conventional Commits.
 
-Two boundaries, and they are about scope rather than care. New capability nobody asked for and unrelated refactors are not yours to add - surface them and move on. Everything else inside the work at hand is the work: a guard clause, a log line, a clear error message, a test beyond the proofs when you can say what _should_ happen at an edge the checklist did not name. Extra tests are welcome and there is no quota.
+Two boundaries, and they are about scope rather than care. New capability nobody asked for and unrelated refactors are not yours to add - surface them and move on. Everything else inside the work at hand is the work: a guard clause, a log line, a clear error message, a test beyond the proofs when you can say what *should* happen at an edge the checklist did not name. Extra tests are welcome and there is no quota.
 
 Doors get discovered while building, and deciding them is yours - stopping to ask on every one defeats the point of getting out of your way. Decide, then record: append the row to `Landing` with its literal shape and the alternative you rejected, **before the code that closes it is written**, and in that code's commit where the project tracks the artifact. The timing is the mechanism, not the commit. An alternative is only knowable while you are still choosing between them; written at the end of the build it becomes a justification of what you already wrote, which is the stale design document `Landing` exists to avoid. Stating what the other option would have done is also the one thing that can expose a bad decision with nobody else in the loop.
 
@@ -140,13 +140,12 @@ Produce the artifact; do not narrate the phase. Lead with the verdict. State dec
 
 User says: "Implement this spec."
 Actions:
-
 1. Read the source completely, then walk the code it touches.
 2. Refuse vague claims. Sweep the nine unwritten requirements.
 3. Read `references/checklist-format.md` and write `.checks/<feature>.md`.
 4. Build from the checklist. Run each proof. Commit in coherent pieces.
 5. After the last commit of the feature, dispatch a fresh Verifier with `references/verify.md`.
-   Result: a checklist with named proofs, green proofs, and a Verifier report that accounts for every check.
+Result: a checklist with named proofs, green proofs, and a Verifier report that accounts for every check.
 
 ### Example 2: Nobody decided
 
@@ -163,16 +162,13 @@ Result: hand off; no checklist and no code from this skill.
 ## Common failures
 
 ### A proof that names a suite
-
 Cause: `Proof: npm test` was treated as settling one claim.
 Solution: name a specific test. A suite going green says nothing about this claim.
 
 ### The author verified their own work
-
 Cause: the builder dispatched a child agent, or re-checked the diff themselves.
 Solution: a build agent finishes, reports, and stops. The orchestrator dispatches a fresh Verifier over the whole feature after the last batch.
 
 ### A test written from the implementation
-
 Cause: the assertion mirrors what the code happens to do.
 Solution: tests assert what the checklist says. If a check is wrong or impossible, stop and renegotiate rather than quietly adjusting it.

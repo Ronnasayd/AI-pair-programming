@@ -24,9 +24,9 @@ Sources:
 
 <Two or three lines: which modules this touches and what it reuses instead of duplicating.>
 
-| One-way door                                         | Literal shape                                                            | Alternative rejected                                                                                      |
-| ---------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `subscription.status` gains `Suspended`              | enum value, not null, existing rows backfilled to `Active`               | a boolean `is_suspended` - cannot express the next state                                                  |
+| One-way door | Literal shape | Alternative rejected |
+| --- | --- | --- |
+| `subscription.status` gains `Suspended` | enum value, not null, existing rows backfilled to `Active` | a boolean `is_suspended` - cannot express the next state |
 | Provider status mapping becomes a module-level table | `map(providerStatus) -> localStatus`, total over the provider's 9 values | an inline switch per call site, the convention today - it drifts silently when the provider adds a status |
 
 - Nothing else in this change is hard to reverse
@@ -60,13 +60,13 @@ Proof: `npm test -- -t "retry is idempotent"`
 
 ## Coverage
 
-| Set (size)                                      | Member -> proof                                                                 | Unproven |
-| ----------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
-| provider status -> local (9)                    | C2, table-driven over all 9                                                     | -        |
-| webhook event types (5)                         | `paused` C12 · `updated` C13 · `deleted` C14 · `trial_will_end` C15 · other C16 | -        |
-| `trialDays` bound (4 edges)                     | 0, 1, 30, 31 all in C5                                                          | -        |
-| `Suspended` transitions (3)                     | into it C1 · out to `Active` C6 · out to `Cancelled` C7                         | -        |
-| startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3                                           | -        |
+| Set (size) | Member -> proof | Unproven |
+| --- | --- | --- |
+| provider status -> local (9) | C2, table-driven over all 9 | - |
+| webhook event types (5) | `paused` C12 · `updated` C13 · `deleted` C14 · `trial_will_end` C15 · other C16 | - |
+| `trialDays` bound (4 edges) | 0, 1, 30, 31 all in C5 | - |
+| `Suspended` transitions (3) | into it C1 · out to `Active` C6 · out to `Cancelled` C7 | - |
+| startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3 | - |
 
 - Claims naming a status code, route or response shape: C7, C12, C16 - each has a proof
   that crosses the boundary
@@ -85,7 +85,7 @@ Where the repo already keeps a decision log or ADRs, append the rows that outliv
 
 Each slice heading carries its **size**, and the arithmetic is `wc -c` on the files that slice touches - the ones its checks land in, which `Landing` and your own walk already named - divided by four. That is a floor: it counts what you will read, not the iteration on top, which is the larger and less predictable half. It is still worth writing, because ranking slices by weight is the decision, and a floor ranks correctly even when it under-counts.
 
-A check is **one** observable claim. If you need "and", split it. The proof must name a specific test, not a whole suite - a suite going green says nothing about _this_ claim. Repeat `Proof:` when one test cannot settle the whole claim, and every proof listed must be green.
+A check is **one** observable claim. If you need "and", split it. The proof must name a specific test, not a whole suite - a suite going green says nothing about *this* claim. Repeat `Proof:` when one test cannot settle the whole claim, and every proof listed must be green.
 
 Read the code before choosing the proof, then check the claim against the input space behind it. A claim about nine provider statuses is not proven by a proof that exercises two - that gap needs a second proof, and it is a question about coverage rather than about test style.
 
@@ -101,7 +101,7 @@ Walk it **from the sets, not from the checks**. Summarising the checks you just 
 
 **Startup configuration is a set too, and its members are places.** A test suite assembles the application itself, so anything this change needs to be true before the first request arrives now lives in every assembly separately - and a proof can only ever assert the one it built. Each assembly is a member, including every app that mounts the module, so the size of the row is the number of assemblies rather than always two. The member is the place and never the value: the failure is not a wrong value, it is a value present in one assembly and absent from another, and a row whose member is the setting collapses into a single cell that cannot be empty.
 
-Two resolutions count - a proof at each place, or one shared assembly both paths use. Prefer the second: it deletes the seam instead of testing it twice, and a row with two members is already the argument for collapsing them. When the setting already lives in exactly one place both paths share, no row is owed, and that is the better state rather than a loophole. A proof that passes only because the test assembles the system differently from production is **assembly substitution** - the same family as the level substitution in [test-policy.md](references/test-policy.md), and invisible to every coverage policy there is, because the branch _is_ covered and only the assembly differs.
+Two resolutions count - a proof at each place, or one shared assembly both paths use. Prefer the second: it deletes the seam instead of testing it twice, and a row with two members is already the argument for collapsing them. When the setting already lives in exactly one place both paths share, no row is owed, and that is the better state rather than a loophole. A proof that passes only because the test assembles the system differently from production is **assembly substitution** - the same family as the level substitution in [test-policy.md](references/test-policy.md), and invisible to every coverage policy there is, because the branch *is* covered and only the assembly differs.
 
 Under `profile: ui` the designed screens are a set too, with a row of their own - [screens.md](references/screens.md) has its shape.
 

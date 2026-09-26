@@ -11,7 +11,7 @@ how to work.
 **It is derived, not decided.** [plan.md](plan.md) settled what must be true and what is being
 built; this turns both into obligations with proofs.
 So the shape - the path, the entities, the interface, the doors - is not written here and not
-re-argued here. What _is_ this file's job is the derivation, and it is where omissions surface:
+re-argued here. What *is* this file's job is the derivation, and it is where omissions surface:
 every route's statuses in `Surface`, every door in `Landing`, every entity in `Relations` owes a
 set row in `Coverage` or a check. A shape section with nothing pointing back at it from here is
 either dead or unproven, and both are findings.
@@ -49,8 +49,8 @@ decision table is not settled by one path through it. When the claim and the pro
 different levels, either split the claim or name the second proof - never let the level slide to
 whichever is cheaper to write.
 
-**Obligations add up rather than substitute.** A test proves the layer where it _asserts_, not
-the layers it happens to _pass through_. An end-to-end test that traverses a branch exercises one
+**Obligations add up rather than substitute.** A test proves the layer where it *asserts*, not
+the layers it happens to *pass through*. An end-to-end test that traverses a branch exercises one
 path through it and cannot fail when a second branch is wrong. Treating it as proof of the code
 it traversed is level substitution, and it is the most common way a green suite ships a broken
 branch table.
@@ -97,7 +97,7 @@ impression is what makes this step never fire.
 A statement answers neither question when it only says where tests live, how they are named, how
 to run them, or how a test is built (which dependencies are real and which are doubled). Watch
 for the last one especially: keying the level to whether a test uses real dependencies decides
-_how_ to write a test, and read as deciding _what deserves_ one, every decision table that
+*how* to write a test, and read as deciding *what deserves* one, every decision table that
 touches a real dependency gets routed away from its own layer and is never enumerated.
 
 Classify by the **shape of the code**, never by the name of the layer. Layer names lie.
@@ -125,7 +125,7 @@ build under them and leave the files alone.
 
 ## Template: `.specs/features/<feature>/checks.md`
 
-```markdown
+````markdown
 # <Feature> checks
 
 Profile: light
@@ -157,14 +157,14 @@ Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
 
 ## Coverage
 
-| Set (size)                                      | Member -> proof                                                                 | Unproven |
-| ----------------------------------------------- | ------------------------------------------------------------------------------- | -------- |
-| provider status -> local (9)                    | C2, table-driven over all 9                                                     | -        |
-| webhook event types (5)                         | `paused` C12 · `updated` C13 · `deleted` C14 · `trial_will_end` C15 · other C16 | -        |
-| `trial_days` bound (4 edges)                    | 0 C5 · 1 C5 · 30 C5 · 31 C5                                                     | -        |
-| `Suspended` transitions (3)                     | into it C1 · out to `Active` C6 · out to `Cancelled` C7                         | -        |
-| `POST /webhooks/provider` statuses (3)          | 200 C3 · 409 C7 · 422 C16                                                       | -        |
-| startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3                                           | -        |
+| Set (size) | Member -> proof | Unproven |
+| --- | --- | --- |
+| provider status -> local (9) | C2, table-driven over all 9 | - |
+| webhook event types (5) | `paused` C12 · `updated` C13 · `deleted` C14 · `trial_will_end` C15 · other C16 | - |
+| `trial_days` bound (4 edges) | 0 C5 · 1 C5 · 30 C5 · 31 C5 | - |
+| `Suspended` transitions (3) | into it C1 · out to `Active` C6 · out to `Cancelled` C7 | - |
+| `POST /webhooks/provider` statuses (3) | 200 C3 · 409 C7 · 422 C16 | - |
+| startup config: raw request body (2 assemblies) | app entry point C17 · test harness C3 | - |
 
 - Claims naming a status code, route or response shape: C7, C12, C16 - each has a proof that
   crosses the boundary
@@ -175,12 +175,12 @@ Proof: `bin/rails test test/webhooks/ingest_test.rb -n "/retry_is_idempotent/"`
 <Only at `standard` / `ui`, and only when the repo leaves the two questions open. Omit the
 section entirely otherwise.>
 
-| Code                                   | Required proofs                                  | Coverage expectation                                                                           |
-| -------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Decides, reached across a boundary     | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
-| Decides, not reached across a boundary | one at its own layer                             | one asserted case per row of the decision table                                                |
-| Entry point that decides nothing       | one at the boundary                              | accepted input, each rejected input, each error path                                           |
-| Instrumentation, pass-throughs         | none of its own                                  | covered by its consumer's proof                                                                |
+| Code | Required proofs | Coverage expectation |
+| --- | --- | --- |
+| Decides, reached across a boundary | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
+| Decides, not reached across a boundary | one at its own layer | one asserted case per row of the decision table |
+| Entry point that decides nothing | one at the boundary | accepted input, each rejected input, each error path |
+| Instrumentation, pass-throughs | none of its own | covered by its consumer's proof |
 
 Evidence:
 
@@ -211,16 +211,24 @@ Where each unwritten requirement landed. All nine, one line each, every time.
 
 ## Handoff
 
-Intended split, with the arithmetic, written before any code:
+Size, with the arithmetic, written after the checks exist and before any code. The cut is
+yours; the mechanism is not, once the estimate exceeds the budget.
 
-- S1-S3 = 118k, all in Billing; S4 enters Webhooks at 140k -> hand off after S3
+Under the budget — one builder, no ask:
+
+- S1 = 10k, all in Billing; S2 enters Webhooks at 25k total, under the 150k budget - one builder
+
+Over the budget — stop, ask (handoff vs one builder), then record the choice:
+
+- S1-S3 = 118k, all in Billing; S4 enters Webhooks at 190k -> proposed cut after S3
+- Mechanism: handoff | one builder (compaction accepted) — <the user's choice>
 
 <Appended by each builder as it finishes, three lines each:>
 
 - **Boundary:** C1-C7 closed at `<sha>`
 - **Settled mid-build:** <every clarification the user gave that did not become a Landing row or an edited check>
 - **Abandoned:** <tried, discarded, and why>
-```
+````
 
 `Out of scope` is only needed when there is no plan, which already carries it - along with
 everything about the requirements and the solution's shape: [plan.md](plan.md).

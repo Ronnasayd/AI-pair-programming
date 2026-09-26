@@ -33,21 +33,8 @@ import os
 import re
 import sys
 
-TYPES = [
-    "feat",
-    "fix",
-    "refactor",
-    "docs",
-    "test",
-    "style",
-    "perf",
-    "build",
-    "ci",
-    "chore",
-]
-HEADER_RE = re.compile(
-    r"^(?P<type>\w+)(?:\((?P<scope>[^)]+)\))?(?P<bang>!)?: (?P<desc>.+)$"
-)
+TYPES = ["feat", "fix", "refactor", "docs", "test", "style", "perf", "build", "ci", "chore"]
+HEADER_RE = re.compile(r"^(?P<type>\w+)(?:\((?P<scope>[^)]+)\))?(?P<bang>!)?: (?P<desc>.+)$")
 
 
 def read_message(args):
@@ -107,24 +94,15 @@ def check(message):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(
-        prog="check_commit.py", description="Validate a Conventional Commits message."
-    )
-    p.add_argument(
-        "msgfile",
-        nargs="?",
-        default=None,
-        help="a commit message file (as git passes to commit-msg), or the message itself",
-    )
+    p = argparse.ArgumentParser(prog="check_commit.py", description="Validate a Conventional Commits message.")
+    p.add_argument("msgfile", nargs="?", default=None,
+                   help="a commit message file (as git passes to commit-msg), or the message itself")
     p.add_argument("--message", default=None, help="the commit message as a string")
     args = p.parse_args(argv)
 
     message = read_message(args)
     if not message.strip():
-        print(
-            "check_commit: no message provided (pass a file, --message, or pipe via stdin).",
-            file=sys.stderr,
-        )
+        print("check_commit: no message provided (pass a file, --message, or pipe via stdin).", file=sys.stderr)
         return 2
 
     errors, warnings = check(message)
@@ -133,9 +111,7 @@ def main(argv=None):
     for e in errors:
         print(f"  ERROR {e}")
     if errors:
-        print(
-            "\ncheck_commit: FAIL - see https://www.conventionalcommits.org/en/v1.0.0/"
-        )
+        print("\ncheck_commit: FAIL - see https://www.conventionalcommits.org/en/v1.0.0/")
         return 1
     print("check_commit: OK")
     return 0

@@ -6,6 +6,21 @@ No task list, no phase plan, no per-task review tables, no `Files to touch` decl
 each edit. The checks are the bar; the route is your call. If you find yourself writing a plan
 for the model to obey, you are rebuilding the thing this skill removed.
 
+## Before the first line of code
+
+The checks exist; the size is now visible. Write `## Handoff` with the arithmetic. Then:
+
+- The estimate fits the budget → one builder. Do not ask. Do not offer a spawn.
+- The estimate exceeds it → **stop**. Ask which mechanism, with both exits named:
+  **handoff** (cut at the surface boundary already written, batches sequential and only on
+  green) or **one builder** (stay, and accept compaction / context loss). Record the choice
+  on that same section before any test or implementation lands.
+
+Do not ask where to cut. Do not ask when it fits. Do not offer spawn at the start of a
+feature. The cut is logistics; only the mechanism, and only when over the limit, is a user
+decision. A slice that alone exceeds the budget was cut too coarsely - say so rather than
+splitting mid-outcome. That is not this ask.
+
 ## What is fixed and what is not
 
 Fixed: the checks, the `Test policy` rows, and the proofs each check names. Lowering either is
@@ -29,7 +44,7 @@ reader trusts it. Take a different path and the hop changes, in the commit that 
 is the same as `Landing`'s and for the same reason: written afterwards it describes what you
 happened to do, which is the failure mode of every architecture document that ever went stale.
 
-A hop you _add_ is worth a second look before you write it. Reaching a fifth module in a feature
+A hop you *add* is worth a second look before you write it. Reaching a fifth module in a feature
 scoped to two is not a `Flow` edit, it is evidence the boundary was wrong - say so rather than
 quietly extending the path.
 
@@ -124,23 +139,24 @@ explicit go-ahead for that action, even mid-build.
 ## Running out of context
 
 Two ways through it, and they are not equivalent. Automatic compaction summarises the
-_conversation_ and chooses for you what to drop. A handoff to a fresh builder carries the
-_artifact_, at a boundary you chose. This skill is built for the second - that is why `Landing`
+*conversation* and chooses for you what to drop. A handoff to a fresh builder carries the
+*artifact*, at a boundary you chose. This skill is built for the second - that is why `Landing`
 rows are appended before the code that closes them rather than at the end.
 
-**Handing off.** Only on green, with every proof in the batch passing. The next builder reads
-`checks.md` and the **diff of what already landed** - never a narrative summary. The diff is the
-state, and it carries the hundred reversible choices that sit below the `Landing` bar: naming,
-error shape, where the helper went. Those are exactly what drifts between builders and exactly
-what no document records.
+A handoff chosen at the size gate executes here. **Handing off.** Only on green, with every
+proof in the batch passing. The next builder reads `checks.md` and the **diff of what already
+landed** - never a narrative summary. The diff is the state, and it carries the hundred
+reversible choices that sit below the `Landing` bar: naming, error shape, where the helper
+went. Those are exactly what drifts between builders and exactly what no document records.
 
 Then append the three `## Handoff` lines - boundary, what the user settled mid-build, what was
 abandoned. They go in the artifact rather than in the next builder's prompt: a briefing written
 into a prompt survives exactly one boundary, and the third builder needs the first one's.
 
-**When compaction happens anyway,** re-read `checks.md` and the diff before continuing. You
-cannot see the limit approaching, but you can see that a compaction occurred - so build the
-recovery on the signal that exists.
+If the user chose one builder over a budget miss, compaction is the accepted path.
+**When compaction happens anyway** — chosen or not — re-read `checks.md` and the diff before
+continuing. You cannot see the limit approaching, but you can see that a compaction occurred
+- so build the recovery on the signal that exists.
 
 ## Then stop
 
@@ -149,20 +165,24 @@ hashes, proof results, deviations. Do not dispatch the Verifier - that is the or
 step, after the last batch of the whole feature, over the full check set. A Verifier briefed by
 the builder that just closed the final batch inherits that builder's scope even though it
 inherits none of its tokens, and reports a pass over four checks that reads exactly like a pass
-over forty. See [verify.md](verify.md).
+over forty.
+
+If you hold the whole feature - you wrote every check's commit, or the last batch just returned
+green to you - you are the orchestrator. Dispatch the Verifier in that same turn. Do not ask.
+Do not wait for "verify work". See [verify.md](verify.md).
 
 ## What was deliberately removed
 
 If you are used to a per-task cycle, these are gone on purpose:
 
-| Removed                                                                                                    | Why                                                                                                                                                                                                                                                                                                             |
-| ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Granular task breakdown with `Where` / `Tools` / `Depends on`                                              | buys ordering, not correctness, and competes with the checks for attention                                                                                                                                                                                                                                      |
-| Per-task test adequacy review with evidence tables                                                         | author self-review reproduces the author's own blind spot; the Verifier does it once, better                                                                                                                                                                                                                    |
-| Pre-implementation assumption declaration per task                                                         | the assumptions that matter are in the spec, closed by its gate                                                                                                                                                                                                                                                 |
-| The component catalogue in a design doc - `Purpose` / `Location` / `Interfaces` / `Dependencies` per class | reversible detail that goes stale with the authority of a document; the plan keeps the path, the entities, the signature and the doors, and nothing per-component                                                                                                                                               |
-| The `graph TD` architecture diagram, as the default rendering of the path                                  | a picture of five boxes carries less than five lines that each say what enters, what crosses and what is handed on, and it rots silently while `Flow` is kept true through the build; a mermaid `flowchart` stays available for the case a list genuinely cannot express - a fan-out, a fork, an async hand-off |
-| The `Code Reuse Analysis` table - `Component` / `Location` / `How to Use`                                  | the inventory is already distributed through `Flow`, where each hop marks whether its module exists; what a table adds beyond that is the catalogue again, so only the decision survives, as the sentence opening `Flow` on what is reused instead of duplicated                                                |
-| The pace question (`Quick` / `Guided` / `Detailed`) and a `context.md` of its own                          | a meta-question spends a turn deciding how to spend turns; the elicitation rules apply always, and their output lands in the plan's `Assumptions`                                                                                                                                                               |
-| A quota of gray areas to generate per feature                                                              | a quota manufactures questions; the surface rubric in `## Observable` is a fixed enumeration with an `n/a` escape instead, which finds items without inventing them                                                                                                                                             |
-| An offer to spawn sub-agents                                                                               | logistics the user cannot decide better than you                                                                                                                                                                                                                                                                |
+| Removed | Why |
+| --- | --- |
+| Granular task breakdown with `Where` / `Tools` / `Depends on` | buys ordering, not correctness, and competes with the checks for attention |
+| Per-task test adequacy review with evidence tables | author self-review reproduces the author's own blind spot; the Verifier does it once, better |
+| Pre-implementation assumption declaration per task | the assumptions that matter are in the spec, closed by its gate |
+| The component catalogue in a design doc - `Purpose` / `Location` / `Interfaces` / `Dependencies` per class | reversible detail that goes stale with the authority of a document; the plan keeps the path, the entities, the signature and the doors, and nothing per-component |
+| The `graph TD` architecture diagram, as the default rendering of the path | a picture of five boxes carries less than five lines that each say what enters, what crosses and what is handed on, and it rots silently while `Flow` is kept true through the build; a mermaid `flowchart` stays available for the case a list genuinely cannot express - a fan-out, a fork, an async hand-off |
+| The `Code Reuse Analysis` table - `Component` / `Location` / `How to Use` | the inventory is already distributed through `Flow`, where each hop marks whether its module exists; what a table adds beyond that is the catalogue again, so only the decision survives, as the sentence opening `Flow` on what is reused instead of duplicated |
+| The pace question (`Quick` / `Guided` / `Detailed`) and a `context.md` of its own | a meta-question spends a turn deciding how to spend turns; the elicitation rules apply always, and their output lands in the plan's `Assumptions` |
+| A quota of gray areas to generate per feature | a quota manufactures questions; the surface rubric in `## Observable` is a fixed enumeration with an `n/a` escape instead, which finds items without inventing them |
+| An offer to spawn sub-agents at the start, or asking where to cut | the cut is logistics; the mechanism is asked only when the estimate exceeds the budget |

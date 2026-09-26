@@ -191,12 +191,7 @@ def main() -> int:
     args = ap.parse_args()
     root = (args.root or Path(".")).resolve()
     hits = find_mandate_fanin(root, args.path)
-    print(
-        json.dumps(
-            {"path": normalize_cite(args.path), "fanin": hits, "blocked": bool(hits)},
-            indent=2,
-        )
-    )
+    print(json.dumps({"path": normalize_cite(args.path), "fanin": hits, "blocked": bool(hits)}, indent=2))
     return 1 if hits else 0
 
 

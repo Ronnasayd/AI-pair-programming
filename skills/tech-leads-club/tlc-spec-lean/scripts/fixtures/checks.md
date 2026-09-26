@@ -48,13 +48,13 @@ Proof: `bin/rails test test/billing/dunning_test.rb -n "/provider_timeout_is_ine
 
 ## Coverage
 
-| Set (size)                                      | Member -> proof                                                                                   | Unproven |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------- | -------- |
-| provider status -> local (9)                    | C2, table-driven over all 9                                                                       | -        |
-| webhook event types (5)                         | `charge_failed` C1 · `charge_succeeded` C6 · `updated` C10 · `deleted` C10 · `trial_will_end` C10 | -        |
-| `Suspended` transitions (3)                     | into it C1 · out to `Active` C6 · rejected to `Trialing` C5                                       | -        |
-| `POST /webhooks/provider` statuses (3)          | 200 C8 · 409 C7 · 422 C9                                                                          | -        |
-| startup config: raw request body (2 assemblies) | app entry point C9 · test harness C8                                                              | -        |
+| Set (size) | Member -> proof | Unproven |
+| --- | --- | --- |
+| provider status -> local (9) | C2, table-driven over all 9 | - |
+| webhook event types (5) | `charge_failed` C1 · `charge_succeeded` C6 · `updated` C10 · `deleted` C10 · `trial_will_end` C10 | - |
+| `Suspended` transitions (3) | into it C1 · out to `Active` C6 · rejected to `Trialing` C5 | - |
+| `POST /webhooks/provider` statuses (3) | 200 C8 · 409 C7 · 422 C9 | - |
+| startup config: raw request body (2 assemblies) | app entry point C9 · test harness C8 | - |
 
 - Claims naming a status code, route or response shape: C7, C8, C9 - each has a proof that crosses the boundary
 - No other check claims more than the single case its proof exercises
@@ -64,12 +64,12 @@ Proof: `bin/rails test test/billing/dunning_test.rb -n "/provider_timeout_is_ine
 The repo's guidelines say where tests live and how to run them, and nothing about which level
 proves which code, so these rows are the bar this build runs under.
 
-| Code                                   | Required proofs                                  | Coverage expectation                                                                           |
-| -------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Decides, reached across a boundary     | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
-| Decides, not reached across a boundary | one at its own layer                             | one asserted case per row of the decision table                                                |
-| Entry point that decides nothing       | one at the boundary                              | accepted input, each rejected input, each error path                                           |
-| Instrumentation, pass-throughs         | none of its own                                  | covered by its consumer's proof                                                                |
+| Code | Required proofs | Coverage expectation |
+| --- | --- | --- |
+| Decides, reached across a boundary | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
+| Decides, not reached across a boundary | one at its own layer | one asserted case per row of the decision table |
+| Entry point that decides nothing | one at the boundary | accepted input, each rejected input, each error path |
+| Instrumentation, pass-throughs | none of its own | covered by its consumer's proof |
 
 Evidence:
 

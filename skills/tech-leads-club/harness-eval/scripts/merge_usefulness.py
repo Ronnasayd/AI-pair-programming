@@ -99,9 +99,7 @@ def load_surfaces(path: Path) -> dict[str, dict]:
     return {s["id"]: s for s in data.get("surfaces", [])}
 
 
-def cell_or_missing(
-    score: dict | None, key: str, *, required_for_apply: bool = False
-) -> str:
+def cell_or_missing(score: dict | None, key: str, *, required_for_apply: bool = False) -> str:
     if not score:
         return "_(missing score)_"
     val = (score.get(key) or "").strip()
@@ -206,9 +204,7 @@ def main() -> int:
         expected = p["expected_family"]
         got = j2.get(pid, {}).get("family")
         if got != expected:
-            if not (
-                expected == "SLIM" and j2.get(pid, {}).get("overall") == "ROUTING-ONLY"
-            ):
+            if not (expected == "SLIM" and j2.get(pid, {}).get("overall") == "ROUTING-ONLY"):
                 misses.append({"id": pid, "expected": expected, "got": got})
     trap_pass = len(misses) <= int(trap.get("pass_threshold_misses", 1))
 

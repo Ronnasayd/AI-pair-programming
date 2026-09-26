@@ -16,7 +16,7 @@ nothing.
 
 **Dispatched by whoever holds the whole feature, never by a builder.** A fresh context is not
 independence on its own: the parent writes the brief, so a Verifier spawned by the agent that
-just closed the last batch inherits that agent's _scope_ even though it inherits none of its
+just closed the last batch inherits that agent's *scope* even though it inherits none of its
 tokens. It gets pointed at the last batch, and a pass over four checks reads exactly like a pass
 over forty. The range is `<feature base>..HEAD` and the set is every check in the checklist,
 whoever wrote them.
@@ -80,7 +80,7 @@ lands as a short list somebody acts on rather than a re-litigation of the markup
 
 **An exemption that does not enumerate is a gap, not a limitation.** A checklist may put spacing,
 colour and type weight out of reach, named against the screen they belong to. It may not write
-"visual fidelity is unproven" and stop - that sentence also covers everything a selector _could_
+"visual fidelity is unproven" and stop - that sentence also covers everything a selector *could*
 have reached, and it arrives at you looking like a limitation properly declared, which is how a
 real gap gets waved through by the one step that exists to catch it. Treat a blanket clause as a
 finding, then enumerate what it was covering.
@@ -92,11 +92,11 @@ Run the proofs yourself at `HEAD`, and never trust a report that the author alre
 **One invocation for the whole target, not one per proof and not one per file.** Runners take
 many files and many name patterns in a single call - `bin/rails test a_test.rb b_test.rb -n
 "/one|two/"`, `pytest f.py g.py -k "one or two"`, `jest --testPathPattern` with one
-`--testNamePattern` alternation. Batching per _file_ is the mistake that looks like batching:
+`--testNamePattern` alternation. Batching per *file* is the mistake that looks like batching:
 forty checks across twelve files is twelve process starts, and the process start is the cost.
 
 The guarantee is unchanged as long as each named test appears in the output individually as
-having run and passed. What is forbidden is substituting a _verdict_ for a result: "the suite is
+having run and passed. What is forbidden is substituting a *verdict* for a result: "the suite is
 green" settles no single check. Fall back to one invocation per proof only where the runner
 cannot report per test, or to re-run something that failed.
 
@@ -126,7 +126,7 @@ that an assertion exists. Cite `file:line` and reproduce the assertion expressio
 verdict. This is the per-check cost that makes a 40-check review outlast the build it reviews,
 and it buys almost nothing.
 
-Where the expected value is _not_ readable at the assertion - `assert_equal expected, actual`
+Where the expected value is *not* readable at the assertion - `assert_equal expected, actual`
 with `expected` built three files away - that is a **finding about the test**, not research you
 owe. An assertion whose expected value cannot be read where it is asserted is weak on its face,
 however green it runs. Say so and move on.
@@ -149,7 +149,7 @@ because the author saw it and the table hid it.
 **Take the members from whatever holds authority over that set, which is not always the code.** A
 provider's statuses come from the provider and a framework's routes from the framework - there the
 code is the right place to look, because the code is where the set is discovered. But a set the
-code is meant to _satisfy_ has its authority outside it: the screens a design draws, the fields a
+code is meant to *satisfy* has its authority outside it: the screens a design draws, the fields a
 contract declares. Recomputing those from the code asks the author's own output whether the
 author's own output is complete, and it answers yes every time. Open the artifact and count there.
 
@@ -161,7 +161,7 @@ Two more, mechanically: a claim about nine cases proven on two is a coverage gap
 naming a status code, route or response shape whose proofs all sit below that boundary is a
 **level gap**, no matter how many assertions it carries.
 
-Judge the _level_ against the artifact's own `## Test policy` rows whenever it carries them
+Judge the *level* against the artifact's own `## Test policy` rows whenever it carries them
 (`standard`, `ui`).
 Those rows are the bar the author built under, and that section exists precisely because the
 repo's conventions were found not to answer - deferring to the conventions instead measures the
@@ -180,15 +180,15 @@ vague assertion - that is a finding about the checklist, and the most useful thi
 produces.
 
 Read the `Swept` rows that resolve to **existing** against the code: is the constraint they
-cite actually there? A cited constraint that is not there is a finding. Rows that say _not in
-scope_ are policy the user approved - there is nothing in the code for them to be wrong about.
+cite actually there? A cited constraint that is not there is a finding. Rows that say *not in
+scope* are policy the user approved - there is nothing in the code for them to be wrong about.
 
 ## 4. Inject faults (`standard`, `ui`)
 
 A green suite proves the tests run. Fault injection proves they can catch a regression.
 
 1. **Isolate.** `git worktree add <scratch> HEAD`. Never mutate the real tree, and **never
-   use `git stash`** - it records state from _before_ the mutation, so popping it does not
+   use `git stash`** - it records state from *before* the mutation, so popping it does not
    reverse a fault applied afterwards.
 2. **Baseline.** Record `git status --porcelain` of the real tree first.
 3. **Inject a behaviour-level fault** in the new code: flip a condition, change a returned
@@ -198,7 +198,7 @@ A green suite proves the tests run. Fault injection proves they can catch a regr
 
 **One fault per distinct assertion surface, not per risky line.** Three mutations killed by the
 same two proofs ran the same experiment three times: the first showed those assertions
-discriminate and the rest confirmed it. Choose faults that force _different_ proofs to fail,
+discriminate and the rest confirmed it. Choose faults that force *different* proofs to fail,
 stop once every proof carrying a check has been made to fail once, and cap it at five however
 risky the feature looks - a quota that scales with risk costs most exactly where checks cluster
 in risky code. Run only the narrowest proof covering each fault; a second covering proof adds a
@@ -223,31 +223,31 @@ Write `.checks/<feature>.verified.md`. Lead with the verdict.
 
 ## Binding sources
 
-| Source                  | Opened             | Contradiction                                       | Uncovered                                                        |
-| ----------------------- | ------------------ | --------------------------------------------------- | ---------------------------------------------------------------- |
-| design `03` overview    | yes - artifact URL | none                                                | progress bar, radio indicator; breadcrumb rendered but not drawn |
-| design `05` montando    | yes                | is a band on `03`; C20 renders it as its own screen | -                                                                |
-| contract `billing.yaml` | yes                | none                                                | -                                                                |
+| Source | Opened | Contradiction | Uncovered |
+|---|---|---|---|
+| design `03` overview | yes - artifact URL | none | progress bar, radio indicator; breadcrumb rendered but not drawn |
+| design `05` montando | yes | is a band on `03`; C20 renders it as its own screen | - |
+| contract `billing.yaml` | yes | none | - |
 
 ## Checks
 
-| Check | Claim                   | Proof run                                        | Evidence                                                   | Result |
-| ----- | ----------------------- | ------------------------------------------------ | ---------------------------------------------------------- | ------ |
-| C1    | suspends, never cancels | `pytest ...::test_failed_charge_suspends` exit 0 | `test_dunning.py:118` - `assert sub.status == "suspended"` | PASS   |
-| C3    | retry changes nothing   | `npm test -- -t "retry is idempotent"` exit 0    | `webhook.spec.ts:41` - `expect(rows).toHaveLength(1)`      | PASS   |
+| Check | Claim | Proof run | Evidence | Result |
+|---|---|---|---|---|
+| C1 | suspends, never cancels | `pytest ...::test_failed_charge_suspends` exit 0 | `test_dunning.py:118` - `assert sub.status == "suspended"` | PASS |
+| C3 | retry changes nothing | `npm test -- -t "retry is idempotent"` exit 0 | `webhook.spec.ts:41` - `expect(rows).toHaveLength(1)` | PASS |
 
 ## Test policy rows
 
-| Row                                | Files it classifies | Required proof             | Expectation met                                           |
-| ---------------------------------- | ------------------- | -------------------------- | --------------------------------------------------------- |
-| Decides, reached across a boundary | `subscription.py`   | boundary C1 · own layer C2 | `suspended` yes · `paused` no - C2 never asserts the emit |
+| Row | Files it classifies | Required proof | Expectation met |
+|---|---|---|---|
+| Decides, reached across a boundary | `subscription.py` | boundary C1 · own layer C2 | `suspended` yes · `paused` no - C2 never asserts the emit |
 
 ## Faults injected
 
-| Mutation                                   | Location              | Killed            |
-| ------------------------------------------ | --------------------- | ----------------- |
-| returned status `suspended` -> `cancelled` | `subscription.py:88`  | yes               |
-| removed the `subscription.suspended` emit  | `subscription.py:104` | no - fix required |
+| Mutation | Location | Killed |
+|---|---|---|
+| returned status `suspended` -> `cancelled` | `subscription.py:88` | yes |
+| removed the `subscription.suspended` emit | `subscription.py:104` | no - fix required |
 
 ## Gate
 
@@ -290,7 +290,7 @@ Then scope by the diff, not by the fix's intent - a fix to a shared helper, a fi
 config has a wider blast radius than its description:
 
 - **Faults**: re-inject on the surfaces the fix touched, and on any the fix created. A fix that
-  _adds_ an assertion is the common case, and its new surface has never been made to fail once.
+  *adds* an assertion is the common case, and its new surface has never been made to fail once.
 - **`Coverage`**: recompute the rows whose authority the fix touched. A fix that adds a branch
   adds a member, which is exactly what may not pass unnoticed.
 - **Citations**: refresh the files the fix touched; line numbers move.

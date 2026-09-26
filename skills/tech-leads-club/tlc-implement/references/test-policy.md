@@ -43,8 +43,8 @@ named, **how** to run them, **how a test is built** (which dependencies are real
 doubled), or **that** testing matters. Those are all useful and none of them allocate: they
 describe the tests, while a policy has to describe the code. Watch for the third one especially,
 because it is the one that looks like an allocation rule: keying the level to whether a test
-uses real dependencies decides _how_ to write a test, and if you read it as deciding _what
-deserves_ one, every decision table that touches a real dependency gets routed away from its own
+uses real dependencies decides *how* to write a test, and if you read it as deciding *what
+deserves* one, every decision table that touches a real dependency gets routed away from its own
 layer and is never enumerated.
 
 ## 2. Classify by the shape of the code, never by the name of the layer
@@ -97,15 +97,14 @@ rows above. Use the repo's own level names, locations and commands; invent none.
 ```markdown
 ## Test policy (proposed - the repo does not declare this)
 
-| Code                                        | Required proofs                                  | Coverage expectation                                                                           |
-| ------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Decides, and is reached across a boundary   | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
-| Decides, not reached across a boundary      | one at its own layer                             | one asserted case per row of the decision table                                                |
-| Entry point or adapter that decides nothing | one at the boundary                              | accepted input, each rejected input, each error path                                           |
-| Instrumentation, pass-throughs              | none of its own                                  | covered by its consumer's proof                                                                |
+| Code | Required proofs | Coverage expectation |
+| --- | --- | --- |
+| Decides, and is reached across a boundary | one at the boundary **and** one at its own layer | the contract at the boundary; one asserted case per row of the decision table at its own layer |
+| Decides, not reached across a boundary | one at its own layer | one asserted case per row of the decision table |
+| Entry point or adapter that decides nothing | one at the boundary | accepted input, each rejected input, each error path |
+| Instrumentation, pass-throughs | none of its own | covered by its consumer's proof |
 
 Evidence:
-
 - <file>: dispatches over <n> cases, <n> branch points -> decides
 - <file>: forwards a single call, no conditional -> instrumentation
 - <existing declaration> decides <what it decides> and leaves the two questions open

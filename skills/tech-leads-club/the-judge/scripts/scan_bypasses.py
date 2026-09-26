@@ -19,17 +19,9 @@ MARKERS = [
     ("test-dodge", re.compile(r"@pytest\.mark\.skip|@unittest\.skip")),
     ("test-dodge", re.compile(r"\bt\.Skip\s*\(")),
     ("hook-bypass", re.compile(r"--no-verify\b")),
-    (
-        "tls-bypass",
-        re.compile(
-            r"rejectUnauthorized\s*:\s*false|verify\s*=\s*False|InsecureSkipVerify|NODE_TLS_REJECT_UNAUTHORIZED"
-        ),
-    ),
+    ("tls-bypass", re.compile(r"rejectUnauthorized\s*:\s*false|verify\s*=\s*False|InsecureSkipVerify|NODE_TLS_REJECT_UNAUTHORIZED")),
     ("type-bypass", re.compile(r"\bas\s+any\b|\bas\s+unknown\s+as\b")),
-    (
-        "error-swallow",
-        re.compile(r"except(\s+\w+)?\s*:\s*pass\b|catch\s*(\([^)]*\))?\s*\{\s*\}"),
-    ),
+    ("error-swallow", re.compile(r"except(\s+\w+)?\s*:\s*pass\b|catch\s*(\([^)]*\))?\s*\{\s*\}")),
     ("unsafe-html", re.compile(r"dangerouslySetInnerHTML|bypassSecurityTrust")),
     ("sync-hack", re.compile(r"\btime\.sleep\s*\(|\bThread\.sleep\s*\(")),
 ]

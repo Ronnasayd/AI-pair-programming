@@ -30,7 +30,6 @@ What it checks:
   ERROR  - a required section is missing
   ERROR  - an acceptance criterion has no SHALL (not testable / not EARS-shaped)
   ERROR  - an Assumptions row has an empty "Chosen default" or "Rationale" cell
-  ERROR  - a Traceability row has a malformed requirement ID
   ERROR  - the Observable section is empty, or has no rows and no `None - <why>`
   ERROR  - an Observable row whose Landing cell is blank
   ERROR  - an Observable `n/a` or `existing` landing with no reason after it
@@ -74,34 +73,26 @@ import sys
 # Each entry is a tuple of acceptable heading names (first is canonical).
 REQUIRED_SECTIONS = [
     ("Problem", "Problem Statement"),
-    ("Out of scope", "Out of Scope"),
-    ("Assumptions", "Assumptions & Open Questions"),
-    ("Criteria", "User Stories"),
-    ("Traceability", "Requirement Traceability"),
-    ("Observable",),
     ("Flow",),
+    ("Impact",),
     ("Relations",),
     ("Surface",),
     ("Landing",),
-    ("Impact",),
+    ("Criteria", "User Stories"),
+    ("Out of scope", "Out of Scope"),
+    ("Assumptions", "Assumptions & Open Questions"),
+    ("Observable",),
 ]
 ADVISORY_SECTIONS = ["Sources"]
 
 # The shape half: each has a one-line answer when it does not apply.
 SHAPE_HINTS = (
     ("Flow", "state the hops in order, or `single module - <name>`"),
-    (
-        "Relations",
-        "state the entities and cardinality, or `None - no stored-data shape change`",
-    ),
+    ("Relations", "state the entities and cardinality, or `None - no stored-data shape change`"),
     ("Surface", "state the route signature, or `None - nothing consumed outside`"),
-    (
-        "Impact",
-        "state what changes underneath, or `nothing` - a missing row is not an answer",
-    ),
+    ("Impact", "state what changes underneath, or `nothing` - a missing row is not an answer"),
 )
 
-ID_RE = re.compile(r"^[A-Z][A-Z0-9]*-\d+$")
 PLACEHOLDER_RE = re.compile(r"^\s*[\[<].+[\]>]\s*$")
 CID_RE = re.compile(r"\bC\d+\b")
 STATUS_RE = re.compile(r"\b[1-5]\d\d\b")
@@ -112,8 +103,7 @@ VAGUE_RE = re.compile(
     re.IGNORECASE,
 )
 HEADER_CELL_RE = re.compile(
-    r"^(assumption|#|id|kind|criterion|slice|set|check|front|decision|excluded)\b",
-    re.IGNORECASE,
+    r"^(assumption|#|id|kind|criterion|slice|set|check|front|decision|excluded)\b", re.IGNORECASE
 )
 
 # `Entity { string name }` in an erDiagram is the columns-and-types syntax, which is
@@ -124,9 +114,7 @@ ER_ATTRIBUTE_RE = re.compile(r"^\s*\w+\s*\{\s*$")
 # `out:` cannot keep a trailing \b: the colon is not a word character, so the
 # boundary never fires and an `out:` hop that names a slug in backticks is
 # misread as an unresolved module.
-HOP_RESOLVED_RE = re.compile(
-    r"\b(exists|existing|new\b|door\s*\d+)|out\s*:", re.IGNORECASE
-)
+HOP_RESOLVED_RE = re.compile(r"\b(exists|existing|new\b|door\s*\d+)|out\s*:", re.IGNORECASE)
 MODULE_RE = re.compile(r"`([^`]+)`")
 # A mermaid flowchart node: `A[Label]`, `A["Label"]`, `A(Label)`. The label is what has to
 # carry the resolution marker, the same as a list hop does.
@@ -156,8 +144,7 @@ def _autodetect(root):
     if not os.path.isdir(base):
         return None
     features = [
-        d
-        for d in sorted(os.listdir(base))
+        d for d in sorted(os.listdir(base))
         if os.path.isfile(os.path.join(base, d, "plan.md"))
     ]
     if len(features) == 1:
@@ -262,15 +249,12 @@ def classify_ears(text):
     if len(kws) >= 2:
         return (True, "complex (" + "+".join(kws) + ")")
     if kws:
-        return (
-            True,
-            {
-                "WHILE": "state-driven",
-                "WHEN": "event-driven",
-                "IF/THEN": "unwanted-behavior",
-                "WHERE": "optional-feature",
-            }[kws[0]],
-        )
+        return (True, {
+            "WHILE": "state-driven",
+            "WHEN": "event-driven",
+            "IF/THEN": "unwanted-behavior",
+            "WHERE": "optional-feature",
+        }[kws[0]])
     if re.match(r"^\s*the\b", low):
         return (True, "ubiquitous")
     return (True, "warn: SHALL present but no EARS lead keyword")
@@ -297,9 +281,7 @@ def check_criteria(lines):
     # label and the list, and treating it as a terminator silently skips every criterion.
     for i, ln in enumerate(lines, start=1):
         stripped = ln.strip()
-        if re.match(
-            r"^\*{0,2}Acceptance Criteria\*{0,2}\s*:?\s*$", stripped, re.IGNORECASE
-        ):
+        if re.match(r"^\*{0,2}Acceptance Criteria\*{0,2}\s*:?\s*$", stripped, re.IGNORECASE):
             in_ac, blanks = True, 0
             continue
         if not in_ac:
@@ -318,9 +300,7 @@ def check_criteria(lines):
             ac_count += 1
             ok, note = classify_ears(item)
             if not ok:
-                errors.append(
-                    f"L{i}: acceptance criterion has no SHALL (not testable): {item[:70]}"
-                )
+                errors.append(f"L{i}: acceptance criterion has no SHALL (not testable): {item[:70]}")
             elif note.startswith("warn"):
                 warnings.append(
                     f"L{i}: AC has SHALL but no EARS keyword (WHEN/WHILE/WHERE/IF or "
@@ -328,19 +308,11 @@ def check_criteria(lines):
                 )
             vague = VAGUE_RE.search(item)
             if vague:
-                warnings.append(
-                    f"L{i}: AC uses '{vague.group(0)}' instead of a concrete value: {item[:60]}"
-                )
-        elif (
-            re.match(r"^#{1,4}\s", ln)
-            or stripped.startswith("**")
-            or re.match(r"^\s*[-*+]\s", ln)
-        ):
+                warnings.append(f"L{i}: AC uses '{vague.group(0)}' instead of a concrete value: {item[:60]}")
+        elif re.match(r"^#{1,4}\s", ln) or stripped.startswith("**") or re.match(r"^\s*[-*+]\s", ln):
             in_ac = False
     if ac_count == 0:
-        warnings.append(
-            "no numbered acceptance criteria found - is the plan filled in?"
-        )
+        warnings.append("no numbered acceptance criteria found - is the plan filled in?")
     return errors, warnings
 
 
@@ -372,12 +344,8 @@ def check_file(path):
             errors.append(f"missing required section: ## {names[0]}")
     for name in ADVISORY_SECTIONS:
         label = re.compile(r"^\**" + re.escape(name) + r"\**\s*:", re.IGNORECASE)
-        if section_bounds(lines, name) is None and not any(
-            label.match(ln.strip()) for ln in lines
-        ):
-            warnings.append(
-                f"no {name} section - 'nothing' is a valid answer, a missing section is not"
-            )
+        if section_bounds(lines, name) is None and not any(label.match(ln.strip()) for ln in lines):
+            warnings.append(f"no {name} section - 'nothing' is a valid answer, a missing section is not")
 
     # A source marked binding is only ever opened by step 1 of Verify, which runs at `ui`.
     if any(re.search(r"\bbinding\b", ln, re.IGNORECASE) for ln in lines):
@@ -408,43 +376,17 @@ def check_file(path):
             if not assumption:
                 continue
             if not chosen or PLACEHOLDER_RE.match(chosen):
-                errors.append(
-                    f"assumption '{assumption[:40]}' has empty 'Chosen default'"
-                )
+                errors.append(f"assumption '{assumption[:40]}' has empty 'Chosen default'")
             if not rationale or PLACEHOLDER_RE.match(rationale):
                 errors.append(f"assumption '{assumption[:40]}' has empty 'Rationale'")
         if template_seen:
-            warnings.append(
-                "Assumptions table still contains template placeholder rows"
-            )
+            warnings.append("Assumptions table still contains template placeholder rows")
         oq = [lines[i] for i in range(*b) if "open questions" in lines[i].lower()]
         oq_clean = re.sub(r"[*_]", "", " ".join(oq)).lower()
         if not oq:
             warnings.append("no 'Open questions:' line in the Assumptions section")
         elif not re.search(r"open questions.*:\s*none", oq_clean):
-            warnings.append(
-                "open questions do not read as resolved ('Open questions: none')"
-            )
-
-    b = present.get("Traceability")
-    if b:
-        template_seen, real_ids = False, 0
-        for r in first_table(lines, b):
-            cells = split_row(r)
-            if not cells or not cells[0]:
-                continue
-            rid = cells[0]
-            if PLACEHOLDER_RE.match(rid) or "[" in rid or "<" in rid:
-                template_seen = True
-                continue
-            if not ID_RE.match(rid):
-                errors.append(
-                    f"malformed requirement ID: '{rid}' (expected e.g. AUTH-01)"
-                )
-            else:
-                real_ids += 1
-        if template_seen and real_ids == 0:
-            warnings.append("Traceability has only template rows (no real IDs yet)")
+            warnings.append("open questions do not read as resolved ('Open questions: none')")
 
     # Observable: every item of every surface present. A surface carries the same decisions
     # every time it appears, so a blank here is an item nobody decided - not one that does not
@@ -460,20 +402,14 @@ def check_file(path):
                 "`None - no user-facing surface`"
             )
         elif not rows and not declares_none:
-            errors.append(
-                "Observable has no rows and does not state `None - no user-facing surface`"
-            )
+            errors.append("Observable has no rows and does not state `None - no user-facing surface`")
         for r in rows:
             cells = split_row(r)
             if len(cells) < 3 or not cells[0] or PLACEHOLDER_RE.match(cells[0]):
                 continue
             label = f"{cells[0][:28]} / {cells[1][:28]}"
             landing = cells[2]
-            if (
-                not landing
-                or PLACEHOLDER_RE.match(landing)
-                or landing in ("-", "\u2014")
-            ):
+            if not landing or PLACEHOLDER_RE.match(landing) or landing in ("-", "\u2014"):
                 errors.append(
                     f"Observable '{label}': landing is blank - a criterion, `existing - <what>`, "
                     "or `n/a - <reason>`"
@@ -482,7 +418,7 @@ def check_file(path):
             low = landing.lower()
             for kw in ("n/a", "na -", "existing"):
                 if low.startswith(kw):
-                    rest = landing[len(kw) :].strip(" -\u2013\u2014:")
+                    rest = landing[len(kw):].strip(" -\u2013\u2014:")
                     if len(rest) < 3:
                         errors.append(
                             f"Observable '{label}': `{kw}` with no reason - say why it does not "
@@ -537,9 +473,7 @@ def check_file(path):
                 )
                 break
         if not rows and not declares_none:
-            errors.append(
-                "Surface has no route rows and does not state `None - nothing consumed outside`"
-            )
+            errors.append("Surface has no route rows and does not state `None - nothing consumed outside`")
 
     # Landing: the doors.
     land = present.get("Landing")
@@ -548,9 +482,7 @@ def check_file(path):
         rows_data = first_table(lines, land)
         declares_none = any(NONE_RE.search(x) for x in body)
         if not body:
-            errors.append(
-                "Landing section is empty - state `None - <why nothing here is one-way>`"
-            )
+            errors.append("Landing section is empty - state `None - <why nothing here is one-way>`")
         elif not rows_data and not declares_none:
             errors.append(
                 "Landing has no door rows and does not state `None - <why>` - the omission has to be contestable"
@@ -559,26 +491,16 @@ def check_file(path):
             cells = split_row(r)
             if len(cells) >= 3 and cells[0] and not PLACEHOLDER_RE.match(cells[0]):
                 if not cells[1] or PLACEHOLDER_RE.match(cells[1]):
-                    errors.append(
-                        f"Landing '{cells[0][:40]}': no literal shape - the next person copies this"
-                    )
+                    errors.append(f"Landing '{cells[0][:40]}': no literal shape - the next person copies this")
                 if not cells[2] or PLACEHOLDER_RE.match(cells[2]):
-                    errors.append(
-                        f"Landing '{cells[0][:40]}': no rejected alternative named"
-                    )
+                    errors.append(f"Landing '{cells[0][:40]}': no rejected alternative named")
 
     # Impact: a section with no rows is a sweep nobody did.
     imp = present.get("Impact")
     if imp:
         body = [lines[i].strip() for i in range(*imp) if lines[i].strip()]
-        if (
-            body
-            and not first_table(lines, imp)
-            and not any(x.startswith(("-", "*")) for x in body)
-        ):
-            warnings.append(
-                "Impact has neither rows nor bullets - name the fronts, even to say nothing changes"
-            )
+        if body and not first_table(lines, imp) and not any(x.startswith(("-", "*")) for x in body):
+            warnings.append("Impact has neither rows nor bullets - name the fronts, even to say nothing changes")
 
     # Flow: a module that neither exists nor is created by a door is placement, which this
     # artifact deliberately leaves to the diff. Naming one here is how the catalogue creeps back.
@@ -629,9 +551,7 @@ def main(argv=None):
     for e in errors:
         print(f"  ERROR {e}")
     fail = errors or (warnings and args.strict)
-    print(
-        f"\nvalidate_plan: {len(errors)} error(s), {len(warnings)} warning(s) in {path}"
-    )
+    print(f"\nvalidate_plan: {len(errors)} error(s), {len(warnings)} warning(s) in {path}")
     return 1 if fail else 0
 
 

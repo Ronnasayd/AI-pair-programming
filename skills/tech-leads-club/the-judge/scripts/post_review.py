@@ -61,23 +61,14 @@ def main():
     ]
     payload = {"body": body, "event": event, "comments": comments}
 
-    with tempfile.NamedTemporaryFile(
-        "w", suffix=".json", delete=False, encoding="utf-8"
-    ) as tmp:
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tmp:
         json.dump(payload, tmp, ensure_ascii=False)
         tmp_path = tmp.name
 
-    rc, out, err = run(
-        [
-            "gh",
-            "api",
-            f"repos/{owner}/{name}/pulls/{number}/reviews",
-            "--method",
-            "POST",
-            "--input",
-            tmp_path,
-        ]
-    )
+    rc, out, err = run([
+        "gh", "api", f"repos/{owner}/{name}/pulls/{number}/reviews",
+        "--method", "POST", "--input", tmp_path,
+    ])
     os.unlink(tmp_path)
 
     if rc != 0:

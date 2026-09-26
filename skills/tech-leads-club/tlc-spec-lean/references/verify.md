@@ -4,7 +4,11 @@
 than as an opinion.
 
 This is the only mechanism standing between "done" and a self-report, so it is never prompted,
-never optional, and never skipped because the author feels confident.
+never optional, never waiting to be asked, and never skipped because the author feels confident.
+
+**When:** the last commit of the feature has landed. Dispatch in that turn. The work is not done
+at that commit; it is done when this report accounts for every check. "verify work" is recovery
+for a feature that already landed without a report, not the happy path.
 
 ## Author is not verifier
 
@@ -15,7 +19,7 @@ remembers.
 
 **Dispatched by whoever holds the whole feature, never by a builder.** A fresh context is not
 independence on its own: the parent writes the brief, so a Verifier spawned by the agent that
-just closed the last batch inherits that agent's _scope_. It gets pointed at the last batch, and
+just closed the last batch inherits that agent's *scope*. It gets pointed at the last batch, and
 a pass over four checks reads exactly like a pass over forty. The range is
 `<feature base>..HEAD` and the set is **every** check in `checks.md`, whoever wrote them.
 
@@ -25,7 +29,12 @@ the author is the author deciding what to do about the author's own work.
 **It receives:** `plan.md`, `checks.md`, every source the plan marks binding, the diff range, and
 this file. It runs read-only over the real tree and fixes nothing. The plan is an input because
 half the enumerations it sweeps for - a route's statuses, an entity's constraints - are named
-there and only _owe_ a row in the checks.
+there and only *owe* a row in the checks.
+
+**How to dispatch.** Launch a fresh sub-agent with no inherited conversation. Hand it this file,
+`plan.md`, `checks.md`, every source the plan marks binding, and the diff range
+`<feature base>..HEAD`. It writes `verification.md` and fixes nothing. You run
+`validate_verification.py`. You do not write the report yourself.
 
 **No sub-agent mechanism available?** Then run this file as a fresh-eyes pass in a new session -
 re-read the plan, the checks and the diff from scratch - and write `Verifier: self-verified
@@ -99,7 +108,7 @@ Run them yourself at `HEAD`. Never trust a report that the author already ran th
 **One invocation for the whole target, not one per proof and not one per file.** Runners take many
 files and many name patterns in a single call - `bin/rails test a_test.rb b_test.rb -n
 "/one|two/"`, `pytest f.py g.py -k "one or two"`, `jest --testPathPattern` with one
-`--testNamePattern` alternation. Batching per _file_ is the mistake that looks like batching: forty
+`--testNamePattern` alternation. Batching per *file* is the mistake that looks like batching: forty
 checks across twelve files is twelve process starts, and the process start is the cost.
 
 The guarantee is unchanged as long as **each named test appears in the output individually** as
@@ -128,7 +137,7 @@ setup, factories and helpers are not yours to walk: a claim naming `409` is sett
 `assert_response :conflict` sitting next to it. This is the per-check cost that makes a 40-check
 review outlast the build it reviews, and it buys almost nothing.
 
-Where the expected value is _not_ readable at the assertion - `assert_equal expected, actual` with
+Where the expected value is *not* readable at the assertion - `assert_equal expected, actual` with
 `expected` built three files away - that is a **finding about the test**, not research you owe. Say
 so and move on.
 
@@ -149,7 +158,7 @@ worse one, because the author saw it and the table hid it.
 
 **Take the members from whatever holds authority over that set, which is not always the code.** A
 provider's statuses come from the provider and a framework's routes from the framework - there the
-code is where the set is discovered. But a set the code is meant to _satisfy_ has its authority
+code is where the set is discovered. But a set the code is meant to *satisfy* has its authority
 outside it: the screens a design draws, the fields a contract declares. Recomputing those from the
 code asks the author's own output whether the author's own output is complete, and it answers yes
 every time.
@@ -184,7 +193,7 @@ the only step that produces that information, and under `light` it does not run,
 that row of the profile table means by "a test that would pass under a wrong implementation".
 
 1. **Isolate.** `git worktree add <scratch> HEAD`. Never mutate the real tree, and **never use
-   `git stash`**: it records state from _before_ the mutation, so popping it does not reverse a
+   `git stash`**: it records state from *before* the mutation, so popping it does not reverse a
    fault applied afterwards, and on a clean tree it creates no entry at all.
 2. **Baseline.** Record `git status --porcelain` of the real tree first.
 3. **Inject a behaviour-level fault** in the new code: flip a condition, change a returned value or
@@ -194,7 +203,7 @@ that row of the profile table means by "a test that would pass under a wrong imp
    differs, STOP, restore the tree, and treat the run as invalid.
 
 **One fault per distinct assertion surface, not per risky line.** Three mutations killed by the same
-two proofs ran the same experiment three times. Choose faults that force _different_ proofs to fail,
+two proofs ran the same experiment three times. Choose faults that force *different* proofs to fail,
 stop once every proof carrying a check has been made to fail once, and cap it at five however risky
 the feature looks - a quota that scales with risk costs most exactly where checks cluster in risky
 code. A second covering proof per fault adds a run and no information. Use real mutation tooling
@@ -226,33 +235,33 @@ Write `.specs/features/<feature>/verification.md`. Lead with the verdict.
 
 ## Binding sources
 
-| Source               | Opened             | Contradiction | Uncovered |
-| -------------------- | ------------------ | ------------- | --------- |
-| design `03` overview | yes - artifact URL | none          | -         |
+| Source | Opened | Contradiction | Uncovered |
+| --- | --- | --- | --- |
+| design `03` overview | yes - artifact URL | none | - |
 
 ## Checks
 
-| Check | Claim                   | Proof run                                                 | Evidence                                                                    | Result |
-| ----- | ----------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------- | ------ |
-| C1    | suspends, never cancels | `bin/rails test ... -n "/failed_charge_suspends/"` exit 0 | `test/billing/dunning_test.rb:118` - `assert_equal "suspended", sub.status` | PASS   |
+| Check | Claim | Proof run | Evidence | Result |
+| --- | --- | --- | --- | --- |
+| C1 | suspends, never cancels | `bin/rails test ... -n "/failed_charge_suspends/"` exit 0 | `test/billing/dunning_test.rb:118` - `assert_equal "suspended", sub.status` | PASS |
 
 ## Coverage
 
-| Set (size)                   | Recomputed from | Member -> proof             | Unproven |
-| ---------------------------- | --------------- | --------------------------- | -------- |
-| provider status -> local (9) | provider docs   | C2, table-driven over all 9 | -        |
+| Set (size) | Recomputed from | Member -> proof | Unproven |
+| --- | --- | --- | --- |
+| provider status -> local (9) | provider docs | C2, table-driven over all 9 | - |
 
 ## Test policy rows
 
-| Row                                | Files it classifies | Required proof             | Expectation met |
-| ---------------------------------- | ------------------- | -------------------------- | --------------- |
-| Decides, reached across a boundary | `subscription.rb`   | boundary C1 · own layer C2 | yes             |
+| Row | Files it classifies | Required proof | Expectation met |
+| --- | --- | --- | --- |
+| Decides, reached across a boundary | `subscription.rb` | boundary C1 · own layer C2 | yes |
 
 ## Faults injected
 
-| Mutation                                   | Location             | Killed |
-| ------------------------------------------ | -------------------- | ------ |
-| returned status `suspended` -> `cancelled` | `subscription.rb:88` | yes    |
+| Mutation | Location | Killed |
+| --- | --- | --- |
+| returned status `suspended` -> `cancelled` | `subscription.rb:88` | yes |
 
 ## Gate
 
@@ -284,7 +293,6 @@ name the feature explicitly rather than letting it search.
 **Report**: `.specs/features/<feature>/verification.md`
 
 **Ranked gaps** (if FAIL):
-
 1. <gap> - <check id> - <file:line or "no evidence">
 ```
 
@@ -319,7 +327,7 @@ Then scope by the diff, not by the fix's intent - a fix to a shared helper, a fi
 has a wider blast radius than its description:
 
 - **Faults** (`standard`, `ui`)**:** re-inject on the surfaces the fix touched, and on any it
-  created. A fix that _adds_ an assertion is the common case, and its new surface has never been
+  created. A fix that *adds* an assertion is the common case, and its new surface has never been
   made to fail once.
 - **Coverage** (`standard`, `ui`)**:** recompute the rows whose authority the fix touched. A fix
   that adds a branch adds a member.

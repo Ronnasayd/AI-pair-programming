@@ -13,7 +13,6 @@ The skill helps you evaluate whether a Skill actually adds value by measuring it
 > **Good Skill = Expert-only Knowledge - What Claude Already Knows**
 
 This skill helps you identify:
-
 - Token-wasting redundant content (things Claude already knows)
 - Genuine expert knowledge that adds value
 - Structural issues that prevent Skills from being activated or used effectively
@@ -29,7 +28,6 @@ Use Skill Judge when you need to:
 - **Compare Skills**: Assess relative quality using consistent criteria
 
 **Trigger phrases**:
-
 - "Evaluate this skill"
 - "Review my SKILL.md"
 - "Audit this skill"
@@ -56,26 +54,26 @@ Use Skill Judge when you need to:
 
 ### The 8 Evaluation Dimensions (120 points total)
 
-| Dimension                        | Max Points | What It Measures                                                         |
-| -------------------------------- | ---------- | ------------------------------------------------------------------------ |
-| **D1: Knowledge Delta**          | 20         | Does the Skill add genuine expert knowledge? (THE CORE DIMENSION)        |
-| **D2: Mindset + Procedures**     | 15         | Does it transfer expert thinking patterns and domain-specific workflows? |
-| **D3: Anti-Pattern Quality**     | 15         | Does it have effective NEVER lists with specific reasons?                |
-| **D4: Specification Compliance** | 15         | Is the frontmatter valid? Is the description comprehensive?              |
-| **D5: Progressive Disclosure**   | 15         | Is content properly layered for on-demand loading?                       |
-| **D6: Freedom Calibration**      | 15         | Is specificity appropriate for task fragility?                           |
-| **D7: Pattern Recognition**      | 10         | Does it follow an established official pattern?                          |
-| **D8: Practical Usability**      | 15         | Can an Agent actually use this Skill effectively?                        |
+| Dimension | Max Points | What It Measures |
+|-----------|------------|------------------|
+| **D1: Knowledge Delta** | 20 | Does the Skill add genuine expert knowledge? (THE CORE DIMENSION) |
+| **D2: Mindset + Procedures** | 15 | Does it transfer expert thinking patterns and domain-specific workflows? |
+| **D3: Anti-Pattern Quality** | 15 | Does it have effective NEVER lists with specific reasons? |
+| **D4: Specification Compliance** | 15 | Is the frontmatter valid? Is the description comprehensive? |
+| **D5: Progressive Disclosure** | 15 | Is content properly layered for on-demand loading? |
+| **D6: Freedom Calibration** | 15 | Is specificity appropriate for task fragility? |
+| **D7: Pattern Recognition** | 10 | Does it follow an established official pattern? |
+| **D8: Practical Usability** | 15 | Can an Agent actually use this Skill effectively? |
 
 ### Grading Scale
 
-| Grade | Percentage      | Meaning                                   |
-| ----- | --------------- | ----------------------------------------- |
-| A     | 90%+ (108+)     | Excellent - production-ready expert Skill |
-| B     | 80-89% (96-107) | Good - minor improvements needed          |
-| C     | 70-79% (84-95)  | Adequate - clear improvement path         |
-| D     | 60-69% (72-83)  | Below Average - significant issues        |
-| F     | <60% (<72)      | Poor - needs fundamental redesign         |
+| Grade | Percentage | Meaning |
+|-------|------------|---------|
+| A | 90%+ (108+) | Excellent - production-ready expert Skill |
+| B | 80-89% (96-107) | Good - minor improvements needed |
+| C | 70-79% (84-95) | Adequate - clear improvement path |
+| D | 60-69% (72-83) | Below Average - significant issues |
+| F | <60% (<72) | Poor - needs fundamental redesign |
 
 ## Key Features
 
@@ -83,23 +81,23 @@ Use Skill Judge when you need to:
 
 The skill teaches you to recognize three types of content:
 
-| Type           | Definition                         | Treatment                             |
-| -------------- | ---------------------------------- | ------------------------------------- |
-| **Expert**     | Claude genuinely doesn't know this | Must keep - this is the Skill's value |
-| **Activation** | Claude knows but may not think of  | Keep if brief - serves as reminder    |
-| **Redundant**  | Claude definitely knows this       | Should delete - wastes tokens         |
+| Type | Definition | Treatment |
+|------|------------|-----------|
+| **Expert** | Claude genuinely doesn't know this | Must keep - this is the Skill's value |
+| **Activation** | Claude knows but may not think of | Keep if brief - serves as reminder |
+| **Redundant** | Claude definitely knows this | Should delete - wastes tokens |
 
 ### Five Official Design Patterns
 
 Skill Judge identifies and evaluates against five established patterns:
 
-| Pattern        | Lines | Best For                               | Example         |
-| -------------- | ----- | -------------------------------------- | --------------- |
-| **Mindset**    | ~50   | Creative tasks requiring taste         | frontend-design |
-| **Navigation** | ~30   | Multiple distinct scenarios            | internal-comms  |
-| **Philosophy** | ~150  | Art/creation requiring originality     | canvas-design   |
-| **Process**    | ~200  | Complex multi-step projects            | mcp-builder     |
-| **Tool**       | ~300  | Precise operations on specific formats | docx, pdf, xlsx |
+| Pattern | Lines | Best For | Example |
+|---------|-------|----------|---------|
+| **Mindset** | ~50 | Creative tasks requiring taste | frontend-design |
+| **Navigation** | ~30 | Multiple distinct scenarios | internal-comms |
+| **Philosophy** | ~150 | Art/creation requiring originality | canvas-design |
+| **Process** | ~200 | Complex multi-step projects | mcp-builder |
+| **Tool** | ~300 | Precise operations on specific formats | docx, pdf, xlsx |
 
 ### Common Failure Pattern Detection
 
@@ -149,7 +147,6 @@ Skill Judge produces a structured evaluation report:
 # Skill Evaluation Report: [Skill Name]
 
 ## Summary
-
 - **Total Score**: X/120 (X%)
 - **Grade**: [A/B/C/D/F]
 - **Pattern**: [Mindset/Navigation/Philosophy/Process/Tool]
@@ -157,19 +154,15 @@ Skill Judge produces a structured evaluation report:
 - **Verdict**: [One sentence assessment]
 
 ## Dimension Scores
-
 [Table with scores for all 8 dimensions]
 
 ## Critical Issues
-
 [Must-fix problems]
 
 ## Top 3 Improvements
-
 [Prioritized improvement suggestions]
 
 ## Detailed Analysis
-
 [In-depth analysis for dimensions scoring below 80%]
 ```
 
@@ -178,7 +171,6 @@ Skill Judge produces a structured evaluation report:
 ### When Evaluating Skills
 
 **Do:**
-
 - Always check the description field first (it's the most critical)
 - Ask "Does Claude already know this?" for every section
 - Look for specific anti-patterns with non-obvious reasons
@@ -186,7 +178,6 @@ Skill Judge produces a structured evaluation report:
 - Check that loading triggers are embedded in workflows
 
 **Never:**
-
 - Give high scores just because content looks professional
 - Ignore token waste from redundant explanations
 - Let length impress you (43 lines can outperform 500)

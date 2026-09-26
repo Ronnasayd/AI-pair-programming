@@ -68,24 +68,9 @@ ROUTE_RE = re.compile(r"(/[A-Za-z0-9_\-/:{}.]*)")
 TABLE_DRIVEN_RE = re.compile(r"table[- ]driven", re.IGNORECASE)
 
 SELECTOR_TOKENS = (
-    "-n ",
-    "-k ",
-    "-t ",
-    "-e ",
-    "--name",
-    "--only",
-    "--example",
-    "--filter",
-    "--testnamepattern",
-    "--test-name",
-    "--run",
-    "-dtest=",
-    "-run ",
-    "::",
-    "#",
-    "--grep",
-    "-g ",
-    "--spec",
+    "-n ", "-k ", "-t ", "-e ", "--name", "--only", "--example", "--filter",
+    "--testnamepattern", "--test-name", "--run", "-dtest=", "-run ", "::", "#",
+    "--grep", "-g ", "--spec",
 )
 
 VAGUE_RE = re.compile(
@@ -97,37 +82,16 @@ VAGUE_RE = re.compile(
 # canonical name -> alternative spellings accepted in the Swept list
 DIMENSIONS = {
     "validation": ("validation", "validation and bounds", "input validation"),
-    "failure modes": (
-        "failure modes",
-        "failure",
-        "failure and partial failure",
-        "partial failure",
-    ),
-    "idempotency": (
-        "idempotency",
-        "idempotency and retry",
-        "idempotency, retry, duplicates",
-        "retry",
-    ),
-    "authorization": (
-        "authorization",
-        "authorisation",
-        "auth",
-        "authorization and rate limits",
-    ),
+    "failure modes": ("failure modes", "failure", "failure and partial failure", "partial failure"),
+    "idempotency": ("idempotency", "idempotency and retry", "idempotency, retry, duplicates", "retry"),
+    "authorization": ("authorization", "authorisation", "auth", "authorization and rate limits"),
     "concurrency": ("concurrency", "concurrency and ordering", "ordering"),
     "data lifecycle": ("data lifecycle", "lifecycle", "data retention"),
     "dependency failure": (
-        "dependency failure",
-        "external-dependency failure",
-        "external dependency failure",
+        "dependency failure", "external-dependency failure", "external dependency failure",
         "external dependency",
     ),
-    "state transitions": (
-        "state transitions",
-        "transitions",
-        "state-transition integrity",
-    ),
+    "state transitions": ("state transitions", "transitions", "state-transition integrity"),
     "observability": ("observability", "logging and metrics", "telemetry"),
 }
 
@@ -153,8 +117,7 @@ def _autodetect(root):
     if not os.path.isdir(base):
         return None
     features = [
-        d
-        for d in sorted(os.listdir(base))
+        d for d in sorted(os.listdir(base))
         if os.path.isfile(os.path.join(base, d, "checks.md"))
     ]
     if len(features) == 1:
@@ -286,13 +249,9 @@ def check_file(path):
             profile = m.group(1).lower()
             break
     if profile is None:
-        errors.append(
-            "no `Profile:` line - the verification report has to name the profile in force"
-        )
+        errors.append("no `Profile:` line - the verification report has to name the profile in force")
     elif profile not in PROFILES:
-        errors.append(
-            f"unknown profile '{profile}' (expected one of: {', '.join(PROFILES)})"
-        )
+        errors.append(f"unknown profile '{profile}' (expected one of: {', '.join(PROFILES)})")
 
     # Sections.
     for name in REQUIRED_SECTIONS:
@@ -307,20 +266,14 @@ def check_file(path):
     # Checks.
     checks, duplicates = parse_checks(lines)
     for cid, line_no in duplicates:
-        errors.append(
-            f"L{line_no}: duplicate check id {cid} - ids are referenced downstream and must be unique"
-        )
+        errors.append(f"L{line_no}: duplicate check id {cid} - ids are referenced downstream and must be unique")
     if not checks:
-        errors.append(
-            "no checks parsed - expected lines shaped `**C1** - <claim>` followed by `Proof: <command>`"
-        )
+        errors.append("no checks parsed - expected lines shaped `**C1** - <claim>` followed by `Proof: <command>`")
         return errors, warnings, profile
 
     for cid, c in sorted(checks.items(), key=lambda kv: int(kv[0][1:])):
         if not c["proofs"]:
-            errors.append(
-                f"{cid} has no `Proof:` line - no proof, no check (L{c['line']})"
-            )
+            errors.append(f"{cid} has no `Proof:` line - no proof, no check (L{c['line']})")
         for pr in c["proofs"]:
             low = pr.lower()
             if not any(tok in low for tok in SELECTOR_TOKENS):
@@ -330,9 +283,7 @@ def check_file(path):
                 )
         vague = VAGUE_RE.search(c["claim"])
         if vague:
-            warnings.append(
-                f"{cid}: claim uses '{vague.group(0)}' instead of a concrete value"
-            )
+            warnings.append(f"{cid}: claim uses '{vague.group(0)}' instead of a concrete value")
 
     referenced = set()
 
@@ -340,9 +291,7 @@ def check_file(path):
     cov = section_bounds(lines, "Coverage")
     rows = table_rows(lines, cov)
     if cov and not rows:
-        warnings.append(
-            "Coverage section has no rows - state 'no set rows' explicitly if nothing enumerates"
-        )
+        warnings.append("Coverage section has no rows - state 'no set rows' explicitly if nothing enumerates")
     for r in rows:
         cells = split_row(r)
         if len(cells) < 2:
@@ -353,16 +302,12 @@ def check_file(path):
             continue
         label = set_cell[:48]
         if not member_cell or PLACEHOLDER_RE.match(member_cell) or member_cell == "-":
-            errors.append(
-                f"Coverage '{label}': empty member cell - every member needs its own token and a check"
-            )
+            errors.append(f"Coverage '{label}': empty member cell - every member needs its own token and a check")
             continue
         referenced |= {c.upper() for c in CID_RE.findall(member_cell)}
         sm = SIZE_RE.search(set_cell)
         if not sm:
-            warnings.append(
-                f"Coverage '{label}': declares no set size - write it as '(N)' so the join is checkable"
-            )
+            warnings.append(f"Coverage '{label}': declares no set size - write it as '(N)' so the join is checkable")
         else:
             declared = int(sm.group(1))
             if TABLE_DRIVEN_RE.search(member_cell) and str(declared) in member_cell:
@@ -374,14 +319,8 @@ def check_file(path):
                         f"Coverage '{label}': declares {declared} members but only {assigned} carry a check "
                         f"- the unassigned member is the one that ships unproven"
                     )
-        if (
-            unproven
-            and unproven not in ("-", "—")
-            and not PLACEHOLDER_RE.match(unproven)
-        ):
-            errors.append(
-                f"Coverage '{label}': Unproven is '{unproven[:40]}' - a member with no proof is a gap"
-            )
+        if unproven and unproven not in ("-", "—") and not PLACEHOLDER_RE.match(unproven):
+            errors.append(f"Coverage '{label}': Unproven is '{unproven[:40]}' - a member with no proof is a gap")
 
     # Swept.
     swept = section_bounds(lines, "Swept")
@@ -399,15 +338,11 @@ def check_file(path):
                     break
         for canon in DIMENSIONS:
             if canon not in found:
-                errors.append(
-                    f"Swept: dimension '{canon}' has no line - all nine, every time"
-                )
+                errors.append(f"Swept: dimension '{canon}' has no line - all nine, every time")
                 continue
             landing, line_no = found[canon]
             if not landing or PLACEHOLDER_RE.match(landing):
-                errors.append(
-                    f"Swept '{canon}' (L{line_no}): landing is blank - a criterion, `existing`, or `n/a - <reason>`"
-                )
+                errors.append(f"Swept '{canon}' (L{line_no}): landing is blank - a criterion, `existing`, or `n/a - <reason>`")
                 continue
             low = landing.lower()
             if CID_RE.search(landing):
@@ -415,19 +350,13 @@ def check_file(path):
             elif low.startswith("n/a") or low.startswith("not in scope"):
                 rest = re.sub(r"^(n/a|not in scope)\b", "", low).strip(" -–—:")
                 if len(rest) < 3:
-                    errors.append(
-                        f"Swept '{canon}' (L{line_no}): `n/a` with no reason - say why it does not apply"
-                    )
+                    errors.append(f"Swept '{canon}' (L{line_no}): `n/a` with no reason - say why it does not apply")
             elif low.startswith("existing"):
-                rest = landing[len("existing") :].strip(" -–—:")
+                rest = landing[len("existing"):].strip(" -–—:")
                 if len(rest) < 3:
-                    errors.append(
-                        f"Swept '{canon}' (L{line_no}): `existing` with no named guard or constraint"
-                    )
+                    errors.append(f"Swept '{canon}' (L{line_no}): `existing` with no named guard or constraint")
             elif low.startswith("unresolved") or low.startswith("open"):
-                warnings.append(
-                    f"Swept '{canon}' (L{line_no}): still Unresolved - confirm it does not block"
-                )
+                warnings.append(f"Swept '{canon}' (L{line_no}): still Unresolved - confirm it does not block")
             else:
                 warnings.append(
                     f"Swept '{canon}' (L{line_no}): landing '{landing[:40]}' is not a check, `existing`, "
@@ -436,9 +365,7 @@ def check_file(path):
 
     # Dangling references.
     for cid in sorted(referenced - set(checks), key=lambda c: int(c[1:])):
-        errors.append(
-            f"{cid} is referenced in Coverage or Swept but is not defined in ## Checks"
-        )
+        errors.append(f"{cid} is referenced in Coverage or Swept but is not defined in ## Checks")
 
     # The derivation. checks.md is derived from plan.md, so a route reviewed there with
     # nothing pointing back at it here is either dead or unproven - and the plan naming it
@@ -452,12 +379,8 @@ def check_file(path):
 
     # Blocking questions.
     for i, ln in enumerate(lines, start=1):
-        if ln.strip().startswith("|") and re.search(
-            r"\|\s*blocks\s*\|", ln, re.IGNORECASE
-        ):
-            warnings.append(
-                f"L{i}: an unresolved question is marked `blocks` - it cannot be settled while building"
-            )
+        if ln.strip().startswith("|") and re.search(r"\|\s*blocks\s*\|", ln, re.IGNORECASE):
+            warnings.append(f"L{i}: an unresolved question is marked `blocks` - it cannot be settled while building")
 
     return errors, warnings, profile
 
@@ -486,9 +409,7 @@ def main(argv=None):
     for e in errors:
         print(f"  ERROR {e}")
     fail = errors or (warnings and args.strict)
-    print(
-        f"\nvalidate_checks: {len(errors)} error(s), {len(warnings)} warning(s) in {path} [profile: {profile or 'none'}]"
-    )
+    print(f"\nvalidate_checks: {len(errors)} error(s), {len(warnings)} warning(s) in {path} [profile: {profile or 'none'}]")
     return 1 if fail else 0
 
 

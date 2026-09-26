@@ -13,10 +13,10 @@ Two sections, written by different phases, never overwritten together.
 
 ## Decisions
 
-| ID     | Decision                                             | Rationale                                          | Status               | Date       |
-| ------ | ---------------------------------------------------- | -------------------------------------------------- | -------------------- | ---------- |
-| AD-001 | Webhook ingest is idempotent on provider delivery id | replays are routine and cheap to dedup at the edge | active               | 2026-02-14 |
-| AD-002 | Money is stored in integer cents                     | superseded by AD-007                               | superseded by AD-007 | 2026-03-02 |
+| ID | Decision | Rationale | Status | Date |
+| --- | --- | --- | --- | --- |
+| AD-001 | Webhook ingest is idempotent on provider delivery id | replays are routine and cheap to dedup at the edge | active | 2026-02-14 |
+| AD-002 | Money is stored in integer cents | superseded by AD-007 | superseded by AD-007 | 2026-03-02 |
 
 ## Handoff
 
@@ -71,10 +71,10 @@ alive: **you supply judgment** - read the failure, phrase the lesson, cite its g
 features, candidate→confirmed promotion, pruning, demotion, rendering. Hand-kept bookkeeping is
 exactly what rots, so it is not your job.
 
-| File                  | Owner                                               |
-| --------------------- | --------------------------------------------------- |
-| `.specs/lessons.json` | script - canonical state, never hand-edit           |
-| `.specs/LESSONS.md`   | script - rendered playbook, read it, never write it |
+| File | Owner |
+| --- | --- |
+| `.specs/lessons.json` | script - canonical state, never hand-edit |
+| `.specs/LESSONS.md` | script - rendered playbook, read it, never write it |
 
 `confirmed` lessons are the playbook. `candidate` lessons are tracked but not trusted until
 corroborated across two distinct features. `quarantined` ones failed when applied and are ignored.
@@ -83,13 +83,13 @@ corroborated across two distinct features. `quarantined` ones failed when applie
 
 Walk the just-written `verification.md`. For each **grounded** signal, record one lesson:
 
-| Signal in the report                                                                | `--signal`           |
-| ----------------------------------------------------------------------------------- | -------------------- |
-| A check unproven, or with no located evidence                                       | `ac_gap`             |
-| A mutant survived fault injection                                                   | `surviving_mutant`   |
-| A check left a value imprecise (precision gap)                                      | `spec_precision_gap` |
-| A check contradicted a binding source, or the build diverged from an approved shape | `spec_deviation`     |
-| The gate failed                                                                     | `gate_fail`          |
+| Signal in the report | `--signal` |
+| --- | --- |
+| A check unproven, or with no located evidence | `ac_gap` |
+| A mutant survived fault injection | `surviving_mutant` |
+| A check left a value imprecise (precision gap) | `spec_precision_gap` |
+| A check contradicted a binding source, or the build diverged from an approved shape | `spec_deviation` |
+| The gate failed | `gate_fail` |
 
 ```bash
 python3 <skill-dir>/scripts/lessons.py add \
@@ -108,10 +108,10 @@ is an opinion.
 mean the same thing must read the same way or neither ever gets promoted:
 
 - Write the general rule, not the incident. Good: `"Assert the exact persisted status value, not
-just that a status field exists"`. Bad: `"The subscription test on line 88 was too weak"`.
+  just that a status field exists"`. Bad: `"The subscription test on line 88 was too weak"`.
 - Be canonical and terse. One lesson per signal; do not bundle.
 
-**Scope discipline.** This captures _execution_ lessons about this codebase. It does **not**
+**Scope discipline.** This captures *execution* lessons about this codebase. It does **not**
 capture opinions about the workflow itself ("we should write checks earlier") - those are
 maintainer decisions that ship in a version bump, never auto-written. If a candidate lesson is
 about how to run the skill rather than about this code, do not record it.

@@ -41,11 +41,11 @@ Ask **before** Track A so the user sets spend up front. Track **A always runs** 
 ```markdown
 Choose eval scope for this run (before Track A).
 
-| Track               | Question                                                    | Certainty                                                                                                                                              | Token consumption                                                                       |
-| ------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| **A — Correctness** | Cited path/command exists?                                  | **Highest** — script only, no LLM. Prefers false negatives over false BROKEN.                                                                          | **~0 model tokens** (always runs next)                                                  |
-| **B — Redundancy**  | Would an agent rediscover this cheaply without the harness? | **Medium** — dual LLM + plants; Ship only if trap PASS and both agree. Disagree → Hold. Less model-sensitive than C.                                   | **High** — 2 judges × every claim (~N in this inventory). Each may spot-check the repo. |
-| **C — Usefulness**  | Does this surface change behavior vs theory/demo/overlap?   | **Lowest / most subjective** — dual LLM + plants + fan-in; **model-sensitive**. Slim/Mixed need gates; prefer second-model check before large deletes. | **Highest** — 2 judges × every surface (whole files; often dominates the run).          |
+| Track | Question | Certainty | Token consumption |
+|-------|----------|-----------|-------------------|
+| **A — Correctness** | Cited path/command exists? | **Highest** — script only, no LLM. Prefers false negatives over false BROKEN. | **~0 model tokens** (always runs next) |
+| **B — Redundancy** | Would an agent rediscover this cheaply without the harness? | **Medium** — dual LLM + plants; Ship only if trap PASS and both agree. Disagree → Hold. Less model-sensitive than C. | **High** — 2 judges × every claim (~N in this inventory). Each may spot-check the repo. |
+| **C — Usefulness** | Does this surface change behavior vs theory/demo/overlap? | **Lowest / most subjective** — dual LLM + plants + fan-in; **model-sensitive**. Slim/Mixed need gates; prefer second-model check before large deletes. | **Highest** — 2 judges × every surface (whole files; often dominates the run). |
 
 Notes: Ship (B) ≠ Slim (C). Rediscoverable ≠ useless. A always runs; B/C are optional.
 

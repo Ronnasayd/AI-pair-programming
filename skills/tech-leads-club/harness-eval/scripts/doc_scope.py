@@ -39,9 +39,7 @@ def normalize_rel(path: str) -> str:
 def is_agent_harness_ref(rel_path: str) -> bool:
     """Skill-tree files (SKILL.md, references/, etc.) — always eligible as T2."""
     p = normalize_rel(rel_path)
-    return any(
-        p.startswith(root) or f"/{root}" in f"/{p}" for root in AGENT_SKILL_ROOTS
-    )
+    return any(p.startswith(root) or f"/{root}" in f"/{p}" for root in AGENT_SKILL_ROOTS)
 
 
 def is_excluded_decision_record(rel_path: str) -> bool:
@@ -56,14 +54,7 @@ def optional_doc_type(rel_path: str) -> str:
     parts = [x for x in p.split("/") if x]
     if len(parts) >= 2:
         # why: docs/foo.md → docs; docs/guides/x.md → docs/guides
-        if parts[0].lower() in {
-            "docs",
-            "doc",
-            "documentation",
-            "wiki",
-            "handbook",
-            "guides",
-        }:
+        if parts[0].lower() in {"docs", "doc", "documentation", "wiki", "handbook", "guides"}:
             if len(parts) >= 3:
                 return f"{parts[0]}/{parts[1]}"
             return parts[0]
