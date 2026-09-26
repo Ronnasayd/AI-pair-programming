@@ -120,7 +120,6 @@ golang:my-golang-patterns
 golang:my-golang-testing
 handling-large-files
 image-mockup-recreator
-index.yaml
 integration-testing
 jira-to-todo
 keycloak-docs-index
@@ -151,7 +150,6 @@ semantic-commit-message
 skill-advisor
 skill-description-generator
 skills-discovery
-skills.db
 SkillSpector:skill-inspector
 srs-generator
 ste

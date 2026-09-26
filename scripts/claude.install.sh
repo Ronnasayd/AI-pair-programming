@@ -151,6 +151,7 @@ find "$LOCAL/$DEFAULT_FOLDER/skills" -maxdepth 1 -type l | while read -r link; d
 done
 ln -s "$SOURCE/skills/index.yaml" "$LOCAL/$DEFAULT_FOLDER/skills/index.yaml"
 ln -s "$SOURCE/skills/skills.db" "$LOCAL/$DEFAULT_FOLDER/skills/skills.db"
+ln -s "$SOURCE/skills/manifest.json" "$LOCAL/$DEFAULT_FOLDER/skills/manifest.json"
 # Procurar por todos os SKILL.md e criar symlinks para seus diretórios pai
 find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     # Obter o diretório pai de SKILL.md (diretório da skill)

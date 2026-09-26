@@ -585,11 +585,11 @@ skills:
     gh-fix-ci), or general Git operations.
 - name:
   - tlc-discover
-  description: Interviews an unshaped idea into a verdict and a design document with
-    literal decisions for tlc-plan. Use when the user says "research this", "help
-    me understand this problem", "should we build this", "discovery", "explore this
-    problem", or "tlc-discover". Do NOT use when the shape is already decided (tlc-plan),
-    or to implement.
+  description: Interviews an unshaped idea into a verdict and a design document -
+    decisions, flows, schema, contracts - that anyone can plan from without having
+    been in the room. Use when the user says "research this", "help me understand
+    this problem", "should we build this", "discovery", "explore this problem", or
+    "tlc-discover". Do NOT use to cut a finished design into tasks, or to implement.
 - name:
   - perf-web-optimization
   description: 'Optimize web performance: bundle size, images, caching, lazy loading,
@@ -1512,3 +1512,8 @@ skills:
     "capture this local reference", or any variation providing a local reference image
     + code pair (no Figma URL involved). Do NOT use when the source is a Figma node
     URL — use figma-capture-mcp for that.
+- name:
+  - skill-inspector
+  description: Review AI agent skills before installation using NVIDIA SkillSpector
+    and source-aware semantic review. Use when asked whether a skill or downloaded
+    skill folder is safe, trustworthy, installable, over-permissioned, or malicious.

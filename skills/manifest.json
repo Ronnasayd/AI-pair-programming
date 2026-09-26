@@ -1,4 +1,8 @@
 {
+  "skill-inspector": {
+    "skill_md": "SkillSpector/skill-inspector/SKILL.md",
+    "files": []
+  },
   "adversarial-dev": {
     "skill_md": "adversarial-dev/SKILL.md",
     "files": []
@@ -948,7 +952,6 @@
       "references/PROTOCOL.md",
       "references/claims.schema.json",
       "references/judge-prompts.md",
-      "scripts/__pycache__/doc_scope.cpython-313.pyc",
       "scripts/doc_scope.py",
       "scripts/inventory_extract.py",
       "scripts/merge_agreement.py",
@@ -1197,7 +1200,6 @@
       "references/sub-agents.md",
       "references/tasks.md",
       "references/validate.md",
-      "scripts/__pycache__/validate_state.cpython-312.pyc",
       "scripts/check_commit.py",
       "scripts/lessons.py",
       "scripts/validate_spec.py",
