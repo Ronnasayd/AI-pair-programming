@@ -13,6 +13,10 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import get_by_key, get_hooks_logger, minify_markdown
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+
 LOG = get_hooks_logger("QuestionToolEnforcer")
 
 
@@ -28,19 +32,12 @@ def build_rule() -> str:
         if lang
         else "Use the same language used by the user.\n"
     )
-    return (
-        "## Always Use Interactive Question Tools\n\n"
-        "Use an interactive question tool for every user question — no exceptions.\n\n"
-        "Covers clarifications, options, confirmations, preference checks, "
-        "all user interactions.\n\n"
-        "- **Claude**: `AskUserQuestion`\n"
-        "- **Other environments**: equivalent interactive tool\n"
-        "- **Fallback**: labeled options (A, B, C... Z)\n\n"
-        "Never ask a plain-text question if an interactive tool exists.\n"
-        "Multiple questions: use `grilling` skill.\n"
-        "Ask in clear, technical language.\n"
-        f"{lang_line}"
-    )
+    with open(
+        os.path.join(script_dir, "..", "markdown/INTERATIVE-QUESTION.md"),
+        encoding="utf-8",
+    ) as f:
+        guides = f.read()
+    return f"{guides}\n{lang_line}"
 
 
 RULE = build_rule()

@@ -2,21 +2,22 @@
 """PreToolUse hook: inject guidelines when a subagent is started."""
 
 import json
+import os
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import get_by_key, get_hooks_logger, minify_markdown
 
-LOG = get_hooks_logger("SubagentGuidelines")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
 
-GUIDELINES = (
-    "When starting a new agent/sub-agent, make sure to follow these guidelines:\n\n"
-    '- The agent must be instructed to communicate using "caveman full."\n\n'
-    "- The agent must have sufficient context to perform its task.\n\n"
-    "- Choose the agent model best suited to the task.\n\n"
-    "- Must not include any information regarding Claude or any agent in commits\n\n"
-)
+LOG = get_hooks_logger("SubagentGuidelines")
+with open(
+    os.path.join(script_dir, "..", "markdown/SUBAGENT-GUIDELINES.md"), encoding="utf-8"
+) as f:
+    GUIDELINES = f.read()
 
 AGENT_TOOL_NAMES = {"agent", "task"}
 
