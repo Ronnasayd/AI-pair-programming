@@ -602,6 +602,11 @@
           },
           {
             "type": "command",
+            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/subagent_response_format_gate.py",
+            "timeout": 10
+          },
+          {
+            "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/question_tool_enforcer.py",
             "timeout": 10
           },
