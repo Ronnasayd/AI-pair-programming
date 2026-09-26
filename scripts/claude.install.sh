@@ -155,8 +155,9 @@ ln -s "$SOURCE/skills/skills.db" "$LOCAL/$DEFAULT_FOLDER/skills/skills.db"
 find "$SOURCE/skills" -name "SKILL.md" -type f | while read skill_file; do
     # Obter o diretório pai de SKILL.md (diretório da skill)
     skill_dir=$(dirname "$skill_file")
-    # Obter apenas o nome da skill
-    skill_name=$(basename "$skill_dir")
+    # Nome da skill = path relativo a $SOURCE/skills, com "/" trocado por ":"
+    skill_rel="${skill_dir#"$SOURCE"/skills/}"
+    skill_name="${skill_rel//\//:}"
 
     # Criar symlink (remove o que existir no lugar, ex.: skill baixada via MCP)
     target_link="$LOCAL/$DEFAULT_FOLDER/skills/$skill_name"

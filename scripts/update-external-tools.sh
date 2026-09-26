@@ -263,9 +263,10 @@ SKILLS=(
 )
 for skill in "${SKILLS[@]}"; do
   skill_name=$(echo "$skill" | cut -d'/' -f2)
+  ignore_name="tech-leads-club:${skill_name}"
   echo "━━━ ${skill_name} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/tech-leads-club/${skill_name}"
-  grep -qF "${skill_name}" .skillsignore 2>/dev/null || echo "${skill_name}" >> .skillsignore
+  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
   echo ""
 done
 }
@@ -284,9 +285,10 @@ SKILLS=(
   "xlsx"
 )
 for skill in "${SKILLS[@]}"; do
+  ignore_name="anthropics:${skill}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/anthropics/${skill}"
-  grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
+  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
   echo ""
 done
 }
@@ -353,9 +355,10 @@ SKILLS=(
   "vue-patterns"
 )
 for skill in "${SKILLS[@]}"; do
+  ignore_name="everything-claude-code:${skill}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/everything-claude-code/${skill}"
-  grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
+  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
   echo ""
 done
 }
@@ -370,9 +373,24 @@ SKILLS=(
   "engineering/grill-with-docs"
 )
 for skill in "${SKILLS[@]}"; do
+  ignore_name="mattpocock:${skill//\//:}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/mattpocock/${skill}"
-  grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
+  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
+  echo ""
+done
+}
+
+get_skills_skill-inspector(){
+# agent-toolkit
+BASE_URL="https://github.com/NVIDIA/SkillSpector/tree/main/skills"
+SKILLS=(
+  "skill-inspector"
+)
+for skill in "${SKILLS[@]}"; do
+  echo "━━━ ${skill} ━━━"
+  gghget "${BASE_URL}/${skill}" "skills/SkillSpector/${skill}"
+  grep -qF "SkillSpector:${skill}" .skillsignore 2>/dev/null || echo "SkillSpector:${skill}" >> .skillsignore
   echo ""
 done
 }
@@ -384,9 +402,10 @@ SKILLS=(
   "skill-judge"
 )
 for skill in "${SKILLS[@]}"; do
+  ignore_name="agent-toolkit:${skill}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/agent-toolkit/${skill}"
-  grep -qF "${skill}" .skillsignore 2>/dev/null || echo "${skill}" >> .skillsignore
+  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
   echo ""
 done
 }
@@ -410,5 +429,6 @@ get_skills_anthropic
 get_skills_ecc
 get_skills_mattpocock
 get_skills_agent-toolkit
+get_skills_skill-inspector
 get_commands_awesome_claude_code_toolkit
 
