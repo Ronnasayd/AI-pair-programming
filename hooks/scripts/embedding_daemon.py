@@ -5,6 +5,7 @@ Loads SentenceTransformer once, serves via Unix socket.
 """
 
 import contextlib
+import fcntl
 import json
 import logging
 import os
@@ -14,6 +15,10 @@ import socket
 import sys
 import time
 import traceback
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from io import TextIOWrapper
 
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 SPACY_MODELS = {"pt": "pt_core_news_sm", "en": "en_core_web_sm"}
@@ -57,7 +62,9 @@ def clean_query(nlp: dict, text: str) -> str:
 
     try:
         # why: langdetect is an optional dependency, only needed for language detection
-        from langdetect import detect  # pylint: disable=import-outside-toplevel
+        from langdetect import (  # type: ignore[import-untyped]  # pylint: disable=import-outside-toplevel
+            detect,
+        )
 
         language = detect(text)
     # why: detection failure on malformed/short text must fall back to raw text
@@ -101,6 +108,30 @@ def get_pid_path(project_name: str) -> str:
     return str(RUNTIME_DIR / f"embedding-daemon-{project_name}.pid")
 
 
+def acquire_singleton_lock(project_name: str) -> "TextIOWrapper | None":
+    """Acquire an exclusive, non-blocking lock so only one daemon runs at a time.
+
+    Prevents the race where two hooks fire in the same prompt turn, both see
+    the daemon as not-running, and both spawn one — the second unlinking and
+    rebinding the first's live socket, orphaning it.
+
+    Args:
+        project_name: Name of the project the daemon serves.
+
+    Returns:
+        The open lock file handle (keep it referenced to hold the lock), or
+        None if another daemon instance already holds it.
+    """
+    lock_path = RUNTIME_DIR / f"embedding-daemon-{project_name}.lock"
+    lock_file = lock_path.open("w", encoding="utf-8")
+    try:
+        fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        lock_file.close()
+        return None
+    return lock_file
+
+
 def setup_logger() -> logging.Logger:
     """Configure and return the daemon's file logger.
 
@@ -131,9 +162,16 @@ def main() -> None:  # pylint: disable=too-many-locals,too-many-statements
     log = setup_logger()
     log.debug("Daemon starting — project=%s socket=%s", project_name, sock_path)
 
+    lock_file = acquire_singleton_lock(project_name)
+    if lock_file is None:
+        log.debug("Another daemon instance already running — exiting")
+        sys.exit(0)
+
     try:
         # why: fastembed is an optional dependency, checked here to give a clear error
-        from fastembed import TextEmbedding  # pylint: disable=import-outside-toplevel
+        from fastembed import (  # type: ignore[import-not-found]  # pylint: disable=import-outside-toplevel
+            TextEmbedding,
+        )
     except ImportError:
         log.error("fastembed not installed")
         sys.exit(1)
@@ -161,6 +199,7 @@ def main() -> None:  # pylint: disable=too-many-locals,too-many-statements
     def shutdown(signum: int | None, frame: object | None) -> None:  # noqa: ARG001
         log.debug("Daemon shutting down")
         server.close()
+        lock_file.close()
         for p in (sock_path, pid_path):
             with contextlib.suppress(FileNotFoundError):
                 Path(p).unlink()
