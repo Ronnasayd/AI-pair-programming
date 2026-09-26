@@ -745,6 +745,23 @@ def tmp_project_dir(project_root: str, namespace: str) -> Path:
     return tmp_dir
 
 
+def read_loop_count(project_root: str, namespace: str, key: str) -> int:
+    """Current stop-loop count for key under namespace, 0 if absent/invalid."""
+    path = tmp_project_dir(project_root, namespace) / f"{key}.txt"
+    if not path.exists():
+        return 0
+    try:
+        return int(path.read_text(encoding="utf-8").strip())
+    except ValueError:
+        return 0
+
+
+def bump_loop_count(project_root: str, namespace: str, key: str, count: int) -> None:
+    """Persist the incremented stop-loop count for key under namespace."""
+    path = tmp_project_dir(project_root, namespace) / f"{key}.txt"
+    path.write_text(str(count), encoding="utf-8")
+
+
 def _coverage_pct(covered: int, total: int) -> float:
     if total == 0:
         return 100

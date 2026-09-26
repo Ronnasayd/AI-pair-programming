@@ -18,6 +18,11 @@ with open(
     os.path.join(script_dir, "..", "markdown/SUBAGENT-GUIDELINES.md"), encoding="utf-8"
 ) as f:
     GUIDELINES = f.read()
+_response_template_path = os.path.join(
+    script_dir, "..", "markdown/SUBAGENT-RESPONSE-TEMPLATE.md"
+)
+with open(_response_template_path, encoding="utf-8") as f:
+    RESPONSE_TEMPLATE = f.read()
 
 AGENT_TOOL_NAMES = {"agent", "task"}
 
@@ -34,10 +39,11 @@ def main() -> None:
     if not tool_name or tool_name.lower() not in AGENT_TOOL_NAMES:
         sys.exit(0)
 
+    combined = f"{GUIDELINES}\n\n{RESPONSE_TEMPLATE}"
     output = {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
-            "additionalContext": minify_markdown(GUIDELINES),
+            "additionalContext": minify_markdown(combined),
         }
     }
     LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
