@@ -194,3 +194,4 @@ node_modules/
 *.sw?
 # OS specific
 .DS_Store
+skills/.quarantine/

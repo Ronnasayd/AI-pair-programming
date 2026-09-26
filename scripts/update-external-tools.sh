@@ -203,10 +203,28 @@ print(d.get('download_url') or '', d.get('sha') or '')
 # ─── Scan de segurança (SkillSpector) ───────────────────────────────────────
 
 # Roda NVIDIA SkillSpector num diretório de skill (só log, não bloqueia)
+# --no-llm suspeito → move pra quarentena e roda de novo com LLM pra validar de verdade
 _scan_skill_dir() {
   local dir="$1"
   command -v uv &>/dev/null || return 0
-  uv run skillspector scan "$dir" --no-llm --recursive || echo "  ⚠ skillspector: findings em $dir (não bloqueante)" >&2
+
+  if uv run skillspector scan "$dir" --no-llm --recursive; then
+    return 0
+  fi
+
+  echo "  ⚠ skillspector: findings em $dir (--no-llm) → quarentena + validação com LLM" >&2
+
+  local quarantine_dir="skills/.quarantine/$(basename "$dir")"
+  rm -rf "$quarantine_dir"
+  mkdir -p "$(dirname "$quarantine_dir")"
+  cp -r "$dir" "$quarantine_dir"
+
+  if SKILLSPECTOR_PROVIDER=claude_cli SKILLSPECTOR_MODEL=claude-haiku-4-5-20251001 uv run skillspector scan "$quarantine_dir" --recursive; then
+    echo "  ✓ skillspector (LLM): $dir sem perigo confirmado, removendo da quarentena" >&2
+    rm -rf "$quarantine_dir"
+  else
+    echo "  ✗ skillspector (LLM): $dir CONFIRMADO com risco, mantido em $quarantine_dir para revisão manual" >&2
+  fi
 }
 
 # ─── Lista de skills ──────────────────────────────────────────────────────────
