@@ -706,6 +706,16 @@ def enclosing_def_name(content: str, file_path: str, offset: int) -> str | None:
     return None
 
 
+class _SessionIdFilter(logging.Filter):  # pylint: disable=too-few-public-methods
+    """Inject the short Claude Code session id as record.session_id."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.session_id = get_session_id_short(
+            os.environ.get("CLAUDE_CODE_SESSION_ID", "")
+        )
+        return True
+
+
 def get_hooks_logger(
     name: str = "Hooks",
     log_file: str = str(Path.home() / ".claude" / "logs" / "hooks.log"),
@@ -719,8 +729,11 @@ def get_hooks_logger(
     file_handler = logging.FileHandler(log_file)
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(
-        logging.Formatter("%(asctime)s [%(levelname)s]-[%(name)s]: %(message)s")
+        logging.Formatter(
+            "%(asctime)s [%(levelname)s]-[%(name)s]-[%(session_id)s]: %(message)s"
+        )
     )
+    file_handler.addFilter(_SessionIdFilter())
     logger.addHandler(file_handler)
     return logger
 
