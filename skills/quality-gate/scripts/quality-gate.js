@@ -205,7 +205,7 @@ function collectMetrics(
     eslintReportPath,
     autoRun,
     root,
-    `${resolveBin("eslint", root)} . --format json > ${JSON.stringify(eslintReportPath)}`
+    `${resolveBin("eslint", root)} . --quiet --format json > ${JSON.stringify(eslintReportPath)}`
   );
   ensureReportFile(
     jscpdReportPath,
