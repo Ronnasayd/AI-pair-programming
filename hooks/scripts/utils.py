@@ -21,10 +21,14 @@ from pathlib import Path
 import re
 import shlex
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
+import time
 from typing import Any
+
+import numpy as np
 
 # ---------------------------------------------------------------------------
 # Utility helpers
@@ -357,6 +361,124 @@ def run_lint_hook_main(
 def minify_json(data: Any) -> str:  # noqa: ANN401 - any JSON-serializable value
     """Serialize with no extra whitespace (compact separators)."""
     return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+
+
+def recv_json_line(conn: socket.socket) -> dict:
+    """Read newline-delimited JSON from a unix socket connection.
+
+    Shared by embedding-daemon clients (skill_activation.py, context7_search.py):
+    reads chunks until a trailing newline or EOF, then parses the buffer as JSON.
+
+    Args:
+        conn: Connected unix socket to read from.
+
+    Returns:
+        dict: The parsed JSON response.
+    """
+    data = b""
+    while not data.endswith(b"\n"):
+        chunk = conn.recv(4096)
+        if not chunk:
+            break
+        data += chunk
+    return json.loads(data.decode())
+
+
+def get_daemon_socket_path() -> str:
+    """Return the per-project unix socket path for the embedding daemon.
+
+    Returns:
+        str: Absolute path to the daemon's unix socket.
+    """
+    return f"/tmp/embedding-daemon-{get_project_name()}.sock"  # noqa: S108 hook temp socket path, per-project isolation
+
+
+def is_daemon_running(sock_path: str) -> bool:
+    """Return True if a socket connection to the daemon succeeds.
+
+    Args:
+        sock_path: Path to the daemon's unix socket.
+
+    Returns:
+        bool: True if the socket accepts a connection, False otherwise.
+    """
+    try:
+        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        conn.connect(sock_path)
+        conn.close()
+        return True
+    except (ConnectionRefusedError, FileNotFoundError, OSError):
+        return False
+
+
+def start_daemon(daemon_script: Path, sock_path: str) -> None:
+    """Spawn the embedding daemon as a detached background process.
+
+    Args:
+        daemon_script: Path to the daemon script to run.
+        sock_path: Path to the daemon's unix socket, used only for logging.
+    """
+    # why: daemon must outlive this hook process (detached, start_new_session)
+    subprocess.Popen(  # noqa: S603 controlled daemon script path via daemon_script arg
+        [sys.executable, str(daemon_script)],
+        start_new_session=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    log(f"Daemon started — socket={sock_path}")
+
+
+def wait_for_daemon(sock_path: str, timeout: int) -> bool:
+    """Poll until the daemon socket accepts connections or timeout elapses.
+
+    Args:
+        sock_path: Path to the daemon's unix socket.
+        timeout: Max seconds to poll before giving up.
+
+    Returns:
+        bool: True if the daemon became reachable, False on timeout.
+    """
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if is_daemon_running(sock_path):
+            return True
+        time.sleep(0.2)
+    return False
+
+
+def encode_via_daemon(
+    text: str, daemon_script: Path, daemon_start_timeout: int
+) -> np.ndarray | None:
+    """Request an embedding vector for text from the daemon, starting it if needed.
+
+    Args:
+        text: Text to embed.
+        daemon_script: Path to the daemon script to run if not already up.
+        daemon_start_timeout: Max seconds to wait for the daemon to come up.
+
+    Returns:
+        np.ndarray | None: The embedding vector, or None on failure.
+    """
+    sock_path = get_daemon_socket_path()
+    if not is_daemon_running(sock_path):
+        log("Daemon not running — starting")
+        start_daemon(daemon_script, sock_path)
+        if not wait_for_daemon(sock_path, daemon_start_timeout):
+            log("Daemon failed to start within timeout")
+            return None
+    try:
+        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        conn.connect(sock_path)
+        conn.sendall((json.dumps({"text": text}) + "\n").encode())
+        response = recv_json_line(conn)
+        conn.close()
+        if "error" in response:
+            log(f"Daemon error: {response['error']}")
+            return None
+        return np.array(response["vector"], dtype=np.float32)
+    except Exception as e:
+        log(f"Daemon communication failed: {e}")
+        return None
 
 
 _MULTI_SPACE_RE = re.compile(r" {2,}")

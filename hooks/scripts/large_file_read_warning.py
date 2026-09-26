@@ -93,5 +93,5 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         sys.exit(0)

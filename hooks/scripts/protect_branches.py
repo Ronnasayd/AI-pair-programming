@@ -51,8 +51,8 @@ def current_branch() -> str | None:
         Current branch name or None if not in a git repo or on error.
     """
     try:
-        result = subprocess.run(
-            ["git", "-C", PROJECT_ROOT, "branch", "--show-current"],
+        result = subprocess.run(  # noqa: S603
+            ["git", "-C", PROJECT_ROOT, "branch", "--show-current"],  # noqa: S607 -- fixed lookup binary, trusted internal tool name
             capture_output=True,
             text=True,
             timeout=5,
@@ -99,6 +99,84 @@ def strip_flags(tokens: list[str]) -> list[str]:
     return [t for t in tokens if not t.startswith("-")]
 
 
+def _check_push(tokens: list[str], args: list[str], branch: str | None) -> None:
+    """Check `git push` for force-push/delete of a protected branch."""
+    has_force = any(a in DESTRUCTIVE_PUSH_FLAGS for a in args)
+    has_delete = "--delete" in args or "-d" in args
+    refs = strip_flags(args)
+
+    for ref in refs:
+        ref_branch = ref.split(":")[-1] if ":" in ref else ref
+        ref_branch = ref_branch.lstrip("+")
+        if ref_branch in PROTECTED_BRANCHES:
+            if has_force:
+                deny(" ".join(tokens), "force-push to protected branch", ref_branch)
+            if has_delete:
+                deny(
+                    " ".join(tokens),
+                    "delete of protected branch (remote)",
+                    ref_branch,
+                )
+
+    # `git push` / `git push origin` with no explicit ref, force-pushing
+    # while HEAD is on a protected branch
+    if (
+        has_force
+        and branch in PROTECTED_BRANCHES
+        and not any(r in PROTECTED_BRANCHES for r in refs)
+    ):
+        deny(" ".join(tokens), "force-push while on protected branch", branch)
+
+    if has_delete:
+        return
+
+    # plain `git push` (no force) while sitting on a protected branch
+    if branch in PROTECTED_BRANCHES and not has_force:
+        deny(" ".join(tokens), "direct push to protected branch", branch)
+
+
+def _check_branch_delete(
+    tokens: list[str], args: list[str], branch: str | None
+) -> None:
+    """Check `git branch -D/-d <name>` for deletion of a protected branch."""
+    has_delete = any(a in ("-D", "-d", "--delete") for a in args)
+    if has_delete:
+        targets = strip_flags(args) or ([branch] if branch else [])
+        for t in targets:
+            if t in PROTECTED_BRANCHES:
+                deny(" ".join(tokens), "delete of protected branch", t)
+
+
+def _check_reset(tokens: list[str], args: list[str], branch: str | None) -> None:
+    """Check `git reset --hard` while sitting on a protected branch."""
+    if "--hard" in args and branch in PROTECTED_BRANCHES:
+        deny(" ".join(tokens), "hard reset on protected branch", branch)
+
+
+def _check_checkout(tokens: list[str], args: list[str], _branch: str | None) -> None:
+    """Check `git checkout -B <protected>` (force-overwrite ref)."""
+    if "-B" in args:
+        idx = args.index("-B")
+        if idx + 1 < len(args) and args[idx + 1] in PROTECTED_BRANCHES:
+            deny(
+                " ".join(tokens),
+                "force-recreate protected branch (checkout -B)",
+                args[idx + 1],
+            )
+
+
+def _check_commit_like_ops(tokens: list[str], subcmd: str, branch: str | None) -> None:
+    """Check commit/merge/rebase/cherry-pick performed on a protected branch."""
+    reasons = {
+        "commit": "direct commit on protected branch",
+        "merge": "direct merge into protected branch",
+        "rebase": "rebase on protected branch",
+        "cherry-pick": "cherry-pick onto protected branch",
+    }
+    if branch in PROTECTED_BRANCHES:
+        deny(" ".join(tokens), reasons[subcmd], branch)
+
+
 def check_git_segment(tokens: list[str]) -> None:
     """Inspect one tokenized `git ...` command for protected-branch operations.
 
@@ -112,89 +190,16 @@ def check_git_segment(tokens: list[str]) -> None:
     args = tokens[2:]
     branch = current_branch()
 
-    # push --force* / delete of a protected branch (remote or local ref)
     if subcmd == "push":
-        has_force = any(a in DESTRUCTIVE_PUSH_FLAGS for a in args)
-        has_delete = "--delete" in args or "-d" in args
-        refs = strip_flags(args)
-
-        for ref in refs:
-            ref_branch = ref.split(":")[-1] if ":" in ref else ref
-            ref_branch = ref_branch.lstrip("+")
-            if ref_branch in PROTECTED_BRANCHES:
-                if has_force:
-                    deny(" ".join(tokens), "force-push to protected branch", ref_branch)
-                if has_delete:
-                    deny(
-                        " ".join(tokens),
-                        "delete of protected branch (remote)",
-                        ref_branch,
-                    )
-
-        # `git push` / `git push origin` with no explicit ref, force-pushing
-        # while HEAD is on a protected branch
-        if (
-            has_force
-            and branch in PROTECTED_BRANCHES
-            and not any(r in PROTECTED_BRANCHES for r in refs)
-        ):
-            deny(" ".join(tokens), "force-push while on protected branch", branch)
-
-        if has_delete:
-            return
-
-        # plain `git push` (no force) while sitting on a protected branch
-        if branch in PROTECTED_BRANCHES and not has_force:
-            deny(" ".join(tokens), "direct push to protected branch", branch)
-        return
-
-    # branch deletion: git branch -D/-d <name>
-    if subcmd == "branch":
-        has_delete = any(a in ("-D", "-d", "--delete") for a in args)
-        if has_delete:
-            targets = strip_flags(args) or ([branch] if branch else [])
-            for t in targets:
-                if t in PROTECTED_BRANCHES:
-                    deny(" ".join(tokens), "delete of protected branch", t)
-        return
-
-    # git reset --hard while sitting on a protected branch
-    if subcmd == "reset":
-        if "--hard" in args and branch in PROTECTED_BRANCHES:
-            deny(" ".join(tokens), "hard reset on protected branch", branch)
-        return
-
-    # checkout -B <protected> / branch -f <protected> (force-overwrite ref)
-    if subcmd == "checkout":
-        if "-B" in args:
-            idx = args.index("-B")
-            if idx + 1 < len(args) and args[idx + 1] in PROTECTED_BRANCHES:
-                deny(
-                    " ".join(tokens),
-                    "force-recreate protected branch (checkout -B)",
-                    args[idx + 1],
-                )
-        return
-
-    if subcmd == "commit":
-        if branch in PROTECTED_BRANCHES:
-            deny(" ".join(tokens), "direct commit on protected branch", branch)
-        return
-
-    if subcmd == "merge":
-        if branch in PROTECTED_BRANCHES:
-            deny(" ".join(tokens), "direct merge into protected branch", branch)
-        return
-
-    if subcmd == "rebase":
-        if branch in PROTECTED_BRANCHES:
-            deny(" ".join(tokens), "rebase on protected branch", branch)
-        return
-
-    if subcmd == "cherry-pick":
-        if branch in PROTECTED_BRANCHES:
-            deny(" ".join(tokens), "cherry-pick onto protected branch", branch)
-        return
+        _check_push(tokens, args, branch)
+    elif subcmd == "branch":
+        _check_branch_delete(tokens, args, branch)
+    elif subcmd == "reset":
+        _check_reset(tokens, args, branch)
+    elif subcmd == "checkout":
+        _check_checkout(tokens, args, branch)
+    elif subcmd in ("commit", "merge", "rebase", "cherry-pick"):
+        _check_commit_like_ops(tokens, subcmd, branch)
 
 
 def main() -> None:
