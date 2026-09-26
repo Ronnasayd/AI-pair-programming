@@ -214,7 +214,7 @@ _scan_skill_dir() {
 
   echo "  ⚠ skillspector: findings em $dir (--no-llm) → quarentena" >&2
 
-  local quarantine_dir="skills/.quarantine/$(basename "$dir")"
+  local quarantine_dir="skills/.quarantine/$dir"
   rm -rf "$quarantine_dir"
   mkdir -p "$(dirname "$quarantine_dir")"
   mv "$dir" "$quarantine_dir"
