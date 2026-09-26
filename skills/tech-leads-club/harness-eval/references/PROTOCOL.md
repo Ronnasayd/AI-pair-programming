@@ -17,11 +17,11 @@ Judgment is separate from remediation. Reports suggest; humans approve Slim/Ship
 
 ## Surface inventory (tiers)
 
-| Tier   | Name                     | Discovery                                                                                                  |
-| ------ | ------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| **T0** | Always-on rules          | `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/**`, `*.mdc` under repo / `.agents/` / `.cursor/` |
-| **T1** | Skills                   | `SKILL.md` under `.agents/skills`, `.cursor/skills`, `.claude/skills` (presence-based)                     |
-| **T2** | Referenced harness files | One-hop cites from T0/T1 after **doc scope** (below)                                                       |
+| Tier | Name | Discovery |
+|------|------|-----------|
+| **T0** | Always-on rules | `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/**`, `*.mdc` under repo / `.agents/` / `.cursor/` |
+| **T1** | Skills | `SKILL.md` under `.agents/skills`, `.cursor/skills`, `.claude/skills` (presence-based) |
+| **T2** | Referenced harness files | One-hop cites from T0/T1 after **doc scope** (below) |
 
 **Out of scope:** `README*`, app source as instruction surface (evidence only), user-global rules outside the repo, recursive crawl of all project docs, **ADRs / RFCs / decision-record trees**.
 
@@ -29,13 +29,13 @@ Judgment is separate from remediation. Reports suggest; humans approve Slim/Ship
 
 Stack-agnostic path policy (see `scripts/doc_scope.py`):
 
-| Class                  | Rule                                                                                                                                                                                                                                         |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Class | Rule |
+|-------|------|
 | **Agent harness refs** | Always T2 if cited — files under `.agents/skills/`, `.cursor/skills/`, `.claude/skills/` (including skill `references/`). Wins even if a skill folder is named `adr` (that is harness SoT for writing ADRs, not the decision-record corpus). |
-| **Decision records**   | **Never** T2 outside skill trees — path segments like `adr` / `adrs` / `rfc` / `rfcs` / `architecture-decision-records` / `request-for-comments`, or filenames `adr-*` / `rfc-*` (e.g. `docs/adr/**`)                                        |
-| **Other cited docs**   | **Opt-in** — default omitted. Inventory writes `optional-docs-candidates.md`. Orchestrator **asks the user** which types/paths to include, then re-runs with `--include-doc-type` / `--include-doc`                                          |
+| **Decision records** | **Never** T2 outside skill trees — path segments like `adr` / `adrs` / `rfc` / `rfcs` / `architecture-decision-records` / `request-for-comments`, or filenames `adr-*` / `rfc-*` (e.g. `docs/adr/**`) |
+| **Other cited docs** | **Opt-in** — default omitted. Inventory writes `optional-docs-candidates.md`. Orchestrator **asks the user** which types/paths to include, then re-runs with `--include-doc-type` / `--include-doc` |
 
-Track A may still flag a broken cite _to_ an ADR path from AGENTS.md (correctness of the link). The ADR body is not scored as a harness surface.
+Track A may still flag a broken cite *to* an ADR path from AGENTS.md (correctness of the link). The ADR body is not scored as a harness surface.
 
 ## Agnostic constraints
 
@@ -81,12 +81,12 @@ Track A may still flag a broken cite _to_ an ADR path from AGENTS.md (correctnes
 
 **Plants (unlabeled in deck; orchestrator keeps `trap-key.json` private):**
 
-| Template                     | Expected family |
-| ---------------------------- | --------------- |
-| Manifest echo ×2             | REDUNDANT       |
-| Generic fluff ×2             | REDUNDANT       |
-| Fixed secrets policy         | KEEP            |
-| Fixed local-vs-CI env caveat | KEEP            |
+| Template | Expected family |
+|----------|-----------------|
+| Manifest echo ×2 | REDUNDANT |
+| Generic fluff ×2 | REDUNDANT |
+| Fixed secrets policy | KEEP |
+| Fixed local-vs-CI env caveat | KEEP |
 
 KEEP plants must **not** be verbatim copies of claims already in the deck.
 
@@ -104,21 +104,21 @@ KEEP plants must **not** be verbatim copies of claims already in the deck.
 
 **Section tags (inside Keep-core / Slim columns):** BEHAVIOR-CHANGING | REPO-DEMONSTRATED | THEORY | OVERLAP | ROUTING-ONLY.
 
-| Tag               | Meaning                                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------- |
-| BEHAVIOR-CHANGING | Without it, wrong paths/APIs/gates are likely                                                                       |
+| Tag | Meaning |
+|-----|---------|
+| BEHAVIOR-CHANGING | Without it, wrong paths/APIs/gates are likely |
 | REPO-DEMONSTRATED | Already taught by 1–2 concrete example files (judge evidence only — not a reason to add those paths into the skill) |
-| THEORY            | General SE knowledge; no repo-specific delta                                                                        |
-| OVERLAP           | Same rule already in another harness surface (must cite path)                                                       |
-| ROUTING-ONLY      | Triggers / purpose / load pointers                                                                                  |
+| THEORY | General SE knowledge; no repo-specific delta |
+| OVERLAP | Same rule already in another harness surface (must cite path) |
+| ROUTING-ONLY | Triggers / purpose / load pointers |
 
 **Plants (`usefulness-trap-key.json`, private):**
 
-| Template                                          | Expected family |
-| ------------------------------------------------- | --------------- |
-| Generic clean-code theory surface                 | SLIM            |
-| Product-fluff surface                             | SLIM            |
-| Cross-module boundary / public-API policy surface | KEEP-CORE       |
+| Template | Expected family |
+|----------|-----------------|
+| Generic clean-code theory surface | SLIM |
+| Product-fluff surface | SLIM |
+| Cross-module boundary / public-API policy surface | KEEP-CORE |
 
 **Trap gate:** miss ≤ 1 plant family on Judge2 → PASS; else discard Slim band.
 
@@ -161,11 +161,11 @@ python3 "$SKILL_DIR/scripts/merge_usefulness.py" --run-dir .harness-eval/runs/$R
 
 ### Certainty and token consumption
 
-| Track | Certainty                                              | Token consumption                         |
-| ----- | ------------------------------------------------------ | ----------------------------------------- |
-| **A** | Highest — deterministic script; no LLM                 | ~0 model tokens                           |
-| **B** | Medium — dual LLM + plants; trap gate; disagree → Hold | High — 2 × every claim                    |
-| **C** | Lowest / model-sensitive — dual LLM + plants + fan-in  | Highest — 2 × every surface (whole files) |
+| Track | Certainty | Token consumption |
+|-------|-----------|-------------------|
+| **A** | Highest — deterministic script; no LLM | ~0 model tokens |
+| **B** | Medium — dual LLM + plants; trap gate; disagree → Hold | High — 2 × every claim |
+| **C** | Lowest / model-sensitive — dual LLM + plants + fan-in | Highest — 2 × every surface (whole files) |
 
 Human-facing reports: `04-correctness.md`, `07-agreement.md`, `10-usefulness-agreement.md` — each starts with **What these words mean**. Mixed apply plan: `11-mixed-apply.md`. Full glossary: skill `references/GLOSSARY.md`.
 

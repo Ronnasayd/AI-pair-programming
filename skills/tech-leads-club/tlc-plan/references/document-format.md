@@ -64,12 +64,12 @@ stateDiagram-v2
 
 Every item of every surface this task exposes. A landing is a criterion already written, `existing`, `n/a`, or `Unresolved` - never a behaviour the walk invented.
 
-| Surface                | Decision                    | Landing                                 |
-| ---------------------- | --------------------------- | --------------------------------------- |
-| screen `<name>`        | empty state                 | 1                                       |
-| screen `<name>`        | error state                 | Unresolved 2                            |
-| screen `<name>`        | destructive action confirms | existing - <the pattern already in use> |
-| API `<METHOD> /<path>` | error shape and codes       | n/a - <why it does not apply>           |
+| Surface | Decision | Landing |
+| --- | --- | --- |
+| screen `<name>` | empty state | 1 |
+| screen `<name>` | error state | Unresolved 2 |
+| screen `<name>` | destructive action confirms | existing - <the pattern already in use> |
+| API `<METHOD> /<path>` | error shape and codes | n/a - <why it does not apply> |
 
 <Or:> `None - no user-facing surface`
 
@@ -91,19 +91,19 @@ Where each unwritten requirement landed. All nine, one line each, every time.
 
 What already exists and gets disturbed. "Nothing" is a valid answer; a missing row is not.
 
-| Front       | What changes                                                                  |
-| ----------- | ----------------------------------------------------------------------------- |
-| domain      | new term: `<Name>` - <one-line definition>, lives in <module>                 |
-| domain      | existing term: `<Name>` meant <x>, now means <y> - <who branches on it today> |
-| stored data | <backfill now / migrate on read / dual write / nothing to migrate>            |
+| Front | What changes |
+|---|---|
+| domain | new term: `<Name>` - <one-line definition>, lives in <module> |
+| domain | existing term: `<Name>` meant <x>, now means <y> - <who branches on it today> |
+| stored data | <backfill now / migrate on read / dual write / nothing to migrate> |
 
 ## Decided
 
 Only what is hard to reverse, with the literal shape. `None - <why nothing here is one-way>` is
 a valid row.
 
-| Decision           | Shape                                                            | Alternative rejected                               |
-| ------------------ | ---------------------------------------------------------------- | -------------------------------------------------- |
+| Decision | Shape | Alternative rejected |
+|---|---|---|
 | <what was decided> | <schema, endpoint + body, enum value, event payload, dependency> | <the option and the property that disqualified it> |
 
 ## Relations
@@ -122,8 +122,8 @@ erDiagram
 Only when the task adds or changes an interface consumed outside it. The signature, not a
 specification.
 
-| Route              | In                   | Out                  | Status             | Criteria  |
-| ------------------ | -------------------- | -------------------- | ------------------ | --------- |
+| Route | In | Out | Status | Criteria |
+|---|---|---|---|---|
 | `<METHOD> /<path>` | `<field>`, `<field>` | `<field>`, `<field>` | `<code>`, `<code>` | <numbers> |
 
 ## Sources
@@ -139,11 +139,11 @@ Questions the source does not settle and asking did not close. Nobody fills thes
 building. `None` when nothing is open — one row, Question is `None`, other cells empty. A missing
 section is not an answer.
 
-| #   | Kind           | Question   | Until answered                                                   |
-| --- | -------------- | ---------- | ---------------------------------------------------------------- |
-| 1   | blocks         | <question> | <which criterion cannot be satisfied until it is answered>       |
-| 2   | blocks go-live | <question> | <what cannot be switched on for real users until it is answered> |
-| 3   | open           | <question> | <what stays imprecise, and what was written in the meantime>     |
+| # | Kind | Question | Until answered |
+|---|---|---|---|
+| 1 | blocks | <question> | <which criterion cannot be satisfied until it is answered> |
+| 2 | blocks go-live | <question> | <what cannot be switched on for real users until it is answered> |
+| 3 | open | <question> | <what stays imprecise, and what was written in the meantime> |
 ````
 
 **The handoff line** comes first because whoever opens this file was handed a path and nothing else - increasingly a model, with no memory of the conversation that produced the task. It names the skill that turns criteria into checks, so the reader does not improvise a plan out of a document that deliberately contains none, and it repeats the one rule that gets broken under pressure: an open question is not an invitation to decide. Name the skill, never a path - where it is installed differs per repository, and a link that does not resolve teaches the reader to skip the line. Add a repo-relative path beside the name only where the project vendors the skill in-tree, and only as a fallback: a skill configured as explicitly-invoked-only never appears in an agent's list, and in a headless or cloud run the name on its own is a reference nobody can act on. A path into somebody's home directory is the one that goes stale - never write that.
@@ -191,7 +191,6 @@ A column and a type belong here whenever they are doors, and the tell is never t
 When a decision needs a paragraph to justify itself, or several one-way doors arrive together, that is an RFC and it comes **before** the task. Write it first, then link it and keep the row literal.
 
 **Relations** renders what `Decided` settled, so it decides nothing. That is the whole licence for drawing it: cardinality is the part of stored data that reads worst in prose and best in a picture
-
 - `1 --> 1` against `1 --> *` is the difference between a user who can never hold a second subscription and one who can, and buried in a decision row it goes past a reviewer who would have caught it at a glance.
 
 Entities, cardinality and the constraints that are one-way. Nothing else, and columns least of all: a full diagram looks authoritative, so the next person builds exactly what is drawn, and the four fifths the planner filled in without opening the code arrive looking decided. An invented schema wearing the costume of a decision is worse than no diagram, because nobody argues with it. Every relationship traces to a row in `Decided`; one you cannot trace is a decision nobody made.

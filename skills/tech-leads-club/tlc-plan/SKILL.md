@@ -65,13 +65,13 @@ What you do **not** settle here is placement. Which folder, which service, how m
 
 A surface is anything outside the system that meets it, and each kind carries the same decisions every time it appears. That is what makes a hole findable rather than a matter of remembering: you do not ask "what did I forget about this screen", you walk the row. A thin ticket names the feature and none of these; the walk is what keeps that from shipping as a task with three criteria and an accidental error payload.
 
-| Surface                          | The decisions it always has                                                                                             |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| a screen or view                 | empty, loading, error and unauthorised states; density and ordering; what a destructive action confirms before doing it |
-| an API or webhook someone calls  | response shape, error shape with its codes, who may call it, versioning, what happens at the rate limit                 |
-| a command or scheduled task      | output format and verbosity, every flag and its default, exit codes, what it prints when it fails halfway               |
-| a document or copy someone reads | structure, tone, depth, and what the reader is meant to do next                                                         |
-| a collection being organised     | the grouping criterion, naming, ordering, what happens to duplicates, and the exception that does not fit               |
+| Surface | The decisions it always has |
+| --- | --- |
+| a screen or view | empty, loading, error and unauthorised states; density and ordering; what a destructive action confirms before doing it |
+| an API or webhook someone calls | response shape, error shape with its codes, who may call it, versioning, what happens at the rate limit |
+| a command or scheduled task | output format and verbosity, every flag and its default, exit codes, what it prints when it fails halfway |
+| a document or copy someone reads | structure, tone, depth, and what the reader is meant to do next |
+| a collection being organised | the grouping criterion, naming, ordering, what happens to duplicates, and the exception that does not fit |
 
 Nothing about state, persistence or contracts is here - that is the nine dimensions in Sweep, and duplicating it in both places produces two answers that disagree.
 
@@ -122,7 +122,7 @@ Where you do ask, these rules are about turn cost rather than politeness. Every 
 - **Assume first when it is safe.** State the default in `Unresolved` as `open` and invite correction instead of blocking. A question you would have answered the same way regardless of the reply is not worth asking.
 - **At most two independent questions per turn, exactly one when they are dependent** - a dependent answer prunes the questions after it, so asking them together wastes most of them. Three or more in a turn is an interrogation, and it reads as one.
 - **"You decide" is an answer.** Write the recommended default as a criterion and quote `user delegated` on the Sources line that records it, so discretion is on the record rather than inferred from silence later.
-- **The boundary is fixed.** Asking clarifies _how_, never whether to add a capability. A new capability that surfaces goes in `Out of scope` with its reason and stays there.
+- **The boundary is fixed.** Asking clarifies *how*, never whether to add a capability. A new capability that surfaces goes in `Out of scope` with its reason and stays there.
 
 **Facts you look up; decisions you ask.** Anything the environment already answers - a convention, an existing field, how the current endpoint behaves, what the schema allows - you resolve yourself through the knowledge chain. A question you could have answered by reading the code spends the user's turn and their patience, and enough of them turn this into an interview. Ask only what is genuinely theirs: scope, priority, product behaviour, which trade-off they want.
 
@@ -158,12 +158,11 @@ Produce the artifact; do not narrate the phase. Present the cut, then the tasks,
 
 User says: "Turn this design doc into work."
 Actions:
-
 1. Read the source completely. Enumerate slices, then decide how many tasks — default one.
 2. Open the repository. Ground names, one-way doors, and contradictions. Amend the source if it is wrong.
 3. Walk the surfaces. Sweep the nine unwritten requirements. Ask rather than guess.
 4. Read `references/document-format.md` and write `.tasks/<name>.md`.
-   Result: one task file. Criteria are observable outcomes with concrete values. Observable has a landing per surface item. Swept has all nine landings. Unresolved is a table, or `None`.
+Result: one task file. Criteria are observable outcomes with concrete values. Observable has a landing per surface item. Swept has all nine landings. Unresolved is a table, or `None`.
 
 ### Example 2: Source has no decision
 
@@ -180,21 +179,17 @@ Result: hand off; no new task file.
 ## Common failures
 
 ### A plausible criterion nobody decided
-
 Cause: a gap in the source was filled with a criterion that reads well.
 Solution: ask. Concrete options, recommendation in one line, at most two independent questions. What only Product can settle goes to `Unresolved`, never into Criteria.
 
 ### A criterion the walk invented
-
 Cause: a surface item or sweep dimension needed a new behaviour and a numbered line was added so the table looks finished.
 Solution: a landing that would need a new behaviour is a question, never a criterion. `n/a` with the reason, `existing`, or `Unresolved`.
 
 ### Horizontal slices
-
 Cause: "schema first, then the endpoints" was treated as two tasks.
 Solution: a slice is one observable outcome someone can watch. Default to one task. Split only for an order constraint, an answer only someone else can give, or another team.
 
 ### Borrowed sweep landing
-
 Cause: concurrency landed on a uniqueness criterion already used for validation.
 Solution: a landing must observe that dimension. If it does not apply, `n/a` with the reason. If it needs a product answer, `Unresolved`.

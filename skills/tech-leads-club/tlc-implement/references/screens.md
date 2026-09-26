@@ -96,8 +96,8 @@ Give the artifact a `## Screens (ui)` section with one row per screen and **thre
 the omission shows up as an empty cell rather than as a shorter sentence:
 
 ```markdown
-| Screen       | Copy and elements (selector)                                                                               | Arrangement (selector)                                                                                                                                                                                                   | Visual unproven              |
-| ------------ | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| Screen | Copy and elements (selector) | Arrangement (selector) | Visual unproven |
+| --- | --- | --- | --- |
 | 01 mid-cycle | kicker `CICLO DE {N} DIAS`, `dia K de N`, `ESTA SEMANA`, `AGORA`, Continuar, Deixar para depois, Regenerar | progress is a **bar**, not a ring · `AGORA` nested **inside** the week band, between last-opened and next · community in **two** columns · stages as numbered circles on a rail · footer: feedback left, Regenerar right | spacing, colour, type weight |
 ```
 

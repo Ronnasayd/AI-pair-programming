@@ -6,105 +6,34 @@ import sys
 import unicodedata
 
 SEVERITIES = ("blocker", "should-fix", "nit", "pre-existing")
-EMOJI = {
-    "blocker": "\U0001f534",
-    "should-fix": "\U0001f7e0",
-    "nit": "\U0001f7e1",
-    "pre-existing": "\U0001f7e3",
-}
+EMOJI = {"blocker": "\U0001F534", "should-fix": "\U0001F7E0", "nit": "\U0001F7E1", "pre-existing": "\U0001F7E3"}
 VERDICTS = ("APPROVE", "COMMENT", "REQUEST_CHANGES")
 MAX_NITS = 5
-CAPS = {
-    "blocker": (900, 10),
-    "should-fix": (900, 10),
-    "nit": (400, 10),
-    "pre-existing": (900, 10),
-}
+CAPS = {"blocker": (900, 10), "should-fix": (900, 10), "nit": (400, 10), "pre-existing": (900, 10)}
 
 BANNED_WORDS = [
-    "obviously",
-    "simply",
-    "delve",
-    "seamless",
-    "streamline",
-    "leverage",
-    "crucial",
-    "pivotal",
-    "tapestry",
-    "foster",
-    "landscape",
-    "furthermore",
-    "moreover",
-    "kudos",
-    "awesome",
-    "sorry",
-    "apologies",
-    "obviamente",
-    "simplesmente",
-    "ademais",
-    "parabens",
-    "desculpe",
-    "desculpa",
+    "obviously", "simply", "delve", "seamless", "streamline", "leverage", "crucial",
+    "pivotal", "tapestry", "foster", "landscape", "furthermore", "moreover", "kudos",
+    "awesome", "sorry", "apologies", "obviamente", "simplesmente", "ademais",
+    "parabens", "desculpe", "desculpa",
 ]
 BANNED_PHRASES = [
-    "you forgot",
-    "you missed",
-    "great job",
-    "nice work",
-    "good catch",
-    "hope this helps",
-    "let me know",
-    "feel free",
-    "happy to",
-    "it's worth noting",
-    "its worth noting",
-    "worth noting",
-    "note that",
-    "just a heads up",
-    "as you can see",
-    "thanks for",
-    "thank you for",
-    "i think maybe",
-    "perhaps consider",
-    "you might want to",
-    "it would be beneficial",
-    "testament to",
-    "otimo trabalho",
-    "bom trabalho",
-    "espero que ajude",
-    "fique a vontade",
-    "sinta-se a vontade",
-    "vale ressaltar",
-    "vale a pena notar",
-    "vale notar",
-    "note que",
-    "alem disso",
-    "voce esqueceu",
-    "com toda certeza",
+    "you forgot", "you missed", "great job", "nice work", "good catch",
+    "hope this helps", "let me know", "feel free", "happy to", "it's worth noting",
+    "its worth noting", "worth noting", "note that", "just a heads up",
+    "as you can see", "thanks for", "thank you for", "i think maybe",
+    "perhaps consider", "you might want to", "it would be beneficial", "testament to",
+    "otimo trabalho", "bom trabalho", "espero que ajude", "fique a vontade",
+    "sinta-se a vontade", "vale ressaltar", "vale a pena notar", "vale notar",
+    "note que", "alem disso", "voce esqueceu", "com toda certeza",
 ]
 NOT_BUT = [
-    re.compile(
-        r"\b(not|isn'?t|doesn'?t|don'?t|aren'?t|wasn'?t)\s+(just|only|merely)\b.{0,80}\bbut\b",
-        re.S,
-    ),
+    re.compile(r"\b(not|isn'?t|doesn'?t|don'?t|aren'?t|wasn'?t)\s+(just|only|merely)\b.{0,80}\bbut\b", re.S),
     re.compile(r"\bnao (apenas|so|somente)\b.{0,80}\bmas\b", re.S),
 ]
 BANNED_OPENERS = [
-    "let me",
-    "i'll",
-    "i will",
-    "looking at",
-    "first,",
-    "so,",
-    "sure",
-    "ok,",
-    "okay",
-    "great",
-    "vou ",
-    "deixa eu",
-    "primeiramente",
-    "olhando",
-    "bom,",
+    "let me", "i'll", "i will", "looking at", "first,", "so,", "sure", "ok,",
+    "okay", "great", "vou ", "deixa eu", "primeiramente", "olhando", "bom,",
 ]
 INTERNAL_REF = re.compile(r"^.+:\d+$")
 
@@ -148,9 +77,7 @@ def opener_violation(body: str, label: str) -> list:
     first = norm(first.strip().split("\n", 1)[0])
     for op in BANNED_OPENERS:
         if first.startswith(op):
-            return [
-                f"{label}: first line opens with '{op.strip()}' (state the problem instead)"
-            ]
+            return [f"{label}: first line opens with '{op.strip()}' (state the problem instead)"]
     return []
 
 
@@ -170,9 +97,7 @@ def check_finding(i: int, f: dict) -> list:
             v.append(f"{label}: pre-existing findings are summary-only, remove 'line'")
     else:
         if not f.get("path") or not isinstance(f.get("line"), int) or f["line"] < 1:
-            v.append(
-                f"{label}: '{sev}' requires 'path' and integer 'line' >= 1 anchored on the diff"
-            )
+            v.append(f"{label}: '{sev}' requires 'path' and integer 'line' >= 1 anchored on the diff")
     ev = f.get("evidence") or []
     if sev in ("blocker", "should-fix") and not ev:
         v.append(f"{label}: '{sev}' requires at least one evidence entry")
@@ -183,13 +108,9 @@ def check_finding(i: int, f: dict) -> list:
         elif t == "external" and not ref.startswith("https://"):
             v.append(f"{label}: external evidence must be an https URL, got '{ref}'")
         elif t == "repro" and not ref.strip():
-            v.append(
-                f"{label}: repro evidence must carry the command that reproduces the claim"
-            )
+            v.append(f"{label}: repro evidence must carry the command that reproduces the claim")
         elif t not in ("internal", "external", "repro"):
-            v.append(
-                f"{label}: evidence type must be internal, external or repro, got '{t}'"
-            )
+            v.append(f"{label}: evidence type must be internal, external or repro, got '{t}'")
     max_chars, max_lines = CAPS[sev]
     if len(body) > max_chars:
         v.append(f"{label}: body {len(body)} chars exceeds {max_chars} cap")
@@ -205,9 +126,7 @@ def check_summary(summary: str) -> list:
     if "tl;dr" not in summary.lower():
         v.append("SUMMARY: missing TL;DR section")
     if not re.search(r"lint[ -]?rule", summary, re.I):
-        v.append(
-            "SUMMARY: missing 'Promote to lint rule' section (write 'none' if empty)"
-        )
+        v.append("SUMMARY: missing 'Promote to lint rule' section (write 'none' if empty)")
     v += text_violations(summary, "SUMMARY")
     return v
 
@@ -223,9 +142,7 @@ def check_verdict(verdict: str, findings: list, carryover: dict) -> list:
     else:
         expected = "APPROVE"
     if verdict != expected:
-        return [
-            f"VERDICT: '{verdict}' inconsistent with findings plus carryover, expected '{expected}'"
-        ]
+        return [f"VERDICT: '{verdict}' inconsistent with findings plus carryover, expected '{expected}'"]
     return []
 
 
@@ -236,24 +153,16 @@ def check_round(round_n: int, data: dict, findings: list, summary: str) -> list:
     carry = data.get("carryover")
     if round_n >= 2:
         if not isinstance(carry, dict):
-            v.append(
-                "ROUND: round >= 2 requires 'carryover' with counts of still-open previous findings (zeros allowed)"
-            )
+            v.append("ROUND: round >= 2 requires 'carryover' with counts of still-open previous findings (zeros allowed)")
         for f in findings:
             if f.get("severity") != "blocker":
-                v.append(
-                    f"ROUND: round {round_n} may only post NEW blockers; '{f.get('severity')}' at {f.get('path', '?')} belongs in the Resolution table or nowhere"
-                )
+                v.append(f"ROUND: round {round_n} may only post NEW blockers; '{f.get('severity')}' at {f.get('path', '?')} belongs in the Resolution table or nowhere")
         if not re.search(r"resolu", summary, re.I):
-            v.append(
-                "ROUND: round >= 2 summary requires a Resolution section mapping every previous finding"
-            )
+            v.append("ROUND: round >= 2 summary requires a Resolution section mapping every previous finding")
     if carry is not None:
         for k in carry:
             if k not in ("blocker", "should-fix"):
-                v.append(
-                    f"ROUND: carryover key '{k}' invalid, use 'blocker' and 'should-fix'"
-                )
+                v.append(f"ROUND: carryover key '{k}' invalid, use 'blocker' and 'should-fix'")
     return v
 
 
@@ -281,9 +190,7 @@ def main() -> int:
 
     nits = sum(1 for f in findings if f.get("severity") == "nit")
     if nits > MAX_NITS:
-        violations.append(
-            f"NITS: {nits} nit findings exceed cap of {MAX_NITS}; fold overflow into the summary count"
-        )
+        violations.append(f"NITS: {nits} nit findings exceed cap of {MAX_NITS}; fold overflow into the summary count")
 
     round_n = data.get("round", 1)
     carryover = data.get("carryover") or {}
@@ -294,9 +201,7 @@ def main() -> int:
     if verdict in VERDICTS:
         violations += check_verdict(verdict, findings, carryover)
         if verdict not in summary:
-            violations.append(
-                f"SUMMARY: TL;DR must contain the verdict token '{verdict}' verbatim"
-            )
+            violations.append(f"SUMMARY: TL;DR must contain the verdict token '{verdict}' verbatim")
 
     if violations:
         for x in violations:

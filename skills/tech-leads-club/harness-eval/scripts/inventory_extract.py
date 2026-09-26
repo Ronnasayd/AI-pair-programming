@@ -219,9 +219,7 @@ def extract_outbound_paths(text: str) -> list[str]:
             continue
         if "/" in raw or raw.endswith((".md", ".mdc", ".ts", ".js", ".py", ".json")):
             paths.append(raw)
-        elif raw.startswith(
-            ("docs/", ".agents/", ".cursor/", "package/", "app/", "references/")
-        ):
+        elif raw.startswith(("docs/", ".agents/", ".cursor/", "package/", "app/", "references/")):
             paths.append(raw)
     # why: decision tables often omit backticks around paths
     for m in BARE_PATH_RE.finditer(cleaned):
@@ -267,10 +265,7 @@ def discover_t2_candidates(root: Path, t0: list[Path], t1: list[Path]) -> list[P
             if resolved in t0_set:
                 continue
             rel_s = rel(root, resolved)
-            if (
-                resolved.suffix.lower() in {".md", ".mdc", ".json", ".yml", ".yaml"}
-                or "references" in rel_s
-            ):
+            if resolved.suffix.lower() in {".md", ".mdc", ".json", ".yml", ".yaml"} or "references" in rel_s:
                 if not is_readme(rel_s):
                     found.add(resolved)
     return sorted(found)
@@ -328,15 +323,7 @@ def _parse_taskfile_tasks(text: str) -> list[str]:
                     in_tasks = False
                 continue
             m = re.match(r"^  ([A-Za-z0-9_.:/-]+):\s*(?:#.*)?$", line)
-            if m and m.group(1) not in {
-                "vars",
-                "env",
-                "cmds",
-                "desc",
-                "dir",
-                "deps",
-                "label",
-            }:
+            if m and m.group(1) not in {"vars", "env", "cmds", "desc", "dir", "deps", "label"}:
                 cmds.append(m.group(1))
     return cmds
 
@@ -349,10 +336,7 @@ def _parse_rakefile_tasks(text: str) -> list[str]:
         stripped = line.split("#", 1)[0].rstrip()
         if not stripped.strip():
             continue
-        nm = re.match(
-            r"^(\s*)namespace\s+(?::([A-Za-z0-9_]+)|['\"]([A-Za-z0-9_:]+)['\"])",
-            stripped,
-        )
+        nm = re.match(r"^(\s*)namespace\s+(?::([A-Za-z0-9_]+)|['\"]([A-Za-z0-9_:]+)['\"])", stripped)
         if nm:
             indent = len(nm.group(1).replace("\t", "  "))
             while ns and ns[-1][0] >= indent:
@@ -600,12 +584,7 @@ def iter_atomic_from_text(text: str, *, skill_mode: bool) -> Iterable[tuple[str,
             j = i + 1
             while j < len(lines):
                 nxt = lines[j]
-                if (
-                    not nxt.strip()
-                    or HEADING_RE.match(nxt)
-                    or BULLET_RE.match(nxt)
-                    or FENCE_RE.match(nxt.strip())
-                ):
+                if not nxt.strip() or HEADING_RE.match(nxt) or BULLET_RE.match(nxt) or FENCE_RE.match(nxt.strip()):
                     break
                 if nxt.startswith("  ") or nxt.startswith("\t"):
                     quote += " " + nxt.strip()
@@ -624,9 +603,7 @@ def iter_atomic_from_text(text: str, *, skill_mode: bool) -> Iterable[tuple[str,
         i += 1
 
 
-def extract_claims_from_file(
-    root: Path, path: Path, *, skill_mode: bool
-) -> list[tuple[str, str, str]]:
+def extract_claims_from_file(root: Path, path: Path, *, skill_mode: bool) -> list[tuple[str, str, str]]:
     text = path.read_text(encoding="utf-8", errors="replace")
     fm, body = strip_frontmatter(text)
     out: list[tuple[str, str, str]] = []
@@ -658,7 +635,7 @@ def build_plants(commands: list[str]) -> list[Claim]:
         tier, source = _PLANT_DECK["manifest_echo"]
         plants.append(
             Claim(
-                id=f"P{idx + 1:03d}",
+                id=f"P{idx+1:03d}",
                 tier=tier,
                 source=source,
                 quote=f"Run the project script `{cmd}` when you need that workflow.",
@@ -670,7 +647,7 @@ def build_plants(commands: list[str]) -> list[Claim]:
         tier, source = _PLANT_DECK["generic_fluff"]
         plants.append(
             Claim(
-                id=f"P{idx + 3:03d}",
+                id=f"P{idx+3:03d}",
                 tier=tier,
                 source=source,
                 quote=fluff,
@@ -826,16 +803,12 @@ def main() -> int:
     inv_payload["doc_scope"] = {
         "included_optional_docs": scope.get("included_optional_docs", []),
         "included_doc_types": scope.get("included_doc_types", []),
-        "excluded_decision_record_count": len(
-            scope.get("excluded_decision_records") or []
-        ),
+        "excluded_decision_record_count": len(scope.get("excluded_decision_records") or []),
         "optional_type_count": {
             k: len(v) for k, v in (scope.get("optional_by_type") or {}).items()
         },
     }
-    (out / "inventory.json").write_text(
-        json.dumps(inv_payload, indent=2) + "\n", encoding="utf-8"
-    )
+    (out / "inventory.json").write_text(json.dumps(inv_payload, indent=2) + "\n", encoding="utf-8")
     (out / "optional-docs-candidates.json").write_text(
         json.dumps(scope, indent=2) + "\n", encoding="utf-8"
     )
@@ -845,29 +818,11 @@ def main() -> int:
     n = 1
     for p in t0:
         for src, section, quote in extract_claims_from_file(root, p, skill_mode=False):
-            claims.append(
-                Claim(
-                    id=f"C{n:03d}",
-                    tier="T0",
-                    source=src,
-                    quote=quote,
-                    is_plant=False,
-                    section=section,
-                )
-            )
+            claims.append(Claim(id=f"C{n:03d}", tier="T0", source=src, quote=quote, is_plant=False, section=section))
             n += 1
     for p in t1:
         for src, section, quote in extract_claims_from_file(root, p, skill_mode=True):
-            claims.append(
-                Claim(
-                    id=f"C{n:03d}",
-                    tier="T1",
-                    source=src,
-                    quote=quote,
-                    is_plant=False,
-                    section=section,
-                )
-            )
+            claims.append(Claim(id=f"C{n:03d}", tier="T1", source=src, quote=quote, is_plant=False, section=section))
             n += 1
     for p in t2:
         src = rel(root, p)
@@ -915,9 +870,7 @@ def main() -> int:
             for p in plants
         ],
     }
-    (out / "trap-key.json").write_text(
-        json.dumps(trap, indent=2) + "\n", encoding="utf-8"
-    )
+    (out / "trap-key.json").write_text(json.dumps(trap, indent=2) + "\n", encoding="utf-8")
 
     print(
         json.dumps(
@@ -928,12 +881,8 @@ def main() -> int:
                 "t2_files": len(t2),
                 "claims": len(claims),
                 "plants": len(plants),
-                "excluded_decision_records": len(
-                    scope.get("excluded_decision_records") or []
-                ),
-                "optional_doc_types": list(
-                    (scope.get("optional_by_type") or {}).keys()
-                ),
+                "excluded_decision_records": len(scope.get("excluded_decision_records") or []),
+                "optional_doc_types": list((scope.get("optional_by_type") or {}).keys()),
                 "included_optional_docs": scope.get("included_optional_docs") or [],
                 "optional_docs_report": str(out / "optional-docs-candidates.md"),
                 "out": str(out),

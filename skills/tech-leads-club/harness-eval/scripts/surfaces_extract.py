@@ -191,13 +191,7 @@ def main() -> int:
 
     (run / "surfaces.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     (run / "surfaces.json").write_text(
-        json.dumps(
-            {
-                "surfaces": surfaces,
-                "generated_at": datetime.now(timezone.utc).isoformat(),
-            },
-            indent=2,
-        )
+        json.dumps({"surfaces": surfaces, "generated_at": datetime.now(timezone.utc).isoformat()}, indent=2)
         + "\n",
         encoding="utf-8",
     )
@@ -206,9 +200,7 @@ def main() -> int:
         "plants": trap_plants,
         "note": "Orchestrator-only. Judges must not read this file.",
     }
-    (run / "usefulness-trap-key.json").write_text(
-        json.dumps(trap, indent=2) + "\n", encoding="utf-8"
-    )
+    (run / "usefulness-trap-key.json").write_text(json.dumps(trap, indent=2) + "\n", encoding="utf-8")
     print(
         json.dumps(
             {

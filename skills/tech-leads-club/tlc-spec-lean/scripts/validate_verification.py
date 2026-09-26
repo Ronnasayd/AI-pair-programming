@@ -57,9 +57,7 @@ def _feature_dirs(root):
     base = os.path.join(root, ".specs", "features")
     if not os.path.isdir(base):
         return base, []
-    return base, [
-        d for d in sorted(os.listdir(base)) if os.path.isdir(os.path.join(base, d))
-    ]
+    return base, [d for d in sorted(os.listdir(base)) if os.path.isdir(os.path.join(base, d))]
 
 
 def split_row(line):
@@ -133,8 +131,7 @@ def _checks_context(fdir):
 def _verdict(lines):
     """Return 'pass', 'fail', 'unfilled', or None."""
     candidates = [
-        ln
-        for ln in lines
+        ln for ln in lines
         if re.search(r"^\**verdict\**\s*:", ln.strip(), re.IGNORECASE)
         or re.search(r"^#{1,4}\s*verification\b", ln.strip(), re.IGNORECASE)
     ]
@@ -166,26 +163,18 @@ def _check_feature(fdir, name):
 
     verdict = _verdict(lines)
     if verdict is None:
-        errors.append(
-            f"{name}: no PASS/FAIL verdict (a prose-only report does not count)"
-        )
+        errors.append(f"{name}: no PASS/FAIL verdict (a prose-only report does not count)")
     elif verdict == "unfilled":
-        errors.append(
-            f"{name}: verdict is still the template placeholder '[PASS | FAIL]'"
-        )
+        errors.append(f"{name}: verdict is still the template placeholder '[PASS | FAIL]'")
     elif verdict == "fail":
-        errors.append(
-            f"{name}: verdict is FAIL - route the ranked gaps back as fixes, then re-verify"
-        )
+        errors.append(f"{name}: verdict is FAIL - route the ranked gaps back as fixes, then re-verify")
 
     # The profile decides which steps run, so a report that quietly declares a cheaper one
     # than the feature was approved under makes an entire step disappear without a trace.
     report_profile = _profile(body)
     approved_profile, policy_rows_exist = _checks_context(fdir)
     if report_profile is None:
-        warnings.append(
-            f"{name}: no `Profile:` line - a step that did not run is indistinguishable from one forgotten"
-        )
+        warnings.append(f"{name}: no `Profile:` line - a step that did not run is indistinguishable from one forgotten")
     elif approved_profile and report_profile != approved_profile:
         errors.append(
             f"{name}: report says profile '{report_profile}' but checks.md was approved under "
@@ -193,9 +182,7 @@ def _check_feature(fdir, name):
         )
     effective = approved_profile or report_profile
     if not re.search(r"^\**round\**\s*:", body, re.IGNORECASE | re.MULTILINE):
-        warnings.append(
-            f"{name}: no `Round:` line - a scoped re-verification must say what was carried forward"
-        )
+        warnings.append(f"{name}: no `Round:` line - a scoped re-verification must say what was carried forward")
     if re.search(r"self[- ]verified", body, re.IGNORECASE):
         warnings.append(
             f"{name}: report is self-verified (author == verifier) - a degraded gate, "
@@ -206,9 +193,7 @@ def _check_feature(fdir, name):
         return errors, warnings
 
     if not EVIDENCE_RE.search(body):
-        errors.append(
-            f"{name}: PASS but cites no file:line evidence - evidence-or-zero not satisfied"
-        )
+        errors.append(f"{name}: PASS but cites no file:line evidence - evidence-or-zero not satisfied")
 
     # A profile-scoped step that produced no section did not run. Requiring the section is what
     # makes "skipped" distinguishable from "forgotten" - otherwise that is only a sentence.
@@ -217,18 +202,12 @@ def _check_feature(fdir, name):
             f"{name}: profile is {effective} but there is no `## Coverage` section - the join has to "
             f"be recomputed from the authority over each set, not read back from the author's table"
         )
-    if effective == "ui" and not has_heading(
-        lines, "Binding sources", "Binding source"
-    ):
+    if effective == "ui" and not has_heading(lines, "Binding sources", "Binding source"):
         errors.append(
             f"{name}: profile is ui but there is no `## Binding sources` section - step 1 is the "
             f"only step that can catch a check contradicting the design, and no later step can"
         )
-    if (
-        effective in ("standard", "ui")
-        and policy_rows_exist
-        and not has_heading(lines, "Test policy")
-    ):
+    if effective in ("standard", "ui") and policy_rows_exist and not has_heading(lines, "Test policy"):
         errors.append(
             f"{name}: checks.md carries Test policy rows but the report gives no verdict on them - "
             f"those rows are the bar the author built under, so an unmet one is a finding"
@@ -257,9 +236,7 @@ def _check_feature(fdir, name):
         if unproven is not None:
             for r in rows:
                 if unproven < len(r) and r[unproven].lower() not in EMPTY_CELL:
-                    errors.append(
-                        f"{name}: PASS but Coverage leaves '{r[unproven][:50]}' unproven ({r[0][:40]})"
-                    )
+                    errors.append(f"{name}: PASS but Coverage leaves '{r[unproven][:50]}' unproven ({r[0][:40]})")
 
         uncovered = column(header, "uncovered")
         if uncovered is not None:
@@ -273,9 +250,7 @@ def _check_feature(fdir, name):
         if result is not None and column(header, "check", "claim") is not None:
             for r in rows:
                 if result < len(r) and r[result] and "pass" not in r[result].lower():
-                    errors.append(
-                        f"{name}: PASS but check {r[0][:20]} reports '{r[result][:30]}'"
-                    )
+                    errors.append(f"{name}: PASS but check {r[0][:20]} reports '{r[result][:30]}'")
 
         met = column(header, "expectation met", "met")
         if met is not None:
@@ -318,9 +293,7 @@ def _resolve(root, feature):
     if feature:
         fdir = feature if os.path.isdir(feature) else os.path.join(base, feature)
         if not os.path.isdir(fdir):
-            print(
-                f"validate_verification: feature not found: {feature}", file=sys.stderr
-            )
+            print(f"validate_verification: feature not found: {feature}", file=sys.stderr)
             raise SystemExit(2)
         return [(fdir, os.path.basename(fdir.rstrip("/")))]
     if not os.path.isdir(base):
@@ -329,19 +302,11 @@ def _resolve(root, feature):
     if len(dirs) == 1:
         return [(os.path.join(base, dirs[0]), dirs[0])]
     if not dirs:
-        print(
-            "validate_verification: no features under .specs/features/ - nothing to check."
-        )
+        print("validate_verification: no features under .specs/features/ - nothing to check.")
         return []
-    picked = [
-        (os.path.join(base, d), d)
-        for d in dirs
-        if _appears_complete(os.path.join(base, d))
-    ]
+    picked = [(os.path.join(base, d), d) for d in dirs if _appears_complete(os.path.join(base, d))]
     if not picked:
-        print(
-            "validate_verification: no completed feature detected (all in progress) - nothing to gate."
-        )
+        print("validate_verification: no completed feature detected (all in progress) - nothing to gate.")
     return picked
 
 
@@ -351,17 +316,10 @@ def main(argv=None):
         description="Completion gate: a done feature needs a real PASS report its own rows do not contradict.",
     )
     p.add_argument("feature", nargs="?", default=None, help="Feature dir or name")
-    p.add_argument(
-        "--root",
-        default=".",
-        help="Project root containing .specs/ (default: current dir)",
-    )
+    p.add_argument("--root", default=".", help="Project root containing .specs/ (default: current dir)")
     p.add_argument("--strict", action="store_true", help="Treat warnings as errors")
-    p.add_argument(
-        "--allow-empty",
-        action="store_true",
-        help="Exit 0 when there is no completed feature to gate (repo-wide sweeps)",
-    )
+    p.add_argument("--allow-empty", action="store_true",
+                   help="Exit 0 when there is no completed feature to gate (repo-wide sweeps)")
     args = p.parse_args(argv)
     root = os.path.abspath(args.root)
 
@@ -391,9 +349,7 @@ def main(argv=None):
         print(f"  ERROR {e}")
     checked = ", ".join(name for _, name in targets) or "(none)"
     fail = all_errors or (all_warnings and args.strict)
-    print(
-        f"\nvalidate_verification: {len(all_errors)} error(s), {len(all_warnings)} warning(s) across [{checked}]"
-    )
+    print(f"\nvalidate_verification: {len(all_errors)} error(s), {len(all_warnings)} warning(s) across [{checked}]")
     return 1 if fail else 0
 
 

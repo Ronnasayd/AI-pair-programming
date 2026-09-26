@@ -26,12 +26,12 @@ These rules override everything else in this skill. Read them before doing anyth
 
 ## Severity and Verdict
 
-| Severity     | Emoji | Definition                                                                                                                              | Verdict effect  |
-| ------------ | ----- | --------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| blocker      | 🔴    | Changes whether the PR should merge: data loss, exploitable security, incorrect money, broken auth, irreversible migration, PII in logs | REQUEST_CHANGES |
-| should-fix   | 🟠    | Real defect, but not a merge risk                                                                                                       | COMMENT         |
-| nit          | 🟡    | Minor. Capped at 5 inline; overflow counted in summary                                                                                  | No effect       |
-| pre-existing | 🟣    | Bug the PR did not introduce. Summary only, never inline                                                                                | No effect       |
+| Severity | Emoji | Definition | Verdict effect |
+|---|---|---|---|
+| blocker | 🔴 | Changes whether the PR should merge: data loss, exploitable security, incorrect money, broken auth, irreversible migration, PII in logs | REQUEST_CHANGES |
+| should-fix | 🟠 | Real defect, but not a merge risk | COMMENT |
+| nit | 🟡 | Minor. Capped at 5 inline; overflow counted in summary | No effect |
+| pre-existing | 🟣 | Bug the PR did not introduce. Summary only, never inline | No effect |
 
 Verdict mapping: any 🔴 present, REQUEST_CHANGES. Zero 🔴 and zero 🟠, APPROVE. Anything else, COMMENT.
 
@@ -108,7 +108,7 @@ Two grounding rules:
 {
   "language": "en",
   "round": 1,
-  "carryover": { "blocker": 0, "should-fix": 0 },
+  "carryover": {"blocker": 0, "should-fix": 0},
   "verdict": "REQUEST_CHANGES",
   "summary": "## TL;DR\n...\n## Findings\n...\n## Promote to lint rule\n...\n## Research log\n...\n## Checks run\n...\n## Skipped files\n...",
   "findings": [
@@ -119,11 +119,8 @@ Two grounding rules:
       "severity": "blocker",
       "body": "🔴 `applyDiscount` divides by `items.length` with no empty-list guard (src/billing/invoice.ts:142)...",
       "evidence": [
-        { "type": "internal", "ref": "src/billing/invoice.ts:142" },
-        {
-          "type": "external",
-          "ref": "https://official-docs.example/api#behavior"
-        }
+        {"type": "internal", "ref": "src/billing/invoice.ts:142"},
+        {"type": "external", "ref": "https://official-docs.example/api#behavior"}
       ]
     }
   ]
@@ -154,38 +151,30 @@ Posts everything as one review (single API call: summary body, verdict event, po
 
 ```markdown
 ## TL;DR
-
 One to three sentences: what the PR does and the verdict with its reason. Must contain the verdict token (APPROVE, COMMENT, or REQUEST_CHANGES) verbatim; the gate checks for it.
 
 ## Findings
-
-| ID  | Severity | Location | Summary |
-| --- | -------- | -------- | ------- |
+| ID | Severity | Location | Summary |
+|---|---|---|---|
 
 ## Resolution (round 2+)
-
-| ID                                                                                                                                                           | Status | Note |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ---- |
-| Every previous finding appears here with status resolved (with the commit), open, or declined-accepted (author's reason held). Omit this section in round 1. |
+| ID | Status | Note |
+|---|---|---|
+Every previous finding appears here with status resolved (with the commit), open, or declined-accepted (author's reason held). Omit this section in round 1.
 
 ## Promote to lint rule
-
 Findings in this review that are deterministic by nature (banned pattern, naming convention, style rule). For each: the rule, and a one-line sketch of how to lint it. Reviews should get cheaper every cycle; this section is the flywheel. Write "none" if empty.
 
 ## Research log
-
 URLs consulted in Step 2, one per line, with the claim each one supports or refutes. Sources that refuted a candidate finding belong here too: a documented non-finding is evidence of diligence and saves a future round. Write "no external surfaces touched" if that is the case.
 
 ## Checks run
-
 Deterministic ladder results from Step 1, verbatim numbers with no interpretation: test counts (passed/failed/skipped), linter and typechecker outcome, bypass scan candidate count.
 
 ## Skipped files
-
 Mechanical/generated files excluded from review.
 
 ## Nit overflow
-
 "N additional nits not posted individually" when the cap was hit. Omit otherwise.
 ```
 
@@ -235,21 +224,17 @@ Result: a short review with only the Resolution table and TL;DR. No new comments
 ## Troubleshooting
 
 ### Error: HTTP 422 on review submission
-
 Cause: APPROVE/REQUEST_CHANGES on your own PR, or a comment anchored to a line not in the diff.
 Solution: `post_review.py` auto-falls back to COMMENT for own PRs. For anchor failures, move the comment to a changed line shown in the patch, or drop `line` and fold it into the summary.
 
 ### Error: gh not authenticated
-
 Cause: no `gh auth login` session.
 Solution: ask the user to run `gh auth status` and authenticate. Do not attempt tokenless calls.
 
 ### Error: no PR for the current branch
-
 Cause: branch never pushed or PR not opened.
 Solution: report it and stop. Opening PRs is out of scope for The Judge (that is a different job).
 
 ### Gate keeps failing on the same body
-
 Cause: rephrasing around a banned pattern instead of removing it.
 Solution: delete the sentence containing the violation. The gate output names the exact pattern and location.

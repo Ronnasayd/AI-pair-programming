@@ -4,7 +4,7 @@ description: Expert in Confluence operations using Atlassian MCP. Use when the u
 license: CC-BY-4.0
 metadata:
   author: Waldemar Neto - github.com/waldemarnt
-  version: "1.0.0"
+  version: '1.0.0'
 ---
 
 # Confluence Assistant

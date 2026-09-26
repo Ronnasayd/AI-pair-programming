@@ -56,9 +56,7 @@ def _now():
 
 def _parse_date(s):
     try:
-        return _dt.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(
-            tzinfo=_dt.timezone.utc
-        )
+        return _dt.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=_dt.timezone.utc)
     except Exception:
         return _dt.datetime.now(_dt.timezone.utc)
 
@@ -158,9 +156,7 @@ def _auto_prune(data):
     dropped = []
     for l in data["lessons"]:
         if l["status"] == "candidate" and l["recurrence"] < threshold:
-            age_days = (
-                now - _parse_date(l.get("last_seen", l.get("created", _now())))
-            ).days
+            age_days = (now - _parse_date(l.get("last_seen", l.get("created", _now())))).days
             if age_days > window:
                 dropped.append(l["id"])
                 continue
@@ -181,15 +177,9 @@ def _render(root, data):
     lines = []
     lines.append("# LESSONS - auto-maintained by scripts/lessons.py")
     lines.append("")
-    lines.append(
-        "> Machine-owned. Do NOT hand-edit. Changes are overwritten on the next `lessons.py` write."
-    )
-    lines.append(
-        "> Canonical state lives in `.specs/lessons.json`. Edit lessons only via the script."
-    )
-    lines.append(
-        f"> promote_threshold={data['promote_threshold']} distinct features · window_days={data['window_days']} · quarantine_threshold={data['quarantine_threshold']}"
-    )
+    lines.append("> Machine-owned. Do NOT hand-edit. Changes are overwritten on the next `lessons.py` write.")
+    lines.append("> Canonical state lives in `.specs/lessons.json`. Edit lessons only via the script.")
+    lines.append(f"> promote_threshold={data['promote_threshold']} distinct features · window_days={data['window_days']} · quarantine_threshold={data['quarantine_threshold']}")
     lines.append("")
 
     by_status = {"confirmed": [], "candidate": [], "quarantined": []}
@@ -215,10 +205,7 @@ def _render(root, data):
             out.append(f"- features: {feats}")
             ev = l.get("evidence", [])
             if ev:
-                out.append(
-                    f"- evidence: {ev[0]}"
-                    + (f" (+{len(ev) - 1} more)" if len(ev) > 1 else "")
-                )
+                out.append(f"- evidence: {ev[0]}" + (f" (+{len(ev) - 1} more)" if len(ev) > 1 else ""))
             out.append(f"- last seen: {l.get('last_seen', '-')}")
             out.append("")
         return out
@@ -245,7 +232,6 @@ def _render(root, data):
 
 # ----------------------------- commands -----------------------------
 
-
 def cmd_init(root, args):
     data = _load(root)
     _save(root, data)
@@ -264,26 +250,14 @@ def cmd_add(root, args):
         print(f"ERROR: --signal must be one of {sorted(SIGNALS)}", file=sys.stderr)
         return 2
     if not feature:
-        print(
-            "ERROR: --feature is required (the feature the signal came from).",
-            file=sys.stderr,
-        )
+        print("ERROR: --feature is required (the feature the signal came from).", file=sys.stderr)
         return 2
     if not source:
-        print(
-            "ERROR: --source is required (file:line / AC id / mutant id / SPEC_DEVIATION ref).",
-            file=sys.stderr,
-        )
-        print(
-            "       A lesson with no grounding in verification.md is an opinion, not a lesson. Refused.",
-            file=sys.stderr,
-        )
+        print("ERROR: --source is required (file:line / AC id / mutant id / SPEC_DEVIATION ref).", file=sys.stderr)
+        print("       A lesson with no grounding in verification.md is an opinion, not a lesson. Refused.", file=sys.stderr)
         return 2
     if len(text) < 12:
-        print(
-            "ERROR: --text too short. State the actionable lesson in one terse sentence.",
-            file=sys.stderr,
-        )
+        print("ERROR: --text too short. State the actionable lesson in one terse sentence.", file=sys.stderr)
         return 2
 
     data = _load(root)
@@ -300,10 +274,7 @@ def cmd_add(root, args):
         if ev not in existing["evidence"]:
             existing["evidence"].append(ev)
         promoted = False
-        if (
-            existing["status"] == "candidate"
-            and existing["recurrence"] >= data["promote_threshold"]
-        ):
+        if existing["status"] == "candidate" and existing["recurrence"] >= data["promote_threshold"]:
             existing["status"] = "confirmed"
             promoted = True
         _save(root, data)
@@ -350,9 +321,7 @@ def cmd_penalize(root, args):
     if target["harmful"] >= data["quarantine_threshold"]:
         target["status"] = "quarantined"
     _save(root, data)
-    print(
-        f"PENALIZED {target['id']} (harmful={target['harmful']}, status={target['status']})"
-    )
+    print(f"PENALIZED {target['id']} (harmful={target['harmful']}, status={target['status']})")
     return 0
 
 
@@ -373,11 +342,7 @@ def cmd_list(root, args):
             continue
         rows.append(l)
     if not rows:
-        print(
-            f"(no {want} lessons"
-            + (f" matching '{q or scope}'" if (q or scope) else "")
-            + ")"
-        )
+        print(f"(no {want} lessons" + (f" matching '{q or scope}'" if (q or scope) else "") + ")")
         return 0
     for l in sorted(rows, key=lambda x: x["id"]):
         sc = f" [scope:{l['scope']}]" if l.get("scope") else ""
@@ -389,9 +354,7 @@ def cmd_prune(root, args):
     data = _load(root)
     dropped = _auto_prune(data)
     _save(root, data)
-    print(
-        f"Pruned {len(dropped)} stale candidate(s): {', '.join(dropped) if dropped else '-'}"
-    )
+    print(f"Pruned {len(dropped)} stale candidate(s): {', '.join(dropped) if dropped else '-'}")
     return 0
 
 
@@ -401,22 +364,13 @@ def cmd_status(root, args):
     for l in data["lessons"]:
         counts[l["status"]] = counts.get(l["status"], 0) + 1
     total = len(data["lessons"])
-    print(
-        f"lessons: {total} total | confirmed={counts['confirmed']} candidate={counts['candidate']} quarantined={counts['quarantined']}"
-    )
+    print(f"lessons: {total} total | confirmed={counts['confirmed']} candidate={counts['candidate']} quarantined={counts['quarantined']}")
     return 0
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(
-        prog="lessons.py",
-        description="Deterministic lessons bookkeeping for tlc-spec-lean.",
-    )
-    p.add_argument(
-        "--root",
-        default=".",
-        help="Project root containing .specs/ (default: current dir)",
-    )
+    p = argparse.ArgumentParser(prog="lessons.py", description="Deterministic lessons bookkeeping for tlc-spec-lean.")
+    p.add_argument("--root", default=".", help="Project root containing .specs/ (default: current dir)")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sp = sub.add_parser("init", help="Create empty store + rendered file")
@@ -425,29 +379,17 @@ def main(argv=None):
     sp = sub.add_parser("add", help="Record a grounded lesson")
     sp.add_argument("--feature", required=True)
     sp.add_argument("--signal", required=True, choices=sorted(SIGNALS))
-    sp.add_argument(
-        "--source",
-        required=True,
-        help="file:line / AC id / mutant id / SPEC_DEVIATION ref",
-    )
+    sp.add_argument("--source", required=True, help="file:line / AC id / mutant id / SPEC_DEVIATION ref")
     sp.add_argument("--text", required=True, help="One terse, actionable sentence")
-    sp.add_argument(
-        "--scope", default="", help="Optional: path/layer/tag for retrieval filtering"
-    )
+    sp.add_argument("--scope", default="", help="Optional: path/layer/tag for retrieval filtering")
     sp.set_defaults(fn=cmd_add)
 
-    sp = sub.add_parser(
-        "penalize", help="Mark a confirmed lesson as failed-when-applied"
-    )
+    sp = sub.add_parser("penalize", help="Mark a confirmed lesson as failed-when-applied")
     sp.add_argument("--id", required=True)
     sp.set_defaults(fn=cmd_penalize)
 
     sp = sub.add_parser("list", help="Print lessons for loading")
-    sp.add_argument(
-        "--status",
-        default="confirmed",
-        choices=["confirmed", "candidate", "quarantined", "all"],
-    )
+    sp.add_argument("--status", default="confirmed", choices=["confirmed", "candidate", "quarantined", "all"])
     sp.add_argument("--query", default="", help="Substring filter on lesson text")
     sp.add_argument("--scope", default="", help="Substring filter on scope")
     sp.set_defaults(fn=cmd_list)

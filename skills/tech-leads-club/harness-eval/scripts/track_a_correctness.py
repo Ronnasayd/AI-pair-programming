@@ -134,8 +134,12 @@ COMMAND_CITE_RES = (
     re.compile(r"`(?:\./)?gradlew?\s+([A-Za-z0-9:_./-]+)(?:\s+[^`]*)?`"),
     # why: go run ./... is covered by RUNNER_BUILTINS; only custom tokens remain
     re.compile(r"`go\s+([A-Za-z0-9:_./-]+)(?:\s+[^`]*)?`"),
-    re.compile(r"`(?:php\s+)?(?:\.?/)?artisan\s+([A-Za-z0-9:_./:-]+)(?:\s+[^`]*)?`"),
-    re.compile(r"`(?:php\s+)?(?:bin/)?console\s+([A-Za-z0-9:_./:-]+)(?:\s+[^`]*)?`"),
+    re.compile(
+        r"`(?:php\s+)?(?:\.?/)?artisan\s+([A-Za-z0-9:_./:-]+)(?:\s+[^`]*)?`"
+    ),
+    re.compile(
+        r"`(?:php\s+)?(?:bin/)?console\s+([A-Za-z0-9:_./:-]+)(?:\s+[^`]*)?`"
+    ),
     re.compile(r"`composer\s+(?:run(?:-script)?\s+)?([A-Za-z0-9:_./-]+)(?:\s+[^`]*)?`"),
 )
 
@@ -201,9 +205,7 @@ CODE_TREE_PREFIXES = (
 )
 
 
-_SKILL_MENTION_STOP = frozenset(
-    {"the", "a", "an", "this", "that", "each", "any", "our"}
-)
+_SKILL_MENTION_STOP = frozenset({"the", "a", "an", "this", "that", "each", "any", "our"})
 
 
 def mentioned_skill_names(text: str) -> list[str]:
@@ -292,11 +294,7 @@ def resolve_cite(
 ) -> tuple[Path | None, list[str]]:
     cite_norm = normalize_cite(cite)
     tried: list[str] = []
-    candidates = [
-        root / cite_norm,
-        source.parent / cite_norm,
-        (source.parent / cite_norm).resolve(),
-    ]
+    candidates = [root / cite_norm, source.parent / cite_norm, (source.parent / cite_norm).resolve()]
     if cite_norm.startswith("../"):
         candidates.append((source.parent / cite_norm).resolve())
     if "skills" in source.parts:
@@ -328,10 +326,7 @@ def resolve_cite(
         except OSError:
             continue
     name = Path(cite_norm).name
-    for parent in [
-        (root / Path(cite_norm).parent),
-        (source.parent / Path(cite_norm).parent),
-    ]:
+    for parent in [(root / Path(cite_norm).parent), (source.parent / Path(cite_norm).parent)]:
         try:
             if parent.is_dir():
                 for child in parent.iterdir():
@@ -342,9 +337,7 @@ def resolve_cite(
     return None, tried
 
 
-def check_file(
-    root: Path, source: Path, commands: set[str], finding_id: list[int]
-) -> list[Finding]:
+def check_file(root: Path, source: Path, commands: set[str], finding_id: list[int]) -> list[Finding]:
     findings: list[Finding] = []
     text = source.read_text(encoding="utf-8", errors="replace")
     src = rel(root, source)
@@ -352,16 +345,12 @@ def check_file(
     for cite in extract_surface_cites(text):
         if is_placeholder_cite(cite):
             continue
-        if cite.count("/") == 0 and not cite.endswith(
-            (".md", ".mdc", ".ts", ".js", ".json")
-        ):
+        if cite.count("/") == 0 and not cite.endswith((".md", ".mdc", ".ts", ".js", ".json")):
             skill = root / ".agents" / "skills" / cite / "SKILL.md"
             alt = root / ".cursor" / "skills" / cite / "SKILL.md"
             if skill.is_file() or alt.is_file():
                 continue
-            if re.search(
-                rf"(?:use|see|skill)\s+[`']?{re.escape(cite)}[`']?", text, re.I
-            ):
+            if re.search(rf"(?:use|see|skill)\s+[`']?{re.escape(cite)}[`']?", text, re.I):
                 finding_id[0] += 1
                 findings.append(
                     Finding(
@@ -399,7 +388,9 @@ def check_file(
             )
         )
 
-    findings.extend(_command_findings(text, src, commands, finding_id))
+    findings.extend(
+        _command_findings(text, src, commands, finding_id)
+    )
     return findings
 
 
@@ -628,9 +619,7 @@ def render_report(
                 f"`.cursor/skills/{cite}/SKILL.md`, or fix the skill name in `{f.source}`."
             )
         elif kind == "inventory":
-            fix = (
-                f"Restore `{f.source}` or re-run inventory after moving harness files."
-            )
+            fix = f"Restore `{f.source}` or re-run inventory after moving harness files."
         elif kind == "casing":
             fix = "Fix the cite so the casing matches the file on disk."
         else:
@@ -676,9 +665,7 @@ def main() -> int:
     finding_id = [0]
     findings: list[Finding] = []
     ok_cites = 0
-    for rel_s in (
-        inventory.get("t0", []) + inventory.get("t1", []) + inventory.get("t2", [])
-    ):
+    for rel_s in inventory.get("t0", []) + inventory.get("t1", []) + inventory.get("t2", []):
         p = root / rel_s
         if not p.is_file():
             finding_id[0] += 1
@@ -715,20 +702,8 @@ def main() -> int:
         uniq.append(f)
 
     render_report(out / "04-correctness.md", inventory, uniq, ok_cites, root)
-    (out / "04-correctness.json").write_text(
-        json.dumps([asdict(f) for f in uniq], indent=2) + "\n", encoding="utf-8"
-    )
-    print(
-        json.dumps(
-            {
-                "run_id": args.run_id,
-                "findings": len(uniq),
-                "broken": sum(1 for f in uniq if f.severity == "BROKEN"),
-                "report": str(out / "04-correctness.md"),
-            },
-            indent=2,
-        )
-    )
+    (out / "04-correctness.json").write_text(json.dumps([asdict(f) for f in uniq], indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"run_id": args.run_id, "findings": len(uniq), "broken": sum(1 for f in uniq if f.severity == "BROKEN"), "report": str(out / "04-correctness.md")}, indent=2))
     return 0
 
 
