@@ -8,14 +8,16 @@ const path = require("path");
 const {
   MissingDependencyError,
   MalformedBaselineError,
-  collectLintViolations,
-  collectDuplicationPercent,
-  collectCoveragePercent,
-  collectLargeFiles,
+  resolveBin,
+  collectEslintMetrics,
+  collectDuplicationMetrics,
+  collectCoverageMetrics,
+  collectFileSizes,
   collectMetrics,
   readBaseline,
   writeBaseline,
   ensureBaseline,
+  toBaselineRecord,
   compareToBaseline,
   renderReport,
   parseArgs,
@@ -26,70 +28,161 @@ function makeTempProject() {
   return fs.mkdtempSync(path.join(os.tmpdir(), "qg-test-"));
 }
 
-test("collectLintViolations sums errorCount and warningCount across files (FR-001)", () => {
-  const root = makeTempProject();
+function writeEslintReport(dir, files) {
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, "eslint-report.json"), JSON.stringify(files));
+}
+
+function writeJscpdReport(dir, { percentage, clones }) {
+  fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(
-    path.join(root, "eslint-report.json"),
-    JSON.stringify([
-      { errorCount: 2, warningCount: 1 },
-      { errorCount: 0, warningCount: 3 }
-    ])
+    path.join(dir, "jscpd-report.json"),
+    JSON.stringify({ statistics: { total: { percentage, clones } } })
   );
-  assert.equal(collectLintViolations(path.join(root, "eslint-report.json")), 6);
+}
+
+function writeCoverageSummary(dir, coverage) {
+  fs.mkdirSync(path.join(dir, "coverage"), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, "coverage", "coverage-summary.json"),
+    JSON.stringify({
+      total: {
+        lines: { pct: coverage.lines },
+        statements: { pct: coverage.statements },
+        functions: { pct: coverage.functions },
+        branches: { pct: coverage.branches }
+      }
+    })
+  );
+}
+
+function seedAllReports(dir) {
+  writeEslintReport(dir, [
+    {
+      filePath: path.join(dir, "a.js"),
+      errorCount: 0,
+      warningCount: 0,
+      messages: []
+    }
+  ]);
+  writeJscpdReport(dir, { percentage: 0, clones: 0 });
+  writeCoverageSummary(dir, {
+    lines: 100,
+    statements: 100,
+    functions: 100,
+    branches: 100
+  });
+}
+
+test("resolveBin returns the quoted local node_modules/.bin path when it exists (FR-001b)", () => {
+  const root = makeTempProject();
+  fs.mkdirSync(path.join(root, "node_modules", ".bin"), { recursive: true });
+  fs.writeFileSync(
+    path.join(root, "node_modules", ".bin", "eslint"),
+    "#!/bin/sh\n"
+  );
+
+  assert.equal(
+    resolveBin("eslint", root),
+    JSON.stringify(path.join(root, "node_modules", ".bin", "eslint"))
+  );
 });
 
-test("collectLintViolations throws MissingDependencyError naming the missing file (FR-002)", () => {
+test("resolveBin falls back to npx when no local bin exists (FR-001b)", () => {
+  const root = makeTempProject();
+  assert.equal(resolveBin("eslint", root), "npx eslint");
+});
+
+test("collectEslintMetrics aggregates total, byRule, byComplexityRule, and perFile (FR-001)", () => {
+  const root = makeTempProject();
+  writeEslintReport(root, [
+    {
+      filePath: path.join(root, "a.js"),
+      errorCount: 2,
+      warningCount: 1,
+      messages: [
+        { ruleId: "max-depth" },
+        { ruleId: "max-depth" },
+        { ruleId: "no-console" }
+      ]
+    },
+    {
+      filePath: path.join(root, "b.js"),
+      errorCount: 0,
+      warningCount: 1,
+      messages: [{ ruleId: "no-console" }]
+    }
+  ]);
+
+  const metrics = collectEslintMetrics(
+    path.join(root, "eslint-report.json"),
+    root
+  );
+
+  assert.equal(metrics.total, 4);
+  assert.deepEqual(metrics.byRule, { "max-depth": 2, "no-console": 2 });
+  assert.equal(metrics.byComplexityRule["max-depth"], 2);
+  assert.equal(metrics.byComplexityRule.complexity, 0);
+  assert.deepEqual(metrics.perFile["a.js"].byRule, {
+    "max-depth": 2,
+    "no-console": 1
+  });
+  assert.deepEqual(metrics.perFile["b.js"].byRule, { "no-console": 1 });
+});
+
+test("collectEslintMetrics throws MissingDependencyError naming the missing file (FR-002)", () => {
   const root = makeTempProject();
   assert.throws(
-    () => collectLintViolations(path.join(root, "eslint-report.json")),
+    () => collectEslintMetrics(path.join(root, "eslint-report.json"), root),
     (err) =>
       err instanceof MissingDependencyError &&
       err.missingPath.endsWith("eslint-report.json")
   );
 });
 
-test("collectDuplicationPercent reads statistics.total.percentage (FR-001)", () => {
+test("collectDuplicationMetrics reads percentage and clones as fragments (FR-001)", () => {
   const root = makeTempProject();
-  fs.writeFileSync(
-    path.join(root, "jscpd-report.json"),
-    JSON.stringify({ statistics: { total: { percentage: 4.2 } } })
+  writeJscpdReport(root, { percentage: 4.2, clones: 3 });
+  const metrics = collectDuplicationMetrics(
+    path.join(root, "jscpd-report.json")
   );
-  assert.equal(
-    collectDuplicationPercent(path.join(root, "jscpd-report.json")),
-    4.2
-  );
+  assert.deepEqual(metrics, { percentage: 4.2, fragments: 3 });
 });
 
-test("collectDuplicationPercent throws MissingDependencyError naming the missing file (FR-002)", () => {
+test("collectDuplicationMetrics throws MissingDependencyError naming the missing file (FR-002)", () => {
   const root = makeTempProject();
   assert.throws(
-    () => collectDuplicationPercent(path.join(root, "jscpd-report.json")),
+    () => collectDuplicationMetrics(path.join(root, "jscpd-report.json")),
     (err) =>
       err instanceof MissingDependencyError &&
       err.missingPath.endsWith("jscpd-report.json")
   );
 });
 
-test("collectCoveragePercent reads total.lines.pct (FR-001)", () => {
+test("collectCoverageMetrics reads all four coverage kinds (FR-001)", () => {
   const root = makeTempProject();
-  fs.mkdirSync(path.join(root, "coverage"));
-  fs.writeFileSync(
-    path.join(root, "coverage", "coverage-summary.json"),
-    JSON.stringify({ total: { lines: { pct: 87.5 } } })
+  writeCoverageSummary(root, {
+    lines: 87.5,
+    statements: 80,
+    functions: 90,
+    branches: 60
+  });
+  const metrics = collectCoverageMetrics(
+    path.join(root, "coverage", "coverage-summary.json")
   );
-  assert.equal(
-    collectCoveragePercent(
-      path.join(root, "coverage", "coverage-summary.json")
-    ),
-    87.5
-  );
+  assert.deepEqual(metrics, {
+    lines: 87.5,
+    statements: 80,
+    functions: 90,
+    branches: 60
+  });
 });
 
-test("collectCoveragePercent throws MissingDependencyError naming the missing file (FR-002)", () => {
+test("collectCoverageMetrics throws MissingDependencyError naming the missing file (FR-002)", () => {
   const root = makeTempProject();
   assert.throws(
     () =>
-      collectCoveragePercent(
+      collectCoverageMetrics(
         path.join(root, "coverage", "coverage-summary.json")
       ),
     (err) =>
@@ -98,7 +191,7 @@ test("collectCoveragePercent throws MissingDependencyError naming the missing fi
   );
 });
 
-test("collectLargeFiles lists files exceeding maxLines with relative path and line count (FR-001)", () => {
+test("collectFileSizes returns lines and bytes for every source file, not just oversized ones (edge case)", () => {
   const root = makeTempProject();
   fs.writeFileSync(path.join(root, "big.js"), Array(10).fill("x").join("\n"));
   fs.writeFileSync(path.join(root, "small.js"), "x");
@@ -108,89 +201,97 @@ test("collectLargeFiles lists files exceeding maxLines with relative path and li
     Array(50).fill("x").join("\n")
   );
 
-  const large = collectLargeFiles(root, 5);
-  assert.deepEqual(large, [{ path: "big.js", lines: 10 }]);
+  const sizes = collectFileSizes(root);
+  const byPath = Object.fromEntries(sizes.map((f) => [f.path, f]));
+  assert.equal(byPath["big.js"].lines, 10);
+  assert.ok(byPath["small.js"]);
+  assert.equal(byPath["node_modules/ignored.js"], undefined);
 });
 
-test("collectLargeFiles returns empty list when nothing exceeds the limit (edge case)", () => {
+test("collectMetrics reads pre-generated reports without auto-running when they already exist (FR-001)", () => {
   const root = makeTempProject();
-  fs.writeFileSync(path.join(root, "small.js"), "x");
-  assert.deepEqual(collectLargeFiles(root, 500), []);
-});
-
-test("collectMetrics aggregates all four metrics in one object (FR-001)", () => {
-  const root = makeTempProject();
-  fs.writeFileSync(
-    path.join(root, "eslint-report.json"),
-    JSON.stringify([{ errorCount: 1, warningCount: 0 }])
-  );
-  fs.writeFileSync(
-    path.join(root, "jscpd-report.json"),
-    JSON.stringify({ statistics: { total: { percentage: 2 } } })
-  );
-  fs.mkdirSync(path.join(root, "coverage"));
-  fs.writeFileSync(
-    path.join(root, "coverage", "coverage-summary.json"),
-    JSON.stringify({ total: { lines: { pct: 90 } } })
-  );
+  seedAllReports(root);
 
   const metrics = collectMetrics(root, {
     maxLines: 500,
     eslintReportPath: path.join(root, "eslint-report.json"),
     jscpdReportPath: path.join(root, "jscpd-report.json"),
-    coverageSummaryPath: path.join(root, "coverage", "coverage-summary.json")
+    coverageSummaryPath: path.join(root, "coverage", "coverage-summary.json"),
+    autoRun: true
   });
-  assert.deepEqual(metrics, {
-    lintViolations: 1,
-    duplicationPercent: 2,
-    coveragePercent: 90,
-    largeFiles: []
-  });
+
+  assert.equal(metrics.eslint.total, 0);
+  assert.equal(metrics.duplication.percentage, 0);
+  assert.equal(metrics.coverage.lines, 100);
 });
 
-test("ensureBaseline bootstraps baseline.json from current metrics when file absent (FR-003)", () => {
+test("collectMetrics fails with MissingDependencyError when autoRun is false and reports are absent", () => {
+  const root = makeTempProject();
+  assert.throws(
+    () =>
+      collectMetrics(root, {
+        maxLines: 500,
+        eslintReportPath: path.join(root, "eslint-report.json"),
+        jscpdReportPath: path.join(root, "jscpd-report.json"),
+        coverageSummaryPath: path.join(
+          root,
+          "coverage",
+          "coverage-summary.json"
+        ),
+        autoRun: false
+      }),
+    MissingDependencyError
+  );
+});
+
+test("ensureBaseline bootstraps nested baseline.json from current metrics when file absent (FR-003)", () => {
   const root = makeTempProject();
   const baselinePath = path.join(root, "baseline.json");
   const metrics = {
-    lintViolations: 3,
-    duplicationPercent: 1.5,
-    coveragePercent: 92,
-    largeFiles: [{ path: "a.js", lines: 10 }]
+    coverage: { lines: 90, statements: 85, functions: 88, branches: 70 },
+    duplication: { percentage: 1.5, fragments: 2 },
+    eslint: {
+      total: 3,
+      byRule: { "no-console": 3 },
+      byComplexityRule: { complexity: 0 },
+      perFile: {}
+    },
+    files: [{ path: "a.js", lines: 600, bytes: 100 }],
+    maxLines: 500
   };
 
   const result = ensureBaseline(baselinePath, metrics);
 
   assert.equal(result.bootstrapped, true);
   const written = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
-  assert.deepEqual(written, {
-    lintViolations: 3,
-    duplicationPercent: 1.5,
-    coveragePercent: 92,
-    largeFilesCount: 1
-  });
+  assert.deepEqual(written.coverage, metrics.coverage);
+  assert.deepEqual(written.duplication, metrics.duplication);
+  assert.equal(written.eslint.total, 3);
+  assert.deepEqual(written.files, { "a.js": { lines: 600, bytes: 100 } });
 });
 
 test("ensureBaseline does not bootstrap when baseline.json already exists (FR-005)", () => {
   const root = makeTempProject();
   const baselinePath = path.join(root, "baseline.json");
-  const existing = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFilesCount: 0
-  };
+  const existing = toBaselineRecord({
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
   fs.writeFileSync(baselinePath, JSON.stringify(existing));
 
   const result = ensureBaseline(baselinePath, {
-    lintViolations: 9,
-    duplicationPercent: 9,
-    coveragePercent: 1,
-    largeFiles: []
+    coverage: { lines: 1, statements: 1, functions: 1, branches: 1 },
+    duplication: { percentage: 9, fragments: 9 },
+    eslint: { total: 9, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
   });
 
   assert.equal(result.bootstrapped, false);
   assert.deepEqual(result.baseline, existing);
-  assert.deepEqual(JSON.parse(fs.readFileSync(baselinePath, "utf8")), existing);
 });
 
 test("readBaseline throws MalformedBaselineError on invalid JSON without overwriting the file (FR-004)", () => {
@@ -202,15 +303,17 @@ test("readBaseline throws MalformedBaselineError on invalid JSON without overwri
   assert.equal(fs.readFileSync(baselinePath, "utf8"), "{ not valid json");
 });
 
-test("readBaseline throws MalformedBaselineError naming the missing field (FR-004)", () => {
+test("readBaseline throws MalformedBaselineError naming a missing nested field (FR-004)", () => {
   const root = makeTempProject();
   const baselinePath = path.join(root, "baseline.json");
   fs.writeFileSync(
     baselinePath,
     JSON.stringify({
-      lintViolations: 0,
-      duplicationPercent: 0,
-      coveragePercent: 100
+      coverage: { lines: 0, statements: 0, functions: 0 },
+      duplication: { percentage: 0, fragments: 0 },
+      eslint: { total: 0, byComplexityRule: {} },
+      files: {},
+      perFileByComplexityRule: {}
     })
   );
 
@@ -218,454 +321,451 @@ test("readBaseline throws MalformedBaselineError naming the missing field (FR-00
     () => readBaseline(baselinePath),
     (err) =>
       err instanceof MalformedBaselineError &&
-      err.message.includes("largeFilesCount")
+      err.message.includes("coverage.branches")
   );
 });
 
-test("writeBaseline always overwrites regardless of prior content (--update-baseline path)", () => {
+test("readBaseline throws MalformedBaselineError for an old flat-shape baseline (backward-incompat note)", () => {
   const root = makeTempProject();
   const baselinePath = path.join(root, "baseline.json");
   fs.writeFileSync(
     baselinePath,
     JSON.stringify({
-      lintViolations: 99,
-      duplicationPercent: 99,
-      coveragePercent: 0,
-      largeFilesCount: 99
+      lintViolations: 0,
+      duplicationPercent: 0,
+      coveragePercent: 100,
+      largeFilesCount: 0
     })
   );
 
+  assert.throws(() => readBaseline(baselinePath), MalformedBaselineError);
+});
+
+test("writeBaseline always overwrites regardless of prior content (--update-baseline path)", () => {
+  const root = makeTempProject();
+  const baselinePath = path.join(root, "baseline.json");
+  fs.writeFileSync(baselinePath, JSON.stringify({ garbage: true }));
+
   writeBaseline(baselinePath, {
-    lintViolations: 1,
-    duplicationPercent: 1,
-    coveragePercent: 100,
-    largeFiles: []
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
   });
 
-  assert.deepEqual(JSON.parse(fs.readFileSync(baselinePath, "utf8")), {
-    lintViolations: 1,
-    duplicationPercent: 1,
-    coveragePercent: 100,
-    largeFilesCount: 0
-  });
+  const written = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
+  assert.equal(written.coverage.lines, 100);
+  assert.equal(written.eslint.total, 0);
 });
 
-test("compareToBaseline fails when lintViolations regresses by even 1 unit (FR-007)", () => {
-  const baseline = {
-    lintViolations: 5,
-    duplicationPercent: 2,
-    coveragePercent: 90,
-    largeFilesCount: 0
-  };
+test("compareToBaseline fails when a coverage field regresses by 0.1 (FR-007)", () => {
+  const baseline = toBaselineRecord({
+    coverage: { lines: 90, statements: 90, functions: 90, branches: 90 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
   const metrics = {
-    lintViolations: 6,
-    duplicationPercent: 2,
-    coveragePercent: 90,
-    largeFiles: []
+    coverage: { lines: 89.9, statements: 90, functions: 90, branches: 90 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
   };
 
   const result = compareToBaseline(baseline, metrics);
 
   assert.equal(result.passed, false);
-  assert.deepEqual(result.fields.lintViolations, {
-    ok: false,
-    baselineValue: 5,
-    currentValue: 6,
-    delta: 1
-  });
+  assert.equal(result.fields["coverage.lines"].ok, false);
+  assert.ok(result.fields["coverage.lines"].delta < 0);
 });
 
-test("compareToBaseline fails when coveragePercent regresses by 0.1 (FR-007)", () => {
-  const baseline = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 90,
-    largeFilesCount: 0
-  };
+test("compareToBaseline fails when eslint total or a complexity rule regresses (FR-007)", () => {
+  const baseline = toBaselineRecord({
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: {
+      total: 5,
+      byRule: {},
+      byComplexityRule: { "max-depth": 1 },
+      perFile: {}
+    },
+    files: [],
+    maxLines: 500
+  });
   const metrics = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 89.9,
-    largeFiles: []
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: {
+      total: 6,
+      byRule: {},
+      byComplexityRule: { "max-depth": 2 },
+      perFile: {}
+    },
+    files: [],
+    maxLines: 500
   };
 
   const result = compareToBaseline(baseline, metrics);
 
   assert.equal(result.passed, false);
-  assert.equal(result.fields.coveragePercent.ok, false);
-  assert.equal(result.fields.coveragePercent.baselineValue, 90);
-  assert.equal(result.fields.coveragePercent.currentValue, 89.9);
-  assert.ok(result.fields.coveragePercent.delta < 0);
+  assert.equal(result.fields["eslint.total"].ok, false);
+  assert.equal(result.fields["eslint.byComplexityRule.max-depth"].ok, false);
 });
 
-test("compareToBaseline passes when all metrics equal the baseline (FR-008)", () => {
-  const baseline = {
-    lintViolations: 3,
-    duplicationPercent: 1,
-    coveragePercent: 95,
-    largeFilesCount: 0
-  };
+test("compareToBaseline passes when all metrics equal or improve (FR-008)", () => {
+  const baseline = toBaselineRecord({
+    coverage: { lines: 90, statements: 90, functions: 90, branches: 90 },
+    duplication: { percentage: 5, fragments: 5 },
+    eslint: { total: 5, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
   const metrics = {
-    lintViolations: 3,
-    duplicationPercent: 1,
-    coveragePercent: 95,
-    largeFiles: []
+    coverage: { lines: 95, statements: 92, functions: 91, branches: 90 },
+    duplication: { percentage: 1, fragments: 1 },
+    eslint: { total: 2, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
   };
 
   assert.equal(compareToBaseline(baseline, metrics).passed, true);
 });
 
-test("compareToBaseline passes when all metrics improve on the baseline (FR-008)", () => {
-  const baseline = {
-    lintViolations: 5,
-    duplicationPercent: 5,
-    coveragePercent: 80,
-    largeFilesCount: 2
-  };
+test("compareToBaseline reports a lines/bytes regression for a file already over the limit (video 'Regressions' behavior)", () => {
+  const baseline = toBaselineRecord({
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [{ path: "big.js", lines: 1008, bytes: 36385 }],
+    maxLines: 500
+  });
   const metrics = {
-    lintViolations: 2,
-    duplicationPercent: 1,
-    coveragePercent: 95,
-    largeFiles: []
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [{ path: "big.js", lines: 1140, bytes: 42083 }],
+    maxLines: 500
   };
 
-  assert.equal(compareToBaseline(baseline, metrics).passed, true);
+  const result = compareToBaseline(baseline, metrics);
+
+  assert.equal(result.passed, false);
+  assert.ok(
+    result.regressions.some((r) => r.includes("grew from 1008 to 1140 lines"))
+  );
+  assert.ok(
+    result.regressions.some((r) => r.includes("grew from 36385 to 42083 bytes"))
+  );
 });
 
-test("compareToBaseline treats fewer large files as an improvement, more as a regression (FR-007/FR-008)", () => {
-  const baseline = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFilesCount: 1
-  };
-  const worse = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFiles: [
-      { path: "a.js", lines: 1 },
-      { path: "b.js", lines: 1 }
-    ]
+test("compareToBaseline reports a per-file complexity-rule regression (video 'max-depth violations increased' behavior)", () => {
+  const baseline = toBaselineRecord({
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: {
+      total: 2,
+      byRule: { "max-depth": 2 },
+      byComplexityRule: { "max-depth": 2 },
+      perFile: { "src/service.js": { byRule: { "max-depth": 2 } } }
+    },
+    files: [],
+    maxLines: 500
+  });
+  const metrics = {
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: {
+      total: 9,
+      byRule: { "max-depth": 9 },
+      byComplexityRule: { "max-depth": 9 },
+      perFile: { "src/service.js": { byRule: { "max-depth": 9 } } }
+    },
+    files: [],
+    maxLines: 500
   };
 
-  assert.equal(compareToBaseline(baseline, worse).passed, false);
+  const result = compareToBaseline(baseline, metrics);
+
+  assert.ok(
+    result.regressions.some(
+      (r) => r === "max-depth violations increased in src/service.js (2 -> 9)"
+    )
+  );
 });
 
-test("renderReport includes current-metrics table and baseline table (FR-009)", () => {
-  const baseline = {
-    lintViolations: 2,
-    duplicationPercent: 1,
-    coveragePercent: 90,
-    largeFilesCount: 0
-  };
+test("renderReport includes Coverage, Duplication, Violations, Regressions sections in order (FR-009)", () => {
+  const baseline = toBaselineRecord({
+    coverage: { lines: 90, statements: 90, functions: 90, branches: 90 },
+    duplication: { percentage: 1, fragments: 1 },
+    eslint: { total: 2, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
   const metrics = {
-    lintViolations: 2,
-    duplicationPercent: 1,
-    coveragePercent: 90,
-    largeFiles: []
+    coverage: { lines: 90, statements: 90, functions: 90, branches: 90 },
+    duplication: { percentage: 1, fragments: 1 },
+    eslint: { total: 2, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
   };
   const comparison = compareToBaseline(baseline, metrics);
 
   const report = renderReport(baseline, metrics, comparison);
 
-  assert.match(report, /\| Metric \| Current \| Baseline \|/);
-  assert.match(report, /\| Lint violations \| 2 \| 2 \|/);
+  const coverageIdx = report.indexOf("## Coverage");
+  const dupIdx = report.indexOf("## Duplication");
+  const violIdx = report.indexOf("## Violations");
+  const regrIdx = report.indexOf("## Regressions");
+  assert.ok(coverageIdx > -1 && coverageIdx < dupIdx);
+  assert.ok(dupIdx < violIdx);
+  assert.ok(violIdx < regrIdx);
+  assert.match(report, /Status: ✅ Passed/);
 });
 
-test("renderReport lists each failing metric with baseline, current, and delta (FR-010)", () => {
-  const baseline = {
-    lintViolations: 2,
-    duplicationPercent: 1,
-    coveragePercent: 90,
-    largeFilesCount: 0
-  };
+test('renderReport shows "None." for regressions when nothing regressed (FR-009)', () => {
+  const baseline = toBaselineRecord({
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
   const metrics = {
-    lintViolations: 5,
-    duplicationPercent: 1,
-    coveragePercent: 90,
-    largeFiles: []
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
   };
   const comparison = compareToBaseline(baseline, metrics);
 
   const report = renderReport(baseline, metrics, comparison);
 
-  assert.match(report, /\| Lint violations \| 2 \| 5 \| 3 \|/);
+  assert.match(report, /## Regressions\n\nNone\./);
 });
 
-test('renderReport shows "None." for failures when nothing regressed (FR-009)', () => {
-  const baseline = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFilesCount: 0
-  };
-  const metrics = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFiles: []
-  };
-  const comparison = compareToBaseline(baseline, metrics);
+test("parseArgs applies defaults and respects overrides, autoRun defaults true, --no-auto-run disables it (FR-011)", () => {
+  const defaults = parseArgs([]);
+  assert.equal(defaults.autoRun, true);
+  assert.equal(defaults.maxLines, 500);
+  assert.equal(defaults.persistDir, ".quality-gate");
+  assert.equal(defaults.workDir, null);
 
-  const report = renderReport(baseline, metrics, comparison);
-
-  assert.match(report, /## Failures\n\nNone\./);
-});
-
-test('renderReport shows large files section explicitly as "None." when empty (FR-012)', () => {
-  const baseline = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFilesCount: 0
-  };
-  const metrics = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFiles: []
-  };
-  const comparison = compareToBaseline(baseline, metrics);
-
-  const report = renderReport(baseline, metrics, comparison);
-
-  assert.match(report, /## Files over the line limit\n\nNone\./);
-});
-
-test("renderReport lists each large file with its line count when present (FR-001)", () => {
-  const baseline = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFilesCount: 0
-  };
-  const metrics = {
-    lintViolations: 0,
-    duplicationPercent: 0,
-    coveragePercent: 100,
-    largeFiles: [{ path: "big.js", lines: 900 }]
-  };
-  const comparison = compareToBaseline(baseline, metrics);
-
-  const report = renderReport(baseline, metrics, comparison);
-
-  assert.match(report, /- big\.js \(900 lines\)/);
-});
-
-test("parseArgs applies defaults and respects --max-lines, --baseline-path, --report-path, --root (FR-011)", () => {
   const options = parseArgs([
     "--root",
     "/proj",
     "--max-lines",
     "300",
-    "--baseline-path",
-    "b.json",
-    "--report-path",
-    "r.md"
+    "--persist-dir",
+    "qg-out",
+    "--work-dir",
+    "/tmp/qg-work",
+    "--no-auto-run"
   ]);
-  assert.deepEqual(options, {
-    root: "/proj",
-    maxLines: 300,
-    updateBaseline: false,
-    baselinePath: "b.json",
-    reportPath: "r.md",
-    eslintReportPath: "eslint-report.json",
-    jscpdReportPath: "jscpd-report.json",
-    coverageSummaryPath: "coverage/coverage-summary.json"
-  });
+  assert.equal(options.root, "/proj");
+  assert.equal(options.maxLines, 300);
+  assert.equal(options.persistDir, "qg-out");
+  assert.equal(options.workDir, "/tmp/qg-work");
+  assert.equal(options.autoRun, false);
 });
 
-test("parseArgs respects --eslint-report, --jscpd-report, --coverage-summary overrides", () => {
-  const options = parseArgs([
-    "--eslint-report",
-    ".quality-gate/eslint-report.json",
-    "--jscpd-report",
-    ".quality-gate/jscpd-report.json",
-    "--coverage-summary",
-    ".quality-gate/coverage/coverage-summary.json"
-  ]);
-  assert.equal(options.eslintReportPath, ".quality-gate/eslint-report.json");
-  assert.equal(options.jscpdReportPath, ".quality-gate/jscpd-report.json");
-  assert.equal(
-    options.coverageSummaryPath,
-    ".quality-gate/coverage/coverage-summary.json"
-  );
-});
-
-test("parseArgs sets updateBaseline true when --update-baseline is present (FR-006)", () => {
-  assert.equal(parseArgs(["--update-baseline"]).updateBaseline, true);
-});
-
-test("run bootstraps baseline on first execution and exits 0 without prompting (FR-003, FR-014)", () => {
+test("run bootstraps nested baseline inside --persist-dir on first execution and exits 0 without prompting (FR-003, FR-014)", () => {
   const root = makeTempProject();
-  fs.writeFileSync(
-    path.join(root, "eslint-report.json"),
-    JSON.stringify([{ errorCount: 0, warningCount: 0 }])
-  );
-  fs.writeFileSync(
-    path.join(root, "jscpd-report.json"),
-    JSON.stringify({ statistics: { total: { percentage: 0 } } })
-  );
-  fs.mkdirSync(path.join(root, "coverage"));
-  fs.writeFileSync(
-    path.join(root, "coverage", "coverage-summary.json"),
-    JSON.stringify({ total: { lines: { pct: 100 } } })
-  );
+  const workDir = makeTempProject();
+  seedAllReports(workDir);
 
   const messages = [];
-  const exitCode = run(["--root", root], (msg) => messages.push(msg));
+  const exitCode = run(
+    ["--root", root, "--no-auto-run", "--work-dir", workDir],
+    (msg) => messages.push(msg)
+  );
 
   assert.equal(exitCode, 0);
-  assert.ok(fs.existsSync(path.join(root, "baseline.json")));
+  const baseline = JSON.parse(
+    fs.readFileSync(path.join(root, ".quality-gate", "baseline.json"), "utf8")
+  );
+  assert.equal(baseline.coverage.lines, 100);
   assert.ok(messages.some((m) => m.includes("created")));
 });
 
-test("run exits 1 and writes the report when a metric regresses (FR-007, FR-011)", () => {
+test("run does not delete a user-supplied --work-dir, only the default auto-created one (FR-001c / cleanup)", () => {
   const root = makeTempProject();
-  fs.writeFileSync(
-    path.join(root, "baseline.json"),
-    JSON.stringify({
-      lintViolations: 0,
-      duplicationPercent: 0,
-      coveragePercent: 100,
-      largeFilesCount: 0
-    })
-  );
-  fs.writeFileSync(
-    path.join(root, "eslint-report.json"),
-    JSON.stringify([{ errorCount: 1, warningCount: 0 }])
-  );
-  fs.writeFileSync(
-    path.join(root, "jscpd-report.json"),
-    JSON.stringify({ statistics: { total: { percentage: 0 } } })
-  );
-  fs.mkdirSync(path.join(root, "coverage"));
-  fs.writeFileSync(
-    path.join(root, "coverage", "coverage-summary.json"),
-    JSON.stringify({ total: { lines: { pct: 100 } } })
-  );
+  const workDir = makeTempProject();
+  seedAllReports(workDir);
 
-  const exitCode = run(["--root", root, "--report-path", "out.md"], () => {});
+  run(["--root", root, "--no-auto-run", "--work-dir", workDir], () => {});
+
+  assert.ok(fs.existsSync(path.join(workDir, "eslint-report.json")));
+});
+
+test("run exits 1 and writes the report inside --persist-dir when a metric regresses (FR-007, FR-011)", () => {
+  const root = makeTempProject();
+  const persistDir = path.join(root, ".quality-gate");
+  fs.mkdirSync(persistDir, { recursive: true });
+  writeBaseline(path.join(persistDir, "baseline.json"), {
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
+  const workDir = makeTempProject();
+  writeEslintReport(workDir, [
+    {
+      filePath: path.join(root, "a.js"),
+      errorCount: 1,
+      warningCount: 0,
+      messages: []
+    }
+  ]);
+  writeJscpdReport(workDir, { percentage: 0, clones: 0 });
+  writeCoverageSummary(workDir, {
+    lines: 100,
+    statements: 100,
+    functions: 100,
+    branches: 100
+  });
+
+  const exitCode = run(
+    ["--root", root, "--no-auto-run", "--work-dir", workDir],
+    () => {}
+  );
 
   assert.equal(exitCode, 1);
-  assert.ok(fs.existsSync(path.join(root, "out.md")));
+  assert.ok(fs.existsSync(path.join(persistDir, "quality-gate-report.md")));
 });
 
 test("run exits 0 when metrics match the baseline exactly (FR-008)", () => {
   const root = makeTempProject();
-  fs.writeFileSync(
-    path.join(root, "baseline.json"),
-    JSON.stringify({
-      lintViolations: 0,
-      duplicationPercent: 0,
-      coveragePercent: 100,
-      largeFilesCount: 0
-    })
-  );
-  fs.writeFileSync(
-    path.join(root, "eslint-report.json"),
-    JSON.stringify([{ errorCount: 0, warningCount: 0 }])
-  );
-  fs.writeFileSync(
-    path.join(root, "jscpd-report.json"),
-    JSON.stringify({ statistics: { total: { percentage: 0 } } })
-  );
-  fs.mkdirSync(path.join(root, "coverage"));
-  fs.writeFileSync(
-    path.join(root, "coverage", "coverage-summary.json"),
-    JSON.stringify({ total: { lines: { pct: 100 } } })
-  );
+  const persistDir = path.join(root, ".quality-gate");
+  fs.mkdirSync(persistDir, { recursive: true });
+  writeBaseline(path.join(persistDir, "baseline.json"), {
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
+  const workDir = makeTempProject();
+  seedAllReports(workDir);
 
   assert.equal(
-    run(["--root", root], () => {}),
+    run(["--root", root, "--no-auto-run", "--work-dir", workDir], () => {}),
     0
   );
 });
 
-test("run with --update-baseline overwrites baseline.json and exits 0 regardless of regression (FR-006)", () => {
+test("run with --update-baseline overwrites baseline.json inside --persist-dir and exits 0 regardless of regression (FR-006)", () => {
   const root = makeTempProject();
-  fs.writeFileSync(
-    path.join(root, "baseline.json"),
-    JSON.stringify({
-      lintViolations: 0,
-      duplicationPercent: 0,
-      coveragePercent: 100,
-      largeFilesCount: 0
-    })
-  );
-  fs.writeFileSync(
-    path.join(root, "eslint-report.json"),
-    JSON.stringify([{ errorCount: 5, warningCount: 0 }])
-  );
-  fs.writeFileSync(
-    path.join(root, "jscpd-report.json"),
-    JSON.stringify({ statistics: { total: { percentage: 0 } } })
-  );
-  fs.mkdirSync(path.join(root, "coverage"));
-  fs.writeFileSync(
-    path.join(root, "coverage", "coverage-summary.json"),
-    JSON.stringify({ total: { lines: { pct: 100 } } })
-  );
+  const persistDir = path.join(root, ".quality-gate");
+  fs.mkdirSync(persistDir, { recursive: true });
+  writeBaseline(path.join(persistDir, "baseline.json"), {
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
+  const workDir = makeTempProject();
+  writeEslintReport(workDir, [
+    {
+      filePath: path.join(root, "a.js"),
+      errorCount: 5,
+      warningCount: 0,
+      messages: []
+    }
+  ]);
+  writeJscpdReport(workDir, { percentage: 0, clones: 0 });
+  writeCoverageSummary(workDir, {
+    lines: 100,
+    statements: 100,
+    functions: 100,
+    branches: 100
+  });
 
-  const exitCode = run(["--root", root, "--update-baseline"], () => {});
+  const exitCode = run(
+    [
+      "--root",
+      root,
+      "--no-auto-run",
+      "--work-dir",
+      workDir,
+      "--update-baseline"
+    ],
+    () => {}
+  );
 
   assert.equal(exitCode, 0);
-  assert.equal(
-    JSON.parse(fs.readFileSync(path.join(root, "baseline.json"), "utf8"))
-      .lintViolations,
-    5
+  const written = JSON.parse(
+    fs.readFileSync(path.join(persistDir, "baseline.json"), "utf8")
   );
+  assert.equal(written.eslint.total, 5);
 });
 
-test("run exits 1 with a clear message when a required dependency is missing, no crash (FR-002)", () => {
+test("run exits 1 with a clear message when a required dependency is missing and auto-run is disabled, no crash (FR-002)", () => {
   const root = makeTempProject();
+  const workDir = makeTempProject();
   const messages = [];
 
-  const exitCode = run(["--root", root], (msg) => messages.push(msg));
+  const exitCode = run(
+    ["--root", root, "--no-auto-run", "--work-dir", workDir],
+    (msg) => messages.push(msg)
+  );
 
   assert.equal(exitCode, 1);
   assert.ok(messages[0].includes("eslint-report.json"));
 });
 
-test("compareToBaseline fails when duplicationPercent regresses (higher is worse) (FR-007)", () => {
-  const baseline = {
-    lintViolations: 0,
-    duplicationPercent: 2,
-    coveragePercent: 90,
-    largeFilesCount: 0
-  };
-  const metrics = {
-    lintViolations: 0,
-    duplicationPercent: 3,
-    coveragePercent: 90,
-    largeFiles: []
-  };
-
-  const result = compareToBaseline(baseline, metrics);
-
-  assert.equal(result.passed, false);
-  assert.deepEqual(result.fields.duplicationPercent, {
-    ok: false,
-    baselineValue: 2,
-    currentValue: 3,
-    delta: 1
+test("run deletes the default auto-created work-dir at the end, leaving only baseline+report in --persist-dir (FR-001c cleanup)", () => {
+  const root = makeTempProject();
+  const persistDir = path.join(root, ".quality-gate");
+  fs.mkdirSync(persistDir, { recursive: true });
+  writeBaseline(path.join(persistDir, "baseline.json"), {
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
   });
+
+  const tmpDirsBefore = fs
+    .readdirSync(os.tmpdir())
+    .filter((n) => n.startsWith("quality-gate-"));
+  const exitCode = run(["--root", root, "--no-auto-run"], () => {});
+  const tmpDirsAfter = fs
+    .readdirSync(os.tmpdir())
+    .filter((n) => n.startsWith("quality-gate-"));
+
+  assert.equal(exitCode, 1);
+  assert.deepEqual(tmpDirsAfter, tmpDirsBefore);
 });
 
-test("compareToBaseline passes when duplicationPercent improves (lower is better) (FR-008)", () => {
-  const baseline = {
-    lintViolations: 0,
-    duplicationPercent: 5,
-    coveragePercent: 90,
-    largeFilesCount: 0
-  };
-  const metrics = {
-    lintViolations: 0,
-    duplicationPercent: 2,
-    coveragePercent: 90,
-    largeFiles: []
-  };
+test("run leaves only baseline+report behind in --persist-dir on a successful comparison, tmp work-dir cleaned up (FR-001c cleanup)", () => {
+  const root = makeTempProject();
+  const persistDir = path.join(root, ".quality-gate");
+  fs.mkdirSync(persistDir, { recursive: true });
+  writeBaseline(path.join(persistDir, "baseline.json"), {
+    coverage: { lines: 100, statements: 100, functions: 100, branches: 100 },
+    duplication: { percentage: 0, fragments: 0 },
+    eslint: { total: 0, byRule: {}, byComplexityRule: {}, perFile: {} },
+    files: [],
+    maxLines: 500
+  });
+  const workDir = makeTempProject();
+  seedAllReports(workDir);
 
-  assert.equal(compareToBaseline(baseline, metrics).passed, true);
+  const exitCode = run(
+    ["--root", root, "--no-auto-run", "--work-dir", workDir],
+    () => {}
+  );
+
+  assert.equal(exitCode, 0);
+  assert.deepEqual(fs.readdirSync(persistDir).sort(), [
+    "baseline.json",
+    "quality-gate-report.md"
+  ]);
+  assert.ok(fs.existsSync(workDir));
 });

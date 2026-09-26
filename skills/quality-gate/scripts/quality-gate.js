@@ -2,28 +2,37 @@
 "use strict";
 
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
+const { execSync } = require("child_process");
 
 const IGNORED_DIRS = new Set([
   "node_modules",
   ".git",
   "coverage",
   "dist",
-  "build"
+  "build",
+  ".quality-gate",
+  ".stryker"
 ]);
 const SOURCE_FILE_PATTERN = /\.(js|jsx|ts|tsx)$/;
+const COMPLEXITY_RULES = [
+  "complexity",
+  "max-depth",
+  "max-lines",
+  "max-lines-per-function",
+  "max-params",
+  "max-statements"
+];
 
 /**
- * Error thrown when a metric's required upstream file (lint/dup/coverage report) is missing.
+ * Error thrown when a metric's required upstream file (lint/dup/coverage report) is missing
+ * and auto-run either produced nothing or was disabled.
  */
 class MissingDependencyError extends Error {
-  /**
-   * Builds a MissingDependencyError naming the exact missing file.
-   * @param missingPath - Absolute or relative path to the file that could not be found.
-   */
   constructor(missingPath) {
     super(
-      `quality-gate: required file not found: ${missingPath}. Run the tool that produces it before this script.`
+      `quality-gate: required file not found: ${missingPath}. Run the tool that produces it before this script (or enable auto-run).`
     );
     this.name = "MissingDependencyError";
     this.missingPath = missingPath;
@@ -31,61 +40,122 @@ class MissingDependencyError extends Error {
 }
 
 /**
+ * Error thrown when a collector command itself fails to spawn (not a lint/test failure).
+ */
+class CollectorExecutionError extends Error {
+  constructor(command, cause) {
+    super(`quality-gate: failed to run collector "${command}": ${cause}`);
+    this.name = "CollectorExecutionError";
+    this.command = command;
+  }
+}
+
+/**
+ * Resolves the CLI to invoke for a tool: the project's local `node_modules/.bin/<name>`
+ * when present (no npx registry check, no version drift), falling back to `npx <name>`.
+ * @param name - Bin name (e.g. "eslint", "jscpd", "jest").
+ * @param root - Project root to look for node_modules/.bin in.
+ * @returns The command prefix to use in place of `npx <name>`.
+ */
+function resolveBin(name, root) {
+  const localBin = path.join(root, "node_modules", ".bin", name);
+  return fs.existsSync(localBin) ? JSON.stringify(localBin) : `npx ${name}`;
+}
+
+/**
+ * Runs a collector shell command, tolerating the non-zero exit codes lint/dup/test
+ * tools use to signal "violations found" — that is expected output, not a script failure.
+ * @param command - Shell command to execute.
+ * @param cwd - Working directory for the command.
+ */
+function runCollector(command, cwd) {
+  try {
+    execSync(command, { cwd, stdio: ["ignore", "pipe", "pipe"] });
+  } catch (error) {
+    if (typeof error.status === "number") return;
+    throw new CollectorExecutionError(command, error.message);
+  }
+}
+
+/**
  * Reads a JSON file, raising MissingDependencyError when it does not exist.
- * @param filePath - Path to the JSON file to read.
- * @returns The parsed JSON content.
  */
 function readJsonOrThrow(filePath) {
   if (!fs.existsSync(filePath)) throw new MissingDependencyError(filePath);
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  const content = fs.readFileSync(filePath, "utf8");
+  if (content.trim() === "") throw new MissingDependencyError(filePath);
+  return JSON.parse(content);
 }
 
 /**
- * Counts total ESLint violations (errors + warnings) from an eslint --format json report.
- * @param eslintReportPath - Path to the eslint --format json report.
- * @returns Total count of lint violations across all files.
+ * Ensures a report file exists, running its collector command first when missing and
+ * auto-run is enabled.
+ * @param filePath - Expected report path.
+ * @param autoRun - Whether to run the collector when the file is missing.
+ * @param root - Project root to run the collector in.
+ * @param command - Shell command that produces filePath (may write to a directory instead).
  */
-function collectLintViolations(eslintReportPath) {
+function ensureReportFile(filePath, autoRun, root, command) {
+  if (fs.existsSync(filePath)) return;
+  if (!autoRun) return;
+  runCollector(command, root);
+}
+
+/**
+ * Counts total ESLint violations and aggregates rule-id counts (overall and per file).
+ * @returns { total, byRule, perFile } where perFile maps relative path -> { byRule }.
+ */
+function collectEslintMetrics(eslintReportPath, root) {
   const results = readJsonOrThrow(eslintReportPath);
-  return results.reduce(
-    (sum, file) => sum + file.errorCount + file.warningCount,
-    0
-  );
+  const byRule = {};
+  const perFile = {};
+  let total = 0;
+
+  for (const file of results) {
+    total += file.errorCount + file.warningCount;
+    const relPath = path.relative(root, file.filePath);
+    const fileByRule = {};
+    for (const message of file.messages || []) {
+      if (!message.ruleId) continue;
+      byRule[message.ruleId] = (byRule[message.ruleId] || 0) + 1;
+      fileByRule[message.ruleId] = (fileByRule[message.ruleId] || 0) + 1;
+    }
+    perFile[relPath] = { byRule: fileByRule };
+  }
+
+  const byComplexityRule = {};
+  for (const rule of COMPLEXITY_RULES)
+    byComplexityRule[rule] = byRule[rule] || 0;
+
+  return { total, byRule, byComplexityRule, perFile };
 }
 
 /**
- * Reads the overall duplication percentage from a jscpd JSON report.
- * @param jscpdReportPath - Path to the jscpd JSON report.
- * @returns Duplication percentage as reported by jscpd.
+ * Reads duplication percentage and clone count from a jscpd JSON report.
  */
-function collectDuplicationPercent(jscpdReportPath) {
+function collectDuplicationMetrics(jscpdReportPath) {
   const report = readJsonOrThrow(jscpdReportPath);
-  return report.statistics.total.percentage;
+  return {
+    percentage: report.statistics.total.percentage,
+    fragments: report.statistics.total.clones
+  };
 }
 
 /**
- * Reads the total line coverage percentage from an Istanbul/nyc coverage summary.
- * @param coverageSummaryPath - Path to the coverage-summary.json file.
- * @returns Line coverage percentage.
+ * Reads per-kind coverage percentages from an Istanbul/nyc coverage summary.
  */
-function collectCoveragePercent(coverageSummaryPath) {
+function collectCoverageMetrics(coverageSummaryPath) {
   const summary = readJsonOrThrow(coverageSummaryPath);
-  return summary.total.lines.pct;
-}
-
-/**
- * Counts the lines in a single file.
- * @param filePath - Path to the file to measure.
- * @returns Number of lines in the file.
- */
-function countFileLines(filePath) {
-  return fs.readFileSync(filePath, "utf8").split("\n").length;
+  return {
+    lines: summary.total.lines.pct,
+    statements: summary.total.statements.pct,
+    functions: summary.total.functions.pct,
+    branches: summary.total.branches.pct
+  };
 }
 
 /**
  * Recursively lists every source file under a directory, skipping ignored dirs.
- * @param dir - Directory to scan.
- * @returns Absolute paths of every matching source file found.
  */
 function listSourceFiles(dir) {
   const files = [];
@@ -102,58 +172,67 @@ function listSourceFiles(dir) {
 }
 
 /**
- * Finds source files whose line count exceeds the configured limit.
- * @param root - Root directory to scan.
- * @param maxLines - Maximum allowed line count per file.
- * @returns List of { path, lines } for files exceeding maxLines, relative to root.
+ * Measures every tracked source file's line and byte size.
+ * @returns List of { path, lines, bytes } (relative to root), for every source file — not
+ * filtered by the line limit, so oversized-file regressions can be detected against baseline.
  */
-function collectLargeFiles(root, maxLines) {
-  return listSourceFiles(root)
-    .map((filePath) => ({
+function collectFileSizes(root) {
+  return listSourceFiles(root).map((filePath) => {
+    const content = fs.readFileSync(filePath, "utf8");
+    return {
       path: path.relative(root, filePath),
-      lines: countFileLines(filePath)
-    }))
-    .filter((file) => file.lines > maxLines);
+      lines: content.split("\n").length,
+      bytes: Buffer.byteLength(content, "utf8")
+    };
+  });
 }
 
 /**
- * Collects all four quality-gate metrics for a project.
- * @param root - Project root directory.
- * @param options - Collection options.
- * @param options.maxLines - Maximum allowed line count per source file.
- * @param options.eslintReportPath - Path to the eslint --format json report.
- * @param options.jscpdReportPath - Path to the jscpd JSON report.
- * @param options.coverageSummaryPath - Path to the coverage-summary.json file.
- * @returns Object with lintViolations, duplicationPercent, coveragePercent, and largeFiles.
+ * Collects all quality-gate metrics for a project, auto-running eslint/jscpd/jest first
+ * when their reports are missing and autoRun is enabled.
  */
 function collectMetrics(
   root,
-  { maxLines, eslintReportPath, jscpdReportPath, coverageSummaryPath }
+  {
+    maxLines,
+    eslintReportPath,
+    jscpdReportPath,
+    coverageSummaryPath,
+    autoRun = true
+  }
 ) {
+  ensureReportFile(
+    eslintReportPath,
+    autoRun,
+    root,
+    `${resolveBin("eslint", root)} . --format json > ${JSON.stringify(eslintReportPath)}`
+  );
+  ensureReportFile(
+    jscpdReportPath,
+    autoRun,
+    root,
+    `${resolveBin("jscpd", root)} . --reporters json -o ${JSON.stringify(path.dirname(jscpdReportPath))}`
+  );
+  ensureReportFile(
+    coverageSummaryPath,
+    autoRun,
+    root,
+    `${resolveBin("jest", root)} --coverage --coverageReporters=json-summary --coverageDirectory=${JSON.stringify(path.dirname(coverageSummaryPath))}`
+  );
+
   return {
-    lintViolations: collectLintViolations(eslintReportPath),
-    duplicationPercent: collectDuplicationPercent(jscpdReportPath),
-    coveragePercent: collectCoveragePercent(coverageSummaryPath),
-    largeFiles: collectLargeFiles(root, maxLines)
+    eslint: collectEslintMetrics(eslintReportPath, root),
+    duplication: collectDuplicationMetrics(jscpdReportPath),
+    coverage: collectCoverageMetrics(coverageSummaryPath),
+    files: collectFileSizes(root),
+    maxLines
   };
 }
-
-const BASELINE_REQUIRED_FIELDS = [
-  "lintViolations",
-  "duplicationPercent",
-  "coveragePercent",
-  "largeFilesCount"
-];
 
 /**
  * Error thrown when baseline.json exists but is invalid JSON or missing a required field.
  */
 class MalformedBaselineError extends Error {
-  /**
-   * Builds a MalformedBaselineError naming the exact problematic field or parse failure.
-   * @param baselinePath - Path to the malformed baseline file.
-   * @param reason - Human-readable description of what is wrong (missing field or parse error).
-   */
   constructor(baselinePath, reason) {
     super(
       `quality-gate: malformed baseline at ${baselinePath}: ${reason}. The file was not overwritten.`
@@ -163,26 +242,54 @@ class MalformedBaselineError extends Error {
   }
 }
 
+const BASELINE_TOP_FIELDS = ["coverage", "duplication", "eslint", "files"];
+const COVERAGE_FIELDS = ["lines", "statements", "functions", "branches"];
+const DUPLICATION_FIELDS = ["percentage", "fragments"];
+
 /**
- * Validates that a parsed baseline object contains every required field.
- * @param baseline - Parsed baseline JSON content.
- * @param baselinePath - Path to the baseline file, used for error reporting.
+ * Validates that a parsed baseline object contains every required nested field.
  */
 function assertBaselineShape(baseline, baselinePath) {
-  const missingField = BASELINE_REQUIRED_FIELDS.find(
-    (field) => !(field in baseline)
-  );
-  if (missingField)
+  const missingTop = BASELINE_TOP_FIELDS.find((field) => !(field in baseline));
+  if (missingTop)
     throw new MalformedBaselineError(
       baselinePath,
-      `missing field "${missingField}"`
+      `missing field "${missingTop}"`
+    );
+
+  for (const field of COVERAGE_FIELDS) {
+    if (!(field in baseline.coverage))
+      throw new MalformedBaselineError(
+        baselinePath,
+        `missing field "coverage.${field}"`
+      );
+  }
+  for (const field of DUPLICATION_FIELDS) {
+    if (!(field in baseline.duplication))
+      throw new MalformedBaselineError(
+        baselinePath,
+        `missing field "duplication.${field}"`
+      );
+  }
+  if (!("total" in baseline.eslint))
+    throw new MalformedBaselineError(
+      baselinePath,
+      `missing field "eslint.total"`
+    );
+  if (!("byComplexityRule" in baseline.eslint))
+    throw new MalformedBaselineError(
+      baselinePath,
+      `missing field "eslint.byComplexityRule"`
+    );
+  if (!("perFileByComplexityRule" in baseline))
+    throw new MalformedBaselineError(
+      baselinePath,
+      `missing field "perFileByComplexityRule"`
     );
 }
 
 /**
  * Reads the baseline file for a project, distinguishing "does not exist" from "malformed".
- * @param baselinePath - Path to baseline.json.
- * @returns { exists: false } when the file is absent, or { exists: true, baseline } when present and valid.
  */
 function readBaseline(baselinePath) {
   if (!fs.existsSync(baselinePath)) return { exists: false };
@@ -201,23 +308,40 @@ function readBaseline(baselinePath) {
 }
 
 /**
- * Converts collected metrics into the flat shape stored in baseline.json.
- * @param metrics - Metrics object from collectMetrics.
- * @returns Flat baseline record with largeFilesCount instead of the full file list.
+ * Converts collected metrics into the nested shape stored in baseline.json.
+ * Only files currently over maxLines are persisted (same population rule as before),
+ * now keyed by path with both lines and bytes so growth can be tracked per file.
  */
 function toBaselineRecord(metrics) {
+  const oversizedFiles = {};
+  for (const file of metrics.files) {
+    if (file.lines > metrics.maxLines)
+      oversizedFiles[file.path] = { lines: file.lines, bytes: file.bytes };
+  }
+
+  const perFileByComplexityRule = {};
+  for (const [filePath, entry] of Object.entries(metrics.eslint.perFile)) {
+    const byRule = {};
+    for (const ruleId of COMPLEXITY_RULES)
+      byRule[ruleId] = entry.byRule[ruleId] || 0;
+    perFileByComplexityRule[filePath] = byRule;
+  }
+
   return {
-    lintViolations: metrics.lintViolations,
-    duplicationPercent: metrics.duplicationPercent,
-    coveragePercent: metrics.coveragePercent,
-    largeFilesCount: metrics.largeFiles.length
+    coverage: { ...metrics.coverage },
+    duplication: { ...metrics.duplication },
+    eslint: {
+      total: metrics.eslint.total,
+      byRule: { ...metrics.eslint.byRule },
+      byComplexityRule: { ...metrics.eslint.byComplexityRule }
+    },
+    files: oversizedFiles,
+    perFileByComplexityRule
   };
 }
 
 /**
  * Writes the baseline file, always overwriting any existing content.
- * @param baselinePath - Path to baseline.json.
- * @param metrics - Metrics object from collectMetrics to persist as the new baseline.
  */
 function writeBaseline(baselinePath, metrics) {
   fs.writeFileSync(
@@ -228,9 +352,6 @@ function writeBaseline(baselinePath, metrics) {
 
 /**
  * Ensures a baseline exists, bootstrapping it from current metrics on first run.
- * @param baselinePath - Path to baseline.json.
- * @param metrics - Currently collected metrics, used to bootstrap when no baseline exists.
- * @returns { bootstrapped: true } when a new baseline was just created, or { bootstrapped: false, baseline } when one already existed.
  */
 function ensureBaseline(baselinePath, metrics) {
   const read = readBaseline(baselinePath);
@@ -239,48 +360,123 @@ function ensureBaseline(baselinePath, metrics) {
   return { bootstrapped: true };
 }
 
-const HIGHER_IS_WORSE_FIELDS = new Set([
-  "lintViolations",
-  "duplicationPercent",
-  "largeFilesCount"
-]);
-
 /**
- * Compares one metric field's current value against its baseline value.
- * @param field - Metric field name (determines whether higher or lower is worse).
- * @param baselineValue - Value recorded in baseline.json for this field.
- * @param currentValue - Value just collected for this field.
- * @returns { ok, delta } where ok is false when the current value regressed past the baseline.
+ * Compares one leaf value; higherIsWorse decides which direction counts as a regression.
  */
-function compareField(field, baselineValue, currentValue) {
+function compareLeaf(baselineValue, currentValue, higherIsWorse) {
   const delta = currentValue - baselineValue;
-  const regressed = HIGHER_IS_WORSE_FIELDS.has(field) ? delta > 0 : delta < 0;
+  const regressed = higherIsWorse ? delta > 0 : delta < 0;
   return { ok: !regressed, baselineValue, currentValue, delta };
 }
 
 /**
- * Compares current metrics against a baseline record for every ratchet field.
- * @param baseline - Baseline record read from baseline.json.
- * @param metrics - Currently collected metrics from collectMetrics.
- * @returns { passed, fields } where fields maps each metric field to its compareField result.
+ * Compares current metrics against a baseline record across every nested leaf field,
+ * plus per-file oversized-file regressions (lines/bytes growth while already over limit).
+ * @returns { passed, fields, regressions } — fields is a flat map keyed "group.leaf" (or
+ * "eslint.byRule.<ruleId>" for dynamic rule ids); regressions is a list of human-readable strings.
  */
 function compareToBaseline(baseline, metrics) {
   const current = toBaselineRecord(metrics);
   const fields = {};
-  for (const field of BASELINE_REQUIRED_FIELDS) {
-    fields[field] = compareField(field, baseline[field], current[field]);
+  const regressions = [];
+
+  for (const field of COVERAGE_FIELDS) {
+    fields[`coverage.${field}`] = compareLeaf(
+      baseline.coverage[field],
+      current.coverage[field],
+      false
+    );
   }
+
+  for (const field of DUPLICATION_FIELDS) {
+    fields[`duplication.${field}`] = compareLeaf(
+      baseline.duplication[field],
+      current.duplication[field],
+      true
+    );
+  }
+
+  fields["eslint.total"] = compareLeaf(
+    baseline.eslint.total,
+    current.eslint.total,
+    true
+  );
+
+  const ruleIds = new Set([
+    ...Object.keys(baseline.eslint.byComplexityRule || {}),
+    ...Object.keys(current.eslint.byComplexityRule)
+  ]);
+  for (const ruleId of ruleIds) {
+    const baselineCount = baseline.eslint.byComplexityRule[ruleId] || 0;
+    const currentCount = current.eslint.byComplexityRule[ruleId] || 0;
+    fields[`eslint.byComplexityRule.${ruleId}`] = compareLeaf(
+      baselineCount,
+      currentCount,
+      true
+    );
+  }
+
+  const oversizedPaths = new Set([
+    ...Object.keys(baseline.files || {}),
+    ...Object.keys(current.files)
+  ]);
+  for (const filePath of oversizedPaths) {
+    const before = baseline.files[filePath];
+    const after = current.files[filePath];
+    fields[`files.${filePath}.lines`] = compareLeaf(
+      before ? before.lines : 0,
+      after ? after.lines : 0,
+      true
+    );
+    fields[`files.${filePath}.bytes`] = compareLeaf(
+      before ? before.bytes : 0,
+      after ? after.bytes : 0,
+      true
+    );
+
+    if (before && after && after.lines > before.lines) {
+      regressions.push(
+        `${filePath} grew from ${before.lines} to ${after.lines} lines while already over the limit`
+      );
+    }
+    if (before && after && after.bytes > before.bytes) {
+      regressions.push(
+        `${filePath} grew from ${before.bytes} to ${after.bytes} bytes while already over the limit`
+      );
+    }
+  }
+
+  for (const ruleId of COMPLEXITY_RULES) {
+    const perFilePaths = new Set([
+      ...Object.keys(baseline.perFileByComplexityRule || {}),
+      ...Object.keys(current.perFileByComplexityRule)
+    ]);
+    for (const filePath of perFilePaths) {
+      const beforeCount =
+        ((baseline.perFileByComplexityRule || {})[filePath] || {})[ruleId] || 0;
+      const afterCount =
+        (current.perFileByComplexityRule[filePath] || {})[ruleId] || 0;
+      if (afterCount > beforeCount) {
+        regressions.push(
+          `${ruleId} violations increased in ${filePath} (${beforeCount} -> ${afterCount})`
+        );
+      }
+    }
+  }
+
   const passed = Object.values(fields).every((result) => result.ok);
-  return { passed, fields };
+  return { passed, fields, regressions };
 }
 
 module.exports = {
   MissingDependencyError,
   MalformedBaselineError,
-  collectLintViolations,
-  collectDuplicationPercent,
-  collectCoveragePercent,
-  collectLargeFiles,
+  CollectorExecutionError,
+  resolveBin,
+  collectEslintMetrics,
+  collectDuplicationMetrics,
+  collectCoverageMetrics,
+  collectFileSizes,
   collectMetrics,
   readBaseline,
   writeBaseline,
@@ -292,96 +488,119 @@ module.exports = {
   run
 };
 
-const METRIC_LABELS = {
-  lintViolations: "Lint violations",
-  duplicationPercent: "Duplication %",
-  coveragePercent: "Coverage %",
-  largeFilesCount: "Large files"
-};
-
 /**
- * Renders the current-metrics and baseline summary tables as markdown.
- * @param baseline - Baseline record read from baseline.json.
- * @param current - Current metrics in baseline-record shape (see toBaselineRecord).
- * @returns Markdown string with two tables: current metrics and baseline values.
+ * Renders the Coverage section: a 4-row table (lines/statements/functions/branches).
  */
-function renderSummaryTables(baseline, current) {
-  const rows = BASELINE_REQUIRED_FIELDS.map(
-    (field) =>
-      `| ${METRIC_LABELS[field]} | ${current[field]} | ${baseline[field]} |`
-  );
+function renderCoverageSection(baseline, current) {
+  const rows = COVERAGE_FIELDS.map((field) => {
+    const label = field.charAt(0).toUpperCase() + field.slice(1);
+    const delta = (current.coverage[field] - baseline.coverage[field]).toFixed(
+      2
+    );
+    return `| ${label} | ${baseline.coverage[field]}% | ${current.coverage[field]}% | ${delta >= 0 ? "+" : ""}${delta}% |`;
+  });
   return [
-    "| Metric | Current | Baseline |",
-    "| --- | --- | --- |",
-    ...rows
-  ].join("\n");
-}
-
-/**
- * Renders the failures section listing baseline, current, and delta for each regressed metric.
- * @param fields - The `fields` map from compareToBaseline's result.
- * @returns Markdown string: a failures table when any field regressed, otherwise a "no failures" line.
- */
-function renderFailuresSection(fields) {
-  const failed = Object.entries(fields).filter(([, result]) => !result.ok);
-  if (failed.length === 0) return "## Failures\n\nNone.";
-
-  const rows = failed.map(
-    ([field, result]) =>
-      `| ${METRIC_LABELS[field]} | ${result.baselineValue} | ${result.currentValue} | ${result.delta} |`
-  );
-  return [
-    "## Failures",
+    "## Coverage",
     "",
-    "| Metric | Baseline | Current | Delta |",
+    "| Metric | Baseline | Current | Δ |",
     "| --- | --- | --- | --- |",
     ...rows
   ].join("\n");
 }
 
 /**
- * Renders the large-files section, explicitly stating "none" when the list is empty.
- * @param largeFiles - List of { path, lines } from collectMetrics.
- * @returns Markdown string listing each large file, or a "none" line when the list is empty.
+ * Renders the Duplication section: percentage + fragment count rows.
  */
-function renderLargeFilesSection(largeFiles) {
-  if (largeFiles.length === 0) return "## Files over the line limit\n\nNone.";
-  const rows = largeFiles.map((file) => `- ${file.path} (${file.lines} lines)`);
-  return ["## Files over the line limit", "", ...rows].join("\n");
+function renderDuplicationSection(baseline, current) {
+  const rows = [
+    `| Percentage | ${baseline.duplication.percentage}% | ${current.duplication.percentage}% |`,
+    `| Fragments | ${baseline.duplication.fragments} | ${current.duplication.fragments} |`
+  ];
+  return [
+    "## Duplication",
+    "",
+    "| Metric | Baseline | Current |",
+    "| --- | --- | --- |",
+    ...rows
+  ].join("\n");
 }
 
 /**
- * Renders the full quality-gate report as markdown.
- * @param baseline - Baseline record read from baseline.json.
- * @param metrics - Currently collected metrics from collectMetrics.
- * @param comparison - Result of compareToBaseline(baseline, metrics).
- * @returns Full markdown report: summary tables, failures section, and large-files section.
+ * Renders the Violations section: eslint total + oversized-files count.
+ */
+function renderViolationsSection(baseline, current) {
+  const rows = [
+    `| Quality rule violations | ${baseline.eslint.total} | ${current.eslint.total} | ${current.eslint.total - baseline.eslint.total} |`,
+    `| Oversized files | ${Object.keys(baseline.files).length} | ${Object.keys(current.files).length} | ${Object.keys(current.files).length - Object.keys(baseline.files).length} |`
+  ];
+  return [
+    "## Violations",
+    "",
+    "| Metric | Baseline | Current | Δ |",
+    "| --- | --- | --- | --- |",
+    ...rows
+  ].join("\n");
+}
+
+/**
+ * Renders the Regressions section as a bullet list, "None." when empty.
+ */
+function renderRegressionsSection(regressions) {
+  if (regressions.length === 0) return "## Regressions\n\nNone.";
+  return ["## Regressions", "", ...regressions.map((line) => `- ${line}`)].join(
+    "\n"
+  );
+}
+
+/**
+ * Renders the full quality-gate report as markdown, matching the video's section order:
+ * Coverage, Duplication, Violations, Regressions, footer timestamp.
  */
 function renderReport(baseline, metrics, comparison) {
   const current = toBaselineRecord(metrics);
   return [
-    "# Quality Gate Report",
+    "# Quality Gate",
     "",
-    renderSummaryTables(baseline, current),
+    `Status: ${comparison.passed ? "✅ Passed" : "❌ Failed"}`,
     "",
-    renderFailuresSection(comparison.fields),
+    renderCoverageSection(baseline, current),
     "",
-    renderLargeFilesSection(metrics.largeFiles),
+    renderDuplicationSection(baseline, current),
+    "",
+    renderViolationsSection(baseline, current),
+    "",
+    renderRegressionsSection(comparison.regressions),
+    "",
+    `Generated by scripts/quality-gate.js on ${new Date().toISOString()}`,
     ""
   ].join("\n");
 }
 
 const DEFAULT_MAX_LINES = 500;
-const DEFAULT_BASELINE_PATH = "baseline.json";
-const DEFAULT_REPORT_PATH = "quality-gate-report.md";
-const DEFAULT_ESLINT_REPORT_PATH = "eslint-report.json";
-const DEFAULT_JSCPD_REPORT_PATH = "jscpd-report.json";
-const DEFAULT_COVERAGE_SUMMARY_PATH = "coverage/coverage-summary.json";
+const DEFAULT_PERSIST_DIR = ".quality-gate";
+const BASELINE_FILENAME = "baseline.json";
+const REPORT_FILENAME = "quality-gate-report.md";
+const ESLINT_REPORT_FILENAME = "eslint-report.json";
+const JSCPD_REPORT_FILENAME = "jscpd-report.json";
+const COVERAGE_SUMMARY_RELATIVE_PATH = "coverage/coverage-summary.json";
+
+/**
+ * Builds a fresh, collision-free work-dir path under the OS tmp dir for one run's
+ * intermediate collector reports (eslint/jscpd/coverage) — deleted at the end of run().
+ */
+function defaultWorkDir() {
+  return path.join(
+    os.tmpdir(),
+    `quality-gate-${process.pid}-${Math.random().toString(36).slice(2, 8)}`
+  );
+}
 
 /**
  * Parses CLI flags into structured options. Never reads stdin or prompts.
- * @param argv - Argument list, typically process.argv.slice(2).
- * @returns { root, maxLines, updateBaseline, baselinePath, reportPath, eslintReportPath, jscpdReportPath, coverageSummaryPath } parsed options.
+ * Only two directories are configurable: --persist-dir (baseline.json + the markdown
+ * report, survives the run) and --work-dir (intermediate collector reports, deleted at
+ * the end of the run). Individual report/baseline file paths are no longer exposed —
+ * their names are fixed inside those two directories.
  */
 function parseArgs(argv) {
   const getFlagValue = (name, fallback) => {
@@ -393,27 +612,14 @@ function parseArgs(argv) {
     root: getFlagValue("--root", process.cwd()),
     maxLines: Number(getFlagValue("--max-lines", DEFAULT_MAX_LINES)),
     updateBaseline: argv.includes("--update-baseline"),
-    baselinePath: getFlagValue("--baseline-path", DEFAULT_BASELINE_PATH),
-    reportPath: getFlagValue("--report-path", DEFAULT_REPORT_PATH),
-    eslintReportPath: getFlagValue(
-      "--eslint-report",
-      DEFAULT_ESLINT_REPORT_PATH
-    ),
-    jscpdReportPath: getFlagValue("--jscpd-report", DEFAULT_JSCPD_REPORT_PATH),
-    coverageSummaryPath: getFlagValue(
-      "--coverage-summary",
-      DEFAULT_COVERAGE_SUMMARY_PATH
-    )
+    autoRun: !argv.includes("--no-auto-run"),
+    persistDir: getFlagValue("--persist-dir", DEFAULT_PERSIST_DIR),
+    workDir: getFlagValue("--work-dir", null)
   };
 }
 
 /**
  * Handles the ratchet-comparison path once a valid baseline is confirmed present.
- * @param baseline - Baseline record read from baseline.json.
- * @param metrics - Currently collected metrics.
- * @param reportPath - Absolute path to write the markdown report to.
- * @param logger - Function used to print status messages.
- * @returns The process exit code (0 pass, 1 regression).
  */
 function runComparison(baseline, metrics, reportPath, logger) {
   const comparison = compareToBaseline(baseline, metrics);
@@ -423,59 +629,80 @@ function runComparison(baseline, metrics, reportPath, logger) {
 }
 
 /**
- * Runs the full quality-gate flow: collect, bootstrap-or-compare, report, exit.
- * Never prompts for input, so it behaves identically local and in CI (FR-013, FR-014).
- * @param argv - Argument list, typically process.argv.slice(2).
- * @param logger - Function used to print status messages (defaults to console.log).
- * @returns The process exit code (0 success, 1 regression or error).
+ * Deletes a directory tree, silently ignoring a missing path (nothing to clean up).
+ */
+function removeDirQuietly(dirPath) {
+  fs.rmSync(dirPath, { recursive: true, force: true });
+}
+
+/**
+ * Runs the full quality-gate flow: collect (auto-running eslint/jscpd/jest when needed),
+ * bootstrap-or-compare, report, exit. Never prompts for input, so it behaves identically
+ * local and in CI. Intermediate collector reports live in a work dir (default: a fresh,
+ * collision-free directory under the OS tmp dir) that is always deleted before returning
+ * — only baseline.json and the markdown report survive, inside --persist-dir.
  */
 function run(argv, logger = console.log) {
   const options = parseArgs(argv);
-  const baselinePath = path.resolve(options.root, options.baselinePath);
-  const reportPath = path.resolve(options.root, options.reportPath);
-  const eslintReportPath = path.resolve(options.root, options.eslintReportPath);
-  const jscpdReportPath = path.resolve(options.root, options.jscpdReportPath);
-  const coverageSummaryPath = path.resolve(
-    options.root,
-    options.coverageSummaryPath
+  const persistDir = path.resolve(options.root, options.persistDir);
+  const workDir = options.workDir
+    ? path.resolve(options.root, options.workDir)
+    : defaultWorkDir();
+  const ownsWorkDir = !options.workDir;
+
+  fs.mkdirSync(persistDir, { recursive: true });
+  fs.mkdirSync(workDir, { recursive: true });
+
+  const baselinePath = path.join(persistDir, BASELINE_FILENAME);
+  const reportPath = path.join(persistDir, REPORT_FILENAME);
+  const eslintReportPath = path.join(workDir, ESLINT_REPORT_FILENAME);
+  const jscpdReportPath = path.join(workDir, JSCPD_REPORT_FILENAME);
+  const coverageSummaryPath = path.join(
+    workDir,
+    COVERAGE_SUMMARY_RELATIVE_PATH
   );
 
-  let metrics;
   try {
-    metrics = collectMetrics(options.root, {
-      maxLines: options.maxLines,
-      eslintReportPath,
-      jscpdReportPath,
-      coverageSummaryPath
-    });
-  } catch (error) {
-    logger(error.message);
-    return 1;
-  }
+    let metrics;
+    try {
+      metrics = collectMetrics(options.root, {
+        maxLines: options.maxLines,
+        eslintReportPath,
+        jscpdReportPath,
+        coverageSummaryPath,
+        autoRun: options.autoRun
+      });
+    } catch (error) {
+      logger(error.message);
+      return 1;
+    }
 
-  if (options.updateBaseline) {
-    writeBaseline(baselinePath, metrics);
-    logger(`quality-gate: baseline updated at ${baselinePath}`);
-    return 0;
-  }
+    if (options.updateBaseline) {
+      writeBaseline(baselinePath, metrics);
+      logger(`quality-gate: baseline updated at ${baselinePath}`);
+      return 0;
+    }
 
-  let read;
-  try {
-    read = readBaseline(baselinePath);
-  } catch (error) {
-    logger(error.message);
-    return 1;
-  }
+    let read;
+    try {
+      read = readBaseline(baselinePath);
+    } catch (error) {
+      logger(error.message);
+      return 1;
+    }
 
-  if (!read.exists) {
-    writeBaseline(baselinePath, metrics);
-    logger(
-      `quality-gate: no baseline found, created ${baselinePath} from current metrics`
-    );
-    return 0;
-  }
+    if (!read.exists) {
+      writeBaseline(baselinePath, metrics);
+      logger(
+        `quality-gate: no baseline found, created ${baselinePath} from current metrics`
+      );
+      return 0;
+    }
 
-  return runComparison(read.baseline, metrics, reportPath, logger);
+    return runComparison(read.baseline, metrics, reportPath, logger);
+  } finally {
+    if (ownsWorkDir) removeDirQuietly(workDir);
+  }
 }
 
 if (require.main === module) {
