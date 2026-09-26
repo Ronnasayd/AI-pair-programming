@@ -2,25 +2,23 @@
 """UserPromptSubmit hook: suggest matching skills via embedding + BM25 fusion."""
 
 from datetime import datetime, timedelta
+import importlib.util
 import json
 import os
 from pathlib import Path
 import re
-import socket
 import sqlite3
-import subprocess
 import sys
-import time
 
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
     detect_skill,
+    encode_via_daemon,
     extract_query_text,
     get_by_key,
     get_hooks_logger,
-    get_project_name,
     get_session_id_short,
     minify_json,
     read_file,
@@ -39,103 +37,6 @@ DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 DAEMON_START_TIMEOUT = 90
 
 
-def get_daemon_socket_path() -> str:
-    """Return the per-project unix socket path for the embedding daemon.
-
-    Returns:
-        str: Absolute path to the daemon's unix socket.
-    """
-    return f"/tmp/embedding-daemon-{get_project_name()}.sock"  # noqa: S108 hook temp socket path, per-project isolation
-
-
-def is_daemon_running(sock_path: str) -> bool:
-    """Return True if a socket connection to the daemon succeeds.
-
-    Args:
-        sock_path: Path to the daemon's unix socket.
-
-    Returns:
-        bool: True if the socket accepts a connection, False otherwise.
-    """
-    try:
-        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        conn.connect(sock_path)
-        conn.close()
-        return True
-    except (ConnectionRefusedError, FileNotFoundError, OSError):
-        return False
-
-
-def start_daemon(sock_path: str) -> None:
-    """Spawn the embedding daemon as a detached background process.
-
-    Args:
-        sock_path: Path to the daemon's unix socket, used only for logging.
-    """
-    subprocess.Popen(  # noqa: S603 controlled daemon script path via DAEMON_SCRIPT constant
-        [sys.executable, str(DAEMON_SCRIPT)],
-        start_new_session=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-    LOG.debug("Daemon started — socket=%s", sock_path)
-
-
-def wait_for_daemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
-    """Poll until the daemon socket accepts connections or timeout elapses.
-
-    Args:
-        sock_path: Path to the daemon's unix socket.
-        timeout: Max seconds to poll before giving up.
-
-    Returns:
-        bool: True if the daemon became reachable, False on timeout.
-    """
-    deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
-        if is_daemon_running(sock_path):
-            return True
-        time.sleep(0.2)
-    return False
-
-
-def encode_via_daemon(text: str) -> np.ndarray | None:
-    """Request an embedding vector for text from the daemon, starting it if needed.
-
-    Args:
-        text: Text to embed.
-
-    Returns:
-        np.ndarray | None: The embedding vector, or None on failure.
-    """
-    sock_path = get_daemon_socket_path()
-    if not is_daemon_running(sock_path):
-        LOG.debug("Daemon not running — starting")
-        start_daemon(sock_path)
-        if not wait_for_daemon(sock_path):
-            LOG.warning("Daemon failed to start within timeout")
-            return None
-    try:
-        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        conn.connect(sock_path)
-        conn.sendall((json.dumps({"text": text}) + "\n").encode())
-        data = b""
-        while not data.endswith(b"\n"):
-            chunk = conn.recv(4096)
-            if not chunk:
-                break
-            data += chunk
-        conn.close()
-        response = json.loads(data.decode())
-        if "error" in response:
-            LOG.warning("Daemon error: %s", response["error"])
-            return None
-        return np.array(response["vector"], dtype=np.float32)
-    except Exception as e:
-        LOG.warning("Daemon communication failed: %s", e)
-        return None
-
-
 def load_rec_log(rec_log_path: Path) -> dict:
     """Load the per-session skill recommendation log, or {} if absent/invalid.
 
@@ -150,7 +51,8 @@ def load_rec_log(rec_log_path: Path) -> dict:
             content = read_file(rec_log_path)
             if content:
                 return json.loads(content)
-    except (json.JSONDecodeError, Exception) as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # why: defensive catch-all, hook must never crash Claude Code
         LOG.debug("Failed to load rec log: %s", e)
     return {}
 
@@ -164,7 +66,8 @@ def save_rec_log(rec_log_path: Path, rec_log: dict) -> None:
     """
     try:
         write_file(rec_log_path, json.dumps(rec_log))
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # why: defensive catch-all, hook must never crash Claude Code
         LOG.debug("Failed to save rec log: %s", e)
 
 
@@ -407,6 +310,178 @@ def find_skills(
     return [(score, name, hints[name]) for name, score in ranked[:limit]]
 
 
+def _resolve_query_text(payload: dict) -> tuple[str, str] | None:
+    """Extract the prompt and resolve it to the text to embed/search.
+
+    Args:
+        payload: The hook's stdin JSON payload.
+
+    Returns:
+        tuple[str, str] | None: (prompt, query_text), or None if no text found.
+    """
+    prompt = extract_query_text(payload)
+    if not prompt:
+        LOG.debug("No prompt/answer text in payload — skipping")
+        return None
+
+    LOG.debug("Processing prompt (%d chars): %r...", len(prompt), prompt[:80])
+
+    command_text = resolve_command_text(prompt, Path(os.environ["CLAUDE_PROJECT_DIR"]))
+    query_text = command_text if command_text is not None else prompt
+    if command_text is not None:
+        LOG.debug(
+            "Resolved /command to body (%d chars): %r...",
+            len(command_text),
+            command_text[:80],
+        )
+    return prompt, query_text
+
+
+def _filter_matches(
+    candidates: list[tuple[float, str, str]],
+    rec_log: dict,
+    referenced_skill: str | None,
+    referenced_skill_local: bool,
+) -> tuple[list[tuple[str, str]], list[str], list[str]]:
+    """Filter fused candidates down to suggestible matches, logging skips.
+
+    Args:
+        candidates: Fused (score, name, hint) candidates.
+        rec_log: The recommendation log mapping skill name to last-suggested timestamp.
+        referenced_skill: Skill name explicitly referenced in the prompt, if any.
+        referenced_skill_local: True if the referenced skill exists locally.
+
+    Returns:
+        tuple: (matches, skipped_dedup, skipped_referenced).
+    """
+    matches = [
+        (name, hint)
+        for _, name, hint in candidates
+        if should_suggest(name, rec_log)
+        and not (referenced_skill_local and name == referenced_skill)
+    ]
+    skipped_dedup = [
+        name for _, name, _ in candidates if not should_suggest(name, rec_log)
+    ]
+    skipped_referenced = [
+        name
+        for _, name, _ in candidates
+        if referenced_skill_local and name == referenced_skill
+    ]
+    if skipped_dedup:
+        LOG.debug(
+            "Skipped (already suggested within %dh): %s", DEDUP_HOURS, skipped_dedup
+        )
+    if skipped_referenced:
+        LOG.debug(
+            "Skipped (explicitly referenced + present locally): %s",
+            skipped_referenced,
+        )
+    return matches, skipped_dedup, skipped_referenced
+
+
+def _gather_candidates(
+    prompt: str, query_text: str
+) -> tuple[list[tuple[float, str, str]], str | None, bool] | None:
+    """Embed the query, fuse-rank skill candidates, and resolve referenced skill.
+
+    Args:
+        prompt: The raw user prompt (used for explicit skill-reference detection).
+        query_text: Text to embed and search with.
+
+    Returns:
+        tuple | None: (candidates, referenced_skill, referenced_skill_local),
+        or None if embedding failed.
+    """
+    query_vector = encode_via_daemon(query_text, DAEMON_SCRIPT, DAEMON_START_TIMEOUT)
+    if query_vector is None:
+        LOG.warning("Failed to get embedding — skipping")
+        return None
+
+    skills_raw = load_db_skills(DB_PATH)
+    LOG.debug("Loaded %d skills from DB", len(skills_raw))
+
+    candidates = find_skills(
+        DB_PATH, query_text, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
+    )
+    LOG.debug(
+        "Fused candidates: %s",
+        [(name, f"{score:.4f}") for score, name, _ in candidates],
+    )
+
+    referenced_skill = detect_skill(prompt)
+    referenced_skill_local = (
+        referenced_skill is not None
+        and Path(f".claude/skills/{referenced_skill}").exists()
+    )
+    LOG.debug(
+        "Referenced skill in prompt: %r (local=%s)",
+        referenced_skill,
+        referenced_skill_local,
+    )
+    return candidates, referenced_skill, referenced_skill_local
+
+
+def _build_output(payload: dict, matches: list[tuple[str, str]]) -> dict:
+    """Build the hookSpecificOutput JSON payload for matched skill suggestions.
+
+    Args:
+        payload: The hook's stdin JSON payload.
+        matches: List of (name, hint) matched skills to suggest.
+
+    Returns:
+        dict: The hookSpecificOutput payload to print as JSON.
+    """
+    suggestions = [
+        {
+            "skill": name,
+            "hint": hint,
+            "present_locally": Path(f".claude/skills/{name}").exists(),
+        }
+        for name, hint in matches
+    ]
+    hook_event_name = (
+        "PostToolUse" if get_by_key(payload, "tool_name") else "UserPromptSubmit"
+    )
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": hook_event_name,
+            "additionalContext": minify_json(
+                {
+                    "instruction": (
+                        "check if these skills match user request; "
+                        "if present_locally, invoke via Skill tool; "
+                        "if not, call the skill-loader MCP tool "
+                        "get_remote_skill(name) to fetch it and "
+                        "follow its instructions inline — if the "
+                        "returned files list has entries SKILL.md "
+                        "references, fetch them with "
+                        "get_remote_skill_file(name, relpath)"
+                    ),
+                    "suggestions": suggestions,
+                }
+            ),
+        }
+    }
+
+
+def _load_session_rec_log(payload: dict) -> tuple[Path, dict]:
+    """Resolve the per-session rec log path and load its contents.
+
+    Args:
+        payload: The hook's stdin JSON payload.
+
+    Returns:
+        tuple[Path, dict]: (rec_log_path, rec_log).
+    """
+    session_id = get_session_id_short(get_by_key(payload, "session_id") or "")
+    rec_log_path = Path(f"/tmp/skill-rec-log-{session_id}.json")  # noqa: S108 hook temp session log, isolated per-session
+    LOG.debug("Session: %s | rec_log: %s", session_id, rec_log_path)
+    rec_log = load_rec_log(rec_log_path)
+    LOG.debug("Rec log has %d entries: %s", len(rec_log), list(rec_log.keys()))
+    return rec_log_path, rec_log
+
+
 def main() -> None:
     """UserPromptSubmit/PostToolUse hook entrypoint: suggest matching skills."""
     if not DB_PATH.exists():
@@ -414,12 +489,11 @@ def main() -> None:
         sys.exit(0)
 
     try:
-        import importlib.util
-
         if importlib.util.find_spec("fastembed") is None:
             LOG.warning("fastembed not installed")
             sys.exit(0)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # why: defensive catch-all, hook must never crash Claude Code
         LOG.debug("Failed to check fastembed availability: %s", e)
 
     try:
@@ -429,81 +503,20 @@ def main() -> None:
         sys.exit(0)
 
     try:
-        prompt = extract_query_text(payload)
-        if not prompt:
-            LOG.debug("No prompt/answer text in payload — skipping")
+        resolved = _resolve_query_text(payload)
+        if resolved is None:
+            sys.exit(0)
+        prompt, query_text = resolved
+
+        rec_log_path, rec_log = _load_session_rec_log(payload)
+
+        gathered = _gather_candidates(prompt, query_text)
+        if gathered is None:
             sys.exit(0)
 
-        LOG.debug("Processing prompt (%d chars): %r...", len(prompt), prompt[:80])
-
-        command_text = resolve_command_text(
-            prompt, Path(os.environ["CLAUDE_PROJECT_DIR"])
+        matches, _skipped_dedup, _skipped_referenced = _filter_matches(
+            gathered[0], rec_log, gathered[1], gathered[2]
         )
-        query_text = command_text if command_text is not None else prompt
-        if command_text is not None:
-            LOG.debug(
-                "Resolved /command to body (%d chars): %r...",
-                len(command_text),
-                command_text[:80],
-            )
-
-        session_id = get_session_id_short(get_by_key(payload, "session_id") or "")
-        rec_log_path = Path(f"/tmp/skill-rec-log-{session_id}.json")  # noqa: S108 hook temp session log, isolated per-session
-        LOG.debug("Session: %s | rec_log: %s", session_id, rec_log_path)
-        rec_log = load_rec_log(rec_log_path)
-        LOG.debug("Rec log has %d entries: %s", len(rec_log), list(rec_log.keys()))
-
-        query_vector = encode_via_daemon(query_text)
-        if query_vector is None:
-            LOG.warning("Failed to get embedding — skipping")
-            sys.exit(0)
-
-        skills_raw = load_db_skills(DB_PATH)
-        LOG.debug("Loaded %d skills from DB", len(skills_raw))
-
-        candidates = find_skills(
-            DB_PATH, query_text, query_vector, MIN_SIMILARITY, MAX_SUGGESTIONS * 2
-        )
-        LOG.debug(
-            "Fused candidates: %s",
-            [(name, f"{score:.4f}") for score, name, _ in candidates],
-        )
-
-        referenced_skill = detect_skill(prompt)
-        referenced_skill_local = (
-            referenced_skill is not None
-            and Path(f".claude/skills/{referenced_skill}").exists()
-        )
-        LOG.debug(
-            "Referenced skill in prompt: %r (local=%s)",
-            referenced_skill,
-            referenced_skill_local,
-        )
-        matches = [
-            (name, hint)
-            for _, name, hint in candidates
-            if should_suggest(name, rec_log)
-            and not (referenced_skill_local and name == referenced_skill)
-        ]
-        skipped_dedup = [
-            name for _, name, _ in candidates if not should_suggest(name, rec_log)
-        ]
-        skipped_referenced = [
-            name
-            for _, name, _ in candidates
-            if referenced_skill_local and name == referenced_skill
-        ]
-        if skipped_dedup:
-            LOG.debug(
-                "Skipped (already suggested within %dh): %s",
-                DEDUP_HOURS,
-                skipped_dedup,
-            )
-        if skipped_referenced:
-            LOG.debug(
-                "Skipped (explicitly referenced + present locally): %s",
-                skipped_referenced,
-            )
         matches = matches[:MAX_SUGGESTIONS]
 
         for name, _ in matches:
@@ -512,45 +525,14 @@ def main() -> None:
         if matches:
             LOG.debug("Final matches (%d): %s", len(matches), [m[0] for m in matches])
             save_rec_log(rec_log_path, rec_log)
-            suggestions = [
-                {
-                    "skill": name,
-                    "hint": hint,
-                    "present_locally": Path(f".claude/skills/{name}").exists(),
-                }
-                for name, hint in matches
-            ]
-            hook_event_name = (
-                "PostToolUse"
-                if get_by_key(payload, "tool_name")
-                else "UserPromptSubmit"
-            )
-            output = {
-                "hookSpecificOutput": {
-                    "hookEventName": hook_event_name,
-                    "additionalContext": minify_json(
-                        {
-                            "instruction": (
-                                "check if these skills match user request; "
-                                "if present_locally, invoke via Skill tool; "
-                                "if not, call the skill-loader MCP tool "
-                                "get_remote_skill(name) to fetch it and "
-                                "follow its instructions inline — if the "
-                                "returned files list has entries SKILL.md "
-                                "references, fetch them with "
-                                "get_remote_skill_file(name, relpath)"
-                            ),
-                            "suggestions": suggestions,
-                        }
-                    ),
-                }
-            }
+            output = _build_output(payload, matches)
             LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
             print(json.dumps(output, ensure_ascii=False))  # noqa: T201 hook stdout protocol
         else:
             LOG.debug("No skill matches after dedup filter")
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # why: defensive catch-all, hook must never crash Claude Code
         LOG.warning("Unexpected error: %s: %s", type(e).__name__, e, exc_info=True)
 
     sys.exit(0)

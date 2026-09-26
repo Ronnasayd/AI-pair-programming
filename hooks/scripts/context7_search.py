@@ -3,10 +3,7 @@
 
 import json
 from pathlib import Path
-import socket
-import subprocess
 import sys
-import time
 import urllib.parse
 import urllib.request
 
@@ -14,10 +11,10 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
+    encode_via_daemon,
     extract_query_text,
     get_by_key,
     get_hooks_logger,
-    get_project_name,
     minify_json,
 )
 
@@ -32,106 +29,6 @@ TOP_N = 3
 TIMEOUT_SECONDS = 5
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 DAEMON_START_TIMEOUT = 90
-
-
-def get_daemon_socket_path() -> str:
-    """Build the embedding daemon's Unix socket path for this project.
-
-    Returns:
-        Path to the daemon's socket file.
-    """
-    return f"/tmp/embedding-daemon-{get_project_name()}.sock"  # noqa: S108
-
-
-def is_daemon_running(sock_path: str) -> bool:
-    """Check whether the embedding daemon is listening on sock_path.
-
-    Args:
-        sock_path: Unix socket path to probe.
-
-    Returns:
-        True if a connection succeeds.
-    """
-    try:
-        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        conn.connect(sock_path)
-        conn.close()
-        return True
-    except (ConnectionRefusedError, FileNotFoundError, OSError):
-        return False
-
-
-def start_daemon(sock_path: str) -> None:
-    """Launch the embedding daemon as a detached background process.
-
-    Args:
-        sock_path: Unix socket path the daemon is expected to bind to.
-    """
-    with subprocess.Popen(  # noqa: S603
-        [sys.executable, str(DAEMON_SCRIPT)],
-        start_new_session=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    ):
-        pass
-    LOG.debug("Daemon started — socket=%s", sock_path)
-
-
-def wait_for_daemon(sock_path: str, timeout: int = DAEMON_START_TIMEOUT) -> bool:
-    """Poll until the embedding daemon is accepting connections.
-
-    Args:
-        sock_path: Unix socket path to probe.
-        timeout: Max seconds to wait.
-
-    Returns:
-        True if the daemon became reachable before timeout.
-    """
-    deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
-        if is_daemon_running(sock_path):
-            return True
-        time.sleep(0.2)
-    return False
-
-
-def encode_via_daemon(text: str) -> np.ndarray | None:
-    """Encode text into an embedding vector via the local daemon.
-
-    Starts the daemon on demand if it isn't already running.
-
-    Args:
-        text: Text to embed.
-
-    Returns:
-        The embedding vector, or None on failure.
-    """
-    sock_path = get_daemon_socket_path()
-    if not is_daemon_running(sock_path):
-        LOG.debug("Daemon not running — starting")
-        start_daemon(sock_path)
-        if not wait_for_daemon(sock_path):
-            LOG.warning("Daemon failed to start within timeout")
-            return None
-    try:
-        conn = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        conn.connect(sock_path)
-        conn.sendall((json.dumps({"text": text}) + "\n").encode())
-        data = b""
-        while not data.endswith(b"\n"):
-            chunk = conn.recv(4096)
-            if not chunk:
-                break
-            data += chunk
-        conn.close()
-        response = json.loads(data.decode())
-        if "error" in response:
-            LOG.warning("Daemon error: %s", response["error"])
-            return None
-        return np.array(response["vector"], dtype=np.float32)
-    except Exception as e:  # pylint: disable=broad-exception-caught
-        LOG.warning("Daemon communication failed: %s", e)
-        return None
 
 
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
@@ -205,7 +102,11 @@ def top_results(results: list[dict], query_vector: np.ndarray | None) -> list[di
         log_scores = []
         for s in filtered:
             description = get_by_key(s, "description") or ""
-            desc_vector = encode_via_daemon(description) if description else None
+            desc_vector = (
+                encode_via_daemon(description, DAEMON_SCRIPT, DAEMON_START_TIMEOUT)
+                if description
+                else None
+            )
             similarity = (
                 cosine_similarity(query_vector, desc_vector)
                 if desc_vector is not None
@@ -281,7 +182,7 @@ def main() -> None:
         LOG.warning("context7 search failed: %s", e)
         sys.exit(0)
 
-    query_vector = encode_via_daemon(prompt)
+    query_vector = encode_via_daemon(prompt, DAEMON_SCRIPT, DAEMON_START_TIMEOUT)
     if query_vector is None:
         LOG.warning("Failed to get prompt embedding — skipping similarity filter")
 
