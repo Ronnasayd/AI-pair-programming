@@ -10,9 +10,11 @@ CLI subcommands (see design.md):
     get <project_path> <category>
 """
 
+import argparse
 import json
 import os
 from pathlib import Path
+import sys
 
 SETTINGS_PATH = Path.home() / ".claude" / "aipp-settings.json"
 
@@ -194,3 +196,69 @@ def set_item(
     entry.setdefault(category, {})
     entry[category][name] = enabled
     save(data, settings_path)
+
+
+def _str2bool(value: str) -> bool:
+    """Parse a CLI boolean argument (true/false/1/0/yes/no, case-insensitive)."""
+    if value.lower() in ("true", "1", "yes"):
+        return True
+    if value.lower() in ("false", "0", "no"):
+        return False
+    raise argparse.ArgumentTypeError(f"expected true/false, got: {value!r}")
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="aipp_settings.py",
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_ensure = sub.add_parser(
+        "ensure-migrated", help="migrate legacy files, then seed from source"
+    )
+    p_ensure.add_argument("local_path")
+    p_ensure.add_argument("source_path")
+
+    p_register = sub.add_parser(
+        "register-if-absent", help="add name under project/category only if absent"
+    )
+    p_register.add_argument("project_path")
+    p_register.add_argument("category", choices=CATEGORIES)
+    p_register.add_argument("name")
+    p_register.add_argument("default", type=_str2bool)
+
+    p_get = sub.add_parser("get", help="print a project's category as JSON")
+    p_get.add_argument("project_path")
+    p_get.add_argument("category", choices=CATEGORIES)
+
+    return parser
+
+
+def main(argv: list | None = None) -> int:
+    """CLI entry point. Returns the process exit code."""
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+
+    try:
+        if args.command == "ensure-migrated":
+            ensure_migrated(args.local_path, args.source_path)
+        elif args.command == "register-if-absent":
+            register_if_absent(
+                args.project_path, args.category, args.name, args.default
+            )
+        elif args.command == "get":
+            entry = get_project(args.project_path)
+            print(json.dumps(entry[args.category]))  # noqa: T201 -- CLI stdout output
+    except json.JSONDecodeError as exc:
+        print(  # noqa: T201 -- CLI stderr output
+            f"error: malformed JSON in {SETTINGS_PATH}: {exc}", file=sys.stderr
+        )
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
