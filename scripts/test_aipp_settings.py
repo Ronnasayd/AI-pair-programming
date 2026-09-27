@@ -245,3 +245,41 @@ def test_ensure_migrated_migrates_then_seeds_missing_items(tmp_path):
     assert entry["skills"]["local-item"] is True
     assert entry["skills"]["source-item"] is True
     assert not (local / ".skillsignore").exists()
+
+
+def test_register_if_absent_adds_new_key_with_default(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    settings.register_if_absent("/proj", "skills", "new-skill", False, target)
+
+    entry = settings.load(target)["projects"]["/proj"]
+    assert entry["skills"] == {"new-skill": False}
+
+
+def test_register_if_absent_noop_when_key_already_present(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    existing = {"skills": {"x": True}, "agents": {}, "instructions": {}}
+    settings.save({"projects": {"/proj": existing}}, target)
+
+    settings.register_if_absent("/proj", "skills", "x", False, target)
+
+    entry = settings.load(target)["projects"]["/proj"]
+    assert entry["skills"]["x"] is True
+
+
+def test_set_item_creates_project_and_category_if_missing(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    settings.set_item("/proj", "agents", "my-agent", True, target)
+
+    entry = settings.load(target)["projects"]["/proj"]
+    assert entry["agents"] == {"my-agent": True}
+
+
+def test_set_item_overwrites_existing_value(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    existing = {"skills": {"x": False}, "agents": {}, "instructions": {}}
+    settings.save({"projects": {"/proj": existing}}, target)
+
+    settings.set_item("/proj", "skills", "x", True, target)
+
+    entry = settings.load(target)["projects"]["/proj"]
+    assert entry["skills"]["x"] is True

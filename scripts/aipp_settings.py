@@ -158,3 +158,39 @@ def ensure_migrated(
     """
     migrate_legacy_files(local_path, settings_path)
     seed_from_source_defaults(local_path, source_path, settings_path)
+
+
+def register_if_absent(
+    project_path: str,
+    category: str,
+    name: str,
+    default: bool,
+    settings_path: Path = SETTINGS_PATH,
+) -> None:
+    """Add name under projects[project_path][category] only if not already a key."""
+    data = load(settings_path)
+    projects = data.setdefault("projects", {})
+    if project_path not in projects:
+        projects[project_path] = {c: {} for c in CATEGORIES}
+    entry = projects[project_path]
+    entry.setdefault(category, {})
+    entry[category].setdefault(name, default)
+    save(data, settings_path)
+
+
+def set_item(
+    project_path: str,
+    category: str,
+    name: str,
+    enabled: bool,
+    settings_path: Path = SETTINGS_PATH,
+) -> None:
+    """Set (create or overwrite) a single item's boolean value."""
+    data = load(settings_path)
+    projects = data.setdefault("projects", {})
+    if project_path not in projects:
+        projects[project_path] = {c: {} for c in CATEGORIES}
+    entry = projects[project_path]
+    entry.setdefault(category, {})
+    entry[category][name] = enabled
+    save(data, settings_path)
