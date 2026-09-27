@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 import aipp_settings as settings
 import pytest
+import yaml
 
 SCRIPT_PATH = Path(__file__).parent / "aipp_settings.py"
 
@@ -360,3 +361,112 @@ def test_cli_exits_nonzero_with_stderr_on_malformed_json(tmp_path):
 
     assert result.returncode != 0
     assert "error" in result.stderr.lower()
+
+
+def _write_index_yaml(source_dir, category, names):
+    index_dir = source_dir / _INDEX_YAML_DIR[category]
+    index_dir.mkdir(parents=True, exist_ok=True)
+    entries = [{"name": [name], "description": "desc"} for name in names]
+    (index_dir / "index.yaml").write_text(yaml.dump({category: entries}))
+
+
+_INDEX_YAML_DIR = {
+    "skills": "skills",
+    "agents": "agents",
+    "instructions": "instructions",
+}
+
+
+def test_sync_catalog_adds_new_item_to_catalog_file(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    _write_default_settings(source, skills={"old-skill": True})
+    _write_index_yaml(source, "skills", ["old-skill", "new-skill"])
+
+    settings.sync_catalog(str(source), target)
+
+    catalog = json.loads((source / "claude" / "aipp-default-settings.json").read_text())
+    assert catalog["skills"] == {"old-skill": True, "new-skill": False}
+
+
+def test_sync_catalog_propagates_new_item_to_existing_projects(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    _write_default_settings(source)
+    _write_index_yaml(source, "agents", ["new-agent.agent.md"])
+    proj_a = str(tmp_path / "proj_a")
+    proj_b = str(tmp_path / "proj_b")
+    settings.save(
+        {
+            "projects": {
+                proj_a: {"skills": {}, "agents": {}, "instructions": {}},
+                proj_b: {"skills": {}, "agents": {"other": True}, "instructions": {}},
+            }
+        },
+        target,
+    )
+
+    settings.sync_catalog(str(source), target)
+
+    data = settings.load(target)
+    assert data["projects"][proj_a]["agents"] == {"new-agent.agent.md": False}
+    assert data["projects"][proj_b]["agents"] == {
+        "other": True,
+        "new-agent.agent.md": False,
+    }
+
+
+def test_sync_catalog_never_overwrites_existing_catalog_value(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    _write_default_settings(source, skills={"enabled-skill": True})
+    _write_index_yaml(source, "skills", ["enabled-skill"])
+
+    settings.sync_catalog(str(source), target)
+
+    catalog = json.loads((source / "claude" / "aipp-default-settings.json").read_text())
+    assert catalog["skills"]["enabled-skill"] is True
+
+
+def test_sync_catalog_skips_items_already_present_per_project(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    _write_default_settings(source)
+    _write_index_yaml(source, "instructions", ["shared.instructions.md"])
+    proj = str(tmp_path / "proj")
+    settings.save(
+        {
+            "projects": {
+                proj: {
+                    "skills": {},
+                    "agents": {},
+                    "instructions": {"shared.instructions.md": True},
+                }
+            }
+        },
+        target,
+    )
+
+    settings.sync_catalog(str(source), target)
+
+    data = settings.load(target)
+    assert data["projects"][proj]["instructions"]["shared.instructions.md"] is True
+
+
+def test_cli_sync_catalog_runs_and_exits_zero(tmp_path):
+    home = tmp_path / "home"
+    home.mkdir()
+    source = tmp_path / "source"
+    source.mkdir()
+    _write_default_settings(source)
+    _write_index_yaml(source, "skills", ["fresh-skill"])
+
+    result = _run_cli(["sync-catalog", str(source)], home)
+
+    assert result.returncode == 0
+    catalog = json.loads((source / "claude" / "aipp-default-settings.json").read_text())
+    assert catalog["skills"] == {"fresh-skill": False}
