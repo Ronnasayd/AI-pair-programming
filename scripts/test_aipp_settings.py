@@ -4,10 +4,28 @@ All tests use temp/fixture paths, never ~/.claude/.
 """
 
 import json
+import os
+from pathlib import Path
+import subprocess
+import sys
 from unittest.mock import patch
 
 import aipp_settings as settings
 import pytest
+
+SCRIPT_PATH = Path(__file__).parent / "aipp_settings.py"
+
+
+def _run_cli(args, home_dir):
+    """Run the CLI with HOME redirected to home_dir, so SETTINGS_PATH (~/.claude/...)
+    never touches the real user config."""
+    env = {**os.environ, "HOME": str(home_dir)}
+    return subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), *args],
+        env=env,
+        capture_output=True,
+        text=True,
+    )
 
 
 def test_load_returns_empty_projects_for_missing_file(tmp_path):
@@ -283,3 +301,47 @@ def test_set_item_overwrites_existing_value(tmp_path):
 
     entry = settings.load(target)["projects"]["/proj"]
     assert entry["skills"]["x"] is True
+
+
+def test_cli_ensure_migrated_runs_and_exits_zero(tmp_path):
+    home = tmp_path / "home"
+    home.mkdir()
+    source = tmp_path / "source"
+    source.mkdir()
+    local = tmp_path / "local"
+    local.mkdir()
+    _write_legacy(source, ".skillsignore", ["# source-item"])
+
+    result = _run_cli(["ensure-migrated", str(local), str(source)], home)
+
+    assert result.returncode == 0
+    settings_file = home / ".claude" / "aipp-settings.json"
+    data = json.loads(settings_file.read_text())
+    assert data["projects"][str(local)]["skills"] == {"source-item": True}
+
+
+def test_cli_register_if_absent_adds_key_when_absent_and_exits_zero(tmp_path):
+    home = tmp_path / "home"
+    home.mkdir()
+
+    result = _run_cli(
+        ["register-if-absent", "/some/project", "skills", "my-skill", "false"], home
+    )
+
+    assert result.returncode == 0
+    settings_file = home / ".claude" / "aipp-settings.json"
+    data = json.loads(settings_file.read_text())
+    assert data["projects"]["/some/project"]["skills"] == {"my-skill": False}
+
+
+def test_cli_exits_nonzero_with_stderr_on_malformed_json(tmp_path):
+    home = tmp_path / "home"
+    (home / ".claude").mkdir(parents=True)
+    (home / ".claude" / "aipp-settings.json").write_text("{not valid json")
+
+    result = _run_cli(
+        ["register-if-absent", "/some/project", "skills", "my-skill", "false"], home
+    )
+
+    assert result.returncode != 0
+    assert "error" in result.stderr.lower()
