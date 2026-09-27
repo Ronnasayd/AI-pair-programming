@@ -34,6 +34,7 @@
     "react.instructions.md": false,
     "reactjs.instructions.md": false,
     "test-mutation.instructions.md": false,
+    "test-pbt.instructions.md": false,
     "test-typescript-node-backend.instructions.md": false,
     "test.instructions.md": false,
     "vue.instructions.md": false
