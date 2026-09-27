@@ -201,28 +201,11 @@ for backend in "${BACKENDS[@]}"; do
   run_install "$backend"
 done
 
+python3 "$SOURCE/scripts/aipp_settings.py" ensure-migrated "$LOCAL" "$SOURCE"
+
 ai-memory install-skills > /dev/null 2>&1 && echo "ia-memory install-skills [ok]"
 
 git_exclude ".agents/skills/*" "skills-lock.json"
-
-# Copy configuration files
-cat $SOURCE/.agentsignore | while read agent; do
-    if ! grep -q "$agent" $LOCAL/.agentsignore; then
-      echo "$agent" >> $LOCAL/.agentsignore
-    fi
-done
-
-cat $SOURCE/.skillsignore | while read skill; do
-    if ! grep -q "$skill" $LOCAL/.skillsignore; then
-      echo "$skill" >> $LOCAL/.skillsignore
-    fi
-done
-
-cat $SOURCE/.rulesignore | while read rule; do
-    if ! grep -q "$rule" $LOCAL/.rulesignore; then
-      echo "$rule" >> $LOCAL/.rulesignore
-    fi
-done
 
 echo "Done!"
 
