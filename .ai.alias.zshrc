@@ -29,9 +29,10 @@ alias aimhllm='ai-memory install-hooks --agent claude-code --apply --server-url 
 alias aimup='claude setup-token' # Generate a long-lived (1yr) OAuth token -> paste into ~/.secrets/claude.env as CLAUDE_CODE_OAUTH_TOKEN, then rerun aimsllm: ai-memory-oauth-refresh
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias claude-yolo="claude --permission-mode=bypassPermissions" # Claude with no permission prompts: yolo
-alias ats="grep '#' .skillsignore 2>/dev/null | sed 's/#/✅/g' || echo '.skillsignore not found'" # Show skills: show-skills
-alias atr="grep '#' .rulesignore 2>/dev/null | sed 's/#/✅/g' || echo '.rulesignore not found'" # Show rules: show-rules
-alias ata="grep '#' .agentsignore 2>/dev/null | sed 's/#/✅/g' || echo '.agentsignore not found'" # Show agents: show-agents
+_aipp_show_status() { jq -r --arg local "$(pwd)" --arg cat "$1" '.projects[$local][$cat] // {} | if length == 0 then "no entry found" else to_entries[] | (if .value then "✅ " else "" end) + .key end' "$HOME/.claude/aipp-settings.json" 2>/dev/null || echo "no entry found"; }
+alias ats="_aipp_show_status skills" # Show skills: show-skills
+alias atr="_aipp_show_status instructions" # Show rules: show-rules
+alias ata="_aipp_show_status agents" # Show agents: show-agents
 alias clc="claude --model haiku -p 'Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made.'" # Commit message generator: commit-create
 alias lgh="touch $HOME/.claude/logs/hooks.log && tail -f $HOME/.claude/logs/hooks.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
 alias lght="touch $HOME/.claude/logs/hooks-tools-colorized.log && tail -f $HOME/.claude/logs/hooks-tools-colorized.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
