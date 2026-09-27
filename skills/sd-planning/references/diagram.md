@@ -10,7 +10,15 @@ flowchart TD
         break into sub-issues:
         scope, constraints, edge cases, deps"] --> A2
         A2["rag-rat / serena / grep / Read
-        gather codebase context"] --> A3{"Gap remains that
+        gather codebase context"] --> A2a["Codebase = source of truth
+        traverse file-by-file to limits,
+        full understanding of current flow"]
+        A2a --> A2c["Transversal search:
+        keywords/terms not directly linked
+        or unseen in inspected files
+        (all tools: semantic search,
+        sub-agents, CLI, MCPs, skills)"]
+        A2c --> A3{"Gap remains that
         codebase + context7
         can't cover?"}
         A3 -- yes --> A2b["WebSearch
