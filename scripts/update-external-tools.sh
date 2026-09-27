@@ -5,6 +5,8 @@ if [[ -z "$GITHUB_PAT_TOKEN" ]]; then
   exit 1
 fi
 
+SOURCE="$(pwd)"
+
 # ─── Utilitários ─────────────────────────────────────────────────────────────
 
 # Calcula o git blob SHA1 de um arquivo local
@@ -266,7 +268,7 @@ for skill in "${SKILLS[@]}"; do
   ignore_name="tech-leads-club:${skill_name}"
   echo "━━━ ${skill_name} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/tech-leads-club/${skill_name}"
-  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
+  python3 "$SOURCE/scripts/aipp_settings.py" register-if-absent "$SOURCE" skills "${ignore_name}" false
   echo ""
 done
 }
@@ -288,7 +290,7 @@ for skill in "${SKILLS[@]}"; do
   ignore_name="anthropics:${skill}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/anthropics/${skill}"
-  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
+  python3 "$SOURCE/scripts/aipp_settings.py" register-if-absent "$SOURCE" skills "${ignore_name}" false
   echo ""
 done
 }
@@ -358,7 +360,7 @@ for skill in "${SKILLS[@]}"; do
   ignore_name="everything-claude-code:${skill}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/everything-claude-code/${skill}"
-  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
+  python3 "$SOURCE/scripts/aipp_settings.py" register-if-absent "$SOURCE" skills "${ignore_name}" false
   echo ""
 done
 }
@@ -376,7 +378,7 @@ for skill in "${SKILLS[@]}"; do
   ignore_name="mattpocock:${skill//\//:}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/mattpocock/${skill}"
-  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
+  python3 "$SOURCE/scripts/aipp_settings.py" register-if-absent "$SOURCE" skills "${ignore_name}" false
   echo ""
 done
 }
@@ -390,7 +392,7 @@ SKILLS=(
 for skill in "${SKILLS[@]}"; do
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/SkillSpector/${skill}"
-  grep -qF "SkillSpector:${skill}" .skillsignore 2>/dev/null || echo "SkillSpector:${skill}" >> .skillsignore
+  python3 "$SOURCE/scripts/aipp_settings.py" register-if-absent "$SOURCE" skills "SkillSpector:${skill}" false
   echo ""
 done
 }
@@ -405,7 +407,7 @@ for skill in "${SKILLS[@]}"; do
   ignore_name="agent-toolkit:${skill}"
   echo "━━━ ${skill} ━━━"
   gghget "${BASE_URL}/${skill}" "skills/agent-toolkit/${skill}"
-  grep -qF "${ignore_name}" .skillsignore 2>/dev/null || echo "${ignore_name}" >> .skillsignore
+  python3 "$SOURCE/scripts/aipp_settings.py" register-if-absent "$SOURCE" skills "${ignore_name}" false
   echo ""
 done
 }
