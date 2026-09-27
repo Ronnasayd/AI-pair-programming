@@ -1,89 +1,35 @@
 #!/usr/bin/env python3
-"""
-Script interativo com checkboxes para habilitar e desabilitar skills e agents
-nos arquivos .skillsignore e .agentsignore
+"""Script interativo com checkboxes para habilitar e desabilitar skills, agents.
+
+Também gerencia instructions no ~/.claude/aipp-settings.json do projeto atual.
 """
 
-import sys
+import contextlib
 import curses
 from pathlib import Path
-from typing import List, Dict, Tuple
+import sys
+
+import aipp_settings
 
 
 class IgnoreFileManager:
-    def __init__(self, workspace_root: str = "."):
-        self.workspace_root = Path(workspace_root)
-        self.skillsignore_path = self.workspace_root / ".skillsignore"
-        self.agentsignore_path = self.workspace_root / ".agentsignore"
-        self.rulesignore_path = self.workspace_root / ".rulesignore"
+    """Manages skill/agent/instruction enablement for one project via aipp_settings."""
 
-    def read_file(self, file_path: Path) -> List[str]:
-        """Lê o arquivo mantendo as linhas originais"""
-        if not file_path.exists():
-            print(f"❌ Arquivo não encontrado: {file_path}")
-            return []
-        with open(file_path, "r") as f:
-            return f.readlines()
+    def __init__(self, workspace_root: str | Path = ".") -> None:
+        """Resolve workspace_root to an absolute path string (the JSON project key)."""
+        self.workspace_root = str(Path(workspace_root).resolve())
 
-    def write_file(self, file_path: Path, lines: List[str]) -> bool:
-        """Escreve as linhas no arquivo"""
-        try:
-            with open(file_path, "w") as f:
-                f.writelines(lines)
-            return True
-        except Exception as e:
-            print(f"❌ Erro ao escrever arquivo: {e}")
-            return False
+    def interactive_checkbox_menu(  # noqa: C901 -- unchanged UI loop, kept verbatim
+        self, stdscr: "curses.window", file_type: str
+    ) -> None:
+        # why: unchanged UI loop kept verbatim; splitting it would risk the render logic
+        # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
+        """Menu interativo com checkboxes usando curses.
 
-    def parse_ignore_file(
-        self, lines: List[str]
-    ) -> Dict[str, List[Tuple[int, str, bool]]]:
+        Args:
+            stdscr: Curses window passed in by curses.wrapper.
+            file_type: Category to edit -- "skills", "agents", or "instructions".
         """
-        Parseia o arquivo e retorna um dicionário com:
-        - chave: categoria/seção
-        - valor: lista de (line_index, pattern, is_enabled)
-        """
-        sections = {}
-        current_section = "Geral"
-
-        for idx, line in enumerate(lines):
-            # Detecta seções (linhas com #####)
-            if "####" in line:
-                current_section = line.replace("#", "").strip()
-                if not current_section:
-                    current_section = "Geral"
-                continue
-
-            # Ignora linhas vazias e comentários de seção
-            if (
-                not line.strip()
-                or line.strip().startswith("#")
-                and len(line.strip()) > 1
-                and line.strip()[1] == "#"
-            ):
-                continue
-
-            # Processa linhas de comentário e padrões
-            # Em .ignore: sem # = DESABILITADO
-            #            # = HABILITADO
-            if line.strip().startswith("#") and not line.strip().startswith("##"):
-                # É um comentário de padrão = HABILITADO
-                pattern = line.lstrip("#").strip()
-                if pattern and not pattern.startswith("#"):
-                    if current_section not in sections:
-                        sections[current_section] = []
-                    sections[current_section].append((idx, pattern, True))
-            elif line.strip() and not line.strip().startswith("##"):
-                # É um padrão sem comentário = DESABILITADO
-                pattern = line.strip()
-                if current_section not in sections:
-                    sections[current_section] = []
-                sections[current_section].append((idx, pattern, False))
-
-        return sections
-
-    def interactive_checkbox_menu(self, stdscr, file_type: str):
-        """Menu interativo com checkboxes usando curses"""
         curses.curs_set(0)  # Esconde o cursor
         stdscr.timeout(100)  # Timeout de 100ms para input
 
@@ -94,43 +40,32 @@ class IgnoreFileManager:
         curses.init_pair(4, curses.COLOR_CYAN, curses.COLOR_BLACK)  # Instrução
         curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)  # Filtro
 
-        if file_type == "skills":
-            file_path = self.skillsignore_path
-            lines = self.read_file(file_path)
-            title = "📋 GERENCIADOR DE SKILLS"
-        elif file_type == "agents":
-            file_path = self.agentsignore_path
-            lines = self.read_file(file_path)
-            title = "🤖 GERENCIADOR DE AGENTS"
-        else:
-            file_path = self.rulesignore_path
-            lines = self.read_file(file_path)
-            title = "📏 GERENCIADOR DE RULES"
+        category = file_type  # "skills" | "agents" | "instructions"
+        titles = {
+            "skills": "📋 GERENCIADOR DE SKILLS",
+            "agents": "🤖 GERENCIADOR DE AGENTS",
+            "instructions": "📏 GERENCIADOR DE RULES",
+        }
+        title = titles.get(category, "📋 GERENCIADOR")
 
-        sections = self.parse_ignore_file(lines)
+        entry = aipp_settings.get_project(self.workspace_root)
+        items_dict = entry.get(category, {})
 
-        if not sections:
+        if not items_dict:
             stdscr.addstr("❌ Nenhum item encontrado\n")
             stdscr.refresh()
             stdscr.getch()
             return
 
-        # Constrói lista flat com info de seção
-        all_items = []
-        for section, items in sections.items():
-            for line_idx, pattern, is_enabled in items:
-                all_items.append(
-                    {
-                        "section": section,
-                        "line_idx": line_idx,
-                        "pattern": pattern,
-                        "is_enabled": is_enabled,
-                    }
-                )
+        # Constrói lista flat (JSON não tem seções)
+        all_items = [
+            {"pattern": name, "is_enabled": enabled}
+            for name, enabled in items_dict.items()
+        ]
 
         cursor_pos = 0
         scroll_offset = 0
-        changes: Dict[int, bool] = {}  # line_idx -> novo estado
+        changes: dict = {}  # pattern -> novo estado
         search_term = ""  # Termo de busca
         search_active = False  # Modo de busca ativo
         filtered_items_indices = list(
@@ -204,11 +139,8 @@ class IgnoreFileManager:
                 item = all_items[idx]
 
                 # Estado do item (considerando mudanças)
-                line_idx = item["line_idx"]
-                if line_idx in changes:
-                    is_enabled = changes[line_idx]
-                else:
-                    is_enabled = item["is_enabled"]
+                pattern = item["pattern"]
+                is_enabled = changes.get(pattern, item["is_enabled"])
 
                 # Checkbox
                 if pos == cursor_pos:
@@ -222,19 +154,17 @@ class IgnoreFileManager:
 
                 # Status badge
                 status = "[✅ ATIVO]" if is_enabled else "[❌ INATIVO]"
-                pattern = item["pattern"]
 
                 # Trunca se necessário
                 available = width - len(prefix) - len(checkbox) - len(status) - 5
-                if len(pattern) > available:
-                    pattern = pattern[: available - 3] + "..."
+                display_pattern = pattern
+                if len(display_pattern) > available:
+                    display_pattern = display_pattern[: available - 3] + "..."
 
-                line_text = f"{prefix}{checkbox} {pattern} {status}"
+                line_text = f"{prefix}{checkbox} {display_pattern} {status}"
 
-                try:
+                with contextlib.suppress(curses.error):
                     stdscr.addstr(y, 0, line_text, color)
-                except curses.error:
-                    pass
 
                 y += 1
                 rendered_items += 1
@@ -254,9 +184,15 @@ class IgnoreFileManager:
                 scroll_info = "[0/0]"
 
             if total_changes > 0:
-                summary = f"📊 Mudanças: {total_changes} | ✅ {enabled_changes} | ❌ {disabled_changes} {scroll_info}"
+                summary = (
+                    f"📊 Mudanças: {total_changes} | ✅ {enabled_changes} | "
+                    f"❌ {disabled_changes} {scroll_info}"
+                )
             else:
-                summary = f"Items: {len(filtered_items_indices)}/{len(all_items)} {scroll_info}"
+                summary = (
+                    f"Items: {len(filtered_items_indices)}/{len(all_items)} "
+                    f"{scroll_info}"
+                )
 
             stdscr.addstr(height - 1, 0, summary[:width], curses.color_pair(3))
 
@@ -303,16 +239,16 @@ class IgnoreFileManager:
                     if filtered_items_indices:
                         actual_idx = filtered_items_indices[cursor_pos]
                         item = all_items[actual_idx]
-                        line_idx = item["line_idx"]
+                        pattern = item["pattern"]
 
-                        if line_idx in changes:
-                            del changes[line_idx]
+                        if pattern in changes:
+                            del changes[pattern]
                         else:
-                            changes[line_idx] = not item["is_enabled"]
+                            changes[pattern] = not item["is_enabled"]
                 elif key == ord("s") or key == ord("S"):
                     # Salvar
                     if changes:
-                        self._apply_changes(file_path, lines, changes)
+                        self._apply_changes(category, changes)
                         stdscr.clear()
                         stdscr.addstr(
                             0,
@@ -328,7 +264,7 @@ class IgnoreFileManager:
                         stdscr.addstr(
                             0,
                             0,
-                            "ℹ️  Nenhuma mudança para salvar",
+                            "ℹ️  Nenhuma mudança para salvar",  # noqa: RUF001
                             curses.color_pair(3),
                         )
                         stdscr.refresh()
@@ -344,91 +280,17 @@ class IgnoreFileManager:
                     else:
                         return
 
-    def _apply_changes(
-        self, file_path: Path, lines: List[str], changes: Dict[int, bool]
-    ):
-        """Aplica as mudanças e reordena o arquivo
+    def _apply_changes(self, category: str, changes: dict) -> None:
+        """Persiste as mudanças no aipp-settings.json via aipp_settings.set_item."""
+        for pattern, enabled in changes.items():
+            aipp_settings.set_item(self.workspace_root, category, pattern, enabled)
 
-        Em .ignore:
-        - True (habilitado) = com # = comentado (ativo)
-        - False (desabilitado) = sem # = descomentuário (inativo)
+    def main_menu(self, stdscr: "curses.window") -> None:
+        """Menu principal.
 
-        Ordena: ativos primeiro (alfabético), depois inativos (alfabético)
+        Args:
+            stdscr: Curses window passed in by curses.wrapper.
         """
-        # Aplica as mudanças
-        for line_idx, should_be_enabled in changes.items():
-            current_line = lines[line_idx]
-
-            if should_be_enabled:
-                if not current_line.strip().startswith("#"):
-                    lines[line_idx] = f"# {current_line.lstrip()}"
-            else:
-                lines[line_idx] = current_line.lstrip("#").lstrip()
-                if not lines[line_idx].endswith("\n"):
-                    lines[line_idx] += "\n"
-
-        # Separa seções, comments e padrões
-        sections = {}
-        current_section = "Geral"
-        active_items = []
-        inactive_items = []
-
-        for line in lines:
-            # Detecta seções
-            if "####" in line:
-                current_section = line.replace("#", "").strip()
-                if not current_section:
-                    current_section = "Geral"
-                if current_section not in sections:
-                    sections[current_section] = line
-                continue
-
-            # Ignora linhas vazias e comments de seção
-            if (
-                not line.strip()
-                or line.strip().startswith("#")
-                and len(line.strip()) > 1
-                and line.strip()[1] == "#"
-            ):
-                continue
-
-            # Processa padrões
-            if line.strip().startswith("#") and not line.strip().startswith("##"):
-                pattern = line.lstrip("#").strip()
-                if pattern:
-                    active_items.append(pattern)
-            elif line.strip() and not line.strip().startswith("##"):
-                pattern = line.strip()
-                inactive_items.append(pattern)
-
-        # Ordena alfabeticamente
-        active_items.sort()
-        inactive_items.sort()
-
-        # Reconstrói o arquivo
-        new_lines = []
-
-        # Adiciona seção principal se houver
-        if "Geral" in sections:
-            new_lines.append(sections["Geral"])
-
-        # Adiciona ativos primeiro
-        for pattern in active_items:
-            new_lines.append(f"# {pattern}\n")
-
-        # Depois inativos
-        for pattern in inactive_items:
-            new_lines.append(f"{pattern}\n")
-
-        # Adiciona outras seções
-        for section, section_line in sections.items():
-            if section != "Geral":
-                new_lines.append(section_line)
-
-        self.write_file(file_path, new_lines)
-
-    def main_menu(self, stdscr):
-        """Menu principal"""
         curses.curs_set(0)
         stdscr.timeout(-1)  # Entrada bloqueante
 
@@ -439,7 +301,7 @@ class IgnoreFileManager:
 
         while True:
             stdscr.clear()
-            height, width = stdscr.getmaxyx()
+            _height, width = stdscr.getmaxyx()
 
             # Title
             title = "🎮 GERENCIADOR DE SKILLS, AGENTS E RULES"
@@ -459,9 +321,9 @@ class IgnoreFileManager:
                 ("Q", "❌ Sair"),
             ]
 
-            for key, text in menu_items:
+            for menu_key, text in menu_items:
                 y += 1
-                stdscr.addstr(y, 2, f"[{key}] {text}", curses.color_pair(2))
+                stdscr.addstr(y, 2, f"[{menu_key}] {text}", curses.color_pair(2))
 
             y += 2
             stdscr.addstr(y, 2, "👉 Digite sua opção: ", curses.color_pair(3))
@@ -475,7 +337,7 @@ class IgnoreFileManager:
                 elif key == ord("2"):
                     self.interactive_checkbox_menu(stdscr, "agents")
                 elif key == ord("3"):
-                    self.interactive_checkbox_menu(stdscr, "rules")
+                    self.interactive_checkbox_menu(stdscr, "instructions")
                 elif key == ord("q") or key == ord("Q"):
                     stdscr.clear()
                     stdscr.addstr(0, 0, "👋 Até logo!", curses.color_pair(3))
@@ -486,28 +348,17 @@ class IgnoreFileManager:
                 break
 
 
-def main():
+def main() -> None:
+    """CLI entry point: launch the curses menu for the current directory's project."""
     # Usa o diretório de trabalho atual (CWD) em vez de tentar resolver do script
     workspace_root = Path.cwd()
     manager = IgnoreFileManager(workspace_root)
 
-    # Verifica se os arquivos existem
-    if not manager.skillsignore_path.exists():
-        print(f"❌ Arquivo não encontrado: {manager.skillsignore_path}")
-        sys.exit(1)
-
-    if not manager.agentsignore_path.exists():
-        print(f"❌ Arquivo não encontrado: {manager.agentsignore_path}")
-        sys.exit(1)
-
-    if not manager.rulesignore_path.exists():
-        print(f"❌ Arquivo não encontrado: {manager.rulesignore_path}")
-        sys.exit(1)
-
     try:
         curses.wrapper(manager.main_menu)
-    except Exception as e:
-        print(f"❌ Erro: {e}")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # why: top-level CLI guard must not crash raw on any curses/runtime error
+        print(f"❌ Erro: {e}")  # noqa: T201 -- CLI stderr-equivalent output
         sys.exit(1)
 
 
