@@ -68,17 +68,21 @@ Scripts live in [`scripts/`](scripts) and run via
 | `Edit\|Write`     | `jest_related_files_report.py`              | Reports which tests cover a touched source file (or which sources a touched test covers).                                                   |
 | `Edit\|Write`     | `impact_surface_hint.py`                    | Asks rag-rat's `impact_surface` for blast-radius hints after an edit.                                                                       |
 | `Edit\|Write`     | `structural_clone_ref.py`                   | Asks rag-rat's `clones_for_symbol` whether a written def/class is a structural clone found elsewhere; skipped if `rag-rat` isn't installed. |
+| `Edit\|Write`     | `php_lint.py`                               | Runs PHP lint checks on touched PHP files.                                                                                                  |
+| `Edit\|Write`     | `comment_policy_hint.py`                    | Flags comments that violate the repo's no-narration comment policy.                                                                         |
+| _(all)_           | `scan_secrets_output.py`                    | Redacts secrets detected (via `secret_scan.py`) in tool output.                                                                             |
 | _(all)_           | `checklist_context_watch.py`                | Re-checks active skill checklist state.                                                                                                     |
 | _(all)_           | `tooluse_context_rules.py`                  | Same rule engine as PreToolUse.                                                                                                             |
 | _(all)_           | `ai-memory` post-tool-use hook              | Records tool-result observation.                                                                                                            |
 
 ## Stop / SubagentStop
 
-| Script                               | Purpose                                                                                             |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `stop_lint_gate.py`                  | Re-runs lint on files changed this turn and blocks the stop if any fail.                            |
-| `question_tool_enforcer.py`          | If the last assistant message asked a plain-text question, nudges toward `AskUserQuestion` instead. |
-| `ai-memory` stop/subagent-stop hooks | Closes out the session/subagent observation stream.                                                 |
+| Script                               | Purpose                                                                                                |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `stop_lint_gate.py`                  | Re-runs lint on files changed this turn and blocks the stop if any fail.                               |
+| `question_tool_enforcer.py`          | If the last assistant message asked a plain-text question, nudges toward `AskUserQuestion` instead.    |
+| `subagent_response_format_gate.py`   | Blocks a subagent's stop if its response doesn't match the required output format (SubagentStop only). |
+| `ai-memory` stop/subagent-stop hooks | Closes out the session/subagent observation stream.                                                    |
 
 ## SessionEnd
 
@@ -105,6 +109,7 @@ Scripts live in [`scripts/`](scripts) and run via
 - `embedding_daemon.py` — SentenceTransformer daemon over a Unix socket, backing semantic-search hooks.
 - `merge_coverage.py` — merges a partial Istanbul coverage run into the project's coverage dir; used by `jest_coverage_incremental.py`.
 - `log_hooks.py` — logs every hook invocation (wired on nearly every event, with `JSON_COLORIZE=1`).
+- `secret_scan.py` — shared secret-detection logic used by both `protect_files.py` (PreToolUse, deny on match) and `scan_secrets_output.py` (PostToolUse, redact on match).
 - `unused/` — retired scripts, not wired anywhere.
 
 Cross-cutting hooks not in `scripts/` (external, run via `node`/shell directly

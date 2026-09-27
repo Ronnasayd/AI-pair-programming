@@ -36,6 +36,8 @@ bash uninstall.sh
 
 ### Environment Variables
 
+Hook-specific env vars: [`hooks/ENVIRONMENTS.md`](hooks/ENVIRONMENTS.md).
+
 | Variable                                                                                                                                            | Default         | Used in                                                           | Description                                                                                           |
 | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `CLAUDE_INSTALL_SKIP_AUTO_CONTEXT`                                                                                                                  | unset           | `scripts/claude.install.sh`                                       | Set to `1` to skip regenerating the `<!-- INIT AUTO-CONTEXT -->` block in `AGENTS.md` on install.     |
@@ -47,5 +49,37 @@ bash uninstall.sh
 | `NERD_FONT`                                                                                                                                         | `1`             | `scripts/statusline-command.sh`, `scripts/subagent-statusline.sh` | Set to anything other than `1` to disable Nerd Font glyphs in the statusline.                         |
 | `CLAUDE_CONFIG_DIR`                                                                                                                                 | `$HOME/.claude` | `scripts/statusline-command.sh`                                   | Claude config dir; used to locate the caveman-mode flag file and detect the `-L` (local) profile.     |
 | `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`, `ANTHROPIC_API_KEY`, `CLAUDE_PROJECT_DIR`, `ENABLE_TOOL_SEARCH`, `ASDF_NODEJS_VERSION`, `CONTEXT7_API_KEY` | unset           | `scripts/ai-jail.sh`                                              | Passed through into the sandbox when set (see `PASSTHROUGH_VARS`).                                    |
+
+### External Tools
+
+Non-native (non-coreutils) tools required or installed by this project's bash/python scripts.
+
+| Tool                                               | Purpose                                                                      |
+| -------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `uv`                                               | Python package/dependency manager                                            |
+| spaCy models (`pt_core_news_sm`, `en_core_web_sm`) | NLP models used by Python tooling                                            |
+| `claude` (Claude Code CLI)                         | Plugin marketplace management                                                |
+| `rag-rat` plugin (cq27-dev/rag-rat)                | Claude Code plugin: repo intelligence                                        |
+| `caveman` plugin (JuliusBrussee/caveman)           | Claude Code plugin: token-compressed communication mode                      |
+| `ponytail` plugin (DietrichGebert/ponytail)        | Claude Code plugin: lazy/minimal-code enforcement mode                       |
+| `serena`                                           | Code agent / LSP-backed coding tool                                          |
+| `rtk`                                              | Token-usage-reducing CLI proxy                                               |
+| `bat`                                              | Syntax-highlighted `cat` replacement                                         |
+| `jq`                                               | JSON processor                                                               |
+| `fzf`                                              | Fuzzy finder                                                                 |
+| `lefthook`                                         | Git hooks manager                                                            |
+| `ai-memory`                                        | Persistent cross-session memory CLI                                          |
+| `curl`                                             | HTTP client (GitHub Contents API)                                            |
+| `python3`                                          | Config merging, inline JSON parsing                                          |
+| `skillspector` (via `uv run`)                      | Security scan of downloaded skills, quarantines findings                     |
+| `security` (macOS Keychain CLI)                    | Stores/reads Claude OAuth token in `scripts/claude.accounts.sh`              |
+| `bwrap` (bubblewrap)                               | Sandboxing for `scripts/ai-jail.sh`                                          |
+| `docker`                                           | Runs sandbox mounts (`ai-jail.sh`) and the litellm proxy container           |
+| `litellm` (Docker image `ghcr.io/berriai/litellm`) | LLM proxy service, `docker/litellm/docker-compose.yml`                       |
+| `ai-memory` container (`akitaonrails/ai-memory`)   | Docker image run by `aims`/`aimsllm` aliases in `.ai.alias.zshrc`            |
+| `codeburn` (via `npx`)                             | CLI run by `codeburn` alias                                                  |
+| `agent-flow-app` (via `npx`)                       | CLI run by `afa` alias                                                       |
+| `omniroute` (via `npx`)                            | CLI run by `omniroute` alias                                                 |
+| `detect-secrets`                                   | Secret scanning in `hooks/scripts/secret_scan.py` (regex fallback if absent) |
 
 ---
