@@ -44,14 +44,8 @@ replace_between() {
 
 instructions=""
 while read -r rule; do
-    if [[ $rule == \#* ]]; then
-        rule="${rule#\#}"
-        rule="${rule#"${rule%%[![:space:]]*}"}"
-        rule="${rule%"${rule##*[![:space:]]}"}"
-
-        instructions+=$'\n'"$(<"$SOURCE/instructions/$rule")"
-    fi
-done < "$LOCAL/.rulesignore"
+    instructions+=$'\n'"$(<"$SOURCE/instructions/$rule")"
+done < <(jq -r --arg local "$LOCAL" '.projects[$local].instructions // {} | to_entries[] | select(.value == true) | .key' "$HOME/.claude/aipp-settings.json")
 
 replace_between \
   "<!-- INIT AUTO-CONTEXT -->" \

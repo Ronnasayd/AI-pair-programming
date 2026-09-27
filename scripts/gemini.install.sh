@@ -60,22 +60,16 @@ if [ -L "$LOCAL/$DEFAULT_FOLDER/instructions" ] || [ -d "$LOCAL/$DEFAULT_FOLDER/
 fi
 mkdir -p "$LOCAL/$DEFAULT_FOLDER/instructions"
 while read -r rule; do
-    if [[ $rule == \#* ]]; then
-        rule="${rule#\#}"
-        rule="${rule#"${rule%%[![:space:]]*}"}"
-        rule="${rule%"${rule##*[![:space:]]}"}"
+    rule_file="$SOURCE/instructions/$rule"
+    applyto=$(extract_applyto "$rule_file")
 
-        rule_file="$SOURCE/instructions/$rule"
-        applyto=$(extract_applyto "$rule_file")
-
-        if [[ "$applyto" == "**/*" ]]; then
-            instructions+=$'\n'"$(extract_body "$rule_file")"
-        else
-            ln -s "$SOURCE/instructions/$rule" "$LOCAL/$DEFAULT_FOLDER/instructions/$rule"
-            references+=$'\n'"- [$(basename "$rule_file" .md)]($DEFAULT_FOLDER/instructions/$(basename "$rule_file")) — applies to: \`$applyto\`"
-        fi
+    if [[ "$applyto" == "**/*" ]]; then
+        instructions+=$'\n'"$(extract_body "$rule_file")"
+    else
+        ln -s "$SOURCE/instructions/$rule" "$LOCAL/$DEFAULT_FOLDER/instructions/$rule"
+        references+=$'\n'"- [$(basename "$rule_file" .md)]($DEFAULT_FOLDER/instructions/$(basename "$rule_file")) — applies to: \`$applyto\`"
     fi
-done < "$LOCAL/.rulesignore"
+done < <(jq -r --arg local "$LOCAL" '.projects[$local].instructions // {} | to_entries[] | select(.value == true) | .key' "$HOME/.claude/aipp-settings.json")
 
 if [[ -n "$references" ]]; then
     instructions+=$'\n\n## Context-Specific Rules\n\nThe following rules apply to specific file types:'"$references"
