@@ -3,39 +3,43 @@
   "repeat_every": 10,
   "rules": [
     {
-      "glob": "*.ts,*.js,*.py,*.java,*.go,*.css,*.cpp,*.c,*.vue,*.jsx,*.tsx",
+      "glob": "**/*.ts,**/*.js,**/*.py,**/*.java,**/*.go,**/*.css,**/*.cpp,**/*.c,**/*.vue,**/*.jsx,**/*.tsx",
       "refs": ["instructions/code.instructions.md"]
     },
     {
-      "glob": "*.ts,*.js,*.jsx,*.tsx",
+      "glob": "**/*.ts,**/*.js,**/*.jsx,**/*.tsx",
       "refs": ["instructions/jsdocs.instructions.md"]
     },
     {
-      "glob": "*.openapi.ts",
+      "glob": "**/*.openapi.ts",
       "refs": ["instructions/openapi.instructions.md"]
     },
     {
-      "glob": "*.jsx,*.tsx",
+      "glob": "**/*.jsx,**/*.tsx",
       "refs": ["instructions/react.instructions.md"]
     },
     {
-      "glob": "*.test.ts,*.test.js,*.spec.ts,*.spec.js",
+      "glob": "**/*.test.ts,**/*.test.js,**/*.spec.ts,**/*.spec.js",
       "refs": ["instructions/test.instructions.md"]
     },
     {
-      "glob": "*.test.ts,*.test.js,*.spec.ts,*.spec.js",
+      "glob": "**/*.test.ts,**/*.test.js,**/*.spec.ts,**/*.spec.js",
       "refs": ["instructions/test-mutation.instructions.md"]
     },
     {
-      "glob": "*.vue",
+      "glob": "**/*.test.ts,**/*.test.js,**/*.spec.ts,**/*.spec.js",
+      "refs": ["instructions/test-pbt.instructions.md"]
+    },
+    {
+      "glob": "**/*.vue",
       "refs": ["instructions/vue.instructions.md"]
     },
     {
-      "glob": "*.py",
+      "glob": "**/*.py",
       "refs": ["instructions/python.instructions.md"]
     },
     {
-      "glob": "*.py",
+      "glob": "**/*.py",
       "refs": ["instructions/pydocs.instructions.md"]
     }
   ]

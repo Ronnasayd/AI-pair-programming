@@ -27,6 +27,9 @@ instructions:
   - agent.instructions.md
   description: Agent behavior rules.
 - name:
+  - test-pbt.instructions.md
+  description: Property-based testing rules (fast-check).
+- name:
   - openapi.instructions.md
   description: Openapi rules.
 - name:
