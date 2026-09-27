@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""
-Script interativo com checkboxes para habilitar e desabilitar skills, agents
-e instructions no ~/.claude/aipp-settings.json do projeto atual.
+"""Script interativo com checkboxes para habilitar e desabilitar skills, agents.
+
+Também gerencia instructions no ~/.claude/aipp-settings.json do projeto atual.
 """
 
+import contextlib
 import curses
 from pathlib import Path
 import sys
@@ -12,11 +13,23 @@ import aipp_settings
 
 
 class IgnoreFileManager:
-    def __init__(self, workspace_root: str = "."):
+    """Manages skill/agent/instruction enablement for one project via aipp_settings."""
+
+    def __init__(self, workspace_root: str | Path = ".") -> None:
+        """Resolve workspace_root to an absolute path string (the JSON project key)."""
         self.workspace_root = str(Path(workspace_root).resolve())
 
-    def interactive_checkbox_menu(self, stdscr, file_type: str):
-        """Menu interativo com checkboxes usando curses"""
+    def interactive_checkbox_menu(  # noqa: C901 -- unchanged UI loop, kept verbatim
+        self, stdscr: "curses.window", file_type: str
+    ) -> None:
+        # why: unchanged UI loop kept verbatim; splitting it would risk the render logic
+        # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
+        """Menu interativo com checkboxes usando curses.
+
+        Args:
+            stdscr: Curses window passed in by curses.wrapper.
+            file_type: Category to edit -- "skills", "agents", or "instructions".
+        """
         curses.curs_set(0)  # Esconde o cursor
         stdscr.timeout(100)  # Timeout de 100ms para input
 
@@ -127,10 +140,7 @@ class IgnoreFileManager:
 
                 # Estado do item (considerando mudanças)
                 pattern = item["pattern"]
-                if pattern in changes:
-                    is_enabled = changes[pattern]
-                else:
-                    is_enabled = item["is_enabled"]
+                is_enabled = changes.get(pattern, item["is_enabled"])
 
                 # Checkbox
                 if pos == cursor_pos:
@@ -153,10 +163,8 @@ class IgnoreFileManager:
 
                 line_text = f"{prefix}{checkbox} {display_pattern} {status}"
 
-                try:
+                with contextlib.suppress(curses.error):
                     stdscr.addstr(y, 0, line_text, color)
-                except curses.error:
-                    pass
 
                 y += 1
                 rendered_items += 1
@@ -176,9 +184,15 @@ class IgnoreFileManager:
                 scroll_info = "[0/0]"
 
             if total_changes > 0:
-                summary = f"📊 Mudanças: {total_changes} | ✅ {enabled_changes} | ❌ {disabled_changes} {scroll_info}"
+                summary = (
+                    f"📊 Mudanças: {total_changes} | ✅ {enabled_changes} | "
+                    f"❌ {disabled_changes} {scroll_info}"
+                )
             else:
-                summary = f"Items: {len(filtered_items_indices)}/{len(all_items)} {scroll_info}"
+                summary = (
+                    f"Items: {len(filtered_items_indices)}/{len(all_items)} "
+                    f"{scroll_info}"
+                )
 
             stdscr.addstr(height - 1, 0, summary[:width], curses.color_pair(3))
 
@@ -250,7 +264,7 @@ class IgnoreFileManager:
                         stdscr.addstr(
                             0,
                             0,
-                            "ℹ️  Nenhuma mudança para salvar",
+                            "ℹ️  Nenhuma mudança para salvar",  # noqa: RUF001
                             curses.color_pair(3),
                         )
                         stdscr.refresh()
@@ -266,13 +280,17 @@ class IgnoreFileManager:
                     else:
                         return
 
-    def _apply_changes(self, category: str, changes: dict):
+    def _apply_changes(self, category: str, changes: dict) -> None:
         """Persiste as mudanças no aipp-settings.json via aipp_settings.set_item."""
         for pattern, enabled in changes.items():
             aipp_settings.set_item(self.workspace_root, category, pattern, enabled)
 
-    def main_menu(self, stdscr):
-        """Menu principal"""
+    def main_menu(self, stdscr: "curses.window") -> None:
+        """Menu principal.
+
+        Args:
+            stdscr: Curses window passed in by curses.wrapper.
+        """
         curses.curs_set(0)
         stdscr.timeout(-1)  # Entrada bloqueante
 
@@ -283,7 +301,7 @@ class IgnoreFileManager:
 
         while True:
             stdscr.clear()
-            height, width = stdscr.getmaxyx()
+            _height, width = stdscr.getmaxyx()
 
             # Title
             title = "🎮 GERENCIADOR DE SKILLS, AGENTS E RULES"
@@ -303,9 +321,9 @@ class IgnoreFileManager:
                 ("Q", "❌ Sair"),
             ]
 
-            for key, text in menu_items:
+            for menu_key, text in menu_items:
                 y += 1
-                stdscr.addstr(y, 2, f"[{key}] {text}", curses.color_pair(2))
+                stdscr.addstr(y, 2, f"[{menu_key}] {text}", curses.color_pair(2))
 
             y += 2
             stdscr.addstr(y, 2, "👉 Digite sua opção: ", curses.color_pair(3))
@@ -330,15 +348,17 @@ class IgnoreFileManager:
                 break
 
 
-def main():
+def main() -> None:
+    """CLI entry point: launch the curses menu for the current directory's project."""
     # Usa o diretório de trabalho atual (CWD) em vez de tentar resolver do script
     workspace_root = Path.cwd()
     manager = IgnoreFileManager(workspace_root)
 
     try:
         curses.wrapper(manager.main_menu)
-    except Exception as e:
-        print(f"❌ Erro: {e}")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        # why: top-level CLI guard must not crash raw on any curses/runtime error
+        print(f"❌ Erro: {e}")  # noqa: T201 -- CLI stderr-equivalent output
         sys.exit(1)
 
 
