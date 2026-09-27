@@ -730,7 +730,7 @@ def get_hooks_logger(
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(
         logging.Formatter(
-            "%(asctime)s [%(levelname)s]-[%(name)s]-[%(session_id)s]: %(message)s"
+            "%(asctime)s [%(session_id)s]-[%(levelname)s]-[%(name)s]: %(message)s"
         )
     )
     file_handler.addFilter(_SessionIdFilter())
