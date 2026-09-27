@@ -8,7 +8,9 @@ flowchart TD
         direction TB
         A1["sequentialthinking (mcp-manager)
         break into sub-issues:
-        scope, constraints, edge cases, deps"] --> A2
+        scope, constraints, edge cases, deps
+        (use /dynamic-programming-analysis
+        if breakdown itself is hard)"] --> A2
         A2["rag-rat / serena / grep / Read
         gather codebase context"] --> A2a["Codebase = source of truth
         traverse file-by-file to limits,
@@ -26,9 +28,13 @@ flowchart TD
         security advisories, precedent"]
         A3 -- no --> A4
         A2b --> A4
-        A4["/grilling session
+        A4["/prd-get-implicit-requirements
+        surface gaps across 14 categories
+        before grilling the user"] --> A4b
+        A4b["/grilling session
         clarify w/ user,
-        surface implicit reqs"] --> A5{"Enough context?"}
+        resolve surfaced gaps +
+        other implicit reqs"] --> A5{"Enough context?"}
         A5 -- no --> A1
     end
 
