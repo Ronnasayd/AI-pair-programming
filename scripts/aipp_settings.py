@@ -117,3 +117,44 @@ def migrate_legacy_files(local_path: str, settings_path: Path = SETTINGS_PATH) -
             file_path.unlink()
 
     return True
+
+
+def seed_from_source_defaults(
+    local_path: str, source_path: str, settings_path: Path = SETTINGS_PATH
+) -> None:
+    """Add items from source_path's legacy .ignore files to local_path's entry.
+
+    Only items not already present in local_path's JSON entry are added, using the
+    source file's enabled state as the default. source_path's legacy files are read-only
+    here (never deleted) -- they remain the toolkit-wide default catalog.
+    """
+    data = load(settings_path)
+    projects = data.setdefault("projects", {})
+    if local_path not in projects:
+        projects[local_path] = {c: {} for c in CATEGORIES}
+    entry = projects[local_path]
+    for c in CATEGORIES:
+        entry.setdefault(c, {})
+
+    source = Path(source_path)
+    for filename, category in LEGACY_FILES.items():
+        file_path = source / filename
+        if not file_path.exists():
+            continue
+        defaults = _parse_ignore_lines(file_path.read_text().splitlines())
+        for name, enabled in defaults.items():
+            entry[category].setdefault(name, enabled)
+
+    save(data, settings_path)
+
+
+def ensure_migrated(
+    local_path: str, source_path: str, settings_path: Path = SETTINGS_PATH
+) -> None:
+    """Migrate local_path's legacy files, if any, then seed from source_path's defaults.
+
+    Single call install.sh makes: migration always runs first (idempotent, no-op
+    if the entry already exists), then seeding fills in any items still missing.
+    """
+    migrate_legacy_files(local_path, settings_path)
+    seed_from_source_defaults(local_path, source_path, settings_path)

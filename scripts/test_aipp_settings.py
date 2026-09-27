@@ -177,3 +177,71 @@ def test_migrate_legacy_files_skips_blank_and_section_header_lines(tmp_path):
     data = settings.load(target)
     entry = data["projects"][str(project)]
     assert entry["skills"] == {"real-item": True}
+
+
+def test_seed_from_source_defaults_new_project_matches_source_ignore_files(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    local = tmp_path / "local"
+    local.mkdir()
+    _write_legacy(source, ".skillsignore", ["# enabled-skill", "disabled-skill"])
+    _write_legacy(source, ".agentsignore", ["# enabled-agent"])
+    _write_legacy(source, ".rulesignore", ["disabled-rule"])
+
+    settings.seed_from_source_defaults(str(local), str(source), target)
+
+    entry = settings.load(target)["projects"][str(local)]
+    assert entry["skills"] == {"enabled-skill": True, "disabled-skill": False}
+    assert entry["agents"] == {"enabled-agent": True}
+    assert entry["instructions"] == {"disabled-rule": False}
+
+
+def test_ensure_migrated_does_not_reseed_already_migrated_project(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    local = tmp_path / "local"
+    local.mkdir()
+    _write_legacy(source, ".skillsignore", ["# source-item"])
+    existing = {"skills": {"local-item": False}, "agents": {}, "instructions": {}}
+    settings.save({"projects": {str(local): existing}}, target)
+
+    settings.ensure_migrated(str(local), str(source), target)
+
+    entry = settings.load(target)["projects"][str(local)]
+    # why: migrate no-ops since entry pre-existed, value must survive seeding
+    assert entry["skills"]["local-item"] is False
+
+
+def test_seed_never_overwrites_existing_key_present_in_both(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    local = tmp_path / "local"
+    local.mkdir()
+    _write_legacy(source, ".skillsignore", ["# shared-item"])
+    existing = {"skills": {"shared-item": False}, "agents": {}, "instructions": {}}
+    settings.save({"projects": {str(local): existing}}, target)
+
+    settings.seed_from_source_defaults(str(local), str(source), target)
+
+    entry = settings.load(target)["projects"][str(local)]
+    assert entry["skills"]["shared-item"] is False
+
+
+def test_ensure_migrated_migrates_then_seeds_missing_items(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    local = tmp_path / "local"
+    local.mkdir()
+    _write_legacy(local, ".skillsignore", ["# local-item"])
+    _write_legacy(source, ".skillsignore", ["# source-item", "local-item"])
+
+    settings.ensure_migrated(str(local), str(source), target)
+
+    entry = settings.load(target)["projects"][str(local)]
+    assert entry["skills"]["local-item"] is True
+    assert entry["skills"]["source-item"] is True
+    assert not (local / ".skillsignore").exists()
