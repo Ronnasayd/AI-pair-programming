@@ -308,5 +308,5 @@ cc_ver_info=""
 [ -n "$cc_version" ] && cc_ver_info="${SEP}\e]8;;https://github.com/anthropics/claude-code/releases\e\\\\${C_SUBTEXT}v${cc_version}${RESET}\e]8;;\e\\\\"
 echo -e "${email_color}${email_info}${RESET}"
 echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info}${SEP}${ICON_BRANCH} ${C_MAUVE}$branch${RESET}${SEP}${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
-echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k)${SEP}${ICON_CACHE} cache(r:${cache_read_f} c:${cache_creation_f} i:${input_tokens_f})${SEP}${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f})${SEP}${cost_info#"${SEP}"}${dur_info}${rate_info}"
+echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k)${SEP}${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f})${SEP}${cost_info#"${SEP}"}${dur_info}${rate_info}"
 
