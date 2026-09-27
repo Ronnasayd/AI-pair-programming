@@ -83,6 +83,11 @@ LEGACY_FILES = {
     ".rulesignore": "instructions",
 }
 
+# why: static catalog under $SOURCE, immune to migrate_legacy_files() deleting a
+# project's own .ignore files -- previously seed_from_source_defaults() re-parsed
+# $SOURCE's live .ignore files, which self-destructed when $SOURCE == $LOCAL
+DEFAULT_SETTINGS_FILENAME = "claude/aipp-default-settings.json"
+
 
 def _parse_ignore_lines(lines: list) -> dict:
     """Parse one legacy .ignore file's lines into {name: enabled}.
@@ -151,15 +156,16 @@ def migrate_legacy_files(local_path: str, settings_path: Path = SETTINGS_PATH) -
 def seed_from_source_defaults(
     local_path: str, source_path: str, settings_path: Path = SETTINGS_PATH
 ) -> None:
-    """Add items from source_path's legacy .ignore files to local_path's entry.
+    """Add items from source_path's default-settings catalog to local_path's entry.
 
     Only items not already present in local_path's JSON entry are added, using the
-    source file's enabled state as the default. source_path's legacy files are read-only
-    here (never deleted) -- they remain the toolkit-wide default catalog.
+    catalog's enabled state as the default. source_path's catalog file
+    (DEFAULT_SETTINGS_FILENAME) is read-only here -- it is the toolkit-wide default
+    catalog, static and independent of any project's own .ignore files.
 
     Args:
         local_path: Absolute project path whose entry is seeded.
-        source_path: Toolkit root path holding the default .ignore catalogs.
+        source_path: Toolkit root path holding the default-settings catalog.
         settings_path: Settings file to read from and write to.
     """
     data = load(settings_path)
@@ -170,13 +176,14 @@ def seed_from_source_defaults(
     for c in CATEGORIES:
         entry.setdefault(c, {})
 
-    source = Path(source_path)
-    for filename, category in LEGACY_FILES.items():
-        file_path = source / filename
-        if not file_path.exists():
-            continue
-        defaults = _parse_ignore_lines(file_path.read_text().splitlines())
-        for name, enabled in defaults.items():
+    defaults_file = Path(source_path) / DEFAULT_SETTINGS_FILENAME
+    if not defaults_file.exists():
+        save(data, settings_path)
+        return
+
+    defaults = json.loads(defaults_file.read_text())
+    for category in CATEGORIES:
+        for name, enabled in defaults.get(category, {}).items():
             entry[category].setdefault(name, enabled)
 
     save(data, settings_path)

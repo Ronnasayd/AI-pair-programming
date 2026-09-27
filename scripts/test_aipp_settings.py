@@ -106,6 +106,17 @@ def _write_legacy(project_dir, filename, lines):
     (project_dir / filename).write_text("\n".join(lines) + "\n" if lines else "")
 
 
+def _write_default_settings(source_dir, skills=None, agents=None, instructions=None):
+    catalog_dir = source_dir / "claude"
+    catalog_dir.mkdir(parents=True, exist_ok=True)
+    data = {
+        "skills": skills or {},
+        "agents": agents or {},
+        "instructions": instructions or {},
+    }
+    (catalog_dir / "aipp-default-settings.json").write_text(json.dumps(data))
+
+
 def test_migrate_legacy_files_produces_correct_true_false_entries(tmp_path):
     target = tmp_path / "aipp-settings.json"
     project = tmp_path / "proj"
@@ -198,15 +209,18 @@ def test_migrate_legacy_files_skips_blank_and_section_header_lines(tmp_path):
     assert entry["skills"] == {"real-item": True}
 
 
-def test_seed_from_source_defaults_new_project_matches_source_ignore_files(tmp_path):
+def test_seed_from_source_defaults_new_project_matches_default_settings_json(tmp_path):
     target = tmp_path / "aipp-settings.json"
     source = tmp_path / "source"
     source.mkdir()
     local = tmp_path / "local"
     local.mkdir()
-    _write_legacy(source, ".skillsignore", ["# enabled-skill", "disabled-skill"])
-    _write_legacy(source, ".agentsignore", ["# enabled-agent"])
-    _write_legacy(source, ".rulesignore", ["disabled-rule"])
+    _write_default_settings(
+        source,
+        skills={"enabled-skill": True, "disabled-skill": False},
+        agents={"enabled-agent": True},
+        instructions={"disabled-rule": False},
+    )
 
     settings.seed_from_source_defaults(str(local), str(source), target)
 
@@ -222,7 +236,7 @@ def test_ensure_migrated_does_not_reseed_already_migrated_project(tmp_path):
     source.mkdir()
     local = tmp_path / "local"
     local.mkdir()
-    _write_legacy(source, ".skillsignore", ["# source-item"])
+    _write_default_settings(source, skills={"source-item": True})
     existing = {"skills": {"local-item": False}, "agents": {}, "instructions": {}}
     settings.save({"projects": {str(local): existing}}, target)
 
@@ -239,7 +253,7 @@ def test_seed_never_overwrites_existing_key_present_in_both(tmp_path):
     source.mkdir()
     local = tmp_path / "local"
     local.mkdir()
-    _write_legacy(source, ".skillsignore", ["# shared-item"])
+    _write_default_settings(source, skills={"shared-item": True})
     existing = {"skills": {"shared-item": False}, "agents": {}, "instructions": {}}
     settings.save({"projects": {str(local): existing}}, target)
 
@@ -256,7 +270,7 @@ def test_ensure_migrated_migrates_then_seeds_missing_items(tmp_path):
     local = tmp_path / "local"
     local.mkdir()
     _write_legacy(local, ".skillsignore", ["# local-item"])
-    _write_legacy(source, ".skillsignore", ["# source-item", "local-item"])
+    _write_default_settings(source, skills={"source-item": True, "local-item": False})
 
     settings.ensure_migrated(str(local), str(source), target)
 
@@ -311,7 +325,7 @@ def test_cli_ensure_migrated_runs_and_exits_zero(tmp_path):
     source.mkdir()
     local = tmp_path / "local"
     local.mkdir()
-    _write_legacy(source, ".skillsignore", ["# source-item"])
+    _write_default_settings(source, skills={"source-item": True})
 
     result = _run_cli(["ensure-migrated", str(local), str(source)], home)
 
