@@ -431,6 +431,26 @@ def test_sync_catalog_never_overwrites_existing_catalog_value(tmp_path):
     assert catalog["skills"]["enabled-skill"] is True
 
 
+def test_sync_catalog_registers_already_catalogued_item_on_new_project(tmp_path):
+    target = tmp_path / "aipp-settings.json"
+    source = tmp_path / "source"
+    source.mkdir()
+    # why: reproduces the pre-fix bug -- "new_names" excluded items already in
+    # the catalog, so a project migrated before this item existed never got it
+    _write_default_settings(source, skills={"old-catalogued-skill": False})
+    _write_index_yaml(source, "skills", ["old-catalogued-skill"])
+    proj = str(tmp_path / "proj")
+    settings.save(
+        {"projects": {proj: {"skills": {}, "agents": {}, "instructions": {}}}},
+        target,
+    )
+
+    settings.sync_catalog(str(source), target)
+
+    data = settings.load(target)
+    assert data["projects"][proj]["skills"] == {"old-catalogued-skill": False}
+
+
 def test_sync_catalog_skips_items_already_present_per_project(tmp_path):
     target = tmp_path / "aipp-settings.json"
     source = tmp_path / "source"
