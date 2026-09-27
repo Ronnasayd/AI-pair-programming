@@ -25,6 +25,7 @@ def _run_cli(args, home_dir):
         env=env,
         capture_output=True,
         text=True,
+        check=False,
     )
 
 
