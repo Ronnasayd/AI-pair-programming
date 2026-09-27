@@ -24,27 +24,47 @@ CATEGORIES = ("skills", "agents", "instructions")
 def load(path: Path = SETTINGS_PATH) -> dict:
     """Read the JSON, creating {"projects": {}} if missing.
 
-    Raises json.JSONDecodeError on malformed content.
+    Args:
+        path: Settings file to read. Defaults to ~/.claude/aipp-settings.json.
+
+    Returns:
+        The parsed settings dict, or {"projects": {}} if the file is missing.
+
+    Raises:
+        json.JSONDecodeError: If the file exists but contains malformed JSON.
     """
     if not path.exists():
         return {"projects": {}}
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
 def save(data: dict, path: Path = SETTINGS_PATH) -> None:
-    """Atomic write: temp file + os.replace."""
+    """Write data to path atomically (temp file + os.replace).
+
+    Args:
+        data: Full settings dict to persist.
+        path: Settings file to write. Defaults to ~/.claude/aipp-settings.json.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
-    with open(tmp, "w") as f:
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
     os.replace(tmp, path)
 
 
 def get_project(path: str, settings_path: Path = SETTINGS_PATH) -> dict:
-    """Return path's project entry, creating it in-memory (loaded, not saved) if absent.
+    """Return path's project entry, creating it in-memory if absent.
 
-    Caller must call save() with the loaded data to persist any new entry.
+    Caller must call save() with the loaded data to persist any new entry;
+    get_project() itself never writes to disk.
+
+    Args:
+        path: Absolute project path used as the JSON key.
+        settings_path: Settings file to read from.
+
+    Returns:
+        The project's {"skills": {}, "agents": {}, "instructions": {}} entry.
     """
     data = load(settings_path)
     projects = data.setdefault("projects", {})
@@ -92,8 +112,15 @@ def _parse_ignore_lines(lines: list) -> dict:
 def migrate_legacy_files(local_path: str, settings_path: Path = SETTINGS_PATH) -> bool:
     """Migrate local_path's legacy .ignore files into its JSON project entry.
 
-    No-op (returns False) if a JSON entry for local_path already exists, or if none of
-    the three legacy files exist. On success, deletes the legacy files and returns True.
+    No-op if a JSON entry for local_path already exists, or if none of the three
+    legacy files exist. On success, deletes the legacy files.
+
+    Args:
+        local_path: Absolute project path to migrate.
+        settings_path: Settings file to read from and write to.
+
+    Returns:
+        True if migration ran and legacy files were deleted, False if it was a no-op.
     """
     data = load(settings_path)
     projects = data.setdefault("projects", {})
@@ -129,6 +156,11 @@ def seed_from_source_defaults(
     Only items not already present in local_path's JSON entry are added, using the
     source file's enabled state as the default. source_path's legacy files are read-only
     here (never deleted) -- they remain the toolkit-wide default catalog.
+
+    Args:
+        local_path: Absolute project path whose entry is seeded.
+        source_path: Toolkit root path holding the default .ignore catalogs.
+        settings_path: Settings file to read from and write to.
     """
     data = load(settings_path)
     projects = data.setdefault("projects", {})
@@ -157,6 +189,11 @@ def ensure_migrated(
 
     Single call install.sh makes: migration always runs first (idempotent, no-op
     if the entry already exists), then seeding fills in any items still missing.
+
+    Args:
+        local_path: Absolute project path to migrate and seed.
+        source_path: Toolkit root path holding the default .ignore catalogs.
+        settings_path: Settings file to read from and write to.
     """
     migrate_legacy_files(local_path, settings_path)
     seed_from_source_defaults(local_path, source_path, settings_path)
@@ -169,7 +206,15 @@ def register_if_absent(
     default: bool,
     settings_path: Path = SETTINGS_PATH,
 ) -> None:
-    """Add name under projects[project_path][category] only if not already a key."""
+    """Add name under projects[project_path][category] only if not already a key.
+
+    Args:
+        project_path: Absolute project path used as the JSON key.
+        category: One of "skills", "agents", "instructions".
+        name: Item key to add.
+        default: Value to set if name is absent; ignored if name already exists.
+        settings_path: Settings file to read from and write to.
+    """
     data = load(settings_path)
     projects = data.setdefault("projects", {})
     if project_path not in projects:
@@ -187,7 +232,15 @@ def set_item(
     enabled: bool,
     settings_path: Path = SETTINGS_PATH,
 ) -> None:
-    """Set (create or overwrite) a single item's boolean value."""
+    """Set (create or overwrite) a single item's boolean value.
+
+    Args:
+        project_path: Absolute project path used as the JSON key.
+        category: One of "skills", "agents", "instructions".
+        name: Item key to set.
+        enabled: Value to store.
+        settings_path: Settings file to read from and write to.
+    """
     data = load(settings_path)
     projects = data.setdefault("projects", {})
     if project_path not in projects:
@@ -237,7 +290,14 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list | None = None) -> int:
-    """CLI entry point. Returns the process exit code."""
+    """CLI entry point.
+
+    Args:
+        argv: Argument list to parse; defaults to sys.argv[1:] via argparse.
+
+    Returns:
+        Process exit code: 0 on success, 1 on malformed settings JSON.
+    """
     parser = _build_parser()
     args = parser.parse_args(argv)
 
