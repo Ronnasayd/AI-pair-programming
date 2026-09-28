@@ -182,6 +182,15 @@ else
     email_info="${ICON_EMAIL} $(cat $HOME/.claude.json | jq -r '.oauthAccount.emailAddress')"
 fi
 
+# Session transcript link (first 8 chars of session_id)
+transcript_path=$(echo "$input" | jq -r '.transcript_path // empty')
+session_id=$(echo "$input" | jq -r '.session_id // empty')
+transcript_link=""
+if [ -n "$session_id" ] && [ -n "$transcript_path" ]; then
+    session_id_short="${session_id:0:8}"
+    transcript_link="${SEP}\e]8;;file://${transcript_path}\e\\\\${C_SUBTEXT}${session_id_short}${RESET}\e]8;;\e\\\\"
+fi
+
 # Serena status (sr(<dot>) is an OSC 8 hyperlink to the dashboard)
 serena_dash="http://localhost:24282/dashboard/"
 serena_info=""
@@ -306,7 +315,7 @@ fi
 cc_ver_info=""
 # OSC 8 hyperlink: v<version> -> release notes (degrades to plain text on terminals without support)
 [ -n "$cc_version" ] && cc_ver_info="${SEP}\e]8;;https://github.com/anthropics/claude-code/releases\e\\\\${C_SUBTEXT}v${cc_version}${RESET}\e]8;;\e\\\\"
-echo -e "${email_color}${email_info}${RESET}"
+echo -e "${email_color}${email_info}${RESET}${transcript_link}"
 echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info}${SEP}${ICON_BRANCH} ${C_MAUVE}$branch${RESET}${SEP}${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
 echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k)${SEP}${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f})${SEP}${cost_info#"${SEP}"}${dur_info}${rate_info}"
 
