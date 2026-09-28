@@ -56,10 +56,12 @@ Flag violations inline: `> ⚠️ Quality issue: [attribute] — [why]` — don'
 
 ## After Generating
 
-1. Flag items marked `⚠️ To be defined` for review.
-2. Ask if user wants to review before saving.
-3. Save to `docs/srs/yyyy-mm-dd-<short-description>.md`.
+1. Run `python3 skills/srs-generator/scripts/validate_srs.py <path>` — fix any `ERROR` before presenting the draft; review `WARN` lines against the Quality Checklist.
+2. Flag items marked `⚠️ To be defined` for review.
+3. Ask if user wants to review before saving.
+4. Save to `docs/srs/yyyy-mm-dd-<short-description>.md`.
 
 ## Reference files
 
 - `references/srs-template.md` — full Markdown template + example functional requirement.
+- `scripts/validate_srs.py` — deterministic pass/fail gate for Generation Rules + Quality Checklist (`--strict` promotes warnings to errors).
