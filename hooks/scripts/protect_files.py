@@ -33,6 +33,7 @@ logger = get_hooks_logger("ProtectFiles")
 # stable for the whole session; os.getcwd() is the fallback but can drift if cwd
 # changes mid-session (cd, subagents), silently widening the boundary check.
 PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
+AI_PROJECT_ROOT_DIR = os.environ.get("AI_PROJECT_ROOT_DIR", os.getcwd())
 
 # Get the home directory path object
 home_dir = str(Path.home())
@@ -40,12 +41,10 @@ home_dir = str(Path.home())
 ALLOWED_PATTERNS = [
     os.path.join(PROJECT_ROOT, ".claude", "**"),
     "/tmp/**",  # noqa: S108 - a fixed allowlist glob, not a temp-file write
-    f"{home_dir}/develop/personal/AI-pair-programming/skills/**",
-    f"{home_dir}/develop/personal/AI-pair-programming/instructions/**",
-    f"{home_dir}/Desktop/*.md",
-    f"{home_dir}/Desktop/*.png",
-    f"{home_dir}/Desktop/*.jpeg",
-    f"{home_dir}/Desktop/*.json",
+    f"{AI_PROJECT_ROOT_DIR}/skills/**",
+    f"{AI_PROJECT_ROOT_DIR}/instructions/**",
+    f"{home_dir}/develop/public/**",
+    *(f"{home_dir}/Desktop/*.{ext}" for ext in ("md", "png", "jpeg", "json")),
     f"{home_dir}/.claude/projects/**/memory/*.md",
 ]
 
