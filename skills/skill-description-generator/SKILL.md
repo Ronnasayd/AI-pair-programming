@@ -24,7 +24,7 @@ Create skill description fields that trigger on exact user phrases and avoid ove
 | --------------- | -------------------------------------------------------- |
 | Length          | Under 1024 characters — count strictly                   |
 | Brackets        | No `< >` (XML) allowed                                   |
-| Line breaks     | Single line — no YAML multiline `>` or `\|`              |
+| Line breaks     | Single line — no YAML multiline `>` or `                 | `   |
 | Trigger phrases | Real words user would say, English only, comma-separated |
 | File types      | Mention if relevant (.md, .json, etc.)                   |
 | Tone            | "Use for X" not "Can be used for"                        |
