@@ -57,11 +57,14 @@ class IgnoreFileManager:
             stdscr.getch()
             return
 
-        # Constrói lista flat (JSON não tem seções)
-        all_items = [
-            {"pattern": name, "is_enabled": enabled}
-            for name, enabled in items_dict.items()
-        ]
+        # why: enabled items first makes it easier to find what to disable
+        all_items = sorted(
+            (
+                {"pattern": name, "is_enabled": enabled}
+                for name, enabled in items_dict.items()
+            ),
+            key=lambda item: (not item["is_enabled"], item["pattern"].lower()),
+        )
 
         cursor_pos = 0
         scroll_offset = 0
