@@ -15,9 +15,6 @@ instructions:
   - node-ts.instructions.md
   description: Node/TS rules.
 - name:
-  - docs.instructions.md
-  description: Documentation rules.
-- name:
   - vue.instructions.md
   description: Vue Code Rules.
 - name:
