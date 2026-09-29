@@ -1,6 +1,6 @@
 ---
 description: Openapi rules.
-applyTo: "**/*.openapi.ts"
+applyTo: "**/*.openapi.ts,**/*.openapi.js"
 ---
 
 # Checklist for Creating a `*.openapi.ts`
