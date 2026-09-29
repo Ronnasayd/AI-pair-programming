@@ -301,7 +301,9 @@ def sync_catalog(source_path: str, settings_path: Path = SETTINGS_PATH) -> dict:
         catalog.setdefault(c, {})
 
     new_items: dict = {c: [] for c in CATEGORIES}
-    project_paths = list_project_paths(settings_path)
+
+    data = load(settings_path)
+    projects = data.setdefault("projects", {})
 
     for category in CATEGORIES:
         on_disk = _read_index_yaml_names(source_path, category)
@@ -310,8 +312,10 @@ def sync_catalog(source_path: str, settings_path: Path = SETTINGS_PATH) -> dict:
             catalog[category][name] = False
             new_items[category].append(name)
         for name in on_disk:
-            for project_path in project_paths:
-                register_if_absent(project_path, category, name, False, settings_path)
+            for entry in projects.values():
+                entry.setdefault(category, {}).setdefault(name, False)
+
+    save(data, settings_path)
 
     if any(new_items.values()):
         defaults_file.parent.mkdir(parents=True, exist_ok=True)
