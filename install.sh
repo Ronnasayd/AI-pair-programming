@@ -205,7 +205,7 @@ uv run --project "$SOURCE" --directory "$SOURCE" python3 "$SOURCE/scripts/list_s
 python3 "$SOURCE/scripts/aipp_settings.py" sync-catalog "$SOURCE"
 python3 "$SOURCE/scripts/aipp_settings.py" ensure-migrated "$LOCAL" "$SOURCE"
 
-ai-memory install-skills > /dev/null 2>&1 && echo "ia-memory install-skills [ok]"
+ai-memory install-skills > /dev/null 2>&1 && echo "ai-memory install-skills [ok]"
 
 git_exclude ".agents/skills/*" "skills-lock.json"
 
