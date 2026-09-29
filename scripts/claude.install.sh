@@ -256,7 +256,7 @@ git_exclude \
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
 if command -v rtk &>/dev/null; then
-  rtk init -g
+  rtk init -g > /dev/null && echo "rtk [ok]"
 else
   echo "Warning: rtk não encontrado no PATH, pulando 'rtk init -g'." >&2
   echo "Use to install: curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" >&2
@@ -266,7 +266,7 @@ fi
 if command -v rag-rat &>/dev/null && [ -f $LOCAL/rag-rat.toml ]; then
   nohup sh -c 'rag-rat init --yes && rag-rat index --full && rag-rat hooks install' >/tmp/rag-rat-setup.log 2>&1 &
   disown
-  echo "ok: rag-rat setup running in background (log: /tmp/rag-rat-setup.log)"
+  echo "rag-rat setup running in background (log: /tmp/rag-rat-setup.log) [ok]"
 else
   echo "Warning: rag-rat not used locally" >&2
 fi
