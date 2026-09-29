@@ -28,7 +28,7 @@ alias aimmllm='ai-memory install-mcp --client claude-code --apply --server-url "
 alias aimhllm='ai-memory install-hooks --agent claude-code --apply --server-url "http://127.0.0.1:49374" --auth-token "$(_aim_secret AI_MEMORY_AUTH_TOKEN)" --project-strategy repo-root' # Install AI Memory hooks with auth token (LLM-backed mode): ai-memory-hooks-llm
 alias aimup='claude setup-token' # Generate a long-lived (1yr) OAuth token -> paste into ~/.secrets/claude.env as CLAUDE_CODE_OAUTH_TOKEN, then rerun aimsllm: ai-memory-oauth-refresh
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
-alias claude-yolo="claude --permission-mode=bypassPermissions" # Claude with no permission prompts: yolo
+alias cldyl="claude --permission-mode=bypassPermissions" # Claude with no permission prompts: yolo
 _aipp_show_status() { jq -r --arg local "$(pwd)" --arg cat "$1" '.projects[$local][$cat] // {} | if length == 0 then "no entry found" else to_entries[] | (if .value then "✅ " else "" end) + .key end' "$HOME/.claude/aipp-settings.json" 2>/dev/null || echo "no entry found"; }
 alias ats="_aipp_show_status skills" # Show skills: show-skills
 alias atr="_aipp_show_status instructions" # Show rules: show-rules
