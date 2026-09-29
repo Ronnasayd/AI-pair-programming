@@ -73,22 +73,38 @@ def _save_cache(cache_path: Path, cache: dict) -> None:
         cache_path.write_text(json.dumps(cache), encoding="utf-8")
 
 
-def _glob_match(file_path: str, glob: str) -> bool:
+def _matches_any(path_str: str, patterns: str) -> bool:
+    """Check path_str against a comma-separated list of glob patterns.
+
+    Args:
+        path_str: Path to test.
+        patterns: Comma-separated glob patterns.
+
+    Returns:
+        True if path_str matches any of the patterns.
+    """
+    for g in patterns.split(","):
+        g = g.strip().replace("\\", "/")
+        if g and fnmatch.fnmatch(path_str, g):
+            return True
+    return False
+
+
+def _glob_match(file_path: str, glob: str, exclude: str = "") -> bool:
     """Match file_path against a comma-separated list of glob patterns.
 
     Args:
         file_path: Path to test.
         glob: Comma-separated glob patterns.
+        exclude: Comma-separated glob patterns that veto a match (e.g. `**/*.test.ts`).
 
     Returns:
-        True if file_path matches any of the patterns.
+        True if file_path matches any of the patterns and none of the exclusions.
     """
-    p = PurePosixPath(file_path.replace("\\", "/"))
-    for g in glob.split(","):
-        g = g.strip().replace("\\", "/")
-        if fnmatch.fnmatch(str(p), g):
-            return True
-    return False
+    p = str(PurePosixPath(file_path.replace("\\", "/")))
+    if exclude and _matches_any(p, exclude):
+        return False
+    return _matches_any(p, glob)
 
 
 def _git_cache_dir(repo_url: str) -> Path:
@@ -251,7 +267,8 @@ def _collect_matched_refs(rel_path: str, rules: list[dict]) -> list[tuple[str, s
     matched_refs: list[tuple[str, str]] = []
     for rule in rules:
         glob = rule.get("glob", "")
-        if not glob or not _glob_match(rel_path, glob):
+        exclude = rule.get("exclude", "")
+        if not glob or not _glob_match(rel_path, glob, exclude):
             continue
         for ref in rule.get("refs", []):
             if ref not in seen:
