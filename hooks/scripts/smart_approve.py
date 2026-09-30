@@ -41,7 +41,6 @@ PERMISSIONS: dict[str, list[str]] = {
         "Bash(docker run:*)",
         "Bash(docker exec:*)",
         "Bash(git merge:*)",
-        "Bash(git commit:*)",
     ],
 }
 
