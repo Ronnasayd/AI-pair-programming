@@ -1192,6 +1192,105 @@ def is_rag_rat_available(cwd: str) -> bool:
     return shutil.which("rag-rat") is not None and (Path(cwd) / "rag-rat.toml").exists()
 
 
+def _mcp_stdio_send(proc: subprocess.Popen, msg: dict) -> None:
+    """Write one JSON-RPC message to proc's stdin, newline-terminated."""
+    assert proc.stdin is not None  # noqa: S101 - invariant: proc opened with stdin=PIPE
+    proc.stdin.write(json.dumps(msg) + "\n")
+    proc.stdin.flush()
+
+
+def _mcp_stdio_recv(proc: subprocess.Popen, timeout: int, server_label: str) -> dict:
+    """Read and parse one JSON-RPC response line from proc's stdout."""
+    import select
+
+    assert proc.stdout is not None  # noqa: S101 - invariant: proc opened with stdout=PIPE
+    ready, _, _ = select.select([proc.stdout], [], [], timeout)
+    if not ready:
+        raise TimeoutError(f"no response from {server_label}")
+    line = proc.stdout.readline()
+    if not line:
+        stderr = proc.stderr.read()[:500] if proc.stderr else ""
+        raise EOFError(f"{server_label} closed: {stderr}")
+    return json.loads(line)
+
+
+# why: mirrors call_rag_rat_tool's params plus command/client_name for backend reuse
+# pylint: disable-next=too-many-arguments,too-many-positional-arguments
+def _call_mcp_tool_stdio(
+    command: list[str],
+    client_name: str,
+    tool_name: str,
+    arguments: dict,
+    cwd: str,
+    logger: logging.Logger,
+    timeout: int = 15,
+) -> str | None:
+    """Call one MCP tool via a throwaway stdio subprocess.
+
+    Shared by `call_rag_rat_tool` and `call_cbm_tool`: both servers speak
+    plain MCP JSON-RPC over stdio, so only the spawn command and client name
+    differ. Returns the first content block's text, or None on any failure.
+    """
+    server_label = command[0]
+    try:
+        proc = subprocess.Popen(  # noqa: S603 - args resolved via PATH by design
+            command,
+            cwd=cwd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+        )
+    except OSError as e:
+        logger.warning(f"Failed to spawn {server_label}: {e}")
+        return None
+
+    try:
+        _mcp_stdio_send(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": client_name, "version": "0.0.1"},
+                },
+            },
+        )
+        _mcp_stdio_recv(proc, timeout, server_label)
+
+        _mcp_stdio_send(proc, {"jsonrpc": "2.0", "method": "notifications/initialized"})
+
+        _mcp_stdio_send(
+            proc,
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "tools/call",
+                "params": {"name": tool_name, "arguments": arguments},
+            },
+        )
+        resp = _mcp_stdio_recv(proc, timeout, server_label)
+    except (TimeoutError, EOFError, json.JSONDecodeError) as e:
+        logger.warning(f"{server_label} {tool_name} call failed: {e}")
+        return None
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+
+    if "error" in resp:
+        logger.debug(f"{server_label} {tool_name} error: {resp['error']}")
+        return None
+    content = resp.get("result", {}).get("content", [])
+    return content[0]["text"] if content else None
+
+
 def call_rag_rat_tool(
     tool_name: str,
     arguments: dict,
@@ -1203,85 +1302,84 @@ def call_rag_rat_tool(
 
     Returns the first content block's text, or None on any failure.
     """
-    try:
-        proc = subprocess.Popen(
-            ["rag-rat", "mcp"],  # noqa: S607 - rag-rat resolved via PATH by design
-            cwd=cwd,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            bufsize=1,
-        )
-    except OSError as e:
-        logger.warning(f"Failed to spawn rag-rat mcp: {e}")
-        return None
+    return _call_mcp_tool_stdio(
+        ["rag-rat", "mcp"], "hooks", tool_name, arguments, cwd, logger, timeout
+    )
 
-    try:
-        _rag_rat_send(
-            proc,
-            {
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "initialize",
-                "params": {
-                    "protocolVersion": "2024-11-05",
-                    "capabilities": {},
-                    "clientInfo": {"name": "hooks", "version": "0.0.1"},
-                },
-            },
-        )
-        _rag_rat_recv(proc, timeout)
 
-        _rag_rat_send(proc, {"jsonrpc": "2.0", "method": "notifications/initialized"})
+# ---------------------------------------------------------------------------
+# codebase-memory-mcp (raw JSON-RPC over stdio) — language fallback for repos
+# or file extensions rag-rat has no target_bindings for. See rag-rat.toml.
+# ---------------------------------------------------------------------------
 
-        _rag_rat_send(
-            proc,
-            {
-                "jsonrpc": "2.0",
-                "id": 2,
-                "method": "tools/call",
-                "params": {"name": tool_name, "arguments": arguments},
-            },
-        )
-        resp = _rag_rat_recv(proc, timeout)
-    except (TimeoutError, EOFError, json.JSONDecodeError) as e:
-        logger.warning(f"rag-rat {tool_name} call failed: {e}")
-        return None
-    finally:
-        proc.terminate()
+RAG_RAT_LANGS = {".py", ".md"}  # mirrors rag-rat.toml [target_bindings]
+
+_cbm_project_cache: dict[str, str | None] = {}
+
+
+def is_cbm_available(cwd: str) -> bool:  # noqa: ARG001 - cwd kept for symmetry with is_rag_rat_available
+    """Return True if the codebase-memory-mcp binary is on PATH."""
+    return shutil.which("codebase-memory-mcp") is not None
+
+
+def call_cbm_tool(
+    tool_name: str,
+    arguments: dict,
+    cwd: str,
+    logger: logging.Logger,
+    timeout: int = 15,
+) -> str | None:
+    """Call one codebase-memory-mcp tool via a throwaway subprocess.
+
+    Returns the first content block's text, or None on any failure.
+    """
+    return _call_mcp_tool_stdio(
+        ["codebase-memory-mcp"], "hooks", tool_name, arguments, cwd, logger, timeout
+    )
+
+
+def resolve_cbm_project(cwd: str, logger: logging.Logger) -> str | None:
+    """Resolve the codebase-memory-mcp project name indexed for `cwd`.
+
+    Project names are assigned at index time (see scripts/claude.install.sh)
+    and don't necessarily match the repo's directory name, so this matches
+    `list_projects`' `root_path` against `cwd` instead of guessing. Cached
+    per-process (per cwd) since it doesn't change within one hook run.
+    """
+    resolved = str(Path(cwd).resolve())
+    if resolved in _cbm_project_cache:
+        return _cbm_project_cache[resolved]
+
+    text = call_cbm_tool("list_projects", {"format": "json"}, cwd, logger)
+    name = None
+    if text:
         try:
-            proc.wait(timeout=3)
-        except subprocess.TimeoutExpired:
-            proc.kill()
+            projects = json.loads(text).get("projects") or []
+        except json.JSONDecodeError:
+            projects = []
+        for project in projects:
+            if str(Path(project.get("root_path", "")).resolve()) == resolved:
+                name = project.get("name")
+                break
 
-    if "error" in resp:
-        logger.debug(f"rag-rat {tool_name} error: {resp['error']}")
-        return None
-    content = resp.get("result", {}).get("content", [])
-    return content[0]["text"] if content else None
-
-
-def _rag_rat_send(proc: subprocess.Popen, msg: dict) -> None:
-    """Write one JSON-RPC message to proc's stdin, newline-terminated."""
-    assert proc.stdin is not None  # noqa: S101 - invariant: proc opened with stdin=PIPE
-    proc.stdin.write(json.dumps(msg) + "\n")
-    proc.stdin.flush()
+    _cbm_project_cache[resolved] = name
+    return name
 
 
-def _rag_rat_recv(proc: subprocess.Popen, timeout: int) -> dict:
-    """Read and parse one JSON-RPC response line from proc's stdout."""
-    import select
+def pick_repo_intel_backend(file_path: str, cwd: str) -> str | None:
+    """Pick which repo-intelligence MCP backend to query for `file_path`.
 
-    assert proc.stdout is not None  # noqa: S101 - invariant: proc opened with stdout=PIPE
-    ready, _, _ = select.select([proc.stdout], [], [], timeout)
-    if not ready:
-        raise TimeoutError("no response from rag-rat mcp")
-    line = proc.stdout.readline()
-    if not line:
-        stderr = proc.stderr.read()[:500] if proc.stderr else ""
-        raise EOFError("rag-rat mcp closed: " + stderr)
-    return json.loads(line)
+    rag-rat is authoritative for languages it has target_bindings for in
+    this repo (python, markdown); codebase-memory-mcp (162 languages via
+    tree-sitter) is the fallback for everything else. Returns "rag-rat",
+    "cbm", or None if neither is available.
+    """
+    ext = Path(file_path).suffix.lower()
+    if ext in RAG_RAT_LANGS and is_rag_rat_available(cwd):
+        return "rag-rat"
+    if is_cbm_available(cwd):
+        return "cbm"
+    return None
 
 
 def rgb_to_ansi(r: int, g: int, b: int) -> str:

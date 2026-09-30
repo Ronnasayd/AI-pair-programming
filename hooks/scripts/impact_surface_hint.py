@@ -1,10 +1,11 @@
 #!/usr/bin/python3
-"""PostToolUse hook: after Edit/Write/MultiEdit, ask rag-rat's impact_surface.
+"""PostToolUse hook: after Edit/Write/MultiEdit, surface the impact surface.
 
-Queries rag-rat's MCP `impact_surface` tool (via `utils.call_rag_rat_tool`) for
-which symbols call into / are called by the top-level functions and classes
-just touched, so the agent sees the blast radius without a separate tool
-round-trip.
+Queries rag-rat's `impact_surface` for languages it indexes here, falling
+back to codebase-memory-mcp's `trace_path` otherwise (see
+`utils.pick_repo_intel_backend`), for which symbols call into / are called
+by the top-level functions and classes just touched, so the agent sees the
+blast radius without a separate tool round-trip.
 """
 
 # pylint: disable=missing-param-doc,missing-return-doc
@@ -17,20 +18,24 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import (
+    call_cbm_tool,
     call_rag_rat_tool,
     enclosing_def_name,
     extract_code_info,
     get_by_key,
     get_hooks_logger,
-    is_rag_rat_available,
     minify_json,
+    pick_repo_intel_backend,
     project_dir,
+    resolve_cbm_project,
 )
 
 LOG = get_hooks_logger("ImpactSurfaceHint")
 
 MAX_SYMBOLS = 5
 MCP_TIMEOUT_SECONDS = 15
+# why: rag-rat target_bindings languages + JS family, plus cbm hybrid-LSP
+# languages that fall back to codebase-memory-mcp (pick_repo_intel_backend)
 SOURCE_SUFFIXES = {
     ".py",
     ".ts",
@@ -38,6 +43,14 @@ SOURCE_SUFFIXES = {
     ".js",
     ".jsx",
     ".go",
+    ".kt",
+    ".java",
+    ".php",
+    ".cs",
+    ".c",
+    ".cpp",
+    ".rs",
+    ".pl",
 }
 
 
@@ -98,6 +111,27 @@ def call_impact_surface(symbol: str, cwd: str) -> str | None:
     )
 
 
+def call_trace_path(function_name: str, cwd: str) -> str | None:
+    """Call codebase-memory-mcp's `trace_path` tool for one function name."""
+    project = resolve_cbm_project(cwd, LOG)
+    if not project:
+        LOG.debug("no codebase-memory-mcp project indexed for %s", cwd)
+        return None
+    return call_cbm_tool(
+        "trace_path",
+        {
+            "project": project,
+            "function_name": function_name,
+            "direction": "both",
+            "depth": 1,
+            "format": "json",
+        },
+        cwd,
+        LOG,
+        timeout=MCP_TIMEOUT_SECONDS,
+    )
+
+
 FROM_SYMBOL_RE = re.compile(r'from_symbol:\s*"([^"]+)"')
 TO_SYMBOL_RE = re.compile(r'to_symbol:\s*"([^"]+)"')
 PATH_RE = re.compile(r'^\s*(?:-\s*)?path:\s*"?([^"\n]+)"?', re.MULTILINE)
@@ -152,6 +186,49 @@ def summarize(symbol: str, toon_text: str) -> dict | None:
     }
 
 
+def _trace_path_direct_names(direction_block: dict) -> list[str]:
+    """Flatten trace_path's {qn_prefix, rows:[[name, hop]]} groups, hop==1 only."""
+    names = []
+    for group in direction_block.get("groups") or []:
+        prefix = group.get("qn_prefix") or ""
+        for row in group.get("rows") or []:
+            name, hop = row[0], row[1]
+            if hop != 1:
+                continue
+            names.append(f"{prefix}.{name}" if prefix else name)
+    return names
+
+
+def summarize_cbm(symbol: str, json_text: str) -> dict | None:
+    """Extract callers/callees from codebase-memory-mcp's trace_path JSON output."""
+    try:
+        data = json.loads(json_text)
+    except json.JSONDecodeError:
+        return None
+
+    callers = _trace_path_direct_names(data.get("callers") or {})
+    callees = _trace_path_direct_names(data.get("callees") or {})
+    if not (callers or callees):
+        return None
+    return {
+        "symbol": symbol,
+        "called_by": callers or None,
+        "calls": callees or None,
+        "imported_by": None,
+    }
+
+
+def impact_summary_for_symbol(
+    symbol: str, file_path: str, cwd: str, backend: str
+) -> dict | None:
+    """Query `backend` for one symbol's impact surface and summarize the result."""
+    if backend == "rag-rat":
+        text = call_impact_surface(qualified_ref(file_path, symbol, cwd), cwd)
+        return summarize(symbol, text) if text else None
+    text = call_trace_path(symbol, cwd)
+    return summarize_cbm(symbol, text) if text else None
+
+
 def main() -> None:
     """Entry point: read the PostToolUse payload and emit impact_surface hints."""
     # why: spawns own rag-rat mcp subprocess per call — stdio JSON-RPC needs a fresh
@@ -164,8 +241,11 @@ def main() -> None:
 
     try:
         cwd = project_dir(payload)
-        if not is_rag_rat_available(cwd):
-            LOG.debug("rag-rat not installed/configured in %s — skipping", cwd)
+        backend = pick_repo_intel_backend(
+            get_by_key(get_by_key(payload, "tool_input") or {}, "file_path") or "", cwd
+        )
+        if not backend:
+            LOG.debug("no repo-intel backend available in %s — skipping", cwd)
             sys.exit(0)
 
         tool_name = get_by_key(payload, "tool_name")
@@ -182,17 +262,13 @@ def main() -> None:
             LOG.debug("No public top-level symbols found in %s", file_path)
             sys.exit(0)
 
-        LOG.debug("Checking impact surface for %s in %s", symbols, file_path)
+        LOG.debug("impact surface for %s in %s via %s", symbols, file_path, backend)
 
-        results = []
-        for symbol in symbols:
-            ref = qualified_ref(file_path, symbol, cwd)
-            text = call_impact_surface(ref, cwd)
-            if not text:
-                continue
-            summary = summarize(symbol, text)
-            if summary:
-                results.append(summary)
+        results = [
+            s
+            for symbol in symbols
+            if (s := impact_summary_for_symbol(symbol, file_path, cwd, backend))
+        ]
 
         if not results:
             sys.exit(0)
@@ -204,9 +280,8 @@ def main() -> None:
                     {
                         "instruction": (
                             "the file you just modified has these "
-                            "dependents/dependencies per symbol (from rag-rat "
-                            "impact_surface) — consider whether your change "
-                            "breaks any callers listed"
+                            f"dependents/dependencies per symbol (from {backend}) "
+                            "— consider whether your change breaks any callers listed"
                         ),
                         "file": file_path,
                         "results": results,

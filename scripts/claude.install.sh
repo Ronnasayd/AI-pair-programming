@@ -271,6 +271,15 @@ else
   echo "Warning: rag-rat not used locally" >&2
 fi
 ##########################################################################################
+###########################################################################################
+if command -v codebase-memory-mcp &>/dev/null; then
+  nohup codebase-memory-mcp cli index_repository --repo-path "$LOCAL" --name aipp >/tmp/codebase-memory-mcp-setup.log 2>&1 &
+  disown
+  echo "codebase-memory-mcp indexing running in background (log: /tmp/codebase-memory-mcp-setup.log) [ok]"
+else
+  echo "Warning: codebase-memory-mcp not used locally" >&2
+fi
+##########################################################################################
 source $SOURCE/scripts/ignores.sh
 
 ###########################################################################################
