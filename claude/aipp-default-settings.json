@@ -83,7 +83,7 @@
     "compress-skill": false,
     "confluence-assistant": false,
     "content-hash-cache-pattern": false,
-    "context-map": false,
+    "context-map": true,
     "context7-documentation-lookup": false,
     "copilot-sdk": false,
     "coupling-analysis": false,
