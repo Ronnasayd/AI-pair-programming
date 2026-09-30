@@ -13,7 +13,7 @@ echo "Uninstalling from: $SOURCE"
 "$SOURCE/install.sh" --clean --all
 
 # Remove global command symlinks.
-for bin in /usr/local/bin/iai /usr/local/bin/mif; do
+for bin in /usr/local/bin/aipp /usr/local/bin/mif; do
   if [ -L "$bin" ]; then
     sudo rm "$bin" && echo "Removed $bin"
   fi
@@ -23,9 +23,9 @@ done
 strip_lines() {
   local rc="$1"
   [ -f "$rc" ] || return 0
-  if grep -qF "$SOURCE/.ai.alias.zshrc" "$rc" || grep -qF "AI_PROJECT_ROOT_DIR=\"$SOURCE\"" "$rc"; then
+  if grep -qF "$SOURCE/.aipp.alias.zshrc" "$rc" || grep -qF "AI_PROJECT_ROOT_DIR=\"$SOURCE\"" "$rc"; then
     sed -i.bak \
-      -e "\#source $SOURCE/.ai.alias.zshrc#d" \
+      -e "\#source $SOURCE/.aipp.alias.zshrc#d" \
       -e "\#export AI_PROJECT_ROOT_DIR=\"$SOURCE\"#d" \
       "$rc"
     echo "Cleaned $rc (backup: $rc.bak)"

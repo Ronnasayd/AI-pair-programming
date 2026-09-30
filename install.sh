@@ -8,7 +8,7 @@ if [ -L "$SCRIPT_FILE" ]; then
   echo "Building"
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
 else
-  if [ ! -L "/usr/local/bin/iai" ]; then
+  if [ ! -L "/usr/local/bin/aipp" ]; then
     echo "Running install script: $SCRIPT_FILE"
     SOURCE="$(pwd)"
     source "$SOURCE/scripts/installs/_generic.install.sh"
@@ -19,25 +19,29 @@ else
     # bash "$(pwd)/scripts/update-external-tools.sh"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
-    sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/iai"
+    sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/aipp"
     sudo ln -s "$SOURCE/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
     if [ -f ~/.bashrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.bashrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc [ok]"
     fi
-    if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.bashrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.bashrc && echo ".ai.alias.zshrc add at .bashrc [ok]"
+    if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.aipp.alias.zshrc" ~/.bashrc; then
+      echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.bashrc && echo ".aipp.alias.zshrc add at .bashrc [ok]"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.zshrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.zshrc && echo "AI_PROJECT_ROOT_DIR add at .zshrc [ok]"
     fi
-    if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.ai.alias.zshrc" ~/.zshrc; then
-      echo "source $SOURCE/.ai.alias.zshrc" >> ~/.zshrc && echo ".ai.alias.zshrc add at .zshrc [ok]"
+    if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.aipp.alias.zshrc" ~/.zshrc; then
+      echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.zshrc && echo ".aipp.alias.zshrc add at .zshrc [ok]"
     fi
-    if [ -f ~/.bashrc ] && ! grep -q "export PATH=$HOME/.local/bin:$PATH" ~/.bashrc; then
-      echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc
+
+    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
+      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+      source ~/.zshrc
     fi
-    if [ -f ~/.zshrc ] && ! grep -q "export PATH=$HOME/.local/bin:$PATH" ~/.zshrc; then
-      echo "export PATH=$HOME/.local/bin:$PATH" >> ~/.zshrc
+
+    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
+      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+      source ~/.bashrc
     fi
 
     claude plugin marketplace add cq27-dev/rag-rat
@@ -59,7 +63,7 @@ else
     install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook && chmod +x ~/.local/bin/lefthook"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
-    echo "Use the command: iai --help"
+    echo "Use the command: aipp --help"
     exit 0
   fi
 fi
