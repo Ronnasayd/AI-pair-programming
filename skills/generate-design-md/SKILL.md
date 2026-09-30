@@ -41,7 +41,7 @@ Document what the code does, not an ideal. Sources, priority order:
 | 5   | Component files — recurring className patterns, variant props                               |
 | 6   | Figma export / screenshots the user supplies                                                |
 
-Use `grep` / `rag-rat` for targeted extraction — don't read whole files when a
+Use `grep` / `rag-rat` / `codebase-memory-mcp` for targeted extraction — don't read whole files when a
 pattern search finds the tokens.
 
 ## 2. Write front matter + body

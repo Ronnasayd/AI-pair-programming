@@ -12,7 +12,7 @@ Add the following steps as tasks using the `TaskCreate`, `TaskUpdate`, `TaskGet`
 
 1. Repeat these steps until you have a complete understanding of the problem and how it fits into the current context. When you feel the loop should end because you have sufficient context, ask the user if they wish to finish or continue refining issues before creating the plan.
    1. Use `sequentialthinking` in `mcp-manager` to break down the feature request into sub-issues (scope, constraints, edge cases, dependencies). Use `/dynamic-programming-analysis` when the breakdown itself is hard (unclear where to start, many interdependent sub-problems).
-   2. Next, use tools such as `rag-rat`, `serena`, `grep`, `Read`, or any other available tool to read files, perform a semantic search, and gather all necessary information from the codebase.
+   2. Next, use tools such as `rag-rat`, `codebase-memory-mcp`, `serena`, `grep`, `Read`, or any other available tool to read files, perform a semantic search, and gather all necessary information from the codebase.
       1. Treat codebase as absolute source of truth. Navigate file-by-file, following flows that will be modified/adjusted, until you reach limits and have total understanding of current behavior.
       2. Don't trust linear flows alone — search transversally: hunt keywords/terms possibly related but not directly linked, or absent from files already inspected (config, feature flags, error codes, event names, shared constants).
       3. Use every available tool to reach this understanding: semantic search, sub-agents for parallel/deep search, CLI commands, MCP tools, skills, or anything else that helps.
