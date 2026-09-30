@@ -35,45 +35,45 @@ Scripts live in [`scripts/`](scripts) and run via
 
 ## PreToolUse
 
-| Matcher             | Script                        | Purpose                                                                                                                       |
-| ------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `AskUserQuestion`   | `notify_sound.py`             | Plays an alert sound when the user is asked a question.                                                                       |
-| `Bash`              | `rtk-rewrite.sh`              | Rewrites commands through the RTK token-saving proxy.                                                                         |
-| `Bash`              | `smart_approve.py`            | Decomposes compound bash commands and checks each against allow/deny patterns.                                                |
-| `Bash`              | `protect_branches.py`         | Denies git operations that would mutate a protected branch (main/master/develop/homolog) outside a PR flow.                   |
-| `Bash`              | `dev_server_tmux_check.py`    | Blocks dev-server commands run outside tmux/screen.                                                                           |
-| `Edit\|Write`       | `md_language_check.py`        | Reminds the agent to write markdown in English.                                                                               |
-| `Edit\|Write`       | `context_refs.py`             | Injects reference-file contents into context when a matched file is about to be edited.                                       |
-| `Edit\|Write`       | `semantic_similar_refs.py`    | Surfaces semantically similar existing code (rag-rat) for content about to be written; skipped if `rag-rat` isn't installed.  |
-| `Write`             | `md_location_check.py`        | Warns when a `.md` file is created outside standard locations.                                                                |
-| `Read\|Edit\|Write` | `dir_context_refs.py`         | Walks parent dirs for `CONTEXT.md`/`CLAUDE.md`/`AGENTS.md` and announces them.                                                |
-| `Read`              | `large_file_read_warning.py`  | Warns when reading a large file without offset/limit.                                                                         |
-| _(all)_             | `tooluse_context_rules.py`    | Generic rule engine: injects `additionalContext` when a rule's `match(payload)` is true.                                      |
-| _(all)_             | `subagent_guidelines.py`      | Injects guidelines when a subagent starts.                                                                                    |
-| _(all)_             | `protect_files.py`            | Blocks reads/writes/exfiltration of protected paths (secrets, home dir, etc.), hardened against compound/obfuscated commands. |
-| _(all)_             | `ai-memory` pre-tool-use hook | Records tool-call observation.                                                                                                |
-| _(all)_             | `agent-flow/hook.js`          | External agent-flow integration hook.                                                                                         |
+| Matcher             | Script                        | Purpose                                                                                                                                                                                 |
+| ------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AskUserQuestion`   | `notify_sound.py`             | Plays an alert sound when the user is asked a question.                                                                                                                                 |
+| `Bash`              | `rtk-rewrite.sh`              | Rewrites commands through the RTK token-saving proxy.                                                                                                                                   |
+| `Bash`              | `smart_approve.py`            | Decomposes compound bash commands and checks each against allow/deny patterns.                                                                                                          |
+| `Bash`              | `protect_branches.py`         | Denies git operations that would mutate a protected branch (main/master/develop/homolog) outside a PR flow.                                                                             |
+| `Bash`              | `dev_server_tmux_check.py`    | Blocks dev-server commands run outside tmux/screen.                                                                                                                                     |
+| `Edit\|Write`       | `md_language_check.py`        | Reminds the agent to write markdown in English.                                                                                                                                         |
+| `Edit\|Write`       | `context_refs.py`             | Injects reference-file contents into context when a matched file is about to be edited.                                                                                                 |
+| `Edit\|Write`       | `semantic_similar_refs.py`    | Surfaces semantically similar existing code for content about to be written, via rag-rat (languages it indexes here) or codebase-memory-mcp otherwise; skipped if neither is installed. |
+| `Write`             | `md_location_check.py`        | Warns when a `.md` file is created outside standard locations.                                                                                                                          |
+| `Read\|Edit\|Write` | `dir_context_refs.py`         | Walks parent dirs for `CONTEXT.md`/`CLAUDE.md`/`AGENTS.md` and announces them.                                                                                                          |
+| `Read`              | `large_file_read_warning.py`  | Warns when reading a large file without offset/limit.                                                                                                                                   |
+| _(all)_             | `tooluse_context_rules.py`    | Generic rule engine: injects `additionalContext` when a rule's `match(payload)` is true.                                                                                                |
+| _(all)_             | `subagent_guidelines.py`      | Injects guidelines when a subagent starts.                                                                                                                                              |
+| _(all)_             | `protect_files.py`            | Blocks reads/writes/exfiltration of protected paths (secrets, home dir, etc.), hardened against compound/obfuscated commands.                                                           |
+| _(all)_             | `ai-memory` pre-tool-use hook | Records tool-call observation.                                                                                                                                                          |
+| _(all)_             | `agent-flow/hook.js`          | External agent-flow integration hook.                                                                                                                                                   |
 
 ## PostToolUse
 
-| Matcher           | Script                                      | Purpose                                                                                                                                     |
-| ----------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AskUserQuestion` | `skill_activation.py`, `context7_search.py` | Re-run after the question resolves.                                                                                                         |
-| `EnterWorktree`   | `worktree_init.py`                          | Symlinks `node_modules` from the main repo into a new worktree.                                                                             |
-| `Edit\|Write`     | `typescript_lint.py`                        | Runs `tsc`/ESLint on touched JS/TS files.                                                                                                   |
-| `Edit\|Write`     | `python_lint.py`                            | Runs `mypy`/`ruff` on touched Python files.                                                                                                 |
-| `Edit\|Write`     | `golang_lint.py`                            | Runs `go vet`/`golangci-lint`/`gofmt` on touched Go files.                                                                                  |
-| `Edit\|Write`     | `jest_coverage_incremental.py`              | Runs scoped `jest --coverage` in the background and merges it into project coverage.                                                        |
-| `Edit\|Write`     | `jest_coverage_report.py`                   | Reports the touched file's existing coverage numbers via `additionalContext`.                                                               |
-| `Edit\|Write`     | `jest_related_files_report.py`              | Reports which tests cover a touched source file (or which sources a touched test covers).                                                   |
-| `Edit\|Write`     | `impact_surface_hint.py`                    | Asks rag-rat's `impact_surface` for blast-radius hints after an edit.                                                                       |
-| `Edit\|Write`     | `structural_clone_ref.py`                   | Asks rag-rat's `clones_for_symbol` whether a written def/class is a structural clone found elsewhere; skipped if `rag-rat` isn't installed. |
-| `Edit\|Write`     | `php_lint.py`                               | Runs PHP lint checks on touched PHP files.                                                                                                  |
-| `Edit\|Write`     | `comment_policy_hint.py`                    | Flags comments that violate the repo's no-narration comment policy.                                                                         |
-| _(all)_           | `scan_secrets_output.py`                    | Redacts secrets detected (via `secret_scan.py`) in tool output.                                                                             |
-| _(all)_           | `checklist_context_watch.py`                | Re-checks active skill checklist state.                                                                                                     |
-| _(all)_           | `tooluse_context_rules.py`                  | Same rule engine as PreToolUse.                                                                                                             |
-| _(all)_           | `ai-memory` post-tool-use hook              | Records tool-result observation.                                                                                                            |
+| Matcher           | Script                                      | Purpose                                                                                                                                                |
+| ----------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `AskUserQuestion` | `skill_activation.py`, `context7_search.py` | Re-run after the question resolves.                                                                                                                    |
+| `EnterWorktree`   | `worktree_init.py`                          | Symlinks `node_modules` from the main repo into a new worktree.                                                                                        |
+| `Edit\|Write`     | `typescript_lint.py`                        | Runs `tsc`/ESLint on touched JS/TS files.                                                                                                              |
+| `Edit\|Write`     | `python_lint.py`                            | Runs `mypy`/`ruff` on touched Python files.                                                                                                            |
+| `Edit\|Write`     | `golang_lint.py`                            | Runs `go vet`/`golangci-lint`/`gofmt` on touched Go files.                                                                                             |
+| `Edit\|Write`     | `jest_coverage_incremental.py`              | Runs scoped `jest --coverage` in the background and merges it into project coverage.                                                                   |
+| `Edit\|Write`     | `jest_coverage_report.py`                   | Reports the touched file's existing coverage numbers via `additionalContext`.                                                                          |
+| `Edit\|Write`     | `jest_related_files_report.py`              | Reports which tests cover a touched source file (or which sources a touched test covers), via rag-rat, then codebase-memory-mcp, then a grep fallback. |
+| `Edit\|Write`     | `impact_surface_hint.py`                    | Asks rag-rat's `impact_surface` (or codebase-memory-mcp's `trace_path` for languages rag-rat doesn't index here) for blast-radius hints after an edit. |
+| `Edit\|Write`     | `structural_clone_ref.py`                   | Asks rag-rat's `clones_for_symbol` whether a written def/class is a structural clone found elsewhere; skipped if `rag-rat` isn't installed.            |
+| `Edit\|Write`     | `php_lint.py`                               | Runs PHP lint checks on touched PHP files.                                                                                                             |
+| `Edit\|Write`     | `comment_policy_hint.py`                    | Flags comments that violate the repo's no-narration comment policy.                                                                                    |
+| _(all)_           | `scan_secrets_output.py`                    | Redacts secrets detected (via `secret_scan.py`) in tool output.                                                                                        |
+| _(all)_           | `checklist_context_watch.py`                | Re-checks active skill checklist state.                                                                                                                |
+| _(all)_           | `tooluse_context_rules.py`                  | Same rule engine as PreToolUse.                                                                                                                        |
+| _(all)_           | `ai-memory` post-tool-use hook              | Records tool-result observation.                                                                                                                       |
 
 ## Stop / SubagentStop
 

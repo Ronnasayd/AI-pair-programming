@@ -11,7 +11,7 @@ flowchart TD
         scope, constraints, edge cases, deps
         (use /dynamic-programming-analysis
         if breakdown itself is hard)"] --> A2
-        A2["rag-rat / serena / grep / Read
+        A2["rag-rat / cbm / serena / grep / Read
         gather codebase context"] --> A2a["Codebase = source of truth
         traverse file-by-file to limits,
         full understanding of current flow"]
