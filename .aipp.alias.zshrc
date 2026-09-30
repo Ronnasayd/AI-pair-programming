@@ -38,7 +38,7 @@ alias lgh="touch $HOME/.claude/logs/hooks.log && tail -f $HOME/.claude/logs/hook
 alias lght="touch $HOME/.claude/logs/hooks-tools-colorized.log && tail -f $HOME/.claude/logs/hooks-tools-colorized.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
 alias lghac='touch $HOME/.claude/logs/hooks.log && tail -f $HOME/.claude/logs/hooks.log | grep -e "\[additionalContext\]" | bat --paging=never -l log' # Show additionalContext hook log lines
 alias lghe="touch $HOME/.claude/logs/external.log && tail -f $HOME/.claude/logs/external.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
-alias mia="mif && iai --claude" # Run mif then launch iai with Claude backend: mif-iai-claude
+alias mia="mif && aipp --claude" # Run mif then launch aipp with Claude backend: mif-aipp-claude
 alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py' # Run AI lint-fix agent script: lint-fix
 alias codeburn="npx codeburn" # Run codeburn CLI via npx: codeburn
 alias tksgi="echo '.tokensave/*' >> .git/info/exclude" # Ignore tokensave artifacts locally: tokensave-gitignore

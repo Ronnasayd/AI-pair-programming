@@ -76,7 +76,7 @@ Non-native (non-coreutils) tools required or installed by this project's bash/py
 | `bwrap` (bubblewrap)                               | Sandboxing for `scripts/ai-jail.sh`                                          |
 | `docker`                                           | Runs sandbox mounts (`ai-jail.sh`) and the litellm proxy container           |
 | `litellm` (Docker image `ghcr.io/berriai/litellm`) | LLM proxy service, `docker/litellm/docker-compose.yml`                       |
-| `ai-memory` container (`akitaonrails/ai-memory`)   | Docker image run by `aims`/`aimsllm` aliases in `.ai.alias.zshrc`            |
+| `ai-memory` container (`akitaonrails/ai-memory`)   | Docker image run by `aims`/`aimsllm` aliases in `.aipp.alias.zshrc`          |
 | `codeburn` (via `npx`)                             | CLI run by `codeburn` alias                                                  |
 | `agent-flow-app` (via `npx`)                       | CLI run by `afa` alias                                                       |
 | `omniroute` (via `npx`)                            | CLI run by `omniroute` alias                                                 |

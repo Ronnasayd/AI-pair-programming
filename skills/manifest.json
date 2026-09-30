@@ -13,9 +13,7 @@
   },
   "skill-judge": {
     "skill_md": "agent-toolkit/skill-judge/SKILL.md",
-    "files": [
-      "README.md"
-    ]
+    "files": ["README.md"]
   },
   "analyze-comfyui-workflow-json": {
     "skill_md": "analyze-comfyui-workflow-json/SKILL.md",
@@ -100,9 +98,7 @@
   },
   "frontend-design": {
     "skill_md": "anthropics/frontend-design/SKILL.md",
-    "files": [
-      "LICENSE.txt"
-    ]
+    "files": ["LICENSE.txt"]
   },
   "mcp-builder": {
     "skill_md": "anthropics/mcp-builder/SKILL.md",
@@ -237,9 +233,7 @@
   },
   "author-claude-hook": {
     "skill_md": "author-claude-hook/SKILL.md",
-    "files": [
-      "references/conventions.md"
-    ]
+    "files": ["references/conventions.md"]
   },
   "auto-improve": {
     "skill_md": "auto-improve/SKILL.md",
@@ -299,10 +293,7 @@
   },
   "dynamic-programming-analysis": {
     "skill_md": "dynamic-programming-analysis/SKILL.md",
-    "files": [
-      "references/example.md",
-      "references/response-template.md"
-    ]
+    "files": ["references/example.md", "references/response-template.md"]
   },
   "event-storming": {
     "skill_md": "event-storming/SKILL.md",
@@ -437,9 +428,7 @@
   },
   "github-ops": {
     "skill_md": "everything-claude-code/github-ops/SKILL.md",
-    "files": [
-      "references/ecc-release-checklist.md"
-    ]
+    "files": ["references/ecc-release-checklist.md"]
   },
   "golang-patterns": {
     "skill_md": "everything-claude-code/golang-patterns/SKILL.md",
@@ -523,9 +512,7 @@
   },
   "security-review": {
     "skill_md": "everything-claude-code/security-review/SKILL.md",
-    "files": [
-      "cloud-infrastructure-security.md"
-    ]
+    "files": ["cloud-infrastructure-security.md"]
   },
   "security-scan": {
     "skill_md": "everything-claude-code/security-scan/SKILL.md",
@@ -571,17 +558,11 @@
   },
   "figma-capture-local": {
     "skill_md": "figma/figma-capture-local/SKILL.md",
-    "files": [
-      "index.html",
-      "references/jsx-template.md"
-    ]
+    "files": ["index.html", "references/jsx-template.md"]
   },
   "figma-capture-mcp": {
     "skill_md": "figma/figma-capture-mcp/SKILL.md",
-    "files": [
-      "index.html",
-      "references/jsx-template.md"
-    ]
+    "files": ["index.html", "references/jsx-template.md"]
   },
   "figma-code-connect-components": {
     "skill_md": "figma/figma-code-connect-components/SKILL.md",
@@ -645,9 +626,7 @@
   },
   "generate-pr-description": {
     "skill_md": "generate-pr-description/SKILL.md",
-    "files": [
-      "scripts/validate_pr_description.py"
-    ]
+    "files": ["scripts/validate_pr_description.py"]
   },
   "git-guide": {
     "skill_md": "git-guide/SKILL.md",
@@ -705,30 +684,19 @@
   },
   "diagnosing-bugs": {
     "skill_md": "mattpocock/engineering/diagnosing-bugs/SKILL.md",
-    "files": [
-      "agents/openai.yaml",
-      "scripts/hitl-loop.template.sh"
-    ]
+    "files": ["agents/openai.yaml", "scripts/hitl-loop.template.sh"]
   },
   "domain-modeling": {
     "skill_md": "mattpocock/engineering/domain-modeling/SKILL.md",
-    "files": [
-      "ADR-FORMAT.md",
-      "CONTEXT-FORMAT.md",
-      "agents/openai.yaml"
-    ]
+    "files": ["ADR-FORMAT.md", "CONTEXT-FORMAT.md", "agents/openai.yaml"]
   },
   "grill-with-docs": {
     "skill_md": "mattpocock/engineering/grill-with-docs/SKILL.md",
-    "files": [
-      "agents/openai.yaml"
-    ]
+    "files": ["agents/openai.yaml"]
   },
   "grilling": {
     "skill_md": "mattpocock/productivity/grilling/SKILL.md",
-    "files": [
-      "agents/openai.yaml"
-    ]
+    "files": ["agents/openai.yaml"]
   },
   "mcp-manager-instructions": {
     "skill_md": "mcp-manager-instructions/SKILL.md",
@@ -748,9 +716,7 @@
   },
   "mutation-survivor-triage": {
     "skill_md": "mutation-survivor-triage/SKILL.md",
-    "files": [
-      "references/example-and-troubleshooting.md"
-    ]
+    "files": ["references/example-and-troubleshooting.md"]
   },
   "my-frontend-patterns": {
     "skill_md": "my-frontend-patterns/SKILL.md",
@@ -770,17 +736,11 @@
   },
   "pr-review": {
     "skill_md": "pr-review/SKILL.md",
-    "files": [
-      "references/examples.md",
-      "references/troubleshooting.md"
-    ]
+    "files": ["references/examples.md", "references/troubleshooting.md"]
   },
   "prd-from-codebase": {
     "skill_md": "prd-from-codebase/SKILL.md",
-    "files": [
-      "references/prd-template.md",
-      "references/stack-hints.md"
-    ]
+    "files": ["references/prd-template.md", "references/stack-hints.md"]
   },
   "prd-generator": {
     "skill_md": "prd-generator/SKILL.md",
@@ -811,10 +771,7 @@
   },
   "quality-gate": {
     "skill_md": "quality-gate/SKILL.md",
-    "files": [
-      "scripts/quality-gate.js",
-      "scripts/quality-gate.test.js"
-    ]
+    "files": ["scripts/quality-gate.js", "scripts/quality-gate.test.js"]
   },
   "resolve-merge-conflicts": {
     "skill_md": "resolve-merge-conflicts/SKILL.md",
@@ -856,11 +813,7 @@
   },
   "sd-planning": {
     "skill_md": "sd-planning/SKILL.md",
-    "files": [
-      "CHECKLIST.md",
-      "references/diagram.md",
-      "references/docs-adr.md"
-    ]
+    "files": ["CHECKLIST.md", "references/diagram.md", "references/docs-adr.md"]
   },
   "semantic-commit-message": {
     "skill_md": "semantic-commit-message/SKILL.md",
@@ -872,10 +825,7 @@
   },
   "skill-description-generator": {
     "skill_md": "skill-description-generator/SKILL.md",
-    "files": [
-      "references/examples.md",
-      "references/troubleshooting.md"
-    ]
+    "files": ["references/examples.md", "references/troubleshooting.md"]
   },
   "skills-discovery": {
     "skill_md": "skills-discovery/SKILL.md",
@@ -883,15 +833,11 @@
   },
   "spec-to-requirements-table": {
     "skill_md": "spec-to-requirements-table/SKILL.md",
-    "files": [
-      "scripts/validate_requirements.py"
-    ]
+    "files": ["scripts/validate_requirements.py"]
   },
   "srs-generator": {
     "skill_md": "srs-generator/SKILL.md",
-    "files": [
-      "references/srs-template.md"
-    ]
+    "files": ["references/srs-template.md", "scripts/validate_srs.py"]
   },
   "ste": {
     "skill_md": "ste/SKILL.md",
@@ -937,10 +883,7 @@
   },
   "taskmaster-overview": {
     "skill_md": "taskmaster/taskmaster-overview/SKILL.md",
-    "files": [
-      "references/commands.md",
-      "references/workflows.md"
-    ]
+    "files": ["references/commands.md", "references/workflows.md"]
   },
   "taskmaster-prd-generator": {
     "skill_md": "taskmaster/taskmaster-prd-generator/SKILL.md",
@@ -952,10 +895,7 @@
   },
   "codenavi": {
     "skill_md": "tech-leads-club/codenavi/SKILL.md",
-    "files": [
-      "references/coding-principles.md",
-      "references/notebook-spec.md"
-    ]
+    "files": ["references/coding-principles.md", "references/notebook-spec.md"]
   },
   "confluence-assistant": {
     "skill_md": "tech-leads-club/confluence-assistant/SKILL.md",
@@ -967,30 +907,19 @@
   },
   "create-adr": {
     "skill_md": "tech-leads-club/create-adr/SKILL.md",
-    "files": [
-      "README.md"
-    ]
+    "files": ["README.md"]
   },
   "create-rfc": {
     "skill_md": "tech-leads-club/create-rfc/SKILL.md",
-    "files": [
-      "README.md",
-      "references/section-templates.md"
-    ]
+    "files": ["README.md", "references/section-templates.md"]
   },
   "domain-analysis": {
     "skill_md": "tech-leads-club/domain-analysis/SKILL.md",
-    "files": [
-      "EXAMPLES.md",
-      "QUICK-REFERENCE.md",
-      "README.md"
-    ]
+    "files": ["EXAMPLES.md", "QUICK-REFERENCE.md", "README.md"]
   },
   "figma-implement-design": {
     "skill_md": "tech-leads-club/figma-implement-design/SKILL.md",
-    "files": [
-      "LICENSE.txt"
-    ]
+    "files": ["LICENSE.txt"]
   },
   "frontend-blueprint": {
     "skill_md": "tech-leads-club/frontend-blueprint/SKILL.md",
@@ -1002,17 +931,11 @@
   },
   "gh-address-comments": {
     "skill_md": "tech-leads-club/gh-address-comments/SKILL.md",
-    "files": [
-      "LICENSE.txt",
-      "scripts/fetch_comments.py"
-    ]
+    "files": ["LICENSE.txt", "scripts/fetch_comments.py"]
   },
   "gh-fix-ci": {
     "skill_md": "tech-leads-club/gh-fix-ci/SKILL.md",
-    "files": [
-      "LICENSE.txt",
-      "scripts/inspect_pr_checks.py"
-    ]
+    "files": ["LICENSE.txt", "scripts/inspect_pr_checks.py"]
   },
   "gtm-engineering": {
     "skill_md": "tech-leads-club/gtm-engineering/SKILL.md",
@@ -1043,9 +966,7 @@
   },
   "jira-assistant": {
     "skill_md": "tech-leads-club/jira-assistant/SKILL.md",
-    "files": [
-      "README.md"
-    ]
+    "files": ["README.md"]
   },
   "legacy-migration-planner": {
     "skill_md": "tech-leads-club/legacy-migration-planner/SKILL.md",
@@ -1214,10 +1135,7 @@
   },
   "spec-driven-eval": {
     "skill_md": "tech-leads-club/spec-driven-eval/SKILL.md",
-    "files": [
-      "references/quickstart.md",
-      "references/reference.md"
-    ]
+    "files": ["references/quickstart.md", "references/reference.md"]
   },
   "subagent-creator": {
     "skill_md": "tech-leads-club/subagent-creator/SKILL.md",
@@ -1247,9 +1165,7 @@
   },
   "tlc-discover": {
     "skill_md": "tech-leads-club/tlc-discover/SKILL.md",
-    "files": [
-      "references/document-format.md"
-    ]
+    "files": ["references/document-format.md"]
   },
   "tlc-implement": {
     "skill_md": "tech-leads-club/tlc-implement/SKILL.md",
@@ -1262,9 +1178,7 @@
   },
   "tlc-plan": {
     "skill_md": "tech-leads-club/tlc-plan/SKILL.md",
-    "files": [
-      "references/document-format.md"
-    ]
+    "files": ["references/document-format.md"]
   },
   "tlc-spec-driven": {
     "skill_md": "tech-leads-club/tlc-spec-driven/SKILL.md",
@@ -1317,9 +1231,7 @@
   },
   "technical-decision-helper": {
     "skill_md": "technical-decision-helper/SKILL.md",
-    "files": [
-      "references/templates.md"
-    ]
+    "files": ["references/templates.md"]
   },
   "my-tdd-workflow": {
     "skill_md": "tests/my-tdd-workflow/SKILL.md",
