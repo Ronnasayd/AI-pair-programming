@@ -257,7 +257,11 @@
   },
   "context-map": {
     "skill_md": "context-map/SKILL.md",
-    "files": []
+    "files": [
+      "references/output-template.md",
+      "references/tool-selection.md",
+      "scripts/validate_context_map.py"
+    ]
   },
   "context7-documentation-lookup": {
     "skill_md": "context7-documentation-lookup/SKILL.md",
@@ -837,7 +841,11 @@
   },
   "srs-generator": {
     "skill_md": "srs-generator/SKILL.md",
-    "files": ["references/srs-template.md", "scripts/validate_srs.py"]
+    "files": [
+      "references/srs-template.md",
+      "scripts/__pycache__/validate_srs.cpython-313.pyc",
+      "scripts/validate_srs.py"
+    ]
   },
   "ste": {
     "skill_md": "ste/SKILL.md",

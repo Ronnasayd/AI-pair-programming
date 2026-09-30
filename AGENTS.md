@@ -55,7 +55,6 @@ cd src && uv run skill-loader-mcp    # skill-loader MCP server
 
 <!-- INIT:AUTO-GENERATED-CONTEXT:DO-NOT-MODIFY -->
 
-
 ## Linters
 
 - For `python` files use ruff+pylint
@@ -90,11 +89,14 @@ Touching a component or screen → run tests via Playwright (or similar E2E tool
 | Resolve merge conflicts                                | `resolve-merge-conflicts`                    |
 | Execute tasks for a spec-driven feature (taskmaster)   | `sd-execute`                                 |
 | Generate a plan step-by-step                           | `sd-planning`                                |
+| Map files/deps/tests a task touches before changing    | `context-map`                                |
 | Build requirements review table from spec/design/tasks | `spec-to-requirements-table`                 |
 | Pick between technical options (pros/cons)             | `technical-decision-helper`                  |
 
 ## Context-Specific Rules
 
 The following rules apply to specific file types:
+
 - [code.instructions](.claude/instructions/code.instructions.md) — applies to: `**/*.ts, **/*.js, **/*.py, **/*.java, **/*.go, **/*.css, **/*.cpp, **/*.c, **/*.vue, **/*.jsx, **/*.tsx`
+
 <!-- END:AUTO-GENERATED-CONTEXT:DO-NOT-MODIFY -->
