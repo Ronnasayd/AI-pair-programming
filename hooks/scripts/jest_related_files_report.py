@@ -8,8 +8,9 @@ After a JS/TS file is edited/created:
     tests that cover it).
 
 Uses rag-rat (find_callers / trace_callees via impact_surface) when
-available for accurate, alias-aware resolution; falls back to a plain
-ripgrep-based import scan otherwise.
+available for accurate, alias-aware resolution, then codebase-memory-mcp's
+trace_path (languages rag-rat has no binding for), falling back to a plain
+ripgrep-based import scan when neither backend resolves anything.
 """
 
 import contextlib
@@ -25,11 +26,13 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
+    call_cbm_tool,
     call_rag_rat_tool,
     find_project_root,
     get_by_key,
     get_hooks_logger,
     is_rag_rat_available,
+    resolve_cbm_project,
 )
 
 logger = get_hooks_logger("JestRelatedFiles")
@@ -165,6 +168,65 @@ def _rag_rat_for_source_file(resolved: Path, project_root: str) -> list[str] | N
     return filtered[:MAX_RESULTS]
 
 
+def _cbm_qn_to_file(qn: str, project: str, project_root: str) -> str | None:
+    """Resolve one fully-qualified name to its file path via search_graph."""
+    text = call_cbm_tool(
+        "search_graph",
+        {"project": project, "qn_pattern": qn, "format": "json"},
+        project_root,
+        logger,
+        timeout=RAG_RAT_TIMEOUT,
+    )
+    if not text:
+        return None
+    try:
+        groups = json.loads(text).get("groups") or []
+    except json.JSONDecodeError:
+        return None
+    return groups[0].get("file") if groups else None
+
+
+def _cbm_for_source_file(resolved: Path, project_root: str) -> list[str] | None:
+    """Find test files calling into `resolved` via codebase-memory-mcp's trace_path."""
+    project = resolve_cbm_project(project_root, logger)
+    if not project:
+        return None
+    text = call_cbm_tool(
+        "trace_path",
+        {
+            "project": project,
+            "function_name": resolved.stem,
+            "direction": "inbound",
+            "include_tests": True,
+            "format": "json",
+        },
+        project_root,
+        logger,
+        timeout=RAG_RAT_TIMEOUT,
+    )
+    if not text:
+        return None
+    try:
+        callers = json.loads(text).get("callers") or {}
+    except json.JSONDecodeError:
+        return None
+
+    paths: list[str] = []
+    for group in callers.get("groups") or []:
+        prefix = group.get("qn_prefix") or ""
+        for row in group.get("rows") or []:
+            name, is_test = row[0], row[2]
+            if not is_test:
+                continue
+            qn = f"{prefix}.{name}" if prefix else name
+            path = _cbm_qn_to_file(qn, project, project_root)
+            if path and _is_test_file(Path(path)) and path not in paths:
+                paths.append(path)
+            if len(paths) >= MAX_RESULTS:
+                break
+    return paths
+
+
 def build_related_files_context(file_path: str | None) -> str | None:
     """Build the additionalContext message linking a JS/TS file to its related tests.
 
@@ -187,17 +249,21 @@ def build_related_files_context(file_path: str | None) -> str | None:
 
     related: list[str] | None = None
     # Test -> source direction is unambiguous from the spec's own imports
-    # (grep is exact); rag-rat's symbol-name query pulls in every consumer
-    # of that name (controllers, DI containers, barrel files), not just what
-    # this spec actually imports, so it's skipped here.
-    if is_rag_rat_available(project_root) and not is_test:
-        related = _rag_rat_for_source_file(resolved, project_root)
-        if related:
+    # (grep is exact); a symbol-name query pulls in every consumer of that
+    # name (controllers, DI containers, barrel files), not just what this
+    # spec actually imports, so it's skipped here for both backends.
+    if not is_test:
+        if is_rag_rat_available(project_root):
+            related = _rag_rat_for_source_file(resolved, project_root)
             logger.debug("rag-rat related=%s", related)
-        else:
+        if not related:
+            related = _cbm_for_source_file(resolved, project_root)
+            if related:
+                logger.debug("cbm related=%s", related)
+        if not related:
             # Empty result can mean a genuinely uncovered file, or a
-            # generic symbol name (e.g. "Role") that rag-rat's query
-            # couldn't disambiguate. Fall back to grep to tell them apart.
+            # generic symbol name (e.g. "Role") that the query couldn't
+            # disambiguate. Fall back to grep to tell them apart.
             related = None
 
     if related is None:

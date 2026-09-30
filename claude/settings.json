@@ -198,7 +198,7 @@
           },
           {
             "type": "command",
-            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/semantic_similar_refs.py; true",
+            "command": "{ command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ]; } || command -v codebase-memory-mcp &> /dev/null && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/semantic_similar_refs.py; true",
             "timeout": 10
           }
         ]
@@ -326,7 +326,7 @@
           },
           {
             "type": "command",
-            "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/impact_surface_hint.py; true",
+            "command": "{ command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ]; } || command -v codebase-memory-mcp &> /dev/null && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/impact_surface_hint.py; true",
             "timeout": 10
           },
           {

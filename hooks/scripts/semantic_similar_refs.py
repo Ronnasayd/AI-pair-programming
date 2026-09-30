@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 """Semantic-Similar-Refs Hook (POC).
 
-PreToolUse hook for Edit|Write. Queries rag-rat's semantic_search with the
-content about to be written and surfaces similar existing code, so the agent
-doesn't duplicate what's already there. Requires a rag-rat index; the caller
-(claude/settings.json) gates execution on `rag-rat` being installed, and this
-script additionally requires a `rag-rat.toml` in cwd — no other fallback.
+PreToolUse hook for Edit|Write. Queries the content about to be written
+against a repo-intelligence backend and surfaces similar existing code, so
+the agent doesn't duplicate what's already there. Uses rag-rat for languages
+it indexes here (see rag-rat.toml target_bindings), falling back to
+codebase-memory-mcp otherwise (see utils.pick_repo_intel_backend). The
+caller (claude/settings.json) gates execution on either binary being
+installed.
 """
 
 import contextlib
@@ -20,11 +22,13 @@ if script_dir not in sys.path:
     sys.path.append(script_dir)
 
 from utils import (  # noqa: E402
+    call_cbm_tool,
     call_rag_rat_tool,
     get_by_key,
     get_hooks_logger,
-    is_rag_rat_available,
+    pick_repo_intel_backend,
     project_dir,
+    resolve_cbm_project,
 )
 
 logger = get_hooks_logger("SemanticSimilarRefs")
@@ -34,27 +38,32 @@ MAX_EMBED_CHARS = 4000
 MAX_RESULTS = 3
 SEMANTIC_SEARCH_TIMEOUT = 10
 
-SOURCE_EXTS = {".py", ".ts", ".tsx", ".js", ".jsx", ".go"}
+# why: rag-rat target_bindings languages + JS family, plus cbm hybrid-LSP
+# languages that fall back to codebase-memory-mcp (pick_repo_intel_backend)
+SOURCE_EXTS = {
+    ".py",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".jsx",
+    ".go",
+    ".kt",
+    ".java",
+    ".php",
+    ".cs",
+    ".c",
+    ".cpp",
+    ".rs",
+    ".pl",
+}
 
 # Each hit is a "  - chunk_id: ...\n    path: ...\n" block (with summary).
 PATH_RE = re.compile(r'^\s*path:\s*"?([^"\n]+)"?', re.MULTILINE)
 SUMMARY_RE = re.compile(r'^\s*summary:\s*"(.*?)"\s*$', re.MULTILINE)
 
 
-def semantic_search_blocks(
-    content: str, target_file: str, cwd: str
-) -> list[str] | None:
-    """Query rag-rat's semantic_search with the new code as the query text.
-
-    Args:
-        content: The source code to query.
-        target_file: The file being edited (excluded from results).
-        cwd: Current working directory for rag-rat execution.
-
-    Returns:
-        Formatted blocks of similar code, or None if rag-rat errors.
-    """
-    query = content[:MAX_EMBED_CHARS]
+def _rag_rat_search_blocks(query: str, target_file: str, cwd: str) -> list[str]:
+    """Parse rag-rat's TOON `semantic_search` output into display blocks."""
     text = call_rag_rat_tool(
         "semantic_search",
         {"query": query, "limit": MAX_RESULTS},
@@ -63,7 +72,7 @@ def semantic_search_blocks(
         timeout=SEMANTIC_SEARCH_TIMEOUT,
     )
     if not text:
-        return None
+        return []
 
     blocks = []
     for hit in re.split(r"^  - chunk_id:", text, flags=re.MULTILINE)[1:]:
@@ -79,8 +88,73 @@ def semantic_search_blocks(
         blocks.append(f"=== semantically similar code in {path} ===\n{snippet}")
         if len(blocks) >= MAX_RESULTS:
             break
-
     return blocks
+
+
+def _cbm_search_blocks(query: str, target_file: str, cwd: str) -> list[str]:
+    """Query codebase-memory-mcp's `search_graph` and parse structuredContent."""
+    project = resolve_cbm_project(cwd, logger)
+    if not project:
+        logger.debug("no codebase-memory-mcp project indexed for %s", cwd)
+        return []
+
+    text = call_cbm_tool(
+        "search_graph",
+        {
+            "project": project,
+            "query": query,
+            "limit": MAX_RESULTS,
+            "format": "json",
+        },
+        cwd,
+        logger,
+        timeout=SEMANTIC_SEARCH_TIMEOUT,
+    )
+    if not text:
+        return []
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        return []
+
+    cols = data.get("cols") or []
+    try:
+        file_idx = cols.index("file")
+        qn_idx = cols.index("qn")
+    except ValueError:
+        return []
+
+    blocks = []
+    for row in data.get("rows") or []:
+        path = row[file_idx]
+        qn = row[qn_idx]
+        if Path(path).resolve() == Path(target_file).resolve():
+            continue
+        blocks.append(f"=== semantically similar code in {path} ===\n{qn}")
+        if len(blocks) >= MAX_RESULTS:
+            break
+    return blocks
+
+
+def semantic_search_blocks(
+    content: str, target_file: str, cwd: str, backend: str
+) -> list[str] | None:
+    """Query the chosen repo-intel backend with the new code as the query text.
+
+    Args:
+        content: The source code to query.
+        target_file: The file being edited (excluded from results).
+        cwd: Current working directory for the MCP subprocess.
+        backend: "rag-rat" or "cbm", from pick_repo_intel_backend.
+
+    Returns:
+        Formatted blocks of similar code, or None if the backend errors.
+    """
+    query = content[:MAX_EMBED_CHARS]
+    if backend == "rag-rat":
+        return _rag_rat_search_blocks(query, target_file, cwd)
+    return _cbm_search_blocks(query, target_file, cwd)
 
 
 def build_context(content: str, target_file: str, cwd: str) -> str:
@@ -89,21 +163,22 @@ def build_context(content: str, target_file: str, cwd: str) -> str:
     Args:
         content: The source code to find similar code for.
         target_file: The file being edited (excluded from results).
-        cwd: Current working directory for rag-rat execution.
+        cwd: Current working directory for the MCP subprocess.
 
     Returns:
         Formatted string of similar code blocks, or empty string if none found.
     """
-    if not is_rag_rat_available(cwd):
-        logger.debug("rag-rat not available (binary or rag-rat.toml missing)")
+    backend = pick_repo_intel_backend(target_file, cwd)
+    if not backend:
+        logger.debug("no repo-intel backend available (rag-rat or cbm)")
         return ""
 
-    blocks = semantic_search_blocks(content, target_file, cwd)
+    blocks = semantic_search_blocks(content, target_file, cwd, backend)
     if not blocks:
-        logger.debug("no semantic_search blocks found or rag-rat call failed")
+        logger.debug("no semantic search blocks found via %s", backend)
         return ""
 
-    logger.debug("build_context: %d blocks from rag-rat semantic_search", len(blocks))
+    logger.debug("build_context: %d blocks from %s", len(blocks), backend)
     return "\n\n".join(blocks)
 
 
