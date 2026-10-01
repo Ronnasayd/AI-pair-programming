@@ -207,8 +207,8 @@ for backend in "${BACKENDS[@]}"; do
 done
 
 uv run --project "$SOURCE" --directory "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
-python3 "$SOURCE/scripts/aipp_settings.py" sync-catalog "$SOURCE"
-python3 "$SOURCE/scripts/aipp_settings.py" ensure-migrated "$LOCAL" "$SOURCE"
+uv run --project "$SOURCE" python3 "$SOURCE/scripts/aipp_settings.py" sync-catalog "$SOURCE"
+uv run --project "$SOURCE" python3 "$SOURCE/scripts/aipp_settings.py" ensure-migrated "$LOCAL" "$SOURCE"
 
 ai-memory install-skills > /dev/null 2>&1 && echo "ai-memory install-skills [ok]"
 
