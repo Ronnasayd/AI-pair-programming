@@ -199,3 +199,4 @@ skills/.quarantine/
 .tlc/harness/state/
 .cursor/hooks.json
 .claude/settings.json
+.tlc/harness/config.json
