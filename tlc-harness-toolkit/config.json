@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/@tech-leads-club/harness-toolkit@0.16/schema.json",
   "version": 1,
-  "codePaths": ["/home/ronnas/develop/personal/AI-pair-programming"],
+  "codePaths": ["$CLAUDE_PROJECT_DIR$"],
   "mode": "solo",
   "grind": {
     "enabled": true,
