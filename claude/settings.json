@@ -387,7 +387,10 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["/home/ronnas/.tlc/harness/bin/tlc-exec.mjs", "tool-after"]
+            "args": [
+              "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
+              "tool-after"
+            ]
           }
         ]
       }
@@ -500,7 +503,10 @@
           {
             "type": "command",
             "command": "node",
-            "args": ["/home/ronnas/.tlc/harness/bin/tlc-exec.mjs", "stop"]
+            "args": [
+              "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
+              "stop"
+            ]
           }
         ]
       }
