@@ -20,7 +20,6 @@ else
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
     sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/aipp"
-    sudo ln -s "$SOURCE/scripts/manage-ignore-files.py" "/usr/local/bin/mif"
     if [ -f ~/.bashrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.bashrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc [ok]"
     fi

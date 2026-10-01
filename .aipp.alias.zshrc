@@ -65,5 +65,5 @@ alias rc="exec $SHELL -c \"claude --continue;exec $SHELL\""
 alias lhi="LEFTHOOK_CONFIG=$AI_PROJECT_ROOT_DIR/lefthook/lefthook.yml lefthook install" # Install lefthook hooks: lefthook-install
 alias scvm="export CAVEMAN_DEFAULT_MODE=off && echo 'off' > $HOME/.claude/.caveman-active" # stop caveman
 alias acvm="export CAVEMAN_DEFAULT_MODE=full && echo 'full' > $HOME/.claude/.caveman-active" # activate  caveman
-
+alias mif="uv run --project "$AI_PROJECT_ROOT_DIR" python3 $AI_PROJECT_ROOT_DIR/scripts/manage-ignore-files.py"
 
