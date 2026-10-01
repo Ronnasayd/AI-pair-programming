@@ -96,7 +96,7 @@
     "ask": [],
     "defaultMode": "auto"
   },
-  "model": "claude-sonnet-5-5",
+  "model": "sonnet",
   "hooks": {
     "PermissionRequest": [
       {

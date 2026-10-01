@@ -12,7 +12,7 @@ applyTo: "**/*"
 
 - Whenever you modify a component or screen → run tests using Playwright (or a similar E2E tool) before finalizing.
 
-- Never treat documentation (`markdown files`) as absolute truth. Only the implemented code should be treated as the truth.
+- Never treat documentation (`markdown files`,`memories`) as absolute truth. Only the implemented code should be treated as the truth.
 
 - Never assume the code is correct without tests to validate it.
 
@@ -34,4 +34,4 @@ applyTo: "**/*"
 | Generate a plan step-by-step                           | `sd-planning`                                |
 | Build requirements review table from spec/design/tasks | `spec-to-requirements-table`                 |
 | Pick between technical options (pros/cons)             | `technical-decision-helper`                  |
-| Generate a context-map                                 | `context-map`                                |
+| Map files/deps/tests a task touches before changing    | `context-map`                                |
