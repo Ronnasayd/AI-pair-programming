@@ -82,6 +82,7 @@
     "coding-standards": false,
     "compress-skill": false,
     "confluence-assistant": false,
+    "consolidate-markdown": false,
     "content-hash-cache-pattern": false,
     "context-map": true,
     "context7-documentation-lookup": false,
