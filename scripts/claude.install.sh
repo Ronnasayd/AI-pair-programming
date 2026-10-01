@@ -257,8 +257,12 @@ git_exclude \
 ## HARNESS CONFIG
 mkdir -p "$LOCAL/.tlc/harness"
 rm -rf "$LOCAL/.tlc/harness/config.json"
-ln -s "$SOURCE/tlc-harness-toolkit/config.json" "$LOCAL/.tlc/harness/config.json"
-git_exclude ".tlc/harness/config.json"
+cp "$SOURCE/tlc-harness-toolkit/config.json" "$LOCAL/.tlc/harness/config.json"
+# why: harness codePaths only matches relative prefixes (no "." / globs), so list every top-level entry of the repo.
+CODE_PATHS="$(ls -A "$LOCAL" | grep -vE '^(\.git|node_modules|\.venv|dist)$' | jq -R . | jq -sc .)"
+jq --argjson cp "$CODE_PATHS" '.codePaths = $cp' "$LOCAL/.tlc/harness/config.json" > "$LOCAL/.tlc/harness/config.json.tmp" \
+  && mv "$LOCAL/.tlc/harness/config.json.tmp" "$LOCAL/.tlc/harness/config.json"
+git_exclude ".tlc/"
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
 if command -v rtk &>/dev/null; then
