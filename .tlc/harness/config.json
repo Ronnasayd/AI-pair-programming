@@ -1,15 +1,1 @@
-{
-  "$schema": "https://unpkg.com/@tech-leads-club/harness-toolkit@0.16/schema.json",
-  "version": 1,
-  "codePaths": ["/home/ronnas/develop/personal/AI-pair-programming"],
-  "mode": "solo",
-  "grind": {
-    "enabled": true,
-    "lintCommand": ["uv", "run", ".claude/hooks/scripts/lint_changed.py"],
-    "maxLoops": 5
-  },
-  "comments": {
-    "enabled": true,
-    "mode": "declared"
-  }
-}
+/home/ronnas/develop/personal/AI-pair-programming/tlc-harness-toolkit/config.json

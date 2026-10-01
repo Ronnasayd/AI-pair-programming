@@ -3,7 +3,7 @@
     "ENABLE_TOOL_SEARCH": "false",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5-5[1m]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1m]",
-    "ASDF_NODEJS_VERSION": "23.11.1",
+    "ASDF_NODEJS_VERSION": "24.16.0",
     "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
     "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "60",
@@ -246,7 +246,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "tool-before"
@@ -386,7 +386,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": ["/home/ronnas/.tlc/harness/bin/tlc-exec.mjs", "tool-after"]
           }
         ]
@@ -456,7 +456,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "session-start"
@@ -499,7 +499,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": ["/home/ronnas/.tlc/harness/bin/tlc-exec.mjs", "stop"]
           }
         ]
@@ -573,7 +573,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "prompt-submit"
@@ -602,7 +602,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "compact-before"
@@ -650,7 +650,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "subagent-start"
@@ -708,7 +708,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "subagent-stop"
@@ -751,7 +751,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "session-end"
@@ -796,7 +796,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "tool-failure"
@@ -826,7 +826,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun",
+            "command": "node",
             "args": [
               "/home/ronnas/.tlc/harness/bin/tlc-exec.mjs",
               "response-after"
