@@ -195,3 +195,7 @@ node_modules/
 # OS specific
 .DS_Store
 skills/.quarantine/
+
+.tlc/harness/state/
+.cursor/hooks.json
+.claude/settings.json

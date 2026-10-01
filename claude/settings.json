@@ -333,11 +333,6 @@
             "type": "command",
             "command": "command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ] && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/structural_clone_ref.py; true",
             "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/comment_policy_hint.py",
-            "timeout": 10
           }
         ]
       },
@@ -444,11 +439,6 @@
           {
             "type": "command",
             "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | tee $HOME/.claude/logs/external.log",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/stop_lint_gate.py",
             "timeout": 10
           },
           {
@@ -595,11 +585,6 @@
       {
         "matcher": "",
         "hooks": [
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/stop_lint_gate.py",
-            "timeout": 10
-          },
           {
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/subagent_response_format_gate.py",
