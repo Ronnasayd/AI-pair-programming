@@ -253,6 +253,15 @@ git_exclude \
     "skills.db" \
     ".mcp.json" \
     ".serena/*"
+########################################################################################
+## HARNESS CONFIG
+mkdir -p "$LOCAL/.tlc/harness"
+rm -rf "$LOCAL/.tlc/harness/config.json"
+cp -r "$SOURCE/tlc-harness-toolkit/config.json" "$LOCAL/.tlc/harness/config.json"
+HARNESS_CFG="$LOCAL/.tlc/harness/config.json"
+jq --arg dir "$LOCAL" 'walk(if . == "$CLAUDE_PROJECT_DIR$" then $dir else . end)' \
+    "$HARNESS_CFG" > "${HARNESS_CFG}.tmp" && mv "${HARNESS_CFG}.tmp" "$HARNESS_CFG"
+git_exclude ".tlc/harness/config.json"
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
 if command -v rtk &>/dev/null; then
