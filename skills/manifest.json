@@ -255,6 +255,10 @@
     "skill_md": "compress-skill/SKILL.md",
     "files": []
   },
+  "consolidate-markdown": {
+    "skill_md": "consolidate-markdown/SKILL.md",
+    "files": []
+  },
   "context-map": {
     "skill_md": "context-map/SKILL.md",
     "files": [

@@ -982,6 +982,14 @@ skills:
     behavior, security, performance, platform behavior, content fallbacks, localization,
     accessibility, legal compliance, deployment, and observability.'
 - name:
+  - consolidate-markdown
+  description: Consolidate several unstructured Markdown files with overlapping or
+    conflicting information into one organized document, without losing data and with
+    every divergence made explicit. Use when user says 'consolidar arquivos markdown',
+    'juntar essas notas', 'merge these md files', 'unify these docs', 'notas duplicadas/divergentes',
+    or has multiple .md notes (Obsidian, Notion exports, scattered docs) covering
+    the same topics with inconsistent details, even if they don't say 'consolidate'.
+- name:
   - taskmaster-overview
   description: AI-driven task management and project tracking using Task Master. Use
     when agent needs to initialize projects, parse Product Requirements Documents
