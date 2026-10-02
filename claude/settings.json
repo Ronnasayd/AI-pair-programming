@@ -138,7 +138,7 @@
           },
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-tool-use.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-pre-tool-use",
             "timeout": 10
           },
           {
@@ -164,7 +164,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/ronnas/.claude/hooks/rtk-rewrite.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "/home/ronnas/.claude/hooks/rtk-rewrite.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh RtkRewrite",
             "timeout": 10
           },
           {
@@ -238,7 +238,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -360,7 +360,7 @@
           },
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/post-tool-use.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-post-tool-use",
             "timeout": 10
           },
           {
@@ -374,7 +374,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -393,7 +393,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-activate.js\" | tee -a $HOME/.claude/logs/external.log",
+            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-activate.js\" | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh CavemanActivate",
             "timeout": 10,
             "statusMessage": "Loading caveman mode..."
           },
@@ -419,7 +419,7 @@
           },
           {
             "type": "command",
-            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee -a $HOME/.claude/logs/external.log",
+            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh McpManagerContext",
             "timeout": 10
           },
           {
@@ -434,7 +434,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-start.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-session-start",
             "timeout": 10
           }
         ]
@@ -443,7 +443,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -463,7 +463,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/stop.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-stop",
             "timeout": 10
           },
           {
@@ -482,7 +482,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -534,13 +534,13 @@
           },
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\" | tee -a $HOME/.claude/logs/external.log",
+            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\" | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh CavemanTracker",
             "timeout": 10,
             "statusMessage": "Tracking caveman mode..."
           },
           {
             "type": "command",
-            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | tee -a $HOME/.claude/logs/external.log",
+            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh McpManagerContext",
             "timeout": 10
           },
           {
@@ -555,7 +555,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/user-prompt-submit.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-user-prompt-submit",
             "timeout": 10
           }
         ]
@@ -575,7 +575,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/pre-compact.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-pre-compact",
             "timeout": 10
           },
           {
@@ -614,7 +614,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -624,7 +624,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-start.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-start.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-subagent-start",
             "timeout": 10
           }
         ]
@@ -668,7 +668,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -678,7 +678,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-stop.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/subagent-stop.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-subagent-stop",
             "timeout": 10
           }
         ]
@@ -698,7 +698,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh | tee -a $HOME/.claude/logs/external.log",
+            "command": "command -v ai-memory &> /dev/null && AI_MEMORY_HOOK_URL=http://127.0.0.1:49374 AI_MEMORY_PROJECT_STRATEGY=repo-root /home/ronnas/.local/share/ai-memory/hooks/claude-code/session-end.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AiMemory-session-end",
             "timeout": 10
           },
           {
@@ -717,7 +717,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -748,7 +748,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           },
           {
@@ -777,7 +777,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | tee -a $HOME/.claude/logs/external.log'",
+            "command": "bash -c 'set -o pipefail; node /home/ronnas/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           },
           {
