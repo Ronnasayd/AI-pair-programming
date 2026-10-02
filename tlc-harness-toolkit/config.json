@@ -31,13 +31,7 @@
   "mode": "solo",
   "grind": {
     "enabled": true,
-    "lintCommand": [
-      "uv",
-      "run",
-      "--project",
-      "$AI_PROJECT_ROOT_DIR",
-      ".claude/hooks/scripts/lint_changed.py"
-    ],
+    "lintCommand": ["uv", "run", ".claude/hooks/scripts/lint_changed.py"],
     "maxLoops": 5
   },
   "comments": {
