@@ -36,6 +36,13 @@
   },
   "comments": {
     "enabled": true,
-    "mode": "declared"
+    "mode": "declared",
+    "onViolation": "off"
+  },
+  "duplication": {
+    "enabled": true
+  },
+  "rules": {
+    "enabled": true
   }
 }
