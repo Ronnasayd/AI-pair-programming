@@ -24,6 +24,7 @@ disabled_mcp_servers = [
     "aipp:ssh-mcp",
     "aipp:notion",
     "aipp:vrep",
+    "aipp:laya",
 ]
 
 parser = argparse.ArgumentParser()
