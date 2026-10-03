@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "aipp:krita": {
+      "command": "python3",
+      "args": ["/home/ronnas/develop/public/krita-mcp/mcp_server.py"]
+    },
     "aipp:vrep": {
       "command": "uvx",
       "args": [
