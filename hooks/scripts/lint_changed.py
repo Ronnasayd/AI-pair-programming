@@ -42,6 +42,16 @@ def _porcelain_paths(project_root: str) -> set[str]:
     return paths
 
 
+def _staged_paths(project_root: str) -> set[str]:
+    """Paths staged for commit (added/copied/modified), relative to project_root."""
+    result = run_command_cwd(
+        "git diff --cached --name-only --diff-filter=ACM", cwd=project_root
+    )
+    if not result["success"]:
+        return set()
+    return {line.strip() for line in result["output"].splitlines() if line.strip()}
+
+
 def _lint_failures(project_root: str, files: list[str]) -> dict[str, dict]:
     """Run the matching lint dispatcher per file, keyed by file for failures only."""
     failures: dict[str, dict] = {}
@@ -61,11 +71,16 @@ def _lint_failures(project_root: str, files: list[str]) -> dict[str, dict]:
 def main() -> int:
     """Lint changed files under cwd and print failures as JSON.
 
+    With `--staged` (lefthook pre-commit) only files staged for the commit are
+    linted; otherwise every file dirty in the working tree.
+
     Returns:
         int: 1 if any file fails lint, else 0.
     """
     root = str(Path.cwd())
-    changed = _porcelain_paths(root)
+    changed = (
+        _staged_paths(root) if "--staged" in sys.argv[1:] else _porcelain_paths(root)
+    )
     files = sorted(p for p in changed if Path(p).suffix in _LINT_DISPATCH)
     failures = _lint_failures(root, files[:MAX_FILES])
     if failures:
