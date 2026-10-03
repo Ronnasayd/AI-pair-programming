@@ -1,5 +1,17 @@
 {
   "mcpServers": {
+    "aipp:vrep": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/vrep-mcp.git",
+        "vrep-mcp"
+      ],
+      "env": {
+        "VREP_DATA_DIR": "${MCP_VREP_DATA_DIR:-add-value-to-env-vars}"
+      },
+      "type": "stdio"
+    },
     "aipp:notion": {
       "url": "https://mcp.notion.com/mcp",
       "type": "http"
