@@ -160,6 +160,21 @@
         "--project-from-cwd"
       ],
       "env": {}
+    },
+    "aipp:laya": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--torch-backend",
+        "cpu",
+        "--from",
+        "laya[mcp]",
+        "laya-mcp-server"
+      ],
+      "env": {
+        "LAYA_DEVICE": "cpu",
+        "LAYA_PRELOAD": "0"
+      }
     }
   }
 }
