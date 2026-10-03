@@ -63,6 +63,9 @@ else
     install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook && chmod +x ~/.local/bin/lefthook"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
+    npm i -g @tech-leads-club/harness-toolkit && tlc harness install
+    tlc harness install --force
+
     echo "Use the command: aipp --help"
     exit 0
   fi

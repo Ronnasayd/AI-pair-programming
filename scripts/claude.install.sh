@@ -253,6 +253,19 @@ git_exclude \
     "skills.db" \
     ".mcp.json" \
     ".serena/*"
+########################################################################################
+## HARNESS CONFIG
+mkdir -p "$LOCAL/.tlc/harness"
+rm -rf "$LOCAL/.tlc/harness/config.json"
+cp "$SOURCE/tlc-harness-toolkit/config.json" "$LOCAL/.tlc/harness/config.json"
+# why: harness codePaths only matches relative prefixes (no "." / globs), so list every top-level entry of the repo.
+CODE_PATHS="$(ls -A "$LOCAL" | grep -vE '^(\.git|node_modules|\.venv|dist)$' | jq -R . | jq -sc .)"
+# why: target repo has no .claude/hooks/scripts nor numpy; run the toolkit's script under the toolkit's own uv project (cwd stays the target repo).
+jq --argjson cp "$CODE_PATHS" --arg src "$SOURCE" \
+  '.codePaths = $cp | .grind.lintCommand = ["uv", "run", "--project", $src, ($src + "/hooks/scripts/lint_changed.py")]' \
+  "$LOCAL/.tlc/harness/config.json" > "$LOCAL/.tlc/harness/config.json.tmp" \
+  && mv "$LOCAL/.tlc/harness/config.json.tmp" "$LOCAL/.tlc/harness/config.json"
+git_exclude ".tlc/"
 ###########################################################################################
 export RTK_TELEMETRY_DISABLED=1
 if command -v rtk &>/dev/null; then

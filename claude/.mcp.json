@@ -1,5 +1,21 @@
 {
   "mcpServers": {
+    "aipp:krita": {
+      "command": "python3",
+      "args": ["${HOME}/develop/public/krita-mcp/mcp_server.py"]
+    },
+    "aipp:vrep": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Ronnasayd/vrep-mcp.git",
+        "vrep-mcp"
+      ],
+      "env": {
+        "VREP_DATA_DIR": "${MCP_VREP_DATA_DIR:-add-value-to-env-vars}"
+      },
+      "type": "stdio"
+    },
     "aipp:notion": {
       "url": "https://mcp.notion.com/mcp",
       "type": "http"
@@ -148,6 +164,21 @@
         "--project-from-cwd"
       ],
       "env": {}
+    },
+    "aipp:laya": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--torch-backend",
+        "cpu",
+        "--from",
+        "laya[mcp]",
+        "laya-mcp-server"
+      ],
+      "env": {
+        "LAYA_DEVICE": "cpu",
+        "LAYA_PRELOAD": "0"
+      }
     }
   }
 }

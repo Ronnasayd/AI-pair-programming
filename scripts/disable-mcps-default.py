@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+"""Set the default disabledMcpServers list for every project in ~/.claude.json."""
 
 import argparse
 import json
 from pathlib import Path
+import sys
 
 disabled_mcp_servers = [
     "aipp:sqlite",
@@ -23,6 +25,9 @@ disabled_mcp_servers = [
     "aipp:omniroute",
     "aipp:ssh-mcp",
     "aipp:notion",
+    "aipp:vrep",
+    "aipp:laya",
+    "aipp:krita",
 ]
 
 parser = argparse.ArgumentParser()
@@ -35,14 +40,16 @@ parser.add_argument(
 args = parser.parse_args()
 config_path = Path(args.config_path)
 
-with open(config_path, "r") as f:
+with open(config_path, encoding="utf-8") as f:
     config = json.load(f)
 
 projects = config.get("projects", {})
 for project_path in projects:
     projects[project_path]["disabledMcpServers"] = disabled_mcp_servers
 
-with open(config_path, "w") as f:
+with open(config_path, "w", encoding="utf-8") as f:
     json.dump(config, f, indent=4)
 
-print(f"disabled {len(disabled_mcp_servers)} mcp servers for {len(projects)} projects")
+sys.stdout.write(
+    f"disabled {len(disabled_mcp_servers)} mcp servers for {len(projects)} projects\n"
+)
