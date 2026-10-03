@@ -23,6 +23,7 @@ disabled_mcp_servers = [
     "aipp:omniroute",
     "aipp:ssh-mcp",
     "aipp:notion",
+    "aipp:vrep",
 ]
 
 parser = argparse.ArgumentParser()
