@@ -10,6 +10,10 @@ pre-commit:
   commands:
     format-staged:
       run: uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/format_staged.py
+    lint-staged:
+      # Runs after format-staged (alphabetical-free: lefthook runs in file order).
+      # Tools missing locally are skipped by the lint dispatchers -> no-op.
+      run: uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/hooks/scripts/lint_changed.py --staged
 
 commit-msg:
   commands:

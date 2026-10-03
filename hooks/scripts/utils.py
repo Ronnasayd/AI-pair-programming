@@ -299,7 +299,8 @@ def run_jscpd(
     report_dir = tmp_project_dir(project_root, "jscpd-reports") / tag
     ensure_dir(report_dir)
     cmd = (
-        f"npx jscpd --no-tips --exit-code 1 --reporters json --ignore '**/.git/**' "
+        f"npx jscpd --no-tips --exit-code 1 --reporters json "
+        f"--ignore '**/.git/**,**/unused/**' "
         f"--threshold {JSCPD_THRESHOLD} --min-lines {JSCPD_MIN_LINES} "
         f"--output {report_dir} {shlex.quote(scan_root)}"
     )
