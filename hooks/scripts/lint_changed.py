@@ -5,6 +5,7 @@ Standalone entry for harness `grind.lintCommand`: no hook payload on stdin,
 no loop counter, no pinned turn SHA (the harness owns those).
 """
 
+from fnmatch import fnmatch
 from pathlib import Path
 import sys
 
@@ -16,6 +17,12 @@ from typescript_lint import maybe_run_typescript_lint
 from utils import minify_json, run_command_cwd
 
 MAX_FILES = 50
+# Always skipped; `--ignore GLOB` adds to these.
+DEFAULT_IGNORE = (
+    "legacy/**",
+    "node_modules/**",
+    "vendor/**",
+)
 _LINT_DISPATCH = {
     ".py": maybe_run_python_lint,
     ".ts": maybe_run_typescript_lint,
@@ -52,6 +59,22 @@ def _staged_paths(project_root: str) -> set[str]:
     return {line.strip() for line in result["output"].splitlines() if line.strip()}
 
 
+def _ignore_globs(argv: list[str]) -> list[str]:
+    """Collect globs from repeatable `--ignore GLOB` / `--ignore=GLOB` args."""
+    globs = []
+    for i, arg in enumerate(argv):
+        if arg == "--ignore" and i + 1 < len(argv):
+            globs.append(argv[i + 1])
+        elif arg.startswith("--ignore="):
+            globs.append(arg.split("=", 1)[1])
+    return globs
+
+
+def _is_ignored(rel_path: str, globs: list[str]) -> bool:
+    """Match rel_path to any glob; the leading "/" lets `**/dir/**` hit root dirs."""
+    return any(fnmatch(rel_path, g) or fnmatch("/" + rel_path, g) for g in globs)
+
+
 def _lint_failures(project_root: str, files: list[str]) -> dict[str, dict]:
     """Run the matching lint dispatcher per file, keyed by file for failures only."""
     failures: dict[str, dict] = {}
@@ -72,7 +95,8 @@ def main() -> int:
     """Lint changed files under cwd and print failures as JSON.
 
     With `--staged` (lefthook pre-commit) only files staged for the commit are
-    linted; otherwise every file dirty in the working tree.
+    linted; otherwise every file dirty in the working tree. Repeatable
+    `--ignore GLOB` skips matching paths (e.g. `--ignore '**/unused/**'`).
 
     Returns:
         int: 1 if any file fails lint, else 0.
@@ -81,7 +105,12 @@ def main() -> int:
     changed = (
         _staged_paths(root) if "--staged" in sys.argv[1:] else _porcelain_paths(root)
     )
-    files = sorted(p for p in changed if Path(p).suffix in _LINT_DISPATCH)
+    ignore = [*DEFAULT_IGNORE, *_ignore_globs(sys.argv[1:])]
+    files = sorted(
+        p
+        for p in changed
+        if Path(p).suffix in _LINT_DISPATCH and not _is_ignored(p, ignore)
+    )
     failures = _lint_failures(root, files[:MAX_FILES])
     if failures:
         print(minify_json(failures))  # noqa: T201 - CLI output
