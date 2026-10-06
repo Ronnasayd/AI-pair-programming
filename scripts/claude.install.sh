@@ -218,13 +218,7 @@ if [ -d "$LOCAL/$DEFAULT_LOCAL_AGENTS/agents" ]; then
         ln -s "$agent_file" "$LOCAL/$DEFAULT_FOLDER/$DEFAULT_LOCAL_AGENTS/$agent_name"
     done
 fi
-########################################################################################3
-##########################################################################################
-mkdir -p "$HOME/.config/Code/User"
-if [ -L "$HOME/.config/Code/User/mcp.json" ] || [ -f "$HOME/.config/Code/User/mcp.json" ]; then
-rm $HOME/.config/Code/User/mcp.json
-fi
-ln -s "$SOURCE/mcps/vscode.mcp.json" "$HOME/.config/Code/User/mcp.json"
+
 ###########################################################################################
 ## GIT HOOKS (lefthook manages .git/hooks/ directly, no manual symlinking).
 if [ -L "$LOCAL/lefthook.yml" ] || [ -d "$LOCAL/lefthook.yml" ]; then
