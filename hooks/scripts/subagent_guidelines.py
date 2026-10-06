@@ -1,13 +1,14 @@
 #!/usr/bin/python3
-"""PreToolUse hook: inject guidelines when a subagent is started."""
+"""PreToolUse hook: inject guidelines on the first subagent start per session."""
 
+import contextlib
 import json
 import os
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
-from utils import get_by_key, get_hooks_logger, minify_markdown
+from utils import get_by_key, get_hooks_logger, get_session_id_short, minify_markdown
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -39,6 +40,13 @@ def main() -> None:
     if not tool_name or tool_name.lower() not in AGENT_TOOL_NAMES:
         sys.exit(0)
 
+    session_id = get_session_id_short(get_by_key(payload, "session_id") or "")
+    marker = Path(f"/tmp/subagent_guidelines_{session_id}")  # noqa: S108
+    if marker.exists():
+        sys.exit(0)
+    with contextlib.suppress(OSError):
+        marker.touch()
+
     combined = f"{GUIDELINES}\n\n{RESPONSE_TEMPLATE}"
     output = {
         "hookSpecificOutput": {
@@ -47,7 +55,7 @@ def main() -> None:
         }
     }
     LOG.debug("[additionalContext]: %s", json.dumps(output, ensure_ascii=False))
-    LOG.info("%s", json.dumps(output, ensure_ascii=False))
+    print(json.dumps(output, ensure_ascii=False))  # noqa: T201 - hook stdout protocol
     sys.exit(0)
 
 

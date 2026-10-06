@@ -1,7 +1,8 @@
 #!/usr/bin/python3
-"""PreToolUse hook: warn on .md files outside standard documentation dirs.
+"""PreToolUse hook: deny creating .md files outside standard documentation dirs.
 
-In case it's unintended boilerplate.
+Guards against unintended boilerplate. Overwriting existing files and allowed
+locations stay silent.
 """
 
 import json
@@ -49,18 +50,21 @@ def main() -> None:
     if any(pattern in file_path for pattern in ALLOWED_PATTERNS):
         sys.exit(0)
 
-    file_name = Path(file_path).name
+    if Path(file_path).exists():
+        sys.exit(0)
+
     output = {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
-            "additionalContext": (
-                f"Creating {file_name} outside of standard documentation "
-                "directories. Make sure this file is intentional and not "
-                "auto-generated boilerplate."
+            "permissionDecision": "deny",
+            "permissionDecisionReason": (
+                f"Creating {Path(file_path).name} outside standard documentation "
+                "directories (docs/, skills/, agents/, commands/, .specs/, ...). "
+                "Move it there, or ask the user if this location is intentional."
             ),
         }
     }
-    LOG.debug("[warning]: %s", json.dumps(output, ensure_ascii=False))
+    LOG.debug("[blocked]: %s", json.dumps(output, ensure_ascii=False))
     print(json.dumps(output, ensure_ascii=False))  # noqa: T201
     sys.exit(0)
 
