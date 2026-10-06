@@ -323,12 +323,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-activate.js\" | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh CavemanActivate",
-            "timeout": 10,
-            "statusMessage": "Loading caveman mode..."
-          },
-          {
-            "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/start_embedding_daemon.py",
             "timeout": 10
           },
@@ -461,12 +455,6 @@
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/context7_search.py",
             "timeout": 10,
             "statusMessage": "Searching context7..."
-          },
-          {
-            "type": "command",
-            "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\" | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh CavemanTracker",
-            "timeout": 10,
-            "statusMessage": "Tracking caveman mode..."
           },
           {
             "type": "command",
