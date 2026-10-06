@@ -196,11 +196,6 @@
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/context_refs.py",
             "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "{ command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ]; } || command -v codebase-memory-mcp &> /dev/null && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/semantic_similar_refs.py; true",
-            "timeout": 10
           }
         ]
       },
@@ -281,41 +276,6 @@
           {
             "type": "command",
             "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/worktree_init.py",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/checklist_context_watch.py",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_incremental.py",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_report.py",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_related_files_report.py",
-            "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "{ command -v rag-rat &> /dev/null && [ -f $CLAUDE_PROJECT_DIR/rag-rat.toml ]; } || command -v codebase-memory-mcp &> /dev/null && uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/impact_surface_hint.py; true",
             "timeout": 10
           }
         ]
@@ -507,11 +467,6 @@
             "command": "\"/home/ronnas/.asdf/installs/nodejs/23.11.1/bin/node\" \"/home/ronnas/.claude/hooks/caveman-mode-tracker.js\" | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh CavemanTracker",
             "timeout": 10,
             "statusMessage": "Tracking caveman mode..."
-          },
-          {
-            "type": "command",
-            "command": "uvx --from git+https://github.com/Ronnasayd/mcp-manager.git mcp_manager_context $HOME/develop/personal/mcp-manager/catalog.json | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh McpManagerContext",
-            "timeout": 10
           },
           {
             "type": "command",
