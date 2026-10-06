@@ -32,6 +32,7 @@
   "grind": {
     "enabled": true,
     "lintCommand": ["uv", "run", ".claude/hooks/scripts/lint_changed.py"],
+    "testCommand": ["uv", "run", ".claude/hooks/scripts/test_changed.py"],
     "maxLoops": 5
   },
   "comments": {
