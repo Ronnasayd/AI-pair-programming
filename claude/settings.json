@@ -618,11 +618,6 @@
             "type": "command",
             "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py",
             "timeout": 10
-          },
-          {
-            "type": "command",
-            "command": "uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/jest_coverage_session_end.py",
-            "timeout": 10
           }
         ]
       },
