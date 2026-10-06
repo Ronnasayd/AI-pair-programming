@@ -7,14 +7,14 @@ cfie(){
 alias aims='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memory \
     --restart unless-stopped \
     -p 127.0.0.1:49374:49374 \
-    -v ai-memory-data:/data \
+    -v $HOME/.ai-memory/data:/data \
     -e AI_MEMORY_AUTO_SCOPE_MODE=repo_root \
     -e AI_MEMORY_AUTO_IMPROVE__REQUIRE_APPROVAL=true \
     akitaonrails/ai-memory:latest' # Start AI Memory container: ai-memory-start
 alias aimsllm='docker rm -f ai-memory 2>/dev/null; docker run -d --name ai-memory \
     --restart unless-stopped \
     -p 127.0.0.1:49374:49374 \
-    -v ai-memory-data:/data \
+    -v $HOME/.ai-memory/data:/data \
     -e AI_MEMORY_AUTO_SCOPE_MODE=repo_root \
     -e AI_MEMORY_AUTO_IMPROVE__REQUIRE_APPROVAL=true \
     -e AI_MEMORY_LLM_MODEL=claude-haiku-4-5 \
