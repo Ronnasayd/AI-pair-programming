@@ -1,0 +1,129 @@
+ ▐▛███▛█   Claude Code v2.1.291
+▝▜██████▀  Sonnet 5.5 · Claude Pro
+ ▝▝   ▝▝   ~/develop/personal/AI-pair-programming/hooks/scripts
+
+
+❯ @lefthook.yml                                                                 
+  @/home/ronnas/Desktop/harness2.md                                             
+  @claude/settings.json                                                         
+                                                                                
+  com base na definição verificar hooks que rodam constatemente injetando       
+  informação no contexto                                                        
+  ⎿  Read lefthook.yml (22 lines)
+  ⎿  Read ../../../Desktop/harness2.md (41 lines)
+  ⎿  Read claude/settings.json (784 lines)
+
+● Vou inspecionar quais scripts emitem additionalContext / stdout.
+
+  Listed 1 directory, ran 1 shell command (ctrl+o to expand)
+
+● Hook de ai-memory fica fora do projeto, bloqueado. Sigo com scripts do repo.
+
+  Ran 3 shell commands (ctrl+o to expand)
+
+● Hooks que injetam contexto repetidamente
+
+  Li a definição em harness2.md: feedback vai em portões (fim de tarefa,
+  commit), não a cada edição. Medi cada hook de claude/settings.json contra
+  isso. Não consegui ler os scripts do ai-memory, porque protect_files bloqueou
+  o caminho fora do projeto.
+
+  Alto impacto: injeta toda vez, sem dedup
+
+  Hook: subagent_guidelines.py
+  Evento: PreToolUse (todo Agent)
+  Problema: Injeta GUIDELINES + SUBAGENT-RESPONSE-TEMPLATE.md inteiros a cada
+  spawn, sem cache. É o maior payload do conjunto.
+  ────────────────────────────────────────
+  Hook: caveman-activate.js e caveman-mode-tracker.js
+  Evento: SessionStart e UserPromptSubmit
+  Problema: Aparecem em dobro: o plugin caveman@caveman e o settings.json
+  registram os mesmos hooks. Cada prompt recebe "CAVEMAN MODE ACTIVE" duas
+  vezes (confirmado neste turno).
+  ────────────────────────────────────────
+  Hook: rag-rat (plugin)
+  Evento: PreToolUse (Bash/grep)
+  Problema: Anexa "rag-rat index context for this search" a cada busca. Não está
+
+  no settings.json; vem do plugin rag-rat@rag-rat.
+  ────────────────────────────────────────
+  Hook: skill_activation.py e context7_search.py
+  Evento: UserPromptSubmit e PostToolUse(AskUserQuestion)
+  Problema: Rodam a cada prompt. O primeiro tem dedup de DEDUP_HOURS; o segundo
+  não mostrou dedup.
+  ────────────────────────────────────────
+  Hook: checklist_context_watch.py
+  Evento: UserPromptSubmit
+  Problema: Roda a cada prompt. Não li o que ele emite nem quando.
+
+  Médio impacto: condicional, mas por chamada
+
+  Hook: md_language_check.py
+  Comportamento: Emite a cada Edit/Write de .md em diretório controlado, sem
+  dedup.
+  ────────────────────────────────────────
+  Hook: md_location_check.py
+  Comportamento: Emite a cada Write de .md fora dos diretórios permitidos, sem
+  dedup.
+  ────────────────────────────────────────
+  Hook: large_file_read_warning.py
+  Comportamento: Emite a cada Read de arquivo grande.
+  ────────────────────────────────────────
+  Hook: tooluse_context_rules.py
+  Comportamento: Tem uma regra só, para AskUserQuestion em plan mode, a cada
+  chamada. Além disso, o matcher é vazio, então o script roda em todo
+  PreToolUse (custo de processo, não de tokens).
+
+  Já com dedup, mantém
+
+  - context_refs.py tem cache por sessão.
+  - dir_context_refs.py tem NOTIFY_EVERY = 25.
+  - skill_activation.py tem janela de dedup.
+
+  Fora do contexto (só logging, sem injeção)
+
+  log_hooks.py e tlc-exec-log.sh só gravam logs. Rodam em quase todo evento (um
+  processo uv run por evento), mas não injetam nada.
+
+  Recomendações, alinhadas ao harness2.md
+
+  1. Remova os hooks caveman duplicados do settings.json, ou desligue o plugin.
+     Corta uma injeção por prompt.
+  2. Dê dedup por sessão ao subagent_guidelines: injete só no primeiro Agent da
+     sessão, ou a cada N chamadas, como o dir_context_refs faz.
+  3. Dê o mesmo dedup (uma vez por sessão ou por diretório) a md_language_check
+     e md_location_check.
+  4. Mova context7_search e checklist_context_watch do UserPromptSubmit para um
+     gatilho de portão (Stop ou pré-commit), ou dê a eles dedup por tema.
+  5. Decida se o contexto do rag-rat em PreToolUse/Bash vale o custo. Ele
+     aparece mesmo em grep de arquivos conhecidos.
+
+  Quer que eu aplique alguma dessas mudanças? Começaria pela 1 e pela 2, que são
+  as menores.
+
+● Ran 5 stop hooks (ctrl+o to expand)
+  ⎿  Stop hook feedback: ## Always Use Interactive Question Tools
+
+  Use an interactive question tool for every user question — no
+  exceptions.
+
+  Covers clarifications, options, confirmations, preference checks,
+  all user interactions.
+
+  - **Claude**: `AskUserQuestion`
+  - **Other environments**: equivalent interactive tool
+  - **Fallback**: labeled options (A, B, C... Z)
+
+  Never ask a plain-text question if an interactive tool exists.
+
+  Multiple questions: use `grilling` skill.
+
+  Ask in clear, technical language.
+
+  MANDATORY: Ask questions in Portuguese.
+
+● User declined to answer questions
+  ⎿  · Quais mudanças devo aplicar agora nos hooks? (Remover caveman duplicado /
+     Dedup subagent_guidelines / Dedup md_language/md_location / Nenhuma)
+
+✻ Brewed for 42s · done 1:29 PM
