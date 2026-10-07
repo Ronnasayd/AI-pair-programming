@@ -24,12 +24,14 @@ else
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc [ok]"
     fi
     if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.aipp.alias.zshrc" ~/.bashrc; then
+      ln -s "$SOURCE/.aipp.alias.zshrc" "$HOME/.aipp.alias.zshrc"
       echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.bashrc && echo ".aipp.alias.zshrc add at .bashrc [ok]"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.zshrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.zshrc && echo "AI_PROJECT_ROOT_DIR add at .zshrc [ok]"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.aipp.alias.zshrc" ~/.zshrc; then
+      ln -s "$SOURCE/.aipp.alias.zshrc" "$HOME/.aipp.alias.zshrc"
       echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.zshrc && echo ".aipp.alias.zshrc add at .zshrc [ok]"
     fi
 

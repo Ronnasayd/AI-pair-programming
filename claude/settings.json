@@ -95,7 +95,7 @@
       "Bash(kubectl apply:*)"
     ],
     "ask": [],
-    "defaultMode": "auto"
+    "defaultMode": "bypassPermissions"
   },
   "model": "sonnet",
   "hooks": {
