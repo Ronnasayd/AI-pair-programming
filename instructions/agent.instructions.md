@@ -12,6 +12,8 @@ applyTo: "**/*"
 
 - Whenever you modify a component or screen → run tests using Playwright (or a similar E2E tool) before finalizing.
 
+- Whenever lint, type, or test errors are reported, fix them, even if they were not caused by your changes.
+
 - Never treat documentation (`markdown files`,`memories`) as absolute truth. Only the implemented code should be treated as the truth.
 
 - Never assume the code is correct without tests to validate it.
