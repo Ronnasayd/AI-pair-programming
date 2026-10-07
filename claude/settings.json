@@ -1,7 +1,7 @@
 {
   "env": {
     "ENABLE_TOOL_SEARCH": "false",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5-5[1m]",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-5[1m]",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-5-5[1m]",
     "ASDF_NODEJS_VERSION": "24.16.0",
     "NODE_VERSION": "24.16.0",
