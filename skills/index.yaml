@@ -141,6 +141,14 @@ skills:
     latest diff", or "update the README after this PR". Also triggers when a git diff,
     patch, or modified file is provided and docs need to stay in sync.
 - name:
+  - sd-review-spec
+  description: Review and correct a feature's spec documents (spec.md, design.md,
+    tasks.md, requirements.md, context-map.md, ADRs) by verifying every claim against
+    the real code, classifying gaps by severity, and applying fixes. Use when user
+    says 'review this spec', 'audit the spec against the code', 'find gaps in the
+    spec', 'check spec inconsistencies', 'find implicit requirements', or 'validate
+    design.md and tasks.md'.
+- name:
   - plan-generator
   description: Generate structured plans for tasks and projects, saved as date-stamped
     markdown files in docs/agents/plans/. Use whenever the user wants to plan a project,
