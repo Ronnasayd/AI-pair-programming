@@ -279,6 +279,7 @@
     "sd-execute": true,
     "sd-insert-taskmaster": true,
     "sd-planning": true,
+    "sd-review-spec": true,
     "security-best-practices": false,
     "security-bounty-hunter": false,
     "security-review": false,
