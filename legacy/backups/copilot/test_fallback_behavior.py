@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
 
-import src.backups.copilot.copilot_ollama as copilot_ollama
+import legacy.backups.copilot.copilot_ollama as copilot_ollama
 
 MOCK_COPILOT_RESPONSE = {"text": "Hello from Copilot"}
 

@@ -3,10 +3,10 @@ import json
 import logging
 import os
 
-import requests
 from dotenv import load_dotenv
+import requests
 
-from src.backups.copilot.copilot_playwright import get_cookies
+from legacy.backups.copilot.copilot_playwright import get_cookies
 
 # Configure logging
 logging.basicConfig(
@@ -289,7 +289,7 @@ if __name__ == "__main__":
     # response = api.chat(
     #     "explique o codigo",
     #     [
-    #         "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
+    #         "$HOME/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
     #     ],
     #     streaming=False,
     # )
@@ -300,7 +300,7 @@ if __name__ == "__main__":
     # for chunk in api.chat(
     #     "explique brevemente o codigo",
     #     [
-    #         "/home/ronnas/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
+    #         "$HOME/develop/personal/AI-pair-programming/src/copilot/copilot_api.py"
     #     ],
     #     streaming=True,
     # ):
