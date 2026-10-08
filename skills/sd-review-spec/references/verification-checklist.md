@@ -1,16 +1,16 @@
 # Step 2 — Verify claims against code
 
-Spec text = hypothesis. Confirm each in source.
+Spec text = hypothesis. Confirm each in source. Stack-agnostic: map each area to project's equivalent (backend, frontend, CLI, library, mobile, data pipeline, infra). Area with no equivalent → mark N/A, don't force it.
 
-| #   | Area                | Verify                                                                                                                              |
-| --- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Routes/controllers  | Central routes file + cited module routers: paths, middlewares applied, order                                                       |
-| 2   | RBAC/permissions    | Whole matrix (all roles, not only cited) + consuming use case: what each resource/action allows today                               |
-| 3   | Data schema         | Cited + related models (Prisma or equiv.): FKs, uniques, column types, naming conventions                                           |
-| 4   | Auth context        | Where populated (middleware/adapter): exact fields, source (token claim vs DB column), extra checks (e.g. local record requirement) |
-| 5   | Error handling      | How validator errors become HTTP responses in the "pattern to reuse" controllers: uniform across project or divergent per module    |
-| 6   | Pagination/listing  | Reference endpoint schema + response, field by field, vs what spec promises to reuse                                                |
-| 7   | Toolchain/versions  | Real dependency versions (ORM, validator) in manifest; run `--help` on command cited in task to confirm flags exist                 |
-| 8   | Data write paths    | Grep who writes/updates field spec assumes "never written by API" / "always in format X" (seeds, scripts, other modules)            |
-| 9   | Existing test fakes | Every file using the contract that will change (not just cited example) → count fakes/mocks that will break                         |
-| 10  | Transactions        | Grep transaction usage (e.g. `$transaction`): first use or existing pattern? Tests hit real DB or mocks only?                       |
+| #   | Area                    | Verify                                                                                                                                               | Examples by stack                                                                                       |
+| --- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1   | Entry points/interfaces | Where feature is exposed + registered: real names/paths/signatures, wrappers applied (middleware, decorators, guards), registration order            | HTTP routes, CLI commands/flags, UI routes/screens, exported functions, event/queue handlers, cron jobs |
+| 2   | Access control          | Whole permission model (all roles/scopes, not only cited) + where enforced: what each actor can do today                                             | RBAC matrix, route guards, feature flags, file permissions, IAM policies                                |
+| 3   | Data model/contracts    | Cited + related structures: fields, types, constraints, relations, naming conventions, nullability                                                   | DB schema/ORM models, TS types/interfaces, API schemas, file formats, config schemas, protobuf          |
+| 4   | Runtime context/inputs  | Where each input spec relies on is populated: exact fields, source of truth, extra preconditions                                                     | Auth/session context, env vars, props/state/store, CLI args, request headers, config files              |
+| 5   | Error handling          | How errors propagate to caller/user in the "pattern to reuse": uniform across project or divergent per module                                        | HTTP error responses, exit codes, thrown vs returned errors, UI error states, retries                   |
+| 6   | Reused patterns         | Every "reuse X like Y" claim: compare reference implementation field by field vs what spec promises                                                  | Pagination/listing, shared components, hooks, base classes, utils, response envelopes                   |
+| 7   | Toolchain/versions      | Real dependency versions in manifest/lockfile; run `--help` (or docs for that version) on every command/API cited in tasks to confirm it exists      | package.json, pyproject/uv.lock, go.mod, Cargo.toml, Gemfile, Dockerfile base images                    |
+| 8   | State write paths       | Grep every writer/mutator of state spec assumes "never written" / "always in format X" (seeds, scripts, migrations, other modules, external systems) | DB columns, global store, caches, files on disk, shared config, localStorage                            |
+| 9   | Affected tests          | Every file using the contract that will change (not just cited example) → count tests, fakes, mocks, fixtures, snapshots that will break             | Unit mocks, test doubles, fixtures, snapshots, E2E selectors, contract tests                            |
+| 10  | Atomicity/side effects  | Multi-step writes, concurrency, async ordering, idempotency: existing pattern or first use? Tests exercise real behavior or mocks only?              | DB transactions, locks, queues, optimistic updates, rollback, file writes, external API calls           |

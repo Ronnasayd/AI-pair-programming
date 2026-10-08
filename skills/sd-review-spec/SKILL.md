@@ -21,11 +21,11 @@ Audit spec docs (spec.md, design.md, tasks.md, requirements.md, context-map.md, 
 
 ## Severity (Step 3)
 
-| Level                           | Examples                                                                                                                                                                                                                                                           |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| High                            | Breaks error contract; command/flag missing in installed version; corrupted/truncated data in doc; validation blocking real system case (e.g. ID in non-guaranteed format); missing integrity constraint domain logic assumes; success criterion with no real test |
-| Medium                          | External dep (FK) can fail on valid system path; justification doesn't match cited code; task underestimates blast radius of contract change; accepted consequence unrecorded; unspecified data normalization                                                      |
-| Inconsistencies / implicit reqs | Docs stale vs each other (one superseded another); declared deps diverge from real tracker; incomplete "files to modify"; broken req ID ↔ task ID traceability; out-of-scope item unrelated to card; type/value specified but unused in any rule                   |
+| Level                           | Examples                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| High                            | Breaks existing contract (API, CLI output, component props, exported signature, error/exit behavior); cited command/API/flag missing in installed version; corrupted/truncated content in doc; validation rejecting a real system case (e.g. input in format not guaranteed by its producer); missing invariant/constraint that logic assumes; success criterion with no real test |
+| Medium                          | External dependency (relation, service, file, env var) can be absent on valid path; justification doesn't match cited code; task underestimates blast radius of contract change; accepted consequence unrecorded; unspecified data normalization/format                                                                                                                            |
+| Inconsistencies / implicit reqs | Docs stale vs each other (one superseded another); declared deps diverge from real tracker; incomplete "files to modify"; broken req ID ↔ task ID traceability; out-of-scope item unrelated to card; type/value specified but unused in any rule                                                                                                                                   |
 
 ## Report (Step 8)
 
@@ -38,6 +38,6 @@ Audit spec docs (spec.md, design.md, tasks.md, requirements.md, context-map.md, 
 
 ## Reference files
 
-- [references/verification-checklist.md](references/verification-checklist.md) — 10-point code verification list (routes, RBAC, schema, auth, errors, pagination, versions, write paths, test fakes, transactions)
+- [references/verification-checklist.md](references/verification-checklist.md) — 10-point stack-agnostic code verification list (entry points, access control, data contracts, runtime inputs, errors, reused patterns, versions, state write paths, affected tests, atomicity/side effects)
 - [references/fix-by-file.md](references/fix-by-file.md) — per-file edit rules (spec, design, tasks, requirements, context-map, ADRs)
 - [references/taskmaster-sync.md](references/taskmaster-sync.md) — disposable-script procedure to sync tracker derived fields
