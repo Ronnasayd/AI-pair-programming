@@ -328,13 +328,25 @@ def disabled_mcp_servers() -> str:
     )
 
 
+def communication_lang() -> str:
+    """Render a markdown line instructing which language to communicate in.
+
+    Honors QUESTION_TOOL_LANG, defaulting to English when unset.
+
+    Returns:
+        Markdown line stating the required communication language.
+    """
+    lang = os.environ.get("QUESTION_TOOL_LANG", "").strip() or "English"
+    return f"MANDATORY: Communicate with the user in {lang}."
+
+
 def main() -> None:
     """Assemble session-start context sections and emit the hook output."""
     try:
         payload = json.load(sys.stdin)
     except json.JSONDecodeError:
         sys.exit(0)  # erro no parse não bloqueia nada
-    additional_context = f"{RULES}"
+    additional_context = f"{RULES}\n\n{communication_lang()}"
     package_text = package_json(payload)
     if package_text:
         additional_context += f"\n\n{package_text}"
