@@ -66,6 +66,7 @@ else
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
     npm i -g @tech-leads-club/harness-toolkit
+    CLAUDE_CONFIG_DIR=/tmp/fake-claude tlc harness install
 
     echo "Use the command: aipp --help"
     exit 0
