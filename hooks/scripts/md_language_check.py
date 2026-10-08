@@ -20,8 +20,8 @@ LOG = get_hooks_logger("MdLanguageCheck")
 # Glob patterns (matched against the file path with fnmatch) whose targets
 # require language-controlled markdown content.
 ENGLISH_ONLY_DIRS = [
-    "*/.spec/**",
-    ".spec/**",
+    "*/.specs/**",
+    ".specs/**",
     "*/docs/**",
     "docs/**",
 ]
