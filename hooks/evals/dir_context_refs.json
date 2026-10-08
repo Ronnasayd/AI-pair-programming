@@ -5,7 +5,12 @@
   "cases": [
     {
       "name": "non_matching_tool_no_output",
-      "input": { "tool_name": "Bash", "tool_input": { "command": "ls" } },
+      "input": {
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "ls"
+        }
+      },
       "expect_output": false
     },
     {
@@ -15,7 +20,10 @@
     },
     {
       "name": "no_file_path_no_output",
-      "input": { "tool_name": "Read", "tool_input": {} },
+      "input": {
+        "tool_name": "Read",
+        "tool_input": {}
+      },
       "expect_output": false
     },
     {
@@ -23,9 +31,9 @@
       "input": {
         "tool_name": "Read",
         "session_id": "evaldircontext01",
-        "cwd": "/home/ronnas/develop/personal",
+        "cwd": "$HOME/develop/personal",
         "tool_input": {
-          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
+          "file_path": "$HOME/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
         }
       },
       "expect_output": true,
@@ -37,9 +45,9 @@
       "input": {
         "tool_name": "Read",
         "session_id": "evaldircontext01",
-        "cwd": "/home/ronnas/develop/personal",
+        "cwd": "$HOME/develop/personal",
         "tool_input": {
-          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
+          "file_path": "$HOME/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
         }
       },
       "expect_output": false,

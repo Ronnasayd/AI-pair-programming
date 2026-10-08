@@ -5,7 +5,10 @@
   "cases": [
     {
       "name": "non_read_tool_no_output",
-      "input": { "tool_name": "Write", "tool_input": {} },
+      "input": {
+        "tool_name": "Write",
+        "tool_input": {}
+      },
       "expect_output": false
     },
     {
@@ -15,14 +18,19 @@
     },
     {
       "name": "no_file_path_no_output",
-      "input": { "tool_name": "Read", "tool_input": {} },
+      "input": {
+        "tool_name": "Read",
+        "tool_input": {}
+      },
       "expect_output": false
     },
     {
       "name": "nonexistent_file_no_output",
       "input": {
         "tool_name": "Read",
-        "tool_input": { "file_path": "/tmp/does-not-exist-eval.txt" }
+        "tool_input": {
+          "file_path": "/tmp/does-not-exist-eval.txt"
+        }
       },
       "expect_output": false
     },
@@ -31,7 +39,7 @@
       "input": {
         "tool_name": "Read",
         "tool_input": {
-          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/evals/protect_files.json",
+          "file_path": "$HOME/develop/personal/AI-pair-programming/hooks/evals/protect_files.json",
           "offset": 1
         }
       },
@@ -42,7 +50,7 @@
       "input": {
         "tool_name": "Read",
         "tool_input": {
-          "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/evals/protect_files.json"
+          "file_path": "$HOME/develop/personal/AI-pair-programming/hooks/evals/protect_files.json"
         }
       },
       "expect_output": true,

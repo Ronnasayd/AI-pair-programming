@@ -2,7 +2,7 @@
 
 import logging
 
-import src.backups.copilot.copilot_ollama as copilot_ollama
+import legacy.backups.copilot.copilot_ollama as copilot_ollama
 
 
 class TestIsValidModel:

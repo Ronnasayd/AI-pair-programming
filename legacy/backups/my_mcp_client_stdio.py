@@ -7,7 +7,7 @@ command = {
     "command": "my_run_command",
     "arguments": {
         "command": "cd notebook_crawler/spiders && ls",
-        "cwd": "/home/ronnas/develop/poc/notebook-search-crawler",
+        "cwd": "$HOME/develop/poc/notebook-search-crawler",
     },
 }
 

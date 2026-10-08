@@ -2,6 +2,7 @@
 # Ollama API proxy server using GitHub Copilot as backend
 # Similar to ollama_local_proxy.py but routes requests to GitHub Copilot instead of Gemini
 import asyncio
+from datetime import datetime, timedelta
 import json
 import logging
 import os
@@ -9,15 +10,14 @@ import re
 import sys
 import time
 import uuid
-from datetime import datetime, timedelta
 
-import uvicorn
-import yaml
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+import uvicorn
+import yaml
 
-from src.backups.copilot.copilot_api import CopilotAPI
+from legacy.backups.copilot.copilot_api import CopilotAPI
 
 LOG_SIZE = (
     200000  # Max characters to log for prompts and responses to prevent log flooding

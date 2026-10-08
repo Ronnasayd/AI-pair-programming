@@ -7,7 +7,7 @@
       "name": "read_env_file_denied",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "/home/ronnas/develop/personal/AI-pair-programming/.env"
+        "file_path": "$HOME/develop/personal/AI-pair-programming/.env"
       },
       "expect": "deny",
       "expect_pattern": ".env"
@@ -16,7 +16,7 @@
       "name": "read_normal_file_allowed",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "/home/ronnas/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
+        "file_path": "$HOME/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
       },
       "expect": "allow"
     },
@@ -24,7 +24,7 @@
       "name": "write_ssh_key_denied",
       "tool_name": "Write",
       "tool_input": {
-        "file_path": "/home/ronnas/.ssh/id_rsa",
+        "file_path": "$HOME/.ssh/id_rsa",
         "content": "x"
       },
       "expect": "deny",
@@ -34,7 +34,7 @@
       "name": "edit_claude_settings_denied",
       "tool_name": "Edit",
       "tool_input": {
-        "file_path": "/home/ronnas/develop/personal/AI-pair-programming/.claude/settings.json"
+        "file_path": "$HOME/develop/personal/AI-pair-programming/.claude/settings.json"
       },
       "expect": "deny",
       "expect_pattern": "settings.json"
@@ -43,7 +43,7 @@
       "name": "edit_claude_hooks_dir_denied",
       "tool_name": "Edit",
       "tool_input": {
-        "file_path": "/home/ronnas/develop/personal/AI-pair-programming/.claude/hooks/foo.py"
+        "file_path": "$HOME/develop/personal/AI-pair-programming/.claude/hooks/foo.py"
       },
       "expect": "deny",
       "expect_pattern": "hooks"
@@ -71,7 +71,7 @@
       "name": "notebook_env_path_denied",
       "tool_name": "NotebookEdit",
       "tool_input": {
-        "notebook_path": "/home/ronnas/develop/personal/AI-pair-programming/notebooks/.env.ipynb"
+        "notebook_path": "$HOME/develop/personal/AI-pair-programming/notebooks/.env.ipynb"
       },
       "expect": "deny",
       "expect_pattern": ".env"
@@ -275,7 +275,7 @@
       "name": "read_allowed_claude_dir",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "/home/ronnas/develop/personal/AI-pair-programming/.claude/agents/foo.md"
+        "file_path": "$HOME/develop/personal/AI-pair-programming/.claude/agents/foo.md"
       },
       "expect": "allow"
     },
@@ -283,7 +283,7 @@
       "name": "read_allowed_skills_dir",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "/home/ronnas/develop/personal/AI-pair-programming/skills/foo/SKILL.md"
+        "file_path": "$HOME/develop/personal/AI-pair-programming/skills/foo/SKILL.md"
       },
       "expect": "allow"
     },
@@ -291,7 +291,7 @@
       "name": "read_allowed_instructions_dir",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "/home/ronnas/develop/personal/AI-pair-programming/instructions/foo.md"
+        "file_path": "$HOME/develop/personal/AI-pair-programming/instructions/foo.md"
       },
       "expect": "allow"
     },
@@ -608,7 +608,7 @@
       "name": "bash_write_claude_dir_allowed",
       "tool_name": "Bash",
       "tool_input": {
-        "command": "echo x > /home/ronnas/develop/personal/AI-pair-programming/.claude/agents/foo.md"
+        "command": "echo x > $HOME/develop/personal/AI-pair-programming/.claude/agents/foo.md"
       },
       "expect": "allow"
     },
@@ -749,7 +749,7 @@
       "name": "mcp_allowlisted_server_bypasses_check",
       "tool_name": "mcp__ssh-mcp__read_file",
       "tool_input": {
-        "remote_path": "/home/ronnas/.ssh/id_rsa"
+        "remote_path": "$HOME/.ssh/id_rsa"
       },
       "expect": "allow"
     },

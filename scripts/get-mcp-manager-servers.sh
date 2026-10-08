@@ -1,2 +1,2 @@
 #!/bin/bash
-jq .backends.'[]|.id' < /home/ronnas/develop/personal/mcp-manager/catalog.json
+jq .backends.'[]|.id' < $HOME/develop/personal/mcp-manager/catalog.json

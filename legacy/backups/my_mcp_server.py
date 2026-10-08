@@ -1,4 +1,4 @@
-#!/home/ronnas/develop/personal/AI-pair-programming/src/venv/bin/python3
+#!$HOME/develop/personal/AI-pair-programming/src/venv/bin/python3
 """
 my_mcp_server.py
 
@@ -7,15 +7,15 @@ markdown/JSON conversion, and shell command execution. This module is designed
 for extensibility and integration with AI-powered workflows.
 """
 
+from glob import glob
 import os
 import subprocess
-from glob import glob
 from typing import Any, Dict, List, Optional
 
 import aiohttp
-import requests
 from markdownify import markdownify as md
 from mcp.server.fastmcp import FastMCP
+import requests
 
 from src.mcps.search_engine import search_codebase
 
@@ -59,8 +59,8 @@ def _format_error(message: str, exc: Exception) -> Dict[str, str]:
 
 
 # Constantes para caminhos de arquivos e diretórios
-AGENTS_DIR = "/home/ronnas/develop/personal/AI-pair-programming/agents"
-TEMPLATES_DIR = "/home/ronnas/develop/personal/AI-pair-programming/templates"
+AGENTS_DIR = "$HOME/develop/personal/AI-pair-programming/agents"
+TEMPLATES_DIR = "$HOME/develop/personal/AI-pair-programming/templates"
 TASKS_DIR = ".taskmaster/tasks"
 TASKS_JSON = "tasks.json"
 TASKS_MD = "tasks.md"
@@ -131,7 +131,7 @@ def my_mcp_get_context(
         dict: Context content or error message.
     """
     try:
-        command = "python3 /home/ronnas/develop/personal/AI-pair-programming/src/generate-context-ia.py"
+        command = "python3 $HOME/develop/personal/AI-pair-programming/src/generate-context-ia.py"
         if exclude:
             command += f" --exclude '{exclude}'"
         if exclude_content:
@@ -315,6 +315,6 @@ if __name__ == "__main__":
     # print(asyncio.run(my_load_page_as_doc(
     #     "https://www.prisma.io/docs/guides/management-api-basic")))
     # print(asyncio.run(my_get_context(
-    #     "--list --tree /home/ronnas/develop/personal/prompt-ia/")))
+    #     "--list --tree $HOME/develop/personal/prompt-ia/")))
     # print(my_run_command("ls -la"))
-    # print(my_code_review("/home/ronnas/develop/personal/prompt-ia/"))
+    # print(my_code_review("$HOME/develop/personal/prompt-ia/"))
