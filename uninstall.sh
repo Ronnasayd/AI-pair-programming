@@ -9,8 +9,6 @@ SOURCE="$(cd "$(dirname "$SCRIPT_FILE")" && pwd)"
 
 echo "Uninstalling from: $SOURCE"
 
-# Remove all backend symlinks/configs via existing clean scripts.
-"$SOURCE/install.sh" --clean --all
 
 # Remove global command symlinks.
 for bin in /usr/local/bin/aipp /usr/local/bin/mif; do
@@ -18,6 +16,10 @@ for bin in /usr/local/bin/aipp /usr/local/bin/mif; do
     sudo rm "$bin" && echo "Removed $bin"
   fi
 done
+
+if command -v tlc &> /dev/null; then
+  tlc harness uninstall  --purge  --yes
+fi
 
 # Strip lines this project's install.sh injected into shell rc files.
 strip_lines() {

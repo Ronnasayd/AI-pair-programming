@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-export ASDF_NODEJS_VERSION=23.11.1
+export ASDF_NODEJS_VERSION=24.16.0
+export NODE_VERSION=24.16.0
 SCRIPT_FILE="${BASH_SOURCE[0]}"
 
 
@@ -65,8 +66,8 @@ else
     install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook && chmod +x ~/.local/bin/lefthook"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
-    npm i -g @tech-leads-club/harness-toolkit
-    CLAUDE_CONFIG_DIR=/tmp/fake-claude tlc harness install
+    npm i -g @tech-leads-club/harness-toolkit && CLAUDE_CONFIG_DIR=/tmp/fake-claude tlc harness install
+
 
     echo "Use the command: aipp --help"
     exit 0
