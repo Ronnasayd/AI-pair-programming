@@ -14,10 +14,13 @@ die() { log "error: $*"; exit 1; }
 
 check_deps() {
     command -v jq >/dev/null 2>&1 || die "jq required, install it (e.g. apt install jq)"
-    command -v fzf >/dev/null 2>&1 || die "fzf required, install it (e.g. apt install fzf)"
     if [ "$(uname -s)" = "Darwin" ]; then
         command -v security >/dev/null 2>&1 || die "security (macOS Keychain CLI) required"
     fi
+}
+
+check_fzf() {
+    command -v fzf >/dev/null 2>&1 || die "fzf required, install it (e.g. apt install fzf)"
 }
 
 # On macOS, claudeAiOauth lives in the Keychain (service "Claude Code-credentials"),
@@ -89,14 +92,21 @@ extract_mode() {
 }
 
 choose_mode() {
+    local email="${1:-}"
     check_deps
     [ -d "$ACCOUNTS_DIR" ] || die "no accounts saved yet, run extract mode first"
 
     save_current_account
 
     local selected
-    selected="$(find "$ACCOUNTS_DIR" -maxdepth 1 -name '*.json' -exec basename {} \; 2>/dev/null | sort | fzf --prompt="account> ")"
-    [ -n "$selected" ] || die "no account selected"
+    if [ -n "$email" ]; then
+        selected="${email}.json"
+        [ -f "$ACCOUNTS_DIR/$selected" ] || die "no saved account for email: $email"
+    else
+        check_fzf
+        selected="$(find "$ACCOUNTS_DIR" -maxdepth 1 -name '*.json' -exec basename {} \; 2>/dev/null | sort | fzf --prompt="account> ")"
+        [ -n "$selected" ] || die "no account selected"
+    fi
 
     local account_file="$ACCOUNTS_DIR/$selected"
     local oauth_account claude_ai_oauth
@@ -117,19 +127,20 @@ choose_mode() {
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") <extract|choose>
+Usage: $(basename "$0") <extract|choose [email]>
 
-  extract   Run 'claude auth login', then save oauthAccount/claudeAiOauth
-            into $ACCOUNTS_DIR/<email>.json
-  choose    Pick a saved account and load it into
-            $CLAUDE_JSON and $CREDENTIALS_JSON
+  extract        Run 'claude auth login', then save oauthAccount/claudeAiOauth
+                 into $ACCOUNTS_DIR/<email>.json
+  choose         Pick a saved account via fzf and load it into
+                 $CLAUDE_JSON and $CREDENTIALS_JSON
+  choose <email> Load that saved account directly, no fzf
 EOF
 }
 
 main() {
     case "${1:-}" in
         extract) extract_mode ;;
-        choose) choose_mode ;;
+        choose) choose_mode "${2:-}" ;;
         *) usage; exit 1 ;;
     esac
 }
