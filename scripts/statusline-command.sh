@@ -218,16 +218,49 @@ else
     jail_up=0; jail_dot="${C_RED}●${RESET}"
 fi
 
+ponytail_up=0
+PONYTAIL_FLAG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.ponytail-active"
+ponytail_mode_detail="off"
+if [ -f "$PONYTAIL_FLAG" ] && [ ! -L "$PONYTAIL_FLAG" ]; then
+    PONYTAIL_MODE=$(head -c 64 "$PONYTAIL_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
+    if [ -n "$PONYTAIL_MODE" ] && [ "$PONYTAIL_MODE" != "off" ]; then
+        ponytail_up=1
+        ponytail_mode_detail="$PONYTAIL_MODE"
+    fi
+fi
+if [ "$ponytail_up" -eq 1 ]; then
+    ponytail_dot="${C_GREEN}●${RESET}"
+else
+    ponytail_dot="${C_RED}●${RESET}"
+fi
+
+RTK_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/RTK.md"
+if [ -f "$RTK_FILE" ]; then
+    rtk_up=1; rtk_dot="${C_GREEN}●${RESET}"
+else
+    rtk_up=0; rtk_dot="${C_RED}●${RESET}"
+fi
+
+TLC_FILE="$CLAUDE_PROJECT_DIR/.tlc/harness/config.json"
+if [ -f "$TLC_FILE" ]; then
+    tlc_up=1; tlc_dot="${C_GREEN}●${RESET}"
+else
+    tlc_up=0; tlc_dot="${C_RED}●${RESET}"
+fi
+
 {
     echo "tools status @ $(date '+%Y-%m-%d %H:%M:%S')"
     echo "serena     : $([ "$serena_up" -eq 1 ] && echo ON || echo OFF)  (dashboard: $serena_dash)"
     echo "ai-memory  : $([ "$memory_up" -eq 1 ] && echo ON || echo OFF)  (web: $memory_web)"
     echo "rag-rat    : $([ "$ragrat_up" -eq 1 ] && echo ON || echo OFF)  (config: $CLAUDE_PROJECT_DIR/rag-rat.toml)"
     echo "caveman    : $([ "$caveman_up" -eq 1 ] && echo ON || echo OFF)  (mode: $caveman_mode_detail)"
+    echo "ponytail   : $([ "$ponytail_up" -eq 1 ] && echo ON || echo OFF)  (mode: $ponytail_mode_detail)"
     echo "ai-jail    : $([ "$jail_up" -eq 1 ] && echo ON || echo OFF)"
+    echo "rtk        : $([ "$rtk_up" -eq 1 ] && echo ON || echo OFF)  (file: $RTK_FILE)"
+    echo "tlc        : $([ "$tlc_up" -eq 1 ] && echo ON || echo OFF)  (config: $TLC_FILE)"
 } > "$TOOLS_LOG"
 
-tools_status="${SEP}${ICON_TOOLS} \e]8;;file://${TOOLS_LOG}\e\\\\tools(${serena_dot}|${memory_dot}|${ragrat_dot}|${caveman_dot}|${jail_dot})\e]8;;\e\\\\"
+tools_status="${SEP}${ICON_TOOLS} \e]8;;file://${TOOLS_LOG}\e\\\\tools(${serena_dot}|${memory_dot}|${ragrat_dot}|${caveman_dot}|${ponytail_dot}|${jail_dot}|${rtk_dot}|${tlc_dot})\e]8;;\e\\\\"
 
 # Session duration (wall clock)
 duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // empty')
