@@ -184,7 +184,7 @@ else
     serena_up=0; serena_dot="${C_RED}●${RESET}"
 fi
 
-if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
+if curl -s --max-time 1 -o /dev/null "$memory_web"; then
     memory_up=1; memory_dot="${C_GREEN}●${RESET}"
 else
     memory_up=0; memory_dot="${C_RED}●${RESET}"
@@ -248,6 +248,14 @@ else
     tlc_up=0; tlc_dot="${C_RED}●${RESET}"
 fi
 
+CBM_PORT="${CBM_PORT:-9749}"
+cbm_web="http://localhost:${CBM_PORT}"
+if curl -s --max-time 1 -o /dev/null "$cbm_web"; then
+    cbm_up=1; cbm_dot="${C_GREEN}●${RESET}"
+else
+    cbm_up=0; cbm_dot="${C_RED}●${RESET}"
+fi
+
 {
     echo "tools status @ $(date '+%Y-%m-%d %H:%M:%S')"
     echo "serena     : $([ "$serena_up" -eq 1 ] && echo ON || echo OFF)  (dashboard: $serena_dash)"
@@ -258,9 +266,10 @@ fi
     echo "ai-jail    : $([ "$jail_up" -eq 1 ] && echo ON || echo OFF)"
     echo "rtk        : $([ "$rtk_up" -eq 1 ] && echo ON || echo OFF)  (file: $RTK_FILE)"
     echo "tlc        : $([ "$tlc_up" -eq 1 ] && echo ON || echo OFF)  (config: $TLC_FILE)"
+    echo "cbm        : $([ "$cbm_up" -eq 1 ] && echo ON || echo OFF)  (web: $cbm_web)"
 } > "$TOOLS_LOG"
 
-tools_status="${SEP}${ICON_TOOLS} \e]8;;file://${TOOLS_LOG}\e\\\\tools(${serena_dot}|${memory_dot}|${ragrat_dot}|${caveman_dot}|${ponytail_dot}|${jail_dot}|${rtk_dot}|${tlc_dot})\e]8;;\e\\\\"
+tools_status="${SEP}${ICON_TOOLS} \e]8;;file://${TOOLS_LOG}\e\\\\tools(${serena_dot}|${memory_dot}|${ragrat_dot}|${caveman_dot}|${ponytail_dot}|${jail_dot}|${rtk_dot}|${tlc_dot}|${cbm_dot})\e]8;;\e\\\\"
 
 # Session duration (wall clock)
 duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // empty')
