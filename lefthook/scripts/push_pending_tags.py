@@ -11,8 +11,11 @@ Behavior:
   only projects that already have a `vX.Y.Z` tag in their history pay for
   tag pushes.
 - All tags already on origin -> no-op.
-- Otherwise: `git push origin --tags`. A failed push (no network, no
-  `origin`) is reported but never blocks the push that triggered this hook.
+- Otherwise: `git push --no-verify origin --tags`. `--no-verify` is
+  required: this push runs INSIDE the pre-push hook, so without it the
+  push would re-trigger pre-push (this script included), recursing until
+  the timeout kills it. A failed push (no network, no `origin`) is
+  reported but never blocks the push that triggered this hook.
 - Network calls (`ls-remote`, `push`) are timeout-bounded so a slow/dead
   remote can't hang the push.
 
@@ -56,12 +59,12 @@ def main() -> int:
             return 0
 
         result = subprocess.run(  # noqa: S603 -- fixed lookup binary, trusted internal tool name
-            [GIT, "push", "origin", "--tags"],
+            [GIT, "push", "--no-verify", "origin", "--tags"],
             cwd=root,
             capture_output=True,
             text=True,
             check=False,
-            timeout=15,
+            timeout=30,
         )
         if result.returncode != 0:
             sys.stderr.write(
