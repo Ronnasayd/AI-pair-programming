@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# debug: timing probe to reproduce push-pending-tags timeout
 """git pre-push hook: push any local tags not yet on the remote.
 
 Symlinked/wired via lefthook.yml (pre-push). Complements
@@ -24,7 +23,6 @@ from __future__ import annotations
 
 import subprocess
 import sys
-import time
 
 from _git_shared import GIT, repo_root, run_git
 
@@ -35,11 +33,9 @@ def main() -> int:
     Returns:
         0 always (never blocks the push that triggered this hook).
     """
-    t0 = time.monotonic()
     try:
         root = repo_root()
         local_tags = set(run_git("tag", "-l").splitlines())
-        sys.stderr.write(f"[DEBUG] t={time.monotonic() - t0:.2f}s after tag -l\n")
         if not local_tags:
             return 0
 
@@ -51,7 +47,6 @@ def main() -> int:
             check=False,
             timeout=10,
         )
-        sys.stderr.write(f"[DEBUG] t={time.monotonic() - t0:.2f}s after ls-remote\n")
         remote_tags = {
             line.split("refs/tags/", 1)[1].removesuffix("^{}")
             for line in ls_remote.stdout.splitlines()
@@ -60,16 +55,14 @@ def main() -> int:
         if local_tags <= remote_tags:
             return 0
 
-        sys.stderr.write(f"[DEBUG] t={time.monotonic() - t0:.2f}s before push\n")
         result = subprocess.run(  # noqa: S603 -- fixed lookup binary, trusted internal tool name
             [GIT, "push", "origin", "--tags"],
             cwd=root,
             capture_output=True,
             text=True,
             check=False,
-            timeout=30,
+            timeout=15,
         )
-        sys.stderr.write(f"[DEBUG] t={time.monotonic() - t0:.2f}s after push\n")
         if result.returncode != 0:
             sys.stderr.write(
                 f"[push-pending-tags] push failed: {result.stderr.strip()}\n"
