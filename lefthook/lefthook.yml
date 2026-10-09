@@ -1,6 +1,6 @@
 # Lefthook config — migrated from git-hooks/ (symlinked git hooks).
 # Install: `lefthook install` (run once per clone).
-# Bypass: `git commit --no-verify` (see lefthook/scripts/commit-msg for why this exists).
+# Bypass: `git commit --no-verify` (see lefthook/scripts/commit-msg.py for why this exists).
 #
 # NOTE: post-checkout, post-commit, post-merge, post-rewrite hooks still live
 # directly in .git/hooks/ and are NOT migrated here yet — protected path,
@@ -22,15 +22,15 @@ commit-msg:
   commands:
     conventional-commits:
       run:
-        uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/conventional-commits-commit-msg
+        uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/conventional-commits-commit-msg.py
         {1}
     reject-ai-mentions:
       run:
-        uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/commit-msg
+        uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/commit-msg.py
         {1}
     reject-emoji:
       run:
-        uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/reject-emoji-commit-msg
+        uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/reject-emoji-commit-msg.py
         {1}
 pre-push:
   commands:
