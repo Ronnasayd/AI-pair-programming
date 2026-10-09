@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 """UserPromptSubmit/PostToolUse hook that surfaces relevant context7 libraries."""
 
+import hashlib
 import json
 from pathlib import Path
 import sys
+import time
 import urllib.parse
 import urllib.request
 
@@ -29,6 +31,30 @@ TOP_N = 3
 TIMEOUT_SECONDS = 5
 DAEMON_SCRIPT = Path(__file__).parent / "embedding_daemon.py"
 DAEMON_START_TIMEOUT = 90
+CACHE_DIR = Path.home() / ".cache" / "context7-search-cache"
+CACHE_TTL_SECONDS = 30 * 24 * 60 * 60
+
+
+def _cache_path(query: str) -> Path:
+    digest = hashlib.sha1(query.encode()).hexdigest()  # noqa: S324 - cache key, not security
+    return CACHE_DIR / f"{digest}.json"
+
+
+def _read_cache(query: str) -> list[dict] | None:
+    path = _cache_path(query)
+    if not path.exists():
+        return None
+    if time.time() - path.stat().st_mtime > CACHE_TTL_SECONDS:
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def _write_cache(query: str, results: list[dict]) -> None:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    _cache_path(query).write_text(json.dumps(results), encoding="utf-8")
 
 
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
@@ -56,13 +82,19 @@ def fetch_results(query: str) -> list[dict]:
     Returns:
         Raw result entries from the API, or [] if none.
     """
+    cached = _read_cache(query)
+    if cached is not None:
+        return cached
+
     url = f"{SEARCH_URL}?query={urllib.parse.quote(query)}"
     req = urllib.request.Request(  # noqa: S310
         url, headers={"User-Agent": "claude-code-hook"}
     )
     with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:  # noqa: S310
         payload = json.load(resp)
-    return get_by_key(payload, "results") or []
+    results = get_by_key(payload, "results") or []
+    _write_cache(query, results)
+    return results
 
 
 def _passes_quality_floor(s: dict) -> bool:
