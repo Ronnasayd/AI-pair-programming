@@ -61,7 +61,7 @@ def main() -> int:
             capture_output=True,
             text=True,
             check=False,
-            timeout=15,
+            timeout=30,
         )
         if result.returncode != 0:
             sys.stderr.write(
