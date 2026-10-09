@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Set the default disabledMcpServers list for every project in $CLAUDE_CONFIG_DIR/.claude.json."""
+"""Set default disabledMcpServers for every project.
+
+Writes into $CLAUDE_CONFIG_DIR/.claude.json.
+"""
 
 import argparse
 import json
@@ -29,6 +32,8 @@ disabled_mcp_servers = [
     "aipp:vrep",
     "aipp:laya",
     "aipp:krita",
+    "aipp:burp",
+    "aipp:gcloud",
 ]
 
 parser = argparse.ArgumentParser()
