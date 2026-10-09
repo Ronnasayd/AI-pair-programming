@@ -25,7 +25,7 @@ At least one of:
 - **firecrawl** — `firecrawl_search`, `firecrawl_scrape`, `firecrawl_crawl`
 - **exa** — `web_search_exa`, `web_search_advanced_exa`, `crawling_exa`
 
-Both together give the best coverage. Configure in `~/.claude.json` or `~/.codex/config.toml`.
+Both together give the best coverage. Configure in `$CLAUDE_CONFIG_DIR/.claude.json` or `~/.codex/config.toml`.
 
 ## Workflow
 

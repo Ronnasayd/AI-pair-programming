@@ -10,7 +10,7 @@ set -euo pipefail
 # Cron uses a minimal PATH and won't see ~/.local/bin (where `claude` lives) or jq.
 export PATH="$HOME/.local/bin:$PATH"
 
-CLAUDE_JSON="$HOME/.claude.json"
+CLAUDE_JSON="$CLAUDE_CONFIG_DIR/.claude.json"
 ACCOUNTS_DIR="$CLAUDE_CONFIG_DIR/accounts"
 ACCOUNTS_SCRIPT="$(dirname "$0")/claude.accounts.sh"
 

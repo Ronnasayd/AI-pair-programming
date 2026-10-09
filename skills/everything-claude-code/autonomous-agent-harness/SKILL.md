@@ -192,7 +192,7 @@ description: Persistent task queue for autonomous operation
 
 Memory MCP is optional. The [MCP reference memory server](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) is published as `@modelcontextprotocol/server-memory`; version `2026.8.31` was verified on the public npm registry on 2026-09-07. It is a reference implementation, not an ECC-bundled service.
 
-After reviewing that package and approving its use, merge this entry into the user-scoped MCP configuration in `~/.claude.json`, preserving existing settings. Replace `MEMORY_FILE_PATH` with an absolute path in a private directory you own. See [Claude Code MCP configuration](https://code.claude.com/docs/en/mcp) for CLI registration and Windows `cmd /c npx` configuration.
+After reviewing that package and approving its use, merge this entry into the user-scoped MCP configuration in `$CLAUDE_CONFIG_DIR/.claude.json`, preserving existing settings. Replace `MEMORY_FILE_PATH` with an absolute path in a private directory you own. See [Claude Code MCP configuration](https://code.claude.com/docs/en/mcp) for CLI registration and Windows `cmd /c npx` configuration.
 
 ```json
 {
