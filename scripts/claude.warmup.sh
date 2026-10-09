@@ -7,9 +7,15 @@
 # ( crontab -l 2>/dev/null | grep -vF "$SCRIPT" ; echo "$CRON_LINE" ) | crontab -
 set -euo pipefail
 
-# Cron uses a minimal PATH and won't see ~/.local/bin (where `claude` lives) or jq.
-export PATH="$HOME/.local/bin:$PATH"
+# Cron runs a non-interactive, non-login shell, so ~/.bashrc's "not interactive -> return"
+# guard skips every export in it (CLAUDE_CONFIG_DIR, PATH additions, etc). Re-exec this
+# script through an interactive login shell once so those exports actually load.
+if [ -z "${WARMUP_REEXECED:-}" ]; then
+    export WARMUP_REEXECED=1
+    exec bash -lic "$(printf '%q ' "$0" "$@")"
+fi
 
+CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 CLAUDE_JSON="$CLAUDE_CONFIG_DIR/.claude.json"
 ACCOUNTS_DIR="$CLAUDE_CONFIG_DIR/accounts"
 ACCOUNTS_SCRIPT="$(dirname "$0")/claude.accounts.sh"
