@@ -9,9 +9,11 @@ Bypass for a deliberate exception: git commit --no-verify
 
 from __future__ import annotations
 
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
+
+from _commit_msg_shared import strip_comments
 
 _EMOJI_REGEX = re.compile(
     "["
@@ -25,14 +27,16 @@ _EMOJI_REGEX = re.compile(
 )
 
 
-def strip_comments(text: str) -> str:
-    return "\n".join(l for l in text.splitlines() if not l.lstrip().startswith("#"))
-
-
 def main() -> int:
+    """Validate the commit message file passed as argv[1].
+
+    Returns:
+        0 if the message has no emoji, 1 otherwise.
+    """
     if len(sys.argv) < 2:
         return 0
-    msg = strip_comments(Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace"))
+    raw = Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
+    msg = strip_comments(raw)
 
     hits = sorted(set(_EMOJI_REGEX.findall(msg)))
     if not hits:
@@ -49,6 +53,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except Exception as exc:  # never wedge commits on a hook bug
+    except OSError as exc:  # never wedge commits on a hook bug
         sys.stderr.write(f"[reject-emoji-commit-msg] error: {exc}\n")
         sys.exit(0)
