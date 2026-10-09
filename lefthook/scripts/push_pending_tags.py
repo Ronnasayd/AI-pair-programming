@@ -13,6 +13,8 @@ Behavior:
 - All tags already on origin -> no-op.
 - Otherwise: `git push origin --tags`. A failed push (no network, no
   `origin`) is reported but never blocks the push that triggered this hook.
+- Network calls (`ls-remote`, `push`) are timeout-bounded so a slow/dead
+  remote can't hang the push.
 
 Bypass for a deliberate exception: git push --no-verify
 """
@@ -37,9 +39,17 @@ def main() -> int:
         if not local_tags:
             return 0
 
+        ls_remote = subprocess.run(  # noqa: S603 -- fixed lookup binary, trusted internal tool name
+            [GIT, "ls-remote", "--tags", "origin"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
         remote_tags = {
             line.split("refs/tags/", 1)[1].removesuffix("^{}")
-            for line in run_git("ls-remote", "--tags", "origin").splitlines()
+            for line in ls_remote.stdout.splitlines()
             if "refs/tags/" in line
         }
         if local_tags <= remote_tags:
@@ -51,6 +61,7 @@ def main() -> int:
             capture_output=True,
             text=True,
             check=False,
+            timeout=15,
         )
         if result.returncode != 0:
             sys.stderr.write(
@@ -59,7 +70,7 @@ def main() -> int:
         else:
             sys.stderr.write("[push-pending-tags] pushed pending tags to origin\n")
         return 0
-    except (OSError, subprocess.CalledProcessError) as exc:
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
         sys.stderr.write(f"[push-pending-tags] error: {exc}\n")
         return 0
 
