@@ -53,6 +53,11 @@ else
       source ~/.zshrc
     fi
 
+    if [ -f ~/.claude.json ]; then
+      cp -f ~/.claude.json $HOME/.claude/.claude.json && echo "moved ~/.claude.json to $CLAUDE_CONFIG_DIR/.claude.json [ok]"
+      rm -f ~/.claude.json && echo "removed ~/.claude.json [ok]"
+    fi
+
     claude plugin marketplace add cq27-dev/rag-rat
     claude plugin install rag-rat@rag-rat
 
