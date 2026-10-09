@@ -18,6 +18,7 @@ if [ "$NERD_FONT" = "1" ]; then
     ICON_CAVEMAN=$'\U0000EE9A'
     ICON_EMAIL=$'\U0000F42F'
     ICON_SERENA=$'\U000F1077'
+    ICON_TOOLS=$'\U0000F013'
     ICON_MEMORY=$'\U0000F0C7'
     ICON_RAGRAT=$'\U000F1636'
     ICON_COST=$'\U000F0CF4'
@@ -31,7 +32,7 @@ if [ "$NERD_FONT" = "1" ]; then
     ICON_5H=$'\u23F1'
     ICON_DURATION=$'\U000F0954'
 else
-    ICON_PYTHON="🐍" ICON_GO="🐹" ICON_EFFORT="🧠" ICON_JAIL="🔒" ICON_CAVEMAN="🦴"
+    ICON_PYTHON="🐍" ICON_GO="🐹" ICON_EFFORT="🧠" ICON_JAIL="🔒" ICON_CAVEMAN="🦴" ICON_TOOLS="⚙"
     ICON_EMAIL="📧" ICON_SERENA="🧭" ICON_MEMORY="💾" ICON_RAGRAT="🐀" ICON_COST="💰"
     ICON_WEEK="📅" ICON_FOLDER="📁" ICON_BRANCH="🌿" ICON_MODEL="🤖" ICON_CTX="📚"
     ICON_CACHE="📦" ICON_TOKEN="🎟" ICON_5H="⏱" ICON_DURATION="⌛"
@@ -153,26 +154,6 @@ if [ -n "$effort_level" ]; then
     effort_info="${SEP}${ICON_EFFORT} ${effort_color}${effort_level}${RESET}"
 fi
 
-# ai-jail sandbox status
-jail_info=""
-if [ -n "$AI_JAIL" ]; then
-    jail_info="${SEP}${ICON_JAIL} lock"
-fi
-
-# Caveman mode status
-caveman_info=""
-CAVEMAN_FLAG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.caveman-active"
-if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
-    CAVEMAN_MODE=$(head -c 64 "$CAVEMAN_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
-    if [ -n "$CAVEMAN_MODE" ] && [ "$CAVEMAN_MODE" != "off" ]; then
-        if [ "$CAVEMAN_MODE" = "full" ]; then
-            caveman_info="${SEP}${ICON_CAVEMAN} caveman(${C_GREEN}●${RESET})"
-        else
-            caveman_info="${SEP}${ICON_CAVEMAN} caveman($CAVEMAN_MODE)(${C_GREEN}●${RESET})"
-        fi
-    fi
-fi
-
 # email proxy status
 email_info=""
 email_color="$C_MAUVE"
@@ -191,31 +172,62 @@ if [ -n "$session_id" ] && [ -n "$transcript_path" ]; then
     transcript_link="${SEP}\e]8;;file://${transcript_path}\e\\\\${C_SUBTEXT}${session_id_short}${RESET}\e]8;;\e\\\\"
 fi
 
-# Serena status (sr(<dot>) is an OSC 8 hyperlink to the dashboard)
+# Tool status group: single collapsed indicator for serena/ai-memory/rag-rat/caveman/jail.
+# Detailed breakdown written to TOOLS_LOG; group link (OSC 8) points there.
+TOOLS_LOG="/tmp/tools.log"
 serena_dash="http://localhost:24282/dashboard/"
-serena_info=""
-if  pgrep -f "serena" > /dev/null; then
-    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\serena(${C_GREEN}●${RESET})\e]8;;\e\\\\"
+memory_web="http://localhost:49374/web"
+
+if pgrep -f "serena" > /dev/null; then
+    serena_up=1; serena_dot="${C_GREEN}●${RESET}"
 else
-    serena_info="${SEP}${ICON_SERENA} \e]8;;${serena_dash}\e\\\\serena(${C_RED}●${RESET})\e]8;;\e\\\\"
+    serena_up=0; serena_dot="${C_RED}●${RESET}"
 fi
 
-
-
-# AI Memory server status (ai-mem(<dot>) is an OSC 8 hyperlink to the web UI)
-memory_web="http://localhost:49374/web"
-memory_status=""
 if docker ps --filter "name=ai-memory" --format "{{.Names}}" 2>/dev/null | grep -q "ai-memory"; then
-    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-memory(${C_GREEN}●${RESET})\e]8;;\e\\\\"
+    memory_up=1; memory_dot="${C_GREEN}●${RESET}"
 else
-    memory_status="${SEP}${ICON_MEMORY} \e]8;;${memory_web}\e\\\\ai-memory(${C_RED}●${RESET})\e]8;;\e\\\\"
+    memory_up=0; memory_dot="${C_RED}●${RESET}"
 fi
 
 if [ -f "$CLAUDE_PROJECT_DIR/rag-rat.toml" ] && [ ! -L "$CLAUDE_PROJECT_DIR/rag-rat.toml" ]; then
-    ragrat_status="${SEP}${ICON_RAGRAT} rag-rat(${C_GREEN}●${RESET})"
+    ragrat_up=1; ragrat_dot="${C_GREEN}●${RESET}"
 else
-    ragrat_status="${SEP}${ICON_RAGRAT} rag-rat(${C_RED}●${RESET})"
+    ragrat_up=0; ragrat_dot="${C_RED}●${RESET}"
 fi
+
+caveman_up=0
+CAVEMAN_FLAG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.caveman-active"
+caveman_mode_detail="off"
+if [ -f "$CAVEMAN_FLAG" ] && [ ! -L "$CAVEMAN_FLAG" ]; then
+    CAVEMAN_MODE=$(head -c 64 "$CAVEMAN_FLAG" 2>/dev/null | tr -d '\n\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')
+    if [ -n "$CAVEMAN_MODE" ] && [ "$CAVEMAN_MODE" != "off" ]; then
+        caveman_up=1
+        caveman_mode_detail="$CAVEMAN_MODE"
+    fi
+fi
+if [ "$caveman_up" -eq 1 ]; then
+    caveman_dot="${C_GREEN}●${RESET}"
+else
+    caveman_dot="${C_RED}●${RESET}"
+fi
+
+if [ -n "$AI_JAIL" ]; then
+    jail_up=1; jail_dot="${C_GREEN}●${RESET}"
+else
+    jail_up=0; jail_dot="${C_RED}●${RESET}"
+fi
+
+{
+    echo "tools status @ $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "serena     : $([ "$serena_up" -eq 1 ] && echo ON || echo OFF)  (dashboard: $serena_dash)"
+    echo "ai-memory  : $([ "$memory_up" -eq 1 ] && echo ON || echo OFF)  (web: $memory_web)"
+    echo "rag-rat    : $([ "$ragrat_up" -eq 1 ] && echo ON || echo OFF)  (config: $CLAUDE_PROJECT_DIR/rag-rat.toml)"
+    echo "caveman    : $([ "$caveman_up" -eq 1 ] && echo ON || echo OFF)  (mode: $caveman_mode_detail)"
+    echo "ai-jail    : $([ "$jail_up" -eq 1 ] && echo ON || echo OFF)"
+} > "$TOOLS_LOG"
+
+tools_status="${SEP}${ICON_TOOLS} \e]8;;file://${TOOLS_LOG}\e\\\\tools(${serena_dot}|${memory_dot}|${ragrat_dot}|${caveman_dot}|${jail_dot})\e]8;;\e\\\\"
 
 # Session duration (wall clock)
 duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // empty')
@@ -316,6 +328,6 @@ cc_ver_info=""
 # OSC 8 hyperlink: v<version> -> release notes (degrades to plain text on terminals without support)
 [ -n "$cc_version" ] && cc_ver_info="${SEP}\e]8;;https://github.com/anthropics/claude-code/releases\e\\\\${C_SUBTEXT}v${cc_version}${RESET}\e]8;;\e\\\\"
 echo -e "${email_color}${email_info}${RESET}${transcript_link}"
-echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info}${SEP}${ICON_BRANCH} ${C_MAUVE}$branch${RESET}${SEP}${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${memory_status}${serena_info}${ragrat_status}${caveman_info}${jail_info}${cc_ver_info}"
+echo -e "${ICON_FOLDER} ${C_TEAL}$folder${RESET}${lang_info}${SEP}${ICON_BRANCH} ${C_MAUVE}$branch${RESET}${SEP}${ICON_MODEL} ${C_LAVENDER}$model${RESET}${effort_info}${tools_status}${cc_ver_info}"
 echo -e "${ICON_CTX} ctx ${C_BLUE}${ctx_bar}${RESET} ${C_BLUE}${ctx_pct_int}%${RESET} (${ctx_usage_k}k/${ctx_size_k}k)${SEP}${ICON_TOKEN} tok(in:${total_input_f} out:${total_output_f})${SEP}${cost_info#"${SEP}"}${dur_info}${rate_info}"
 
