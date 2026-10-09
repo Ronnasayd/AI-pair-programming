@@ -1,0 +1,63 @@
+# Semantic version bump for GitLab merge requests merged via the UI button,
+# which never run the local post-commit hook (no `git commit` happens on a
+# contributor's machine for those). Mirrors
+# .github/workflows/semantic-version-bump.yml: same Conventional Commits
+# rules (feat -> minor, fix -> patch, `!`/BREAKING CHANGE -> major), same
+# opt-in gate (repo must already have at least one `vX.Y.Z` tag), and the
+# same "skip if HEAD is already tagged" guard so this never double-tags a
+# commit the local hook or a prior CI run already tagged.
+#
+# Include from the project's .gitlab-ci.yml:
+#   include:
+#     - local: '.gitlab/ci/semantic-version-bump.yml'
+semantic-version-bump:
+  stage: .post
+  image: alpine/git:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  script:
+    - |
+      set -e
+      git fetch --tags --quiet
+
+      LATEST_TAG=$(git tag -l 'v*' | sort -V | tail -n1)
+      if [ -z "$LATEST_TAG" ]; then
+        echo "No vX.Y.Z tag found, repo did not opt in. Skipping."
+        exit 0
+      fi
+
+      if git tag --points-at HEAD | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+        echo "HEAD already tagged. Skipping."
+        exit 0
+      fi
+
+      BUMP="none"
+      for sha in $(git log "${CI_COMMIT_BEFORE_SHA}..${CI_COMMIT_SHA}" --format=%H); do
+        subject=$(git log -1 --format=%s "$sha")
+        body=$(git log -1 --format=%B "$sha")
+        if echo "$subject" | grep -qE '^(feat|fix)(\([^)]+\))?!: ' || echo "$body" | grep -q '^BREAKING[ -]CHANGE: '; then
+          BUMP="major"
+        elif [ "$BUMP" != "major" ] && echo "$subject" | grep -qE '^feat(\([^)]+\))?: '; then
+          BUMP="minor"
+        elif [ "$BUMP" = "none" ] && echo "$subject" | grep -qE '^fix(\([^)]+\))?: '; then
+          BUMP="patch"
+        fi
+      done
+
+      if [ "$BUMP" = "none" ]; then
+        echo "No feat/fix commits in range. Skipping."
+        exit 0
+      fi
+
+      MAJOR=$(echo "$LATEST_TAG" | sed 's/^v//' | cut -d. -f1)
+      MINOR=$(echo "$LATEST_TAG" | sed 's/^v//' | cut -d. -f2)
+      PATCH=$(echo "$LATEST_TAG" | sed 's/^v//' | cut -d. -f3)
+      case "$BUMP" in
+        major) NEW_TAG="v$((MAJOR + 1)).0.0" ;;
+        minor) NEW_TAG="v${MAJOR}.$((MINOR + 1)).0" ;;
+        patch) NEW_TAG="v${MAJOR}.${MINOR}.$((PATCH + 1))" ;;
+      esac
+
+      git tag -a "$NEW_TAG" -m "Release $NEW_TAG"
+      git push "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$NEW_TAG"
+      echo "Bumped $LATEST_TAG -> $NEW_TAG"

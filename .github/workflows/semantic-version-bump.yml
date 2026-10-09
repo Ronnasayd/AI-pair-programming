@@ -1,0 +1,39 @@
+name: Semantic version bump
+
+# Covers PR merges done on GitHub (button merge, incl. squash/rebase), which
+# never run the local post-commit hook since no `git commit` happens on a
+# contributor's machine for those. Self-contained: no dependency on this
+# repo's local scripts, so this file alone is enough to generalize to any
+# project via install.sh.
+on:
+  pull_request:
+    types: [closed]
+    branches: [main, master]
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate version
+        id: version
+        uses: paulhatch/semantic-version@v6.0.2
+        with:
+          tag_prefix: "v"
+          major_pattern: "/!:|BREAKING CHANGE:/"
+          minor_pattern: "/feat(\\(.+\\))?:/"
+          version_format: "${major}.${minor}.${patch}"
+          enable_prerelease_mode: false
+
+      - name: Tag release
+        if: steps.version.outputs.version_type != 'none' && steps.version.outputs.is_tagged == 'false'
+        run: |
+          git tag -a "${{ steps.version.outputs.version_tag }}" -m "Release ${{ steps.version.outputs.version_tag }}"
+          git push origin "${{ steps.version.outputs.version_tag }}"
