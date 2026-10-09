@@ -29,6 +29,7 @@ strip_lines() {
     sed -i.bak \
       -e "\#source $SOURCE/.aipp.alias.zshrc#d" \
       -e "\#export AI_PROJECT_ROOT_DIR=\"$SOURCE\"#d" \
+      -e "\#export CLAUDE_CONFIG_DIR=\"$HOME/.claude\"#d" \
       "$rc"
     echo "Cleaned $rc (backup: $rc.bak)"
   fi

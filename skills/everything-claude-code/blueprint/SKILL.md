@@ -48,6 +48,7 @@ Blueprint detects git/gh availability automatically. With git + GitHub CLI, it g
 ```
 
 Produces `plans/myapp-migrate-database-to-postgresql.md` with steps like:
+
 - Step 1: Add PostgreSQL driver and connection config
 - Step 2: Create migration scripts for each table
 - Step 3: Update repository layer to use new driver
@@ -94,7 +95,7 @@ git checkout <reviewed-full-sha>          # pin to a specific reviewed commit
 
 ### Vendored standalone install
 
-If you are vendoring only this skill outside the full ECC install, copy the reviewed file from the ECC repository into `~/.claude/skills/blueprint/SKILL.md`. Vendored copies do not have a git remote, so update them by re-copying the file from a reviewed ECC commit rather than running `git pull`.
+If you are vendoring only this skill outside the full ECC install, copy the reviewed file from the ECC repository into `$CLAUDE_CONFIG_DIR/skills/blueprint/SKILL.md`. Vendored copies do not have a git remote, so update them by re-copying the file from a reviewed ECC commit rather than running `git pull`.
 
 ## Requirements
 

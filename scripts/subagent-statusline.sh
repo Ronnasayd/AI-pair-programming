@@ -46,7 +46,7 @@ SEP=" • "
 
 input=$(cat)
 
-echo $input > $HOME/.claude/logs/subagent_claude_statusline.json
+echo $input > $CLAUDE_CONFIG_DIR/logs/subagent_claude_statusline.json
 
 # Format a token count: k-suffixed when > 1000, raw otherwise
 fmt_k() {

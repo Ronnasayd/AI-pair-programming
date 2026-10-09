@@ -97,7 +97,7 @@
     "ask": [],
     "defaultMode": "bypassPermissions"
   },
-  "model": "sonnet",
+  "model": "claude-sonnet-5-5",
   "hooks": {
     "PermissionRequest": [
       {
@@ -164,7 +164,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/rtk-rewrite.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh RtkRewrite",
+            "command": "$CLAUDE_CONFIG_DIR/hooks/rtk-rewrite.sh | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh RtkRewrite",
             "timeout": 10
           },
           {
@@ -233,7 +233,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -304,7 +304,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -367,7 +367,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -406,7 +406,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -527,7 +527,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -581,7 +581,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -625,7 +625,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           }
         ]
@@ -656,7 +656,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           },
           {
@@ -666,7 +666,7 @@
           },
           {
             "type": "command",
-            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file ~/.claude/logs/hooks-fails.log",
+            "command": "JSON_COLORIZE=1 uv run --project $AI_PROJECT_ROOT_DIR $CLAUDE_PROJECT_DIR/.claude/hooks/scripts/log_hooks.py --log-file $CLAUDE_CONFIG_DIR/logs/hooks-fails.log",
             "timeout": 10
           }
         ]
@@ -685,7 +685,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; node $HOME/.claude/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
+            "command": "bash -c 'set -o pipefail; node $CLAUDE_CONFIG_DIR/agent-flow/hook.js 2>&1 | bash $AI_PROJECT_ROOT_DIR/scripts/ext-log.sh AgentFlow'",
             "timeout": 10
           },
           {

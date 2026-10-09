@@ -34,6 +34,7 @@ logger = get_hooks_logger("ProtectFiles")
 # changes mid-session (cd, subagents), silently widening the boundary check.
 PROJECT_ROOT = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
 AI_PROJECT_ROOT_DIR = os.environ.get("AI_PROJECT_ROOT_DIR", os.getcwd())
+CLAUDE_CONFIG_DIR = os.environ.get("CLAUDE_CONFIG_DIR", os.path.expanduser("~/.claude"))
 
 # Get the home directory path object
 home_dir = str(Path.home())
@@ -45,7 +46,7 @@ ALLOWED_PATTERNS = [
     f"{AI_PROJECT_ROOT_DIR}/instructions/**",
     f"{home_dir}/develop/public/**",
     *(f"{home_dir}/Desktop/*.{ext}" for ext in ("md", "png", "jpeg", "json")),
-    f"{home_dir}/.claude/projects/**/memory/*.md",
+    f"{CLAUDE_CONFIG_DIR}/projects/**/memory/*.md",
 ]
 
 # User-controlled extension of ALLOWED_PATTERNS. Only takes effect if set in

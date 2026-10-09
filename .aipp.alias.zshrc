@@ -29,15 +29,15 @@ alias aimhllm='ai-memory install-hooks --agent claude-code --apply --server-url 
 alias aimup='claude setup-token' # Generate a long-lived (1yr) OAuth token -> paste into ~/.secrets/claude.env as CLAUDE_CODE_OAUTH_TOKEN, then rerun aimsllm: ai-memory-oauth-refresh
 alias aimw="if command -v xdg-open &>/dev/null; then xdg-open http://localhost:49374/web; else open http://localhost:49374/web; fi" # Open AI Memory web: ai-memory-web
 alias cldyl="claude --permission-mode=bypassPermissions" # Claude with no permission prompts: yolo
-_aipp_show_status() { jq -r --arg local "$(pwd)" --arg cat "$1" '.projects[$local][$cat] // {} | if length == 0 then "no entry found" else to_entries[] | (if .value then "✅ " else "" end) + .key end' "$HOME/.claude/aipp-settings.json" 2>/dev/null || echo "no entry found"; }
+_aipp_show_status() { jq -r --arg local "$(pwd)" --arg cat "$1" '.projects[$local][$cat] // {} | if length == 0 then "no entry found" else to_entries[] | (if .value then "✅ " else "" end) + .key end' "$CLAUDE_CONFIG_DIR/aipp-settings.json" 2>/dev/null || echo "no entry found"; }
 alias ats="_aipp_show_status skills" # Show skills: show-skills
 alias atr="_aipp_show_status instructions" # Show rules: show-rules
 alias ata="_aipp_show_status agents" # Show agents: show-agents
 alias clc="claude --model haiku -p 'Thoroughly analyze the changes and create a clear and concise commit message in conventional commit format. Don't start the commit message with any words other than: feat, fix, docs, style, refactor, perf, test, or chore. Don't include any emojis. Ensure the message accurately reflects the changes made.'" # Commit message generator: commit-create
-alias lgh="touch $HOME/.claude/logs/hooks.log && tail -f $HOME/.claude/logs/hooks.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
-alias lght="touch $HOME/.claude/logs/hooks-tools-colorized.log && tail -f $HOME/.claude/logs/hooks-tools-colorized.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
-alias lghac='touch $HOME/.claude/logs/hooks.log && tail -f $HOME/.claude/logs/hooks.log | grep -e "\[additionalContext\]" | bat --paging=never -l log' # Show additionalContext hook log lines
-alias lghe="touch $HOME/.claude/logs/external.log && tail -f $HOME/.claude/logs/external.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
+alias lgh="touch $CLAUDE_CONFIG_DIR/logs/hooks.log && tail -f $CLAUDE_CONFIG_DIR/logs/hooks.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
+alias lght="touch $CLAUDE_CONFIG_DIR/logs/hooks-tools-colorized.log && tail -f $CLAUDE_CONFIG_DIR/logs/hooks-tools-colorized.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
+alias lghac='touch $CLAUDE_CONFIG_DIR/logs/hooks.log && tail -f $CLAUDE_CONFIG_DIR/logs/hooks.log | grep -e "\[additionalContext\]" | bat --paging=never -l log' # Show additionalContext hook log lines
+alias lghe="touch $CLAUDE_CONFIG_DIR/logs/external.log && tail -f $CLAUDE_CONFIG_DIR/logs/external.log | bat --paging=never -l log" # Live git hooks log: live-git-hooks
 alias mia="mif && aipp --claude" # Run mif then launch aipp with Claude backend: mif-aipp-claude
 alias lintfix='uv run --with claude-agent-sdk $AI_PROJECT_ROOT_DIR/src/sdk/lint_fix_agent.py' # Run AI lint-fix agent script: lint-fix
 alias codeburn="npx codeburn" # Run codeburn CLI via npx: codeburn
@@ -46,7 +46,6 @@ alias slt="bash $AI_PROJECT_ROOT_DIR/docker/litellm/start-litellm.sh" # Start lo
 alias 9cl="ANTHROPIC_MODEL=9router-low claude" # Run Claude via 9router low-cost model tier: 9router-claude-low
 alias 9ch="ANTHROPIC_MODEL=9router-high claude" # Run Claude via 9router high-cost model tier: 9router-claude-high
 alias dms="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py" # Disable default MCP servers: disable-mcps
-alias dmsl="$AI_PROJECT_ROOT_DIR/scripts/disable-mcps-default.py $HOME/.claude-L/.claude.json" # Disable default MCP servers: disable-mcps
 alias rri="rag-rat init --yes && rag-rat index --full && rag-rat hooks install" # Init rag-rat and install its hooks: rag-rat-init
 alias sri="serena init" # Init serena in current project: serena-init
 alias osd="xdg-open http://localhost:24282/dashboard/" # Open serena dashboard
@@ -63,7 +62,7 @@ alias aimat="ai-memory generate-auth-token" # Generate AI Memory auth token: ai-
 alias aimpl="ai-memory pending-writes list" # List AI Memory pending writes: ai-memory-pending-writes
 alias rc="exec $SHELL -c \"claude --continue;exec $SHELL\""
 alias lhi="LEFTHOOK_CONFIG=$AI_PROJECT_ROOT_DIR/lefthook/lefthook.yml lefthook install" # Install lefthook hooks: lefthook-install
-alias scvm="export CAVEMAN_DEFAULT_MODE=off && echo 'off' > $HOME/.claude/.caveman-active" # stop caveman
-alias acvm="export CAVEMAN_DEFAULT_MODE=full && echo 'full' > $HOME/.claude/.caveman-active" # activate  caveman
+alias scvm="export CAVEMAN_DEFAULT_MODE=off && echo 'off' > $CLAUDE_CONFIG_DIR/.caveman-active" # stop caveman
+alias acvm="export CAVEMAN_DEFAULT_MODE=full && echo 'full' > $CLAUDE_CONFIG_DIR/.caveman-active" # activate  caveman
 alias mif="uv run --project "$AI_PROJECT_ROOT_DIR" python3 $AI_PROJECT_ROOT_DIR/scripts/manage-ignore-files.py"
 

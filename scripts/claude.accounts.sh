@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Manage multiple Claude Code accounts by swapping oauthAccount/claudeAiOauth
-# between saved profiles in ~/.claude/accounts and the live config files.
+# between saved profiles in $CLAUDE_CONFIG_DIR/accounts and the live config files.
 set -euo pipefail
 
 CLAUDE_JSON="$HOME/.claude.json"
-CREDENTIALS_JSON="$HOME/.claude/.credentials.json"
-ACCOUNTS_DIR="$HOME/.claude/accounts"
-BACKUPS_DIR="$HOME/.claude/backups"
+CREDENTIALS_JSON="$CLAUDE_CONFIG_DIR/.credentials.json"
+ACCOUNTS_DIR="$CLAUDE_CONFIG_DIR/accounts"
+BACKUPS_DIR="$CLAUDE_CONFIG_DIR/backups"
 KEYCHAIN_SERVICE="Claude Code-credentials"
 
 log() { printf '%s\n' "$*" >&2; }

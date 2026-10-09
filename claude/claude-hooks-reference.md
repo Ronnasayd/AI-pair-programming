@@ -12,14 +12,14 @@ Hooks são comandos de shell, endpoints HTTP, ferramentas MCP, prompts LLM ou ag
 
 ## Onde ficam os arquivos de configuração
 
-| Escopo                | Localização                                   | Git?             |
-| --------------------- | --------------------------------------------- | ---------------- |
-| Todos os projetos     | `~/.claude/settings.json` → campo `hooks`     | Não (local)      |
-| Projeto único         | `.claude/settings.json` → campo `hooks`       | Sim              |
-| Projeto único (local) | `.claude/settings.local.json` → campo `hooks` | Não (gitignored) |
-| Organização           | Managed policy settings                       | Sim (admin)      |
-| Plugin                | `hooks/hooks.json` dentro do plugin           | Sim              |
-| Skill/Agent           | YAML frontmatter do componente                | Sim              |
+| Escopo                | Localização                                        | Git?             |
+| --------------------- | -------------------------------------------------- | ---------------- |
+| Todos os projetos     | `$CLAUDE_CONFIG_DIR/settings.json` → campo `hooks` | Não (local)      |
+| Projeto único         | `.claude/settings.json` → campo `hooks`            | Sim              |
+| Projeto único (local) | `.claude/settings.local.json` → campo `hooks`      | Não (gitignored) |
+| Organização           | Managed policy settings                            | Sim (admin)      |
+| Plugin                | `hooks/hooks.json` dentro do plugin                | Sim              |
+| Skill/Agent           | YAML frontmatter do componente                     | Sim              |
 
 ---
 
@@ -197,9 +197,7 @@ Hooks são comandos de shell, endpoints HTTP, ferramentas MCP, prompts LLM ou ag
 {
   "hook_event_name": "PreToolUse",
   "tool_name": "Bash | Write | Edit | Read | Glob | Grep | ...",
-  "tool_input": {
-    /* depende da ferramenta */
-  },
+  "tool_input": {/* depende da ferramenta */},
   "tool_use_id": "toolu_01ABC..."
 }
 ```
@@ -322,7 +320,7 @@ Tool inputs por ferramenta:
   "stop_hook_active": false,
   "agent_id": "def456",
   "agent_type": "Explore",
-  "agent_transcript_path": "~/.claude/projects/.../subagents/agent-def456.jsonl",
+  "agent_transcript_path": "$CLAUDE_CONFIG_DIR/projects/.../subagents/agent-def456.jsonl",
   "last_assistant_message": "Analysis complete...",
   "background_tasks": [],
   "session_crons": []
@@ -921,7 +919,7 @@ hooks:
 claude --debug-file /path/to/debug.log
 # ou
 claude --debug
-# log em ~/.claude/debug/<session-id>.txt
+# log em $CLAUDE_CONFIG_DIR/debug/<session-id>.txt
 ```
 
 ```

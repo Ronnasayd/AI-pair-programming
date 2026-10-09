@@ -18,12 +18,12 @@ Each of the 3 mining phases below is independent — run only the phase(s) the u
 
 ### Step 1: Mine session transcripts (if requested)
 
-Session transcripts live at `~/.claude/projects/<url-encoded-cwd>/*.jsonl`, one file per session UUID.
+Session transcripts live at `$CLAUDE_CONFIG_DIR/projects/<url-encoded-cwd>/*.jsonl`, one file per session UUID.
 
 1. Read one raw line where `type == "user"` from any `.jsonl` in the target project directory and inspect `message.content` and the `promptSource` field. **Do this every time before running the script** — schema can differ across Claude Code versions, and tool-result/system content is also stored under `role: "user"`, so `promptSource == "typed"` may not still isolate real human input without checking first.
 2. Run `scripts/extract_user_prompts.py` against all session files for the project:
    ```
-   python3 scripts/extract_user_prompts.py "$HOME/.claude/projects/<project-dir>/*.jsonl" --out /tmp/user_prompts_only.txt
+   python3 scripts/extract_user_prompts.py "$CLAUDE_CONFIG_DIR/projects/<project-dir>/*.jsonl" --out /tmp/user_prompts_only.txt
    ```
 3. Read the output file in full (paginate if needed) — do not sample. For each prompt, ask: is this a request the user has phrased before (same or near-same intent, different session/wording), or a task that took many manual back-and-forth turns to accomplish?
 4. Cluster matches into candidate workflows. For each candidate, record: the recurring request pattern (paraphrase, not verbatim), how many times/sessions it showed up, and the rough sequence of steps that were manually repeated each time.

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Extract only genuine human-typed prompts from Claude Code session transcripts (.jsonl).
+"""Extract genuine human-typed prompts from Claude Code session transcripts.
 
 Usage:
-    python extract_user_prompts.py <glob-pattern> [<glob-pattern> ...] --out <output-file>
+    python extract_user_prompts.py <glob-pattern> [<glob-pattern> ...] \
+        --out <output-file>
 
 Example:
-    python extract_user_prompts.py "$HOME/.claude/projects/-path-to-project/*.jsonl" --out user_prompts_only.txt
+    python extract_user_prompts.py \
+        "$CLAUDE_CONFIG_DIR/projects/-path-to-project/*.jsonl" \
+        --out user_prompts_only.txt
 
 Filters strictly on type == "user" AND promptSource == "typed" to exclude
 tool results, system-reminders, and injected skill content that also carry
@@ -19,6 +22,7 @@ import json
 
 
 def extract_text(content: object) -> str:
+    """Return the plain-text form of a transcript message's content field."""
     if isinstance(content, str):
         return content
     if isinstance(content, list):
@@ -32,6 +36,10 @@ def extract_text(content: object) -> str:
 
 
 def process_file(path: str, out) -> int:
+    """Write each typed human prompt from one session file to `out`.
+
+    Returns the number of prompts written.
+    """
     count = 0
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
@@ -56,6 +64,7 @@ def process_file(path: str, out) -> int:
 
 
 def main() -> None:
+    """Parse arguments, extract prompts from matched session files, and report."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "patterns", nargs="+", help="Glob pattern(s) for session .jsonl files"

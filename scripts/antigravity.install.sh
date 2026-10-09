@@ -45,7 +45,7 @@ replace_between() {
 instructions=""
 while read -r rule; do
     instructions+=$'\n'"$(<"$SOURCE/instructions/$rule")"
-done < <(jq -r --arg local "$LOCAL" '.projects[$local].instructions // {} | to_entries[] | select(.value == true) | .key' "$HOME/.claude/aipp-settings.json")
+done < <(jq -r --arg local "$LOCAL" '.projects[$local].instructions // {} | to_entries[] | select(.value == true) | .key' "$CLAUDE_CONFIG_DIR/aipp-settings.json")
 
 replace_between \
   "<!-- INIT AUTO-CONTEXT -->" \

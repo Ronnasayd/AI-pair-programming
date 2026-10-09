@@ -21,29 +21,36 @@ else
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
     sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/aipp"
+
     if [ -f ~/.bashrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.bashrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc [ok]"
+    fi
+    if [ -f ~/.bashrc ] && ! grep -q "export CLAUDE_CONFIG_DIR=\"$HOME/.claude\"" ~/.bashrc; then
+      echo "export CLAUDE_CONFIG_DIR=\"$HOME/.claude\"" >> ~/.bashrc && echo "CLAUDE_CONFIG_DIR add at .bashrc [ok]"
     fi
     if [ -f ~/.bashrc ] && ! grep -q "source $SOURCE/.aipp.alias.zshrc" ~/.bashrc; then
       ln -s "$SOURCE/.aipp.alias.zshrc" "$HOME/.aipp.alias.zshrc"
       echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.bashrc && echo ".aipp.alias.zshrc add at .bashrc [ok]"
     fi
+    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
+      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+      source ~/.bashrc
+    fi
+
+
     if [ -f ~/.zshrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.zshrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.zshrc && echo "AI_PROJECT_ROOT_DIR add at .zshrc [ok]"
+    fi
+    if [ -f ~/.zshrc ] && ! grep -q "export CLAUDE_CONFIG_DIR=\"$HOME/.claude\"" ~/.zshrc; then
+      echo "export CLAUDE_CONFIG_DIR=\"$HOME/.claude\"" >> ~/.zshrc && echo "CLAUDE_CONFIG_DIR add at .zshrc [ok]"
     fi
     if [ -f ~/.zshrc ] && ! grep -q "source $SOURCE/.aipp.alias.zshrc" ~/.zshrc; then
       ln -s "$SOURCE/.aipp.alias.zshrc" "$HOME/.aipp.alias.zshrc"
       echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.zshrc && echo ".aipp.alias.zshrc add at .zshrc [ok]"
     fi
-
     if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
       echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
       source ~/.zshrc
-    fi
-
-    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
-      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-      source ~/.bashrc
     fi
 
     claude plugin marketplace add cq27-dev/rag-rat

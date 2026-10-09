@@ -4,7 +4,7 @@
 # usage: some-hook | ext-log.sh Name
 name=${1:-External}
 sid=${CLAUDE_CODE_SESSION_ID:0:8}
-log="$HOME/.claude/logs/external.log"
+log="$CLAUDE_CONFIG_DIR/logs/external.log"
 mkdir -p "${log%/*}"
 while IFS= read -r line || [ -n "$line" ]; do
   printf '%s\n' "$line"
