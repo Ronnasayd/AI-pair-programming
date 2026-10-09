@@ -43,3 +43,6 @@ pre-push:
       run: $AI_PROJECT_ROOT_DIR/lefthook/scripts/pre-push-jest
     typecheck:
       run: $AI_PROJECT_ROOT_DIR/lefthook/scripts/pre-push-typecheck
+    push-pending-tags:
+      run:
+        uv run --project $AI_PROJECT_ROOT_DIR $AI_PROJECT_ROOT_DIR/lefthook/scripts/push_pending_tags.py
