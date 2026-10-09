@@ -65,4 +65,4 @@ alias lhi="LEFTHOOK_CONFIG=$AI_PROJECT_ROOT_DIR/lefthook/lefthook.yml lefthook i
 alias scvm="export CAVEMAN_DEFAULT_MODE=off && echo 'off' > $CLAUDE_CONFIG_DIR/.caveman-active" # stop caveman
 alias acvm="export CAVEMAN_DEFAULT_MODE=full && echo 'full' > $CLAUDE_CONFIG_DIR/.caveman-active" # activate  caveman
 alias mif="uv run --project "$AI_PROJECT_ROOT_DIR" python3 $AI_PROJECT_ROOT_DIR/scripts/manage-ignore-files.py"
-
+alias ccd="sudo rm -rf /tmp/.claude && cp -R $CLAUDE_CONFIG_DIR /tmp/.claude && export CLAUDE_CONFIG_DIR=/tmp/.claude && echo 'CLAUDE_CONFIG_DIR set to /tmp/.claude for this shell session'"
