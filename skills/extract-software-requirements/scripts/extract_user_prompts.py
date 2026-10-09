@@ -2,11 +2,16 @@
 """Extract only genuine human-typed prompts from Claude Code session transcripts (.jsonl).
 
 Usage:
-    python extract_user_prompts.py <glob-pattern> [<glob-pattern> ...] --out <output-file> [--last-n-sessions N]
+    python extract_user_prompts.py <glob-pattern> [<glob-pattern> ...] \\
+        --out <output-file> [--last-n-sessions N]
 
 Example:
-    python extract_user_prompts.py "$HOME/.claude/projects/-path-to-project/*.jsonl" --out user_prompts_only.txt
-    python extract_user_prompts.py "$HOME/.claude/projects/-path-to-project/*.jsonl" --out out.txt --last-n-sessions 5
+    python extract_user_prompts.py \\
+        "$CLAUDE_CONFIG_DIR/projects/-path-to-project/*.jsonl" \\
+        --out user_prompts_only.txt
+    python extract_user_prompts.py \\
+        "$CLAUDE_CONFIG_DIR/projects/-path-to-project/*.jsonl" \\
+        --out out.txt --last-n-sessions 5
 
 --last-n-sessions N: after matching all patterns, keep only the N most
 recently modified session files (by mtime) instead of every match.
@@ -19,48 +24,21 @@ one raw line before trusting the filter (see SKILL.md Step 1).
 
 import argparse
 import glob
-import json
 import os
+import sys
+from pathlib import Path
 
+_SIBLING_SCRIPT_DIR = (
+    Path(__file__).resolve().parents[2] / "extract-automation-candidates" / "scripts"
+)
+if str(_SIBLING_SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(_SIBLING_SCRIPT_DIR))
 
-def extract_text(content: object) -> str:
-    if isinstance(content, str):
-        return content
-    if isinstance(content, list):
-        parts = [
-            b.get("text", "")
-            for b in content
-            if isinstance(b, dict) and b.get("type") == "text"
-        ]
-        return "\n".join(p for p in parts if p)
-    return ""
-
-
-def process_file(path: str, out) -> int:
-    count = 0
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if obj.get("type") != "user":
-                continue
-            if obj.get("promptSource") != "typed":
-                continue
-            text = extract_text(obj.get("message", {}).get("content")).strip()
-            if not text:
-                continue
-            ts = obj.get("timestamp", "")
-            out.write(f"[{ts}] {text}\n\n")
-            count += 1
-    return count
+from extract_user_prompts import process_file  # noqa: E402
 
 
 def main() -> None:
+    """Parse arguments, extract prompts from matched session files, and report."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "patterns", nargs="+", help="Glob pattern(s) for session .jsonl files"

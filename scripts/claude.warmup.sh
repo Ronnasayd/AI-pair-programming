@@ -11,7 +11,7 @@ set -euo pipefail
 export PATH="$HOME/.local/bin:$PATH"
 
 CLAUDE_JSON="$HOME/.claude.json"
-ACCOUNTS_DIR="$HOME/.claude/accounts"
+ACCOUNTS_DIR="$CLAUDE_CONFIG_DIR/accounts"
 ACCOUNTS_SCRIPT="$(dirname "$0")/claude.accounts.sh"
 
 log() { printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }

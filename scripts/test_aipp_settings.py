@@ -1,6 +1,6 @@
 """Unit tests for scripts/aipp_settings.py.
 
-All tests use temp/fixture paths, never ~/.claude/.
+All tests use temp/fixture paths, never $CLAUDE_CONFIG_DIR/.
 """
 
 import json
@@ -18,7 +18,7 @@ SCRIPT_PATH = Path(__file__).parent / "aipp_settings.py"
 
 
 def _run_cli(args, home_dir):
-    """Run the CLI with HOME redirected to home_dir, so SETTINGS_PATH (~/.claude/...)
+    """Run the CLI with HOME redirected to home_dir, so SETTINGS_PATH ($CLAUDE_CONFIG_DIR/...)
     never touches the real user config."""
     env = {**os.environ, "HOME": str(home_dir)}
     return subprocess.run(

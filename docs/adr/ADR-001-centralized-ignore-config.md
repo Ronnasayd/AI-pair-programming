@@ -10,7 +10,7 @@ Skill/agent/instruction enablement per project was tracked across three plain-te
 
 ## Decision
 
-Enablement state moves into a single JSON file at `~/.claude/aipp-settings.json`, global to the machine, keyed by project absolute path, with explicit `name: boolean` entries per skill/agent/instruction (no glob/wildcard patterns). One Python module owns all reads and writes to this file.
+Enablement state moves into a single JSON file at `$CLAUDE_CONFIG_DIR/aipp-settings.json`, global to the machine, keyed by project absolute path, with explicit `name: boolean` entries per skill/agent/instruction (no glob/wildcard patterns). One Python module owns all reads and writes to this file.
 
 ## Considered Alternatives
 

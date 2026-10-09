@@ -23,7 +23,7 @@ When a candidate sits on the boundary (e.g. a command that's grown a couple of c
 
 - Skill: `<workdir>/agents/skills/<kebab-name>/SKILL.md` (plus `scripts/`/`references/` subdirs only if the workflow actually needs them — don't scaffold empty dirs).
 - Command: `<workdir>/agents/commands/<kebab-name>.md`.
-- Instruction: append one bullet to the project's `AGENTS.md` under the most relevant existing section, or a new short section if none fits. Never touch the user's private `~/.claude/CLAUDE.md`.
+- Instruction: append one bullet to the project's `AGENTS.md` under the most relevant existing section, or a new short section if none fits. Never touch the user's private `$CLAUDE_CONFIG_DIR/CLAUDE.md`.
 
 If `<workdir>/agents/skills` or `<workdir>/agents/commands` don't exist yet, create them — this is the first artifact for that project, not an error.
 

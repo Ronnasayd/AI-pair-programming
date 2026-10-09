@@ -316,14 +316,14 @@
 - **[♻️ Refactoring]** Change context usage bucket threshold to 5% ([212ca0a](https://github.com/Ronnasayd/AI-pair-programming/commit/212ca0a))
 - **[🐛 Bug Fixes]** Correct skills root default and add debug logging ([042f4b4](https://github.com/Ronnasayd/AI-pair-programming/commit/042f4b4))
 - **[✨ Features]** Resurface skill checklist.md on context growth ([6eaf5ef](https://github.com/Ronnasayd/AI-pair-programming/commit/6eaf5ef))
-- **[🐛 Bug Fixes]** Write context debug log to ~/.claude/logs ([bf5a914](https://github.com/Ronnasayd/AI-pair-programming/commit/bf5a914))
+- **[🐛 Bug Fixes]** Write context debug log to $CLAUDE_CONFIG_DIR/logs ([bf5a914](https://github.com/Ronnasayd/AI-pair-programming/commit/bf5a914))
 - **[📚 Documentation]** Sync docs via generate-docs after execute ([f26ea0e](https://github.com/Ronnasayd/AI-pair-programming/commit/f26ea0e))
 - **[✨ Features]** Add adr template and criteria for offering adrs ([ef5fb12](https://github.com/Ronnasayd/AI-pair-programming/commit/ef5fb12))
 
 ### **2026-08-08**
 
 - **[🐛 Bug Fixes]** Bind systemd-resolved stub for dns resolution in sandbox ([27b0e67](https://github.com/Ronnasayd/AI-pair-programming/commit/27b0e67))
-- **[♻️ Refactoring]** Move hook logs from /tmp to ~/.claude/logs ([3ac17d6](https://github.com/Ronnasayd/AI-pair-programming/commit/3ac17d6))
+- **[♻️ Refactoring]** Move hook logs from /tmp to $CLAUDE_CONFIG_DIR/logs ([3ac17d6](https://github.com/Ronnasayd/AI-pair-programming/commit/3ac17d6))
 - **[🐛 Bug Fixes]** Bind real /tmp and passthrough env vars to fix claude auto-update in sandbox ([246ad2c](https://github.com/Ronnasayd/AI-pair-programming/commit/246ad2c))
 
 ### **2026-08-07**

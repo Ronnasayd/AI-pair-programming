@@ -32,7 +32,7 @@ export ANTHROPIC_AUTH_TOKEN=<mesma LITELLM_MASTER_KEY do seu .env>
 export ANTHROPIC_MODEL=openrouter-claude-sonnet
 ```
 
-Ou, alternativa mais permanente, em `~/.claude/settings.json`:
+Ou, alternativa mais permanente, em `$CLAUDE_CONFIG_DIR/settings.json`:
 
 ```json
 {

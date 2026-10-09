@@ -69,7 +69,7 @@ while read -r rule; do
         ln -s "$SOURCE/instructions/$rule" "$LOCAL/$DEFAULT_FOLDER/instructions/$rule"
         references+=$'\n'"- [$(basename "$rule_file" .md)]($DEFAULT_FOLDER/instructions/$(basename "$rule_file")) — applies to: \`$applyto\`"
     fi
-done < <(jq -r --arg local "$LOCAL" '.projects[$local].instructions // {} | to_entries[] | select(.value == true) | .key' "$HOME/.claude/aipp-settings.json")
+done < <(jq -r --arg local "$LOCAL" '.projects[$local].instructions // {} | to_entries[] | select(.value == true) | .key' "$CLAUDE_CONFIG_DIR/aipp-settings.json")
 
 if [[ -n "$references" ]]; then
     instructions+=$'\n\n## Context-Specific Rules\n\nThe following rules apply to specific file types:'"$references"

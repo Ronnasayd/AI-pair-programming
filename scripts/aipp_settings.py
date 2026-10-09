@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Single owner of ~/.claude/aipp-settings.json reads/writes/migration/seeding.
+"""Single owner of $CLAUDE_CONFIG_DIR/aipp-settings.json reads/writes/migration/seeding.
 
 Storage shape:
     {"projects": {"<abs-path>": {"skills": {}, "agents": {}, "instructions": {}}}}
@@ -28,7 +28,7 @@ def load(path: Path = SETTINGS_PATH) -> dict:
     """Read the JSON, creating {"projects": {}} if missing.
 
     Args:
-        path: Settings file to read. Defaults to ~/.claude/aipp-settings.json.
+        path: Settings file to read. Defaults to $CLAUDE_CONFIG_DIR/aipp-settings.json.
 
     Returns:
         The parsed settings dict, or {"projects": {}} if the file is missing.
@@ -47,7 +47,7 @@ def save(data: dict, path: Path = SETTINGS_PATH) -> None:
 
     Args:
         data: Full settings dict to persist.
-        path: Settings file to write. Defaults to ~/.claude/aipp-settings.json.
+        path: Settings file to write. Defaults to $CLAUDE_CONFIG_DIR/aipp-settings.json.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")

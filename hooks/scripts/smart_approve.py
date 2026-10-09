@@ -3,7 +3,7 @@
 
 Decomposes compound bash commands (&&, ||, ;, |, $(), newlines) into
 individual sub-commands and checks each against the allow/deny patterns
-in ~/.claude/settings.json.
+in $CLAUDE_CONFIG_DIR/settings.json.
 
 Input:  JSON on stdin with tool_name and tool_input.command
 Output: JSON with {"decision": "allow"/"deny", "reason": "..."} or silent exit
@@ -49,13 +49,13 @@ def load_settings(path: str | None = None) -> dict:
     """Load and return the permissions dict from settings.json.
 
     Args:
-        path: Optional path to settings.json. Defaults to ~/.claude/settings.json.
+        path: Optional path to settings.json. Defaults to $CLAUDE_CONFIG_DIR/settings.json.
 
     Returns:
         dict: The loaded settings dictionary, or empty dict if file not found.
     """
     if path is None:
-        path = os.path.expanduser("~/.claude/settings.json")
+        path = f"{os.getenv('CLAUDE_CONFIG_DIR', os.path.expanduser('~/.claude'))}/settings.json"
     path = os.path.expanduser(path)
     try:
         with open(path, encoding="utf-8") as f:
@@ -68,7 +68,7 @@ def load_merged_settings(global_path: str | None = None) -> dict:
     """Load and merge all settings layers matching Claude Code's behavior.
 
     Loads up to three sources and merges their permissions.allow/deny arrays:
-      1. Global:        ~/.claude/settings.json (or $CLAUDE_SETTINGS_PATH)
+      1. Global:        $CLAUDE_CONFIG_DIR/settings.json (or $CLAUDE_SETTINGS_PATH)
       2. Project:       $CLAUDE_PROJECT_DIR/.claude/settings.json (committed)
       3. Project-local: $CLAUDE_PROJECT_DIR/.claude/settings.local.json (gitignored)
 

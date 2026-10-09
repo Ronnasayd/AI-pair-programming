@@ -136,7 +136,7 @@ def setup_logger() -> logging.Logger:
     """Configure and return the daemon's file logger.
 
     Returns:
-        Logger writing to ~/.claude/logs/hooks.log.
+        Logger writing to $CLAUDE_CONFIG_DIR/logs/hooks.log.
     """
     logger = logging.getLogger("EmbeddingDaemon")
     logger.setLevel(logging.DEBUG)

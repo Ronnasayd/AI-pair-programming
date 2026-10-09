@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Script interativo com checkboxes para habilitar e desabilitar skills, agents.
 
-Também gerencia instructions no ~/.claude/aipp-settings.json do projeto atual.
+Também gerencia instructions no $CLAUDE_CONFIG_DIR/aipp-settings.json do projeto atual.
 """
 
 import contextlib
