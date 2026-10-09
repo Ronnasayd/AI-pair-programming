@@ -165,20 +165,18 @@
       ],
       "env": {}
     },
-    "aipp:laya": {
-      "type": "stdio",
-      "command": "uvx",
+    "aipp:burp": {
+      "command": "java",
       "args": [
-        "--torch-backend",
-        "cpu",
-        "--from",
-        "laya[mcp]",
-        "laya-mcp-server"
-      ],
-      "env": {
-        "LAYA_DEVICE": "cpu",
-        "LAYA_PRELOAD": "0"
-      }
+        "-jar",
+        "/home/ronnas/mcp-proxy.jar",
+        "--sse-url",
+        "http://127.0.0.1:9876/"
+      ]
+    },
+    "aipp:gcloud": {
+      "command": "npx",
+      "args": ["-y", "@google-cloud/gcloud-mcp"]
     }
   }
 }
