@@ -100,7 +100,7 @@ done
 
 # ── Explicit dotfile mounts (regular files) ────────────────────
 [ -f "$HOME/.gitconfig" ] && DOTFILE_MOUNTS+=("--ro-bind" "$HOME/.gitconfig" "$HOME/.gitconfig")
-[ -f "$HOME/.claude.json" ] && DOTFILE_MOUNTS+=("--bind" "$HOME/.claude.json" "$HOME/.claude.json")
+[ -f "$CLAUDE_CONFIG_DIR/.claude.json" ] && DOTFILE_MOUNTS+=("--bind" "$CLAUDE_CONFIG_DIR/.claude.json" "$CLAUDE_CONFIG_DIR/.claude.json")
 
 # ── Hide sensitive subdirs inside ~/.config (after rw mount) ───
 CONFIG_HIDE_MOUNTS=()

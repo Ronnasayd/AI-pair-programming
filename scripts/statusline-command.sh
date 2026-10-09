@@ -179,7 +179,7 @@ email_color="$C_MAUVE"
 if [ "$CLAUDE_CONFIG_DIR" == "$HOME/.claude-L" ] ; then
     email_info="${ICON_EMAIL} $(cat $HOME/.claude-L/.claude.json | jq -r '.oauthAccount.emailAddress')"
 else
-    email_info="${ICON_EMAIL} $(cat $HOME/.claude.json | jq -r '.oauthAccount.emailAddress')"
+    email_info="${ICON_EMAIL} $(cat $CLAUDE_CONFIG_DIR/.claude.json | jq -r '.oauthAccount.emailAddress')"
 fi
 
 # Session transcript link (first 8 chars of session_id)

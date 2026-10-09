@@ -6,7 +6,7 @@
 
 ## Context
 
-Skill/agent/instruction enablement per project was tracked across three plain-text files (`.skillsignore`, `.agentsignore`, `.rulesignore`) living inside each installed project's root, using an inverted convention (`# pattern` = enabled, bare `pattern` = disabled). Five separate scripts (`ignores.sh`, `manage-ignore-files.py`, `install.sh`, `update-external-tools.sh`, plus shell aliases) each re-implemented parsing of this format. Claude Code's own `~/.claude.json` already tracks per-project MCP server enablement in a single global JSON file, keyed by project absolute path — a precedent for this toolkit's own configuration.
+Skill/agent/instruction enablement per project was tracked across three plain-text files (`.skillsignore`, `.agentsignore`, `.rulesignore`) living inside each installed project's root, using an inverted convention (`# pattern` = enabled, bare `pattern` = disabled). Five separate scripts (`ignores.sh`, `manage-ignore-files.py`, `install.sh`, `update-external-tools.sh`, plus shell aliases) each re-implemented parsing of this format. Claude Code's own `$CLAUDE_CONFIG_DIR/.claude.json` already tracks per-project MCP server enablement in a single global JSON file, keyed by project absolute path — a precedent for this toolkit's own configuration.
 
 ## Decision
 
@@ -16,7 +16,7 @@ Enablement state moves into a single JSON file at `$CLAUDE_CONFIG_DIR/aipp-setti
 
 | Alternative                                                          | Pros                                                                                                            | Cons                                                                                                                                                                    |
 | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Per-project JSON file (e.g. `<project>/.agent-config.json`)          | Mirrors current per-project file location; no global single point of failure                                    | Still needs gitignore/exclude handling per project like the old files did; doesn't match the `~/.claude.json` precedent this decision is modeled on                     |
+| Per-project JSON file (e.g. `<project>/.agent-config.json`)          | Mirrors current per-project file location; no global single point of failure                                    | Still needs gitignore/exclude handling per project like the old files did; doesn't match the `$CLAUDE_CONFIG_DIR/.claude.json` precedent this decision is modeled on    |
 | Global JSON with wildcard/glob support (e.g. `"anthropics:*": true`) | Preserves the old files' ability to enable/disable a whole namespace in one line; smaller file for large groups | Requires match-resolution logic in every consumer (bash and Python) exactly like the system being replaced; defeats the goal of "one file, one explicit truth per item" |
 | Keep three separate JSON files instead of merging into one           | Smaller migration diff per category                                                                             | Still three sources of truth instead of one; doesn't address the core complaint (fragmentation)                                                                         |
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Set the default disabledMcpServers list for every project in ~/.claude.json."""
+"""Set the default disabledMcpServers list for every project in $CLAUDE_CONFIG_DIR/.claude.json."""
 
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -31,11 +32,13 @@ disabled_mcp_servers = [
 ]
 
 parser = argparse.ArgumentParser()
+CONFIG_DIR = Path(os.environ.get("CLAUDE_CONFIG_DIR", str(Path.home() / ".claude")))
+
 parser.add_argument(
     "config_path",
     nargs="?",
-    default=str(Path.home() / ".claude.json"),
-    help="path to claude config json (default: ~/.claude.json)",
+    default=str(CONFIG_DIR / ".claude.json"),
+    help="path to claude config json (default: $CLAUDE_CONFIG_DIR/.claude.json)",
 )
 args = parser.parse_args()
 config_path = Path(args.config_path)

@@ -3,7 +3,7 @@
 # between saved profiles in $CLAUDE_CONFIG_DIR/accounts and the live config files.
 set -euo pipefail
 
-CLAUDE_JSON="$HOME/.claude.json"
+CLAUDE_JSON="$CLAUDE_CONFIG_DIR/.claude.json"
 CREDENTIALS_JSON="$CLAUDE_CONFIG_DIR/.credentials.json"
 ACCOUNTS_DIR="$CLAUDE_CONFIG_DIR/accounts"
 BACKUPS_DIR="$CLAUDE_CONFIG_DIR/backups"
