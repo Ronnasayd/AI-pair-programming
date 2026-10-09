@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# debug: timing probe to reproduce push-pending-tags timeout
 """git pre-push hook: push any local tags not yet on the remote.
 
 Symlinked/wired via lefthook.yml (pre-push). Complements
