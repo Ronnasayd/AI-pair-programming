@@ -7,7 +7,9 @@
 # ( crontab -l 2>/dev/null | grep -vF "$SCRIPT" ; echo "$CRON_LINE" ) | crontab -
 set -euo pipefail
 
-cd $AI_PROJECT_ROOT_DIR
+# Project root derived from this script's own location (scripts/.. ), not from
+# AI_PROJECT_ROOT_DIR — cron runs a non-login shell where that env var isn't set yet.
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Cron runs a non-interactive, non-login shell, so ~/.bashrc's "not interactive -> return"
 # guard skips every export in it (CLAUDE_CONFIG_DIR, PATH additions, etc). Re-exec this
