@@ -66,3 +66,4 @@ alias scvm="export CAVEMAN_DEFAULT_MODE=off && echo 'off' > $CLAUDE_CONFIG_DIR/.
 alias acvm="export CAVEMAN_DEFAULT_MODE=full && echo 'full' > $CLAUDE_CONFIG_DIR/.caveman-active" # activate  caveman
 alias mif="uv run --project "$AI_PROJECT_ROOT_DIR" python3 $AI_PROJECT_ROOT_DIR/scripts/manage-ignore-files.py"
 alias ccd="sudo rm -rf /tmp/.claude && cp -R $CLAUDE_CONFIG_DIR /tmp/.claude && export CLAUDE_CONFIG_DIR=/tmp/.claude && echo 'CLAUDE_CONFIG_DIR set to /tmp/.claude for this shell session'"
+alias tagi="git tag -a v0.1.0 -m 'Release v0.1.0'" # Create initial semantic-version tag to opt-in the post-commit bump hook: tag-init
