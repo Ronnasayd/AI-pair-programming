@@ -778,8 +778,11 @@ def project_dir(payload: Mapping[str, Any]) -> str:
     return os.environ.get("CLAUDE_PROJECT_DIR") or get_by_key(payload, "cwd") or "."
 
 
+MAX_QUERY_TEXT_CHARS = 250
+
+
 def extract_query_text(payload: Mapping[str, Any]) -> str | None:
-    """Return text to embed/search for.
+    """Return text to embed/search for, truncated to MAX_QUERY_TEXT_CHARS.
 
     Comes from either a UserPromptSubmit payload ("prompt") or a
     PostToolUse payload for AskUserQuestion (question + selected
@@ -787,7 +790,7 @@ def extract_query_text(payload: Mapping[str, Any]) -> str | None:
     """
     prompt = get_by_key(payload, "prompt")
     if prompt:
-        return prompt
+        return prompt[:MAX_QUERY_TEXT_CHARS]
 
     tool_name = get_by_key(payload, "tool_name")
     if tool_name != "AskUserQuestion":
@@ -798,7 +801,8 @@ def extract_query_text(payload: Mapping[str, Any]) -> str | None:
     if not answers:
         return None
 
-    return " ".join(f"{q} {a}" for q, a in answers.items())
+    text = " ".join(f"{q} {a}" for q, a in answers.items())
+    return text[:MAX_QUERY_TEXT_CHARS]
 
 
 # ---------------------------------------------------------------------------
