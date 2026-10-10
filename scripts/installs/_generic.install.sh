@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Cross-platform package install: picks the available package manager.
+# Usage: pkg_install <package_name>
+pkg_install() {
+    local pkg="$1"
+    if command -v pkg &> /dev/null; then
+        pkg install -y "$pkg"
+    elif command -v apt &> /dev/null; then
+        sudo apt install -y "$pkg"
+    elif command -v brew &> /dev/null; then
+        brew install "$pkg"
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -S --noconfirm "$pkg"
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y "$pkg"
+    else
+        echo "No supported package manager found for '$pkg'." >&2
+        return 1
+    fi
+}
+
 # Generic installer helper: checks if a CLI is present, prompts to install if not.
 # Usage: install_tool <bin_name> <version_cmd> <install_cmd> [post_install_cmd]
 install_tool() {

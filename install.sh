@@ -72,9 +72,9 @@ else
     install_tool "rtk" "rtk --version" "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh" "rtk init"
     install_tool "rag-rat" "rag-rat --version" "bash $SOURCE/scripts/installs/rag-rat-installer.sh"
     install_tool "codebase-memory-mcp" "codebase-memory-mcp --version" "curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash -s -- --skip-config"
-    install_tool "bat" "bat --version" "sudo apt install bat"
-    install_tool "jq" "jq --version" "sudo apt install jq"
-    install_tool "fzf" "fzf --version" "sudo apt install fzf"
+    install_tool "bat" "bat --version" "pkg_install bat"
+    install_tool "jq" "jq --version" "pkg_install jq"
+    install_tool "fzf" "fzf --version" "pkg_install fzf"
     install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook && chmod +x ~/.local/bin/lefthook"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 

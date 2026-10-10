@@ -30,6 +30,7 @@ ALLOWED_PATTERNS = [
     "CODEMAP.md",
     "CONTRIBUTING.md",
     "SKILL.md",
+    "README.md",
 ]
 
 
@@ -56,7 +57,7 @@ def main() -> None:
     output = {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
-            "permissionDecision": "deny",
+            "permissionDecision": "ask",
             "permissionDecisionReason": (
                 f"Creating {Path(file_path).name} outside standard documentation "
                 "directories (docs/, skills/, agents/, commands/, .specs/, ...). "
