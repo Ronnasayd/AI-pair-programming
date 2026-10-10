@@ -11,7 +11,7 @@ echo "Uninstalling from: $SOURCE"
 
 
 # Remove global command symlinks.
-for bin in $HOME/.local/bin/aipp; do
+for bin in $HOME/.local/bin/aipp /usr/local/bin/aipp; do
   if [ -L "$bin" ]; then
     sudo rm "$bin" && echo "Removed $bin"
   fi
