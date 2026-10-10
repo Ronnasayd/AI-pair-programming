@@ -84,7 +84,12 @@ else
     install_tool "lefthook" "lefthook --version" "curl -L https://github.com/evilmartians/lefthook/releases/download/v2.1.14/lefthook_2.1.14_Linux_x86_64 --output ~/.local/bin/lefthook && chmod +x ~/.local/bin/lefthook"
     install_tool "ai-memory" "ai-memory --version" "mkdir -p ~/.local/bin && curl -fsSL https://raw.githubusercontent.com/akitaonrails/ai-memory/main/bin/ai-memory -o ~/.local/bin/ai-memory && chmod +x ~/.local/bin/ai-memory"
 
-    npm i -g @tech-leads-club/harness-toolkit && CLAUDE_CONFIG_DIR=/tmp/fake-claude tlc harness install
+    NODE_MAJOR="$(node -v 2>/dev/null | sed 's/^v//' | cut -d. -f1)"
+    if [ -n "$NODE_MAJOR" ] && [ "$NODE_MAJOR" -ge 24 ]; then
+      npm i -g @tech-leads-club/harness-toolkit && CLAUDE_CONFIG_DIR=/tmp/fake-claude tlc harness install
+    else
+      echo "Skip harness-toolkit install: node >= 24 required (found: $(node -v 2>/dev/null || echo 'none'))"
+    fi
 
 
     echo "Use the command: aipp --help"

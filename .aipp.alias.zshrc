@@ -1,4 +1,3 @@
-alias clign="rm -f .skillsignore .agentsignore .rulesignore 2>/dev/null && echo 'Cleaned ignore files'" # Clean ignore files: cleanignore
 # Read a value from ~/.secrets/claude.env, stripping surrounding quotes. Handles '=' in the value.
 _aim_secret() { grep -E "^$1=" ~/.secrets/claude.env | head -1 | cut -d= -f2- | sed -e 's/^["'\'']//' -e 's/["'\'']$//'; }
 cfie(){
