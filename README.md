@@ -23,8 +23,8 @@ This project is a comprehensive toolkit designed to enhance AI-assisted software
 ### Instalation
 
 ```sh
-git clone https://github.com/Ronnasayd/AI-pair-programming.git ~/AI-pair-programming
-cd ~/AI-pair-programming
+git clone https://github.com/Ronnasayd/aipp.git ~/aipp
+cd ~/aipp
 bash install.sh
 ```
 
