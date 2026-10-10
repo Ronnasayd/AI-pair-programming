@@ -21,6 +21,8 @@ else
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
 
+    mkdir -p ~/.local/bin
+
     if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
       echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
       source ~/.zshrc
