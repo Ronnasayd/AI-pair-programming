@@ -1,5 +1,5 @@
-#!$HOME/develop/personal/AI-pair-programming/src/venv/bin/python3
-"""Fetch skill content from the AI-pair-programming GitHub repo.
+#!$HOME/develop/personal/aipp/src/venv/bin/python3
+"""Fetch skill content from the aipp GitHub repo.
 
 So agents in other projects can use a suggested skill even when it isn't
 present in the current project's .claude/skills/ directory.
@@ -17,9 +17,7 @@ from fastmcp import FastMCP  # type: ignore[import-not-found]
 
 mcp = FastMCP(name="skill_loader")
 
-_RAW_BASE = (
-    "https://raw.githubusercontent.com/Ronnasayd/AI-pair-programming/master/skills"
-)
+_RAW_BASE = "https://raw.githubusercontent.com/Ronnasayd/aipp/master/skills"
 
 
 def _fetch_text(url: str) -> str:
@@ -66,7 +64,7 @@ def _resolve_skill(
 
 @mcp.tool()
 def list_remote_skills() -> dict[str, Any]:
-    """List all skill names available in the AI-pair-programming GitHub repo.
+    """List all skill names available in the aipp GitHub repo.
 
     Returns:
         `{"skills": manifest}` or `{"error": message}` on failure.

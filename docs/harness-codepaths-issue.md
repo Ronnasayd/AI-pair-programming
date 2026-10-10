@@ -11,7 +11,7 @@ root can never be covered, whatever value is configured.
 ## Observed
 
 - Config: `grind.enabled: true`, `grind.lintCommand` set, `codePaths` set to the
-  absolute repo path (`/home/<user>/.../AI-pair-programming`).
+  absolute repo path (`/home/<user>/.../aipp`).
 - `lint_changed.py` run by hand exits 1 and prints the failures.
 - `echo '{"hook_event_name":"Stop",...}' | node tlc-exec.mjs stop` exits 0 with
   empty output. The gate never ran, and nothing says why.

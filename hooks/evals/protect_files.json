@@ -7,7 +7,7 @@
       "name": "read_env_file_denied",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "$HOME/develop/personal/AI-pair-programming/.env"
+        "file_path": "$HOME/develop/personal/aipp/.env"
       },
       "expect": "deny",
       "expect_pattern": ".env"
@@ -16,7 +16,7 @@
       "name": "read_normal_file_allowed",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "$HOME/develop/personal/AI-pair-programming/hooks/scripts/protect_files.py"
+        "file_path": "$HOME/develop/personal/aipp/hooks/scripts/protect_files.py"
       },
       "expect": "allow"
     },
@@ -34,7 +34,7 @@
       "name": "edit_claude_settings_denied",
       "tool_name": "Edit",
       "tool_input": {
-        "file_path": "$HOME/develop/personal/AI-pair-programming/.claude/settings.json"
+        "file_path": "$HOME/develop/personal/aipp/.claude/settings.json"
       },
       "expect": "deny",
       "expect_pattern": "settings.json"
@@ -43,7 +43,7 @@
       "name": "edit_claude_hooks_dir_denied",
       "tool_name": "Edit",
       "tool_input": {
-        "file_path": "$HOME/develop/personal/AI-pair-programming/.claude/hooks/foo.py"
+        "file_path": "$HOME/develop/personal/aipp/.claude/hooks/foo.py"
       },
       "expect": "deny",
       "expect_pattern": "hooks"
@@ -71,7 +71,7 @@
       "name": "notebook_env_path_denied",
       "tool_name": "NotebookEdit",
       "tool_input": {
-        "notebook_path": "$HOME/develop/personal/AI-pair-programming/notebooks/.env.ipynb"
+        "notebook_path": "$HOME/develop/personal/aipp/notebooks/.env.ipynb"
       },
       "expect": "deny",
       "expect_pattern": ".env"
@@ -275,7 +275,7 @@
       "name": "read_allowed_claude_dir",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "$HOME/develop/personal/AI-pair-programming/.claude/agents/foo.md"
+        "file_path": "$HOME/develop/personal/aipp/.claude/agents/foo.md"
       },
       "expect": "allow"
     },
@@ -283,7 +283,7 @@
       "name": "read_allowed_skills_dir",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "$HOME/develop/personal/AI-pair-programming/skills/foo/SKILL.md"
+        "file_path": "$HOME/develop/personal/aipp/skills/foo/SKILL.md"
       },
       "expect": "allow"
     },
@@ -291,7 +291,7 @@
       "name": "read_allowed_instructions_dir",
       "tool_name": "Read",
       "tool_input": {
-        "file_path": "$HOME/develop/personal/AI-pair-programming/instructions/foo.md"
+        "file_path": "$HOME/develop/personal/aipp/instructions/foo.md"
       },
       "expect": "allow"
     },
@@ -608,7 +608,7 @@
       "name": "bash_write_claude_dir_allowed",
       "tool_name": "Bash",
       "tool_input": {
-        "command": "echo x > $HOME/develop/personal/AI-pair-programming/.claude/agents/foo.md"
+        "command": "echo x > $HOME/develop/personal/aipp/.claude/agents/foo.md"
       },
       "expect": "allow"
     },

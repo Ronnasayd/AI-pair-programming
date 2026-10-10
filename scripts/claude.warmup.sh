@@ -2,7 +2,7 @@
 # Cron job: for each saved Claude account, check session usage.
 # If usage is 0%, fire a trivial prompt to start the 5h session clock.
 # Execute this script every 30 minutes to keep sessions alive.
-# SCRIPT="$HOME/develop/personal/AI-pair-programming/scripts/claude.warmup.sh"
+# SCRIPT="$HOME/develop/personal/aipp/scripts/claude.warmup.sh"
 # CRON_LINE="*/30 * * * * $SCRIPT >> /tmp/warmup.log 2>&1"
 # ( crontab -l 2>/dev/null | grep -vF "$SCRIPT" ; echo "$CRON_LINE" ) | crontab -
 set -euo pipefail

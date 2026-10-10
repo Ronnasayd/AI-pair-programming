@@ -61,4 +61,4 @@ Report: hook path, the settings.json snippet (verbatim), eval result. One or two
 
 ---
 
-_Traceability: recurring across 16+ session prompts ("criar um hook que…", "comando para colar no settings", "fazer um hook equivalente em python") and 29 `fix(hooks)` commits (Jul–Aug 2026) fixing the same classes of mistake — wrong env var for project root, missing dedup, matcher not covering `AskUserQuestion`, non-atomic cache writes, silent exceptions. Sources: `$CLAUDE_CONFIG_DIR/projects/-home-ronnas-develop-personal-AI-pair-programming/*.jsonl`, git log._
+_Traceability: recurring across 16+ session prompts ("criar um hook que…", "comando para colar no settings", "fazer um hook equivalente em python") and 29 `fix(hooks)` commits (Jul–Aug 2026) fixing the same classes of mistake — wrong env var for project root, missing dedup, matcher not covering `AskUserQuestion`, non-atomic cache writes, silent exceptions. Sources: `$CLAUDE_CONFIG_DIR/projects/-home-ronnas-develop-personal-aipp/*.jsonl`, git log._
