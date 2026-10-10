@@ -9,7 +9,7 @@
       "tool_input": {
         "command": "git push"
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "deny",
       "expect_pattern": "protected branch"
     },
@@ -19,7 +19,7 @@
       "tool_input": {
         "command": "git push --force origin master"
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "deny",
       "expect_pattern": "force-push"
     },
@@ -29,7 +29,7 @@
       "tool_input": {
         "command": "git branch -D master"
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "deny",
       "expect_pattern": "delete of protected branch"
     },
@@ -39,7 +39,7 @@
       "tool_input": {
         "command": "git commit -m x"
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "deny",
       "expect_pattern": "direct commit"
     },
@@ -49,7 +49,7 @@
       "tool_input": {
         "command": "git reset --hard HEAD~1"
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "deny",
       "expect_pattern": "hard reset"
     },
@@ -59,7 +59,7 @@
       "tool_input": {
         "command": "ls -la"
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "allow"
     },
     {
@@ -68,7 +68,7 @@
       "tool_input": {
         "command": "git status"
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "allow"
     },
     {
@@ -77,7 +77,7 @@
       "tool_input": {
         "command": ""
       },
-      "cwd": "$HOME/develop/personal/aipp",
+      "cwd": "$AI_PROJECT_ROOT_DIR",
       "expect": "allow"
     }
   ]

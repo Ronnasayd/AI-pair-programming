@@ -1,4 +1,4 @@
-#!$HOME/develop/personal/aipp/src/venv/bin/python3
+#!$AI_PROJECT_ROOT_DIR/src/venv/bin/python3
 """
 my_mcp_server.py
 
@@ -59,8 +59,8 @@ def _format_error(message: str, exc: Exception) -> Dict[str, str]:
 
 
 # Constantes para caminhos de arquivos e diretórios
-AGENTS_DIR = "$HOME/develop/personal/aipp/agents"
-TEMPLATES_DIR = "$HOME/develop/personal/aipp/templates"
+AGENTS_DIR = "$AI_PROJECT_ROOT_DIR/agents"
+TEMPLATES_DIR = "$AI_PROJECT_ROOT_DIR/templates"
 TASKS_DIR = ".taskmaster/tasks"
 TASKS_JSON = "tasks.json"
 TASKS_MD = "tasks.md"
@@ -131,7 +131,7 @@ def my_mcp_get_context(
         dict: Context content or error message.
     """
     try:
-        command = "python3 $HOME/develop/personal/aipp/src/generate-context-ia.py"
+        command = "python3 $AI_PROJECT_ROOT_DIR/src/generate-context-ia.py"
         if exclude:
             command += f" --exclude '{exclude}'"
         if exclude_content:

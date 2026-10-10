@@ -39,7 +39,7 @@
       "input": {
         "tool_name": "Read",
         "tool_input": {
-          "file_path": "$HOME/develop/personal/aipp/hooks/evals/protect_files.json",
+          "file_path": "$AI_PROJECT_ROOT_DIR/hooks/evals/protect_files.json",
           "offset": 1
         }
       },
@@ -50,7 +50,7 @@
       "input": {
         "tool_name": "Read",
         "tool_input": {
-          "file_path": "$HOME/develop/personal/aipp/hooks/evals/protect_files.json"
+          "file_path": "$AI_PROJECT_ROOT_DIR/hooks/evals/protect_files.json"
         }
       },
       "expect_output": true,

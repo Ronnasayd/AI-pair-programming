@@ -33,7 +33,7 @@
         "session_id": "evaldircontext01",
         "cwd": "$HOME/develop/personal",
         "tool_input": {
-          "file_path": "$HOME/develop/personal/aipp/hooks/scripts/protect_files.py"
+          "file_path": "$AI_PROJECT_ROOT_DIR/hooks/scripts/protect_files.py"
         }
       },
       "expect_output": true,
@@ -47,7 +47,7 @@
         "session_id": "evaldircontext01",
         "cwd": "$HOME/develop/personal",
         "tool_input": {
-          "file_path": "$HOME/develop/personal/aipp/hooks/scripts/protect_files.py"
+          "file_path": "$AI_PROJECT_ROOT_DIR/hooks/scripts/protect_files.py"
         }
       },
       "expect_output": false,

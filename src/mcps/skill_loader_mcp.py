@@ -1,4 +1,4 @@
-#!$HOME/develop/personal/aipp/src/venv/bin/python3
+#!$AI_PROJECT_ROOT_DIR/src/venv/bin/python3
 """Fetch skill content from the aipp GitHub repo.
 
 So agents in other projects can use a suggested skill even when it isn't

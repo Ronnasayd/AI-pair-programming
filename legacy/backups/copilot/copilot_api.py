@@ -289,7 +289,7 @@ if __name__ == "__main__":
     # response = api.chat(
     #     "explique o codigo",
     #     [
-    #         "$HOME/develop/personal/aipp/src/copilot/copilot_api.py"
+    #         "$AI_PROJECT_ROOT_DIR/src/copilot/copilot_api.py"
     #     ],
     #     streaming=False,
     # )
@@ -300,7 +300,7 @@ if __name__ == "__main__":
     # for chunk in api.chat(
     #     "explique brevemente o codigo",
     #     [
-    #         "$HOME/develop/personal/aipp/src/copilot/copilot_api.py"
+    #         "$AI_PROJECT_ROOT_DIR/src/copilot/copilot_api.py"
     #     ],
     #     streaming=True,
     # ):
