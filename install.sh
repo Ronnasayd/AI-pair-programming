@@ -9,7 +9,7 @@ if [ -L "$SCRIPT_FILE" ]; then
   echo "Building"
   SCRIPT_FILE="$(readlink -f "$SCRIPT_FILE")"
 else
-  if [ ! -L "/usr/local/bin/aipp" ]; then
+  if [ ! -L "$HOME/.local/bin/aipp" ]; then
     echo "Running install script: $SCRIPT_FILE"
     SOURCE="$(pwd)"
     source "$SOURCE/scripts/installs/_generic.install.sh"
@@ -20,7 +20,17 @@ else
     # bash "$(pwd)/scripts/update-external-tools.sh"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/list_skills_agents.py" > /dev/null && echo "list skills [ok]"
     uv run --project "$SOURCE" python3 "$SOURCE/scripts/build-skill-index.py" > /dev/null && echo "build skills [ok]"
-    sudo ln -s "$SOURCE/$SCRIPT_FILE" "/usr/local/bin/aipp"
+
+    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
+      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+      source ~/.zshrc
+    fi
+    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
+      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+      source ~/.bashrc
+    fi
+
+    sudo ln -s "$SOURCE/$SCRIPT_FILE" "$HOME/.local/bin/aipp"
 
     if [ -f ~/.bashrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.bashrc; then
       echo "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" >> ~/.bashrc && echo "AI_PROJECT_ROOT_DIR add at .bashrc [ok]"
@@ -32,10 +42,7 @@ else
       ln -s "$SOURCE/.aipp.alias.zshrc" "$HOME/.aipp.alias.zshrc"
       echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.bashrc && echo ".aipp.alias.zshrc add at .bashrc [ok]"
     fi
-    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
-      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-      source ~/.bashrc
-    fi
+
 
 
     if [ -f ~/.zshrc ] && ! grep -q "export AI_PROJECT_ROOT_DIR=\"$SOURCE\"" ~/.zshrc; then
@@ -48,10 +55,7 @@ else
       ln -s "$SOURCE/.aipp.alias.zshrc" "$HOME/.aipp.alias.zshrc"
       echo "source $SOURCE/.aipp.alias.zshrc" >> ~/.zshrc && echo ".aipp.alias.zshrc add at .zshrc [ok]"
     fi
-    if ! echo "$PATH" | tr ':' '\n' | grep -qx "$HOME/.local/bin"; then
-      echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-      source ~/.zshrc
-    fi
+
 
     if [ -f ~/.claude.json ]; then
       cp -f ~/.claude.json $HOME/.claude/.claude.json && echo "moved ~/.claude.json to $CLAUDE_CONFIG_DIR/.claude.json [ok]"
