@@ -32,7 +32,7 @@ logger = get_hooks_logger("DirContextRefs")
 
 MAX_STDIN = 1024 * 1024
 NOTIFY_EVERY = 25
-CANDIDATE_NAMES = ("CONTEXT.md", "CLAUDE.md", "AGENTS.md")
+CANDIDATE_NAMES = ("CONTEXT.md", "CLAUDE.md", "AGENTS.md", "README.md")
 
 
 def _cache_path(session_id: str) -> Path:
