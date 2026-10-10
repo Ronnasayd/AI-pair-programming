@@ -856,7 +856,6 @@
       "references/json-schemas.md",
       "references/walkthrough-example.md",
       "scripts/README.md",
-      "scripts/__pycache__/merge-tasks.cpython-312.pyc",
       "scripts/merge-tasks.py",
       "scripts/validate-tasks.py",
       "test-merge.sh"
@@ -907,7 +906,6 @@
     "skill_md": "srs-generator/SKILL.md",
     "files": [
       "references/srs-template.md",
-      "scripts/__pycache__/validate_srs.cpython-313.pyc",
       "scripts/validate_srs.py"
     ]
   },

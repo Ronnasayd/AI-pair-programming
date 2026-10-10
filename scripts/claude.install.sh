@@ -245,6 +245,7 @@ git_exclude \
     "$DEFAULT_FOLDER/hooks/*" \
     "$DEFAULT_FOLDER/context-refs.json" \
     "skills.db" \
+    "skills.db.sha256" \
     ".mcp.json" \
     ".serena/*"
 ########################################################################################
